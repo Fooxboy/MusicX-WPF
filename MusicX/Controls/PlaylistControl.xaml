@@ -1,0 +1,82 @@
+﻿<UserControl x:Class="MusicX.Controls.PlaylistControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MusicX.Controls" xmlns:controls="clr-namespace:WPFUI.Controls;assembly=WPFUI"
+             mc:Ignorable="d" 
+             Loaded="UserControl_Loaded"
+             MouseEnter="UserControl_MouseEnter"
+             MouseLeave="UserControl_MouseLeave"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid >
+
+        <Grid x:Name="CompactGrid" Visibility="Visible">
+            <controls:CardAction Click="CardAction_Click" ShowChevron="False">
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="40"/>
+
+                    </Grid.RowDefinitions>
+
+
+                    <Rectangle  Height="174" Width="174" Grid.Row="0" Fill="Black" Opacity="0.1" RadiusX="5" RadiusY="5"/>
+                    <controls:FontIcon Height="174" Width="174" FontSize="50" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontFamily="Segoe Fluent Icons" Glyph="&#xE90B;" />
+
+                  
+
+
+                    <Rectangle Height="174" Width="174" Grid.Row="0" RadiusX="5" RadiusY="5">
+                        <Rectangle.Fill>
+                            <ImageBrush  x:Name="CoverImageCompact" Stretch="UniformToFill"/>
+
+                        </Rectangle.Fill>
+                    </Rectangle>
+
+                    <StackPanel x:Name="PlaylistStackPanelCompact" VerticalAlignment="Center" Margin="0 5 0 0" Grid.Row="1">
+                        <TextBlock x:Name="TitleCompact"  FontFamily="{StaticResource VKSansDemiBold}"  FontWeight="DemiBold"  TextTrimming="CharacterEllipsis" FontSize="16" Text="Album title"/>
+                        <TextBlock x:Name="ArtistCompact"  Opacity="0.6" TextTrimming="CharacterEllipsis" FontSize="12" Text="Artist"/>
+
+                    </StackPanel>
+                </Grid>
+
+            </controls:CardAction>
+        </Grid>
+
+        <Grid x:Name="FullGrid" MouseLeftButtonDown="FullGrid_MouseLeftButtonDown" HorizontalAlignment="Stretch" Visibility="Collapsed">
+
+            <controls:Card HorizontalAlignment="Stretch" Visibility="Collapsed" x:Name="Card" Width="500"/>
+            <StackPanel Orientation="Horizontal" >
+                <Grid>
+                    <Rectangle  Height="85" Width="85" Grid.Row="0" Fill="Black" Opacity="0.1" RadiusX="5" RadiusY="5"/>
+                    <controls:FontIcon Height="50" Width="50" FontSize="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontFamily="Segoe Fluent Icons" Glyph="&#xE90B;" />
+
+                    
+                    <Rectangle Height="85" RadiusX="3" RadiusY="3" Width="84">
+                        <Rectangle.Fill>
+                            <ImageBrush  x:Name="CoverImage"  Stretch="UniformToFill"/>
+                        </Rectangle.Fill>
+
+                        <Rectangle.Effect>
+                            <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="0"  Opacity="0.2"/>
+                        </Rectangle.Effect>
+                    </Rectangle>
+
+                </Grid>
+                
+                <StackPanel VerticalAlignment="Center" Margin="10 0 0 0" x:Name="PlaylistStackPanel" >
+                    <TextBlock Foreground="White" FontFamily="{StaticResource VKSansBold}" x:Name="Title" FontWeight="Bold"  TextTrimming="CharacterEllipsis" FontSize="18" Text="Album title"/>
+                    <TextBlock Foreground="White" x:Name="Artist"  Opacity="0.6" TextTrimming="CharacterEllipsis" FontSize="15" Text="Artist"/>
+                    <TextBlock Foreground="White" x:Name="Year"  Opacity="0.3" TextTrimming="CharacterEllipsis" FontSize="12" Text="1997"/>
+                    <TextBlock Foreground="White" x:Name="Genres"  Opacity="0.3" TextTrimming="CharacterEllipsis" FontSize="12" Text="1997"/>
+
+                </StackPanel>
+            </StackPanel>
+
+        </Grid>
+
+       
+    </Grid>
+</UserControl>

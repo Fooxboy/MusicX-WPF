@@ -1,0 +1,117 @@
+﻿<UserControl x:Class="MusicX.Controls.PlayerControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MusicX.Controls"
+             mc:Ignorable="d" 
+             xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
+             SizeChanged="UserControl_SizeChanged"
+             Loaded="UserControl_Loaded"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <Storyboard x:Key="BackgroundAmimate">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="rectangle" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="1"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.4000000" Value="0.8"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </UserControl.Resources>
+    <Grid>
+
+        <Border CornerRadius="5" >
+            <Border.Clip>
+                <RectangleGeometry x:Name="rec" Rect="0,0, 0, 100" RadiusX="5" RadiusY="5"/>
+            </Border.Clip>
+            <Image x:Name="BackgroundCard" VerticalAlignment="Center" Stretch="UniformToFill">
+                <Image.Effect>
+                    <BlurEffect RenderingBias="Performance" KernelType="Gaussian"  Radius="20"/>
+                </Image.Effect>
+            </Image>
+        </Border>
+
+        <Rectangle x:Name="rectangle" Fill="Black" Opacity="0.8" RadiusX="5" RadiusY="5" />
+        <wpfui:Card >
+            <Grid>
+
+                <StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="25"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="25"/>
+
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock x:Name="CurrentPosition" Grid.Column="0" Text="1:03"/>
+                        <Slider x:Name="PositionSlider" Grid.Column="1" ValueChanged="PositionSlider_ValueChanged"  Margin="5 0 5 0"/>
+                        <TextBlock x:Name="MaxPosition" Grid.Column="2"  Text="3:03"/>
+                    </Grid>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+
+                        <StackPanel Grid.Column="0" Orientation="Horizontal">
+                            <Grid >
+                                <Rectangle Height="50" Width="50" Fill="Black" RadiusX="5" RadiusY="5" Opacity="0.1"/>
+                                <wpfui:FontIcon Foreground="White" Height="50" Width="50" FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontFamily="Segoe Fluent Icons" Glyph="&#xEC4F;" />
+
+                                <Rectangle RadiusX="5" RadiusY="5"  Height="50" Width="50">
+                                    <Rectangle.Fill>
+                                        <ImageBrush x:Name="TrackCover" />
+                                    </Rectangle.Fill>
+                                </Rectangle>
+
+                            </Grid>
+                            <StackPanel VerticalAlignment="Center" Margin="15 0 0 0">
+                                <TextBlock x:Name="TrackTitle" Margin="0 0 0 5" FontFamily="{StaticResource VKSansDemiBold}" FontSize="16" Text="Track name"/>
+                                <TextBlock x:Name="ArtistName" MouseEnter="ArtistName_MouseEnter" MouseLeave="ArtistName_MouseLeave" MouseLeftButtonDown="ArtistName_MouseLeftButtonDown" Opacity="0.7" FontFamily="{StaticResource VKSansRegular}" Text="Artist name"/>
+
+                            </StackPanel>
+
+                            <wpfui:Button Margin="10 0 0 0" x:Name="LikeTrack" Click="LikeTrack_Click" Appearance="Transparent" HorizontalContentAlignment="Center" Padding="0" Height="40" Width="40">
+                                <wpfui:FontIcon FontSize="15" x:Name="LikeIcon"  FontFamily="Segoe Fluent Icons" Glyph="&#xE006;" />
+                            </wpfui:Button>
+                        </StackPanel>
+
+
+                        <StackPanel HorizontalAlignment="Center" Grid.Column="1" Orientation="Horizontal">
+
+                            <wpfui:Button HorizontalContentAlignment="Center" Margin="0 0 10 0" Height="40" Width="40" Padding="0" Appearance="Transparent">
+                                <wpfui:FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE14B;" />
+                            </wpfui:Button>
+
+                            <wpfui:Button x:Name="PrevButton" Click="PrevButton_Click" HorizontalContentAlignment="Center" Height="40" Margin="0 0 10 0"  Width="40" Padding="0" Appearance="Transparent">
+                                <wpfui:FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE100;" />
+                            </wpfui:Button>
+
+                            <wpfui:Button x:Name="PlayPauseButton" Click="PlayPauseButton_Click" HorizontalContentAlignment="Center" Height="50" Margin="0 0 10 0"  Width="50" Padding="0" Appearance="Transparent">
+                                <wpfui:FontIcon x:Name="PlayIcon" FontSize="17" FontFamily="Segoe Fluent Icons" Glyph="&#xE102;" />
+                            </wpfui:Button>
+
+                            <wpfui:Button x:Name="NextButton" Click="NextButton_Click" HorizontalContentAlignment="Center" Height="40" Margin="0 0 10 0"  Width="40" Padding="0" Appearance="Transparent">
+                                <wpfui:FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE101;" />
+                            </wpfui:Button>
+                            <wpfui:Button HorizontalContentAlignment="Center" Height="40" Margin="0 0 10 0"  Width="40" Padding="0" Appearance="Transparent">
+                                <wpfui:FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE1CD;" />
+                            </wpfui:Button>
+
+                        </StackPanel>
+
+                        <Grid Grid.Column="2">
+                            <Slider Width="150" ValueChanged="Slider_ValueChanged" HorizontalAlignment="Right" Value="1" VerticalAlignment="Center" Maximum="1"/>
+                        </Grid>
+
+                    </Grid>
+
+                </StackPanel>
+            </Grid>
+        </wpfui:Card>
+
+    </Grid>
+</UserControl>
