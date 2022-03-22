@@ -159,18 +159,23 @@ namespace MusicX.Controls
 
         private void UserControl_MouseEnter(object sender, MouseEventArgs e)
         {
+            PlayPlaylistGrid.Visibility = Visibility.Visible;
             Card.Visibility = Visibility.Visible;
             Card.Opacity = 0.5;
         }
 
         private void UserControl_MouseLeave(object sender, MouseEventArgs e)
         {
+            PlayPlaylistGrid.Visibility = Visibility.Collapsed;
+
             Card.Visibility = Visibility.Collapsed;
             Card.Opacity = 0;
         }
 
-        private void CardAction_Click(object sender, RoutedEventArgs e)
+        private async void CardAction_Click(object sender, RoutedEventArgs e)
         {
+            await Task.Delay(300);
+            if (nowLoad) return;
             var notificationService = StaticService.Container.Resolve<Services.NavigationService>();
 
             notificationService.NavigateToPage(new PlaylistView(Playlist));
@@ -181,6 +186,53 @@ namespace MusicX.Controls
             var notificationService = StaticService.Container.Resolve<Services.NavigationService>();
 
             notificationService.NavigateToPage(new PlaylistView(Playlist));
+        }
+
+        private void PlayPlaylistGrid_MouseEnter(object sender, MouseEventArgs e)
+        {
+            this.Cursor = Cursors.Hand;
+        }
+
+        private void PlayPlaylistGrid_MouseLeave(object sender, MouseEventArgs e)
+        {
+            this.Cursor = Cursors.Arrow;
+        }
+
+        bool nowLoad = false;
+        bool nowPlay = false;
+        private async void PlayPlaylistGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                nowLoad = true;
+
+                var playerService = StaticService.Container.Resolve<PlayerService>();
+
+                if (!nowPlay)
+                {
+                    bool nowPlay = true;
+
+                    iconPlay.Glyph = WPFUI.Common.Icon.Timer20;
+                    var vkService = StaticService.Container.Resolve<VkService>();
+
+                    var audios = await vkService.AudioGetAsync(Playlist.Id, Playlist.OwnerId, Playlist.AccessKey);
+
+                    await playerService.Play(0, audios.Items);
+
+                    iconPlay.Glyph = WPFUI.Common.Icon.Pause24;
+                }
+                else
+                {
+                    nowPlay = false;
+                    playerService.Pause();
+                }
+                nowLoad = false;
+            }catch (Exception ex)
+            {
+                nowLoad = false;
+            }
+            
+
         }
     }
 }

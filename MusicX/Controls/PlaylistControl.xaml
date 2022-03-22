@@ -21,6 +21,7 @@
 
                     </Grid.RowDefinitions>
 
+                    
 
                     <Rectangle  Height="174" Width="174" Grid.Row="0" Fill="Black" Opacity="0.1" RadiusX="5" RadiusY="5"/>
                     <controls:FontIcon Height="174" Width="174" FontSize="50" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontFamily="Segoe Fluent Icons" Glyph="&#xE90B;" />
@@ -40,6 +41,12 @@
                         <TextBlock x:Name="ArtistCompact"  Opacity="0.6" TextTrimming="CharacterEllipsis" FontSize="12" Text="Artist"/>
 
                     </StackPanel>
+
+                    <Grid x:Name="PlayPlaylistGrid" MouseEnter="PlayPlaylistGrid_MouseEnter" Visibility="Collapsed" MouseLeave="PlayPlaylistGrid_MouseLeave" MouseLeftButtonDown="PlayPlaylistGrid_MouseLeftButtonDown" Grid.RowSpan="2" HorizontalAlignment="Right" Margin="0 0 5 45" VerticalAlignment="Bottom">
+                        <Rectangle RadiusX="100" Height="60" Width="60" Opacity="0.8" Fill="Black" RadiusY="100"/>
+                        <controls:Icon x:Name="iconPlay" Glyph="Play28" FontSize="20"/>
+                    </Grid>
+
                 </Grid>
 
             </controls:CardAction>

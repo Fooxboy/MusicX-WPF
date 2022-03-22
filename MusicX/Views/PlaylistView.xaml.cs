@@ -29,11 +29,13 @@ namespace MusicX.Views
     {
         public PlaylistViewModel ViewModel { get; set; }
 
-        private readonly Playlist playlist;
+        private Playlist playlist;
         private readonly long playlistId;
         private readonly long ownerId;
         private readonly string accessKey;
         private readonly Logger logger;
+
+        private long currentUserId;
 
         public PlaylistView(Playlist playlist)
         {
@@ -50,16 +52,39 @@ namespace MusicX.Views
             InitializeComponent();
             ViewModel = StaticService.Container.Resolve<PlaylistViewModel>();
 
+            ViewModel.PlaylistLoaded += ViewModel_PlaylistLoaded;
             DataContext = ViewModel;
             this.playlistId = playlistId;
             this.ownerId = ownerId;
             this.accessKey = accessKey;
         }
 
+        private void ViewModel_PlaylistLoaded(object? sender, Playlist e)
+        {
+            this.playlist = e;
+            if (e.OwnerId == currentUserId)
+            {
+                this.AddPlaylist.Content = "Удалить плейлист";
+                this.AddPlaylist.Icon = WPFUI.Common.Icon.Delete24;
+            }
+        }
+
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             try
             {
+                var config = await ViewModel.ConfigService.GetConfig();
+                currentUserId = config.UserId;
+
+                if(playlist != null)
+                {
+                    if (playlist.OwnerId == currentUserId)
+                    {
+                        this.AddPlaylist.Content = "Удалить плейлист";
+                        this.AddPlaylist.Icon = WPFUI.Common.Icon.Delete24;
+                    }
+                }
+               
                 if (playlist != null)
                 {
                     await ViewModel.LoadPlaylist(playlist);
@@ -90,6 +115,77 @@ namespace MusicX.Views
                 logger.Error(ex, ex.Message);
             }
            
+        }
+
+        private async void AddPlaylist_Click(object sender, RoutedEventArgs e)
+        {
+            if(playlist.OwnerId != currentUserId)
+            {
+                this.AddPlaylist.Content = "Добавление...";
+                this.AddPlaylist.Icon = WPFUI.Common.Icon.Timer12;
+
+                var res = await ViewModel.AddPlaylist();
+
+                if (res)
+                {
+                    this.AddPlaylist.Content = "Удалить плейлист";
+                    this.AddPlaylist.Icon = WPFUI.Common.Icon.Delete24;
+                }
+                else
+                {
+                    this.AddPlaylist.Content = "Ошибка";
+                    this.AddPlaylist.Icon = WPFUI.Common.Icon.ErrorCircle20;
+                }
+            }else
+            {
+                this.AddPlaylist.Content = "Удаление...";
+                this.AddPlaylist.Icon = WPFUI.Common.Icon.Timer12;
+
+                var res = await ViewModel.RemovePlaylist();
+
+                if (res)
+                {
+                    this.AddPlaylist.Content = "Добавить к себе";
+                    this.AddPlaylist.Icon = WPFUI.Common.Icon.Add28;
+                }
+                else
+                {
+                    this.AddPlaylist.Content = "Ошибка";
+                    this.AddPlaylist.Icon = WPFUI.Common.Icon.ErrorCircle20;
+                }
+            }
+        }
+
+        bool _nowPlay = false;
+        private async void PlayPlaylist_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var player = StaticService.Container.Resolve<PlayerService>();
+                if (_nowPlay)
+                {
+                    _nowPlay = false;
+
+                    PlayPlaylist.Content = "Возпроизвести";
+                    PlayPlaylist.Icon = WPFUI.Common.Icon.Play20;
+
+
+                    player.Pause();
+                }
+                else
+                {
+                    _nowPlay = true;
+
+                    PlayPlaylist.Content = "Остановить воспроизведение";
+                    PlayPlaylist.Icon = WPFUI.Common.Icon.Pause20;
+
+                    await player.Play(0, ViewModel.Tracks);
+                }
+            }catch (Exception ex)
+            {
+                var logger = StaticService.Container.Resolve<Logger>();
+                logger.Error(ex, ex.Message);
+            }
         }
     }
 }

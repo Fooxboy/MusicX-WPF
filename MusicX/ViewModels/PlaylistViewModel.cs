@@ -1,5 +1,6 @@
 ﻿using MusicX.Core.Models;
 using MusicX.Core.Services;
+using MusicX.Services;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,8 @@ namespace MusicX.ViewModels
 {
     public class PlaylistViewModel:BaseViewModel
     {
+
+        public event EventHandler<Playlist> PlaylistLoaded;
         public string Title { get; set; }
         public string ArtistText { get; set; }
         public string Genres { get; set; }
@@ -31,9 +34,12 @@ namespace MusicX.ViewModels
         private readonly VkService vkService;
         private readonly Logger logger;
 
-        public PlaylistViewModel(VkService vkService, Logger logger)
+        public ConfigService ConfigService { get; set; }
+
+        public PlaylistViewModel(VkService vkService, Logger logger, ConfigService configService)
         {
             this.vkService = vkService;
+            this.ConfigService = configService;
             this.logger = logger;
         }
 
@@ -143,6 +149,7 @@ namespace MusicX.ViewModels
 
                 Tracks.AddRange(playlist.Audios);
 
+                this.PlaylistLoaded.Invoke(this, playlist.Playlist);
                 await this.LoadPlaylist(playlist.Playlist, false);
             }catch (Exception ex)
             {
@@ -152,5 +159,33 @@ namespace MusicX.ViewModels
             
         }
 
+        public async Task<bool> AddPlaylist()
+        {
+            try
+            {
+                await vkService.AddPlaylistAsync(Playlist.Id, Playlist.OwnerId, Playlist.AccessKey);
+                return true;
+            }catch(Exception ex)
+            {
+                logger.Error("Error in add playlist");
+                logger.Error(ex, ex.Message);
+                return false;
+            }
+        }
+
+        public async Task<bool> RemovePlaylist()
+        {
+            try
+            {
+                await vkService.DeletePlaylistAsync(Playlist.Id, Playlist.OwnerId);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                logger.Error("Error in remove playlist");
+                logger.Error(ex, ex.Message);
+                return false;
+            }
+        }
     }
 }

@@ -246,7 +246,7 @@ namespace MusicX.Controls
             }
         }
 
-        private void CardAction_Click(object sender, RoutedEventArgs e)
+        private async void CardAction_Click(object sender, RoutedEventArgs e)
         {
 
             try
@@ -256,6 +256,12 @@ namespace MusicX.Controls
 
                 if (Block.Buttons[0].Action.Type == "play_shuffled_audios_from_block")
                 {
+                    var vkService = StaticService.Container.Resolve<VkService>();
+                    var playerService = StaticService.Container.Resolve<PlayerService>();
+
+                    var res = await vkService.GetBlockItemsAsync(Block.Buttons[0].BlockId);
+
+                    await playerService.Play(0, res.Audios);
 
                 }
 

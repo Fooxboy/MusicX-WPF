@@ -15,7 +15,7 @@ using Windows.Media.Streaming.Adaptive;
 
 namespace MusicX.Services
 {
-    class PlayerService
+    public class PlayerService
     {
         private int currentIndex;
         private string blockId;

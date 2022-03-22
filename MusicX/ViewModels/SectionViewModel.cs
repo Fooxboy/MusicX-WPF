@@ -114,7 +114,7 @@ namespace MusicX.ViewModels
                         break;
                     }
 
-                    startIndex += 1;
+                    //startIndex += 1;
 
                     await Application.Current.Dispatcher.BeginInvoke(() =>
                     {

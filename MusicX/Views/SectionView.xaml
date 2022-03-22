@@ -27,10 +27,8 @@
 
         <Grid x:Name="ContentGrid" Visibility="{Binding Path=VisibleContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
 
-            <ListBox BorderThickness="0"
-                     
+            <ListBox BorderThickness="0"     
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
-                  
                   VerticalContentAlignment="Top" 
                      ScrollViewer.ScrollChanged="BlocksScrollView_ScrollChanged"
                      SnapsToDevicePixels="True"

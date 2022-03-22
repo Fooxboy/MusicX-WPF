@@ -70,8 +70,6 @@
         </Grid.RowDefinitions>
 
 
-        <wpfui:TitleBar Grid.Row="0" Height="40" ApplicationNavigation="True" />
-
 
         <Grid Grid.Row="1" Margin="5 10 0 0">
             <Grid.ColumnDefinitions>
@@ -83,9 +81,21 @@
 
             </wpfui:NavigationStore>
 
-            <Frame x:Name="RootFrame" Grid.Column="1" />
 
         </Grid>
+
+        <Frame x:Name="RootFrame" Margin="73 50 0 0"  Grid.Column="1" Grid.RowSpan="2" />
+
+        <Rectangle Height="60" Opacity="1" Visibility="Collapsed" >
+            <Rectangle.Fill>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="Black" Offset="0.2"/>
+                    <GradientStop Color="#00000000" Offset="1"/>
+                </LinearGradientBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+
+        <wpfui:TitleBar Grid.Row="0" Height="40" ApplicationNavigation="True" />
 
         <wpfui:SearchBox x:Name="SearchBox" MouseEnter="SearchBox_MouseEnter" MouseLeave="SearchBox_MouseLeave" KeyUp="TextBox_KeyUp" Margin="0 10 0 0" Grid.RowSpan="2" Width="500" VerticalAlignment="Top"  HorizontalAlignment="Center" Placeholder="Поиск музыки, плейлистов, исполнителей" />
 
@@ -102,7 +112,7 @@
         </controls:PlayerControl>
         <wpfui:Button Height="40" Click="Button_Click" BorderThickness="0"  Width="70" Padding="0" HorizontalAlignment="Left" Appearance="Transparent">
             <Button.Content>
-                <wpfui:FontIcon Margin="0 10 0 0" FontFamily="Segoe Fluent Icons" Glyph="&#xE0A6;" />
+                <wpfui:FontIcon Margin="0 0 0 0" FontFamily="Segoe Fluent Icons" Glyph="&#xE0A6;" />
             </Button.Content>
         </wpfui:Button>
 
