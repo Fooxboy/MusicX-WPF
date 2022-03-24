@@ -29,7 +29,7 @@ namespace MusicX.Controls.Blocks
             {
                 foreach (var link in Block.Links)
                 {
-                    ListLinks.Children.Add(new LinkControl() { Height = 80, Width = 300, Link = link, FullLink = true, Margin = new Thickness(0, 0, 10, 0) });
+                    ListLinks.Children.Add(new LinkControl() { Height = 80, Width = 300, Link = link, FullLink = true, Margin = new Thickness(0, 0, 10, 10) });
                 }
 
             }
@@ -37,7 +37,7 @@ namespace MusicX.Controls.Blocks
             {
                 foreach (var link in Block.Links)
                 {
-                    ListLinks.Children.Add(new LinkControl() { Height = 140, Width = 140, Link = link, Margin = new Thickness(0, 0, 10, 0) });
+                    ListLinksRec.Children.Add(new LinkControl() { Height = 140, Width = 140, Link = link, Margin = new Thickness(0, 0, 10, 0) });
                 }
             }
         }

@@ -5,9 +5,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MusicX.Controls.Blocks"
              mc:Ignorable="d" 
+             xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
+             
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid x:Name="CuratorBanner" Margin="0 0 0 10">
-        <Rectangle Height="280" RadiusX="5" RadiusY="5">
+        <Rectangle Height="280" RadiusX="15" RadiusY="15">
             <Rectangle.Fill>
                 <ImageBrush  Stretch="UniformToFill" x:Name="CuratorBannerImage"/>
             </Rectangle.Fill>
@@ -15,11 +17,14 @@
 
         <Grid Margin="0 0 0 0" VerticalAlignment="Bottom">
 
-            <Rectangle VerticalAlignment="Stretch" HorizontalAlignment="Stretch"  Opacity="0.3" Fill="Black"/>
+            <Rectangle VerticalAlignment="Stretch" HorizontalAlignment="Stretch" RadiusX="15" RadiusY="15" Opacity="0.3" Fill="Black"/>
             <StackPanel Margin="10">
                 <TextBlock FontSize="14" Foreground="White" Opacity="0.7" FontWeight="DemiBold" Text="Сообщество-куратор"/>
 
-                <TextBlock x:Name="CuratorText" FontFamily="{StaticResource VKSansBold}" Foreground="White" FontSize="40"  FontWeight="Black" Text="Curator name"/>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock x:Name="CuratorText" FontFamily="{StaticResource VKSansBold}" Foreground="White" FontSize="40"  FontWeight="Black" Text="Curator name"/>
+                    <wpfui:Button Click="ActionCuratorButton_Click" x:Name="ActionCuratorButton" Margin="10 0 0 0" Appearance="Transparent" Content="Подписаться"/>
+                </StackPanel>
 
                 <TextBlock x:Name="CuratorDescription" FontFamily="{StaticResource VKSansRegular}" Foreground="White" TextWrapping="Wrap" FontSize="17"  Opacity="0.7"   Text="Curator desc"/>
             </StackPanel>

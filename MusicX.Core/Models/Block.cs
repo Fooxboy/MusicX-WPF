@@ -25,6 +25,9 @@ namespace MusicX.Core.Models
         [JsonProperty("buttons")]
         public List<Button> Buttons { get; set; }
 
+        [JsonProperty("actions")]
+        public List<Button> Actions { get; set; } = new List<Button> { };
+
         [JsonProperty("next_from")]
         public string NextFrom { get; set; }
 

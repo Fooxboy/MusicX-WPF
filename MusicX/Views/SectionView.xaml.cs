@@ -46,7 +46,7 @@ namespace MusicX.Views
           
         }
 
-        public async Task LoadSection(string sectionId)
+        public async Task LoadSection(string sectionId, bool showTitle = false)
         {
             try
             {
@@ -54,7 +54,7 @@ namespace MusicX.Views
                 {
                     BlocksScrollView.ScrollIntoView(BlocksScrollView.Items[0]);
                 }
-                await ViewModel.LoadSection(sectionId);
+                await ViewModel.LoadSection(sectionId, showTitle);
             }catch (Exception ex)
             {
                 logger.Error("FATAL ERROR IN LOAD SECTION");

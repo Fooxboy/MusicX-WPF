@@ -13,14 +13,16 @@ namespace MusicX.Core.Models
         [JsonProperty("owner_id")]
         public long OwnerId { get; set; }
 
+        public string? OwnerName { get; set; }
+
         [JsonProperty("type")]
         public long Type { get; set; }
 
         [JsonProperty("title")]
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
         [JsonProperty("description")]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         [JsonProperty("count")]
         public long Count { get; set; }
@@ -47,19 +49,22 @@ namespace MusicX.Core.Models
         public int Year { get; set; }
 
         [JsonProperty("original")]
-        public Original Original { get; set; }
+        public Original? Original { get; set; }
 
         [JsonProperty("followed")]
-        public Followed Followed { get; set; }
+        public Followed? Followed { get; set; }
 
         [JsonProperty("photo")]
-        public Photo Photo { get; set; }
+        public Photo? Photo { get; set; }
 
         [JsonProperty("permissions")]
         public Permissions Permissions { get; set; }
 
         [JsonProperty("subtitle_badge")]
         public bool SubtitleBadge { get; set; }
+
+        [JsonProperty("subtitle")]
+        public string Subtitle { get; set; }
 
         [JsonProperty("play_button")]
         public bool PlayButton { get; set; }

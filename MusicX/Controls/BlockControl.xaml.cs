@@ -107,7 +107,24 @@ namespace MusicX.Controls
 
                 if (Block.DataType == "music_playlists")
                 {
+
+                    if (Block.Layout.Name == "music_chart_large_slider")
+                    {
+                        BlocksPanel.Children.Add(new ListPlaylists() { Playlists = Block.Playlists, ShowFull = false });
+                        logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
+
+                        return;
+                    }
+
                     if (Block.Layout.Name == "large_slider")
+                    {
+                        BlocksPanel.Children.Add(new ListPlaylists() { Playlists = Block.Playlists, ShowFull = false });
+                        logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
+
+                        return;
+                    }
+
+                    if (Block.Layout.Name == "recomms_slider")
                     {
                         BlocksPanel.Children.Add(new ListPlaylists() { Playlists = Block.Playlists, ShowFull = false });
                         logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
@@ -191,6 +208,7 @@ namespace MusicX.Controls
                     card.Click += CardAction_Click;
                     var text = new TextBlock() { Text = "content" };
 
+                    if (Block.Buttons == null) return;
                     if (Block.Buttons[0].Action.Type == "play_shuffled_audios_from_block")
                     {
                         card.Icon = WPFUI.Common.Icon.MusicNote2Play20;
@@ -216,7 +234,7 @@ namespace MusicX.Controls
                 {
                     logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
 
-                    if (Block.Layout.Name == "header" || Block.Layout.Name == "header_compact")
+                    if (Block.Layout.Name == "header" || Block.Layout.Name == "header_compact" || Block.Layout.Name == "header_extended")
                     {
                         BlocksPanel.Children.Add(new TitleBlockControl() { Block = Block });
                         return;

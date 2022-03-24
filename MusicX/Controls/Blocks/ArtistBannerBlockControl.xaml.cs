@@ -26,6 +26,12 @@ namespace MusicX.Controls.Blocks
         {
             ArtistBannerImage.ImageSource = new BitmapImage(new Uri(Block.Artists[0].Photo[2].Url) );
             ArtistText.Text = Block.Artists[0].Name;
+
+        }
+
+        private void ActionArtistButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

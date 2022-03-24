@@ -67,6 +67,16 @@ namespace MusicX.Controls.Blocks
             }
             else
             {
+                
+                if(Block.Actions.Count >0)
+                {
+                    MoreButton.Visibility = Visibility.Visible;
+
+                    MoreButton.Content = Block.Actions[0].Title;
+
+                    return;
+                }
+
                 MoreButton.Visibility = Visibility.Collapsed;
                 return;
             }
@@ -78,9 +88,17 @@ namespace MusicX.Controls.Blocks
             {
                 var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
 
+                if (Block.Actions.Count > 0)
+                {
+                    var bnt = Block.Actions[0];
+
+                    await navigationService.OpenSection(bnt.SectionId, true);
+                    return;
+                }
+
                 var button = Block.Buttons[0];
 
-                await navigationService.OpenSection(button.SectionId);
+                await navigationService.OpenSection(button.SectionId, true);
             }
             catch (Exception ex)
             {

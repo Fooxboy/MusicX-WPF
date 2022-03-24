@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using VkNet.Model;
 
 namespace MusicX.Core.Models.General
 {
@@ -60,6 +61,9 @@ namespace MusicX.Core.Models.General
 
         [JsonProperty("replacements")]
         public Replacements Replacements { get; set; }
+
+        [JsonProperty("profiles")]
+        public List<User> Profiles { get; set; }
 
     }
 }

@@ -199,14 +199,13 @@ namespace MusicX.ViewModels
             
         }
 
-        public async Task LoadSection(string sectionId)
+        public async Task LoadSection(string sectionId, bool showTitle = false)
         {
             await Task.Run(async () =>
             {
                 try
                 {
                     logger.Info($"Load section {sectionId}");
-                    this.Section = Section;
 
                     await Application.Current.Dispatcher.BeginInvoke(() =>
                     {
@@ -220,6 +219,8 @@ namespace MusicX.ViewModels
 
                     var section = await vkService.GetSectionAsync(sectionId).ConfigureAwait(false);
 
+                    this.Section = section.Section;
+
                     navigationService.AddHistory(Models.Enums.NavigationSource.Section, section.Section.Blocks);
 
                     this.Section = section.Section;
@@ -227,6 +228,11 @@ namespace MusicX.ViewModels
 
 
                     var obsCollection = new ObservableCollection<Block>();
+
+                    if(showTitle)
+                    {
+                        obsCollection.Add(new Block() { DataType = "none", Layout = new Layout() { Name = "header", Title = Section.Title } });
+                    }
                     foreach (var block in section.Section.Blocks)
                     {
                         obsCollection.Add(block);

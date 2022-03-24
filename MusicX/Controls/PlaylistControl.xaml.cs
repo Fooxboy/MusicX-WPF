@@ -114,11 +114,13 @@ namespace MusicX.Controls
                     }
                     else
                     {
-                        Artist.Text = "";
-
+                        Artist.Text = Playlist.OwnerName;
                     }
 
-                    
+                    if (Playlist.Subtitle != null)
+                    {
+                        Artist.Text = Playlist.Subtitle;
+                    }
 
                     return;
                 }
@@ -145,8 +147,14 @@ namespace MusicX.Controls
                     }
                     else
                     {
-                        ArtistCompact.Text = "";
+                       
+                        ArtistCompact.Text = Playlist.OwnerName;
 
+                    }
+
+                    if(Playlist.Subtitle != null)
+                    {
+                        ArtistCompact.Text = Playlist.Subtitle;
                     }
                 }
             }catch (Exception ex)
@@ -174,7 +182,7 @@ namespace MusicX.Controls
 
         private async void CardAction_Click(object sender, RoutedEventArgs e)
         {
-            await Task.Delay(300);
+            await Task.Delay(200);
             if (nowLoad) return;
             var notificationService = StaticService.Container.Resolve<Services.NavigationService>();
 
@@ -210,7 +218,7 @@ namespace MusicX.Controls
 
                 if (!nowPlay)
                 {
-                    bool nowPlay = true;
+                    nowPlay = true;
 
                     iconPlay.Glyph = WPFUI.Common.Icon.Timer20;
                     var vkService = StaticService.Container.Resolve<VkService>();
@@ -220,19 +228,25 @@ namespace MusicX.Controls
                     await playerService.Play(0, audios.Items);
 
                     iconPlay.Glyph = WPFUI.Common.Icon.Pause24;
+
+                    nowLoad = false;
+
                 }
                 else
                 {
-                    nowPlay = false;
                     playerService.Pause();
+                    iconPlay.Glyph = WPFUI.Common.Icon.Play24;
+
+                    await Task.Delay(400);
+                    nowLoad = false;
+
+                    nowPlay = false;
+
                 }
-                nowLoad = false;
             }catch (Exception ex)
             {
                 nowLoad = false;
             }
-            
-
         }
     }
 }

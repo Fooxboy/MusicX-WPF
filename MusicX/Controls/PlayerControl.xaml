@@ -5,17 +5,22 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MusicX.Controls"
              mc:Ignorable="d" 
+      xmlns:hc="https://handyorg.github.io/handycontrol"
+             
              xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
              SizeChanged="UserControl_SizeChanged"
              Loaded="UserControl_Loaded"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
-        <Storyboard x:Key="BackgroundAmimate">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="rectangle" Storyboard.TargetProperty="(UIElement.Opacity)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="1"/>
-                <EasingDoubleKeyFrame KeyTime="00:00:00.4000000" Value="0.8"/>
-            </DoubleAnimationUsingKeyFrames>
-        </Storyboard>
+        <ResourceDictionary>
+            <Storyboard x:Key="BackgroundAmimate">
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="rectangle" Storyboard.TargetProperty="(UIElement.Opacity)">
+                    <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="1"/>
+                    <EasingDoubleKeyFrame KeyTime="00:00:00.4000000" Value="0.8"/>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+        </ResourceDictionary>
+        
     </UserControl.Resources>
     <Grid>
 
@@ -42,9 +47,22 @@
                             <ColumnDefinition Width="25"/>
 
                         </Grid.ColumnDefinitions>
+                        <Grid.Resources>
+                            <ResourceDictionary>
+                                <ResourceDictionary.MergedDictionaries>
+                                    <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml"/>
+                                    <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml"/>
+                                </ResourceDictionary.MergedDictionaries>
+                            </ResourceDictionary>
+                        </Grid.Resources>
 
                         <TextBlock x:Name="CurrentPosition" Grid.Column="0" Text="1:03"/>
-                        <Slider x:Name="PositionSlider" Grid.Column="1" ValueChanged="PositionSlider_ValueChanged"  Margin="5 0 5 0"/>
+                        <hc:PreviewSlider x:Name="PositionSlider" Grid.Column="1" ValueChanged="PositionSlider_ValueChanged"  Margin="5 0 5 0">
+                            <hc:PreviewSlider.Background>
+                                <SolidColorBrush Color="White" Opacity="0.3"/>
+                            </hc:PreviewSlider.Background>
+                        </hc:PreviewSlider>
+                        <!--<Slider x:Name="PositionSlider" Grid.Column="1" ValueChanged="PositionSlider_ValueChanged"  Margin="5 0 5 0"/>-->
                         <TextBlock x:Name="MaxPosition" Grid.Column="2"  Text="3:03"/>
                     </Grid>
 
@@ -82,9 +100,9 @@
 
                         <StackPanel HorizontalAlignment="Center" Grid.Column="1" Orientation="Horizontal">
 
-                            <wpfui:Button HorizontalContentAlignment="Center" Margin="0 0 10 0" Height="40" Width="40" Padding="0" Appearance="Transparent">
+                            <ToggleButton x:Name="ShuffleButton" Click="ShuffleButton_Click" HorizontalContentAlignment="Center" Margin="0 0 10 0" Height="40" Width="40" Padding="0" >
                                 <wpfui:FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE14B;" />
-                            </wpfui:Button>
+                            </ToggleButton>
 
                             <wpfui:Button x:Name="PrevButton" Click="PrevButton_Click" HorizontalContentAlignment="Center" Height="40" Margin="0 0 10 0"  Width="40" Padding="0" Appearance="Transparent">
                                 <wpfui:FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE100;" />
@@ -97,14 +115,28 @@
                             <wpfui:Button x:Name="NextButton" Click="NextButton_Click" HorizontalContentAlignment="Center" Height="40" Margin="0 0 10 0"  Width="40" Padding="0" Appearance="Transparent">
                                 <wpfui:FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE101;" />
                             </wpfui:Button>
-                            <wpfui:Button HorizontalContentAlignment="Center" Height="40" Margin="0 0 10 0"  Width="40" Padding="0" Appearance="Transparent">
+                            
+                            <ToggleButton x:Name="RepeatButton" Click="RepeatButton_Click"  HorizontalContentAlignment="Center" Height="40" Margin="0 0 10 0"  Width="40" Padding="0">
                                 <wpfui:FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE1CD;" />
-                            </wpfui:Button>
+                            </ToggleButton>
 
                         </StackPanel>
 
                         <Grid Grid.Column="2">
-                            <Slider Width="150" ValueChanged="Slider_ValueChanged" HorizontalAlignment="Right" Value="1" VerticalAlignment="Center" Maximum="1"/>
+                            <Grid.Resources>
+                                <ResourceDictionary>
+                                    <ResourceDictionary.MergedDictionaries>
+                                        <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml"/>
+                                        <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml"/>
+                                    </ResourceDictionary.MergedDictionaries>
+                                </ResourceDictionary>
+                            </Grid.Resources>
+                            <hc:PreviewSlider Width="150" ValueChanged="Slider_ValueChanged" HorizontalAlignment="Right" Value="1" VerticalAlignment="Center" Maximum="1">
+                                <hc:PreviewSlider.Background>
+                                    <SolidColorBrush Color="White" Opacity="0.3"/>
+                                </hc:PreviewSlider.Background>
+                            </hc:PreviewSlider>
+                            <!--<Slider Width="150" ValueChanged="Slider_ValueChanged" HorizontalAlignment="Right" Value="1" VerticalAlignment="Center" Maximum="1"/>-->
                         </Grid>
 
                     </Grid>

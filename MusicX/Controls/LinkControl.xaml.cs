@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -59,8 +60,22 @@ namespace MusicX.Controls
             try
             {
                 LinkText.Text = Link.Title;
+                if(Link.Meta.ContentType == null)
+                {
+                    this.FullLink = true;
+                    this.Width = 200;
+                    this.Height = 80;
+                }
 
-                if (Link.Image != null) LinkImage.ImageSource = new BitmapImage(new Uri(Link.Image[0].Url));
+                if (Link.Meta.ContentType == "group" || Link.Meta.ContentType == "user")
+                {
+                    if (Link.Image != null) LinkImage.ImageSource = new BitmapImage(new Uri(Link.Image[1].Url));
+
+                }else
+                {
+                    if (Link.Image != null) LinkImage.ImageSource = new BitmapImage(new Uri(Link.Image[0].Url));
+
+                }
 
                 if (FullLink)
                 {
@@ -87,6 +102,14 @@ namespace MusicX.Controls
         {
             try
             {
+                if (Link.Meta.ContentType == null)
+                {
+                    var music = await vkService.GetAudioCatalogAsync(Link.Url);
+                    await navigationService.OpenSection(music.Catalog.DefaultSection, true);
+
+                    return;
+                }
+
                 if (Link.Meta.ContentType == "artist")
                 {
                     var url = new Uri(Link.Url);
@@ -96,6 +119,17 @@ namespace MusicX.Controls
 
                 if (Link.Meta.ContentType == "group" || Link.Meta.ContentType == "user")
                 {
+                    var match = Regex.Match(Link.Url, "https://vk.com/audios[0-9]+$");
+                    if(match.Success)
+                    {
+                        var music = await vkService.GetAudioCatalogAsync(Link.Url);
+
+                        await navigationService.OpenSection(music.Catalog.DefaultSection, false);
+
+                        return;
+                    }
+
+                  
                     Process.Start(new ProcessStartInfo
                     {
                         FileName = Link.Url,

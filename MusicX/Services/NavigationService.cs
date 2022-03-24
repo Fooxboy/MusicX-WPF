@@ -33,12 +33,12 @@ namespace MusicX.Services
             CurrentFrame.Navigate(page);
         }
 
-        public async Task OpenSection(string sectionId)
+        public async Task OpenSection(string sectionId, bool showTitle = false)
         {
             logger.Info($"Open section {sectionId}");
 
             if (History.First().Source == NavigationSource.Page) CurrentFrame.Navigate(SectionView);
-            await SectionView.LoadSection(sectionId);
+            await SectionView.LoadSection(sectionId, showTitle);
         }
 
         public async Task OpenArtistSection(string artistId)

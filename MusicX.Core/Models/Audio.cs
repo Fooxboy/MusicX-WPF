@@ -54,6 +54,8 @@ namespace MusicX.Core.Models
         [JsonProperty("date")]
         public long Date { get; set; }
 
+        public DateTime DateTime => new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc).AddSeconds(Date).ToLocalTime();
+
         [JsonProperty("album")]
         public Album Album { get; set; }
 

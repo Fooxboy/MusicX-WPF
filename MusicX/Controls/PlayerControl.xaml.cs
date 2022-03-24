@@ -275,5 +275,18 @@ namespace MusicX.Controls
             this.config = await configService.GetConfig();
 
         }
+
+        private void ShuffleButton_Click(object sender, RoutedEventArgs e)
+        {
+            ;
+
+            this.playerService.SetShuffle(ShuffleButton.IsChecked.Value);
+        }
+
+        private void RepeatButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.playerService.SetRepeat(RepeatButton.IsChecked.Value);
+
+        }
     }
 }

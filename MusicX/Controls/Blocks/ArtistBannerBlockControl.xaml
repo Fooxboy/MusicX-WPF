@@ -4,11 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MusicX.Controls.Blocks"
+             xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
+             
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
     <Grid x:Name="ArtistBanner" Margin="0 0 0 10">
-        <Rectangle Height="450" RadiusX="5" RadiusY="5">
+        <Rectangle Height="450" RadiusX="15" RadiusY="15">
             <Rectangle.Fill>
                 <ImageBrush  Stretch="UniformToFill" x:Name="ArtistBannerImage">
 
@@ -16,7 +18,11 @@
 
             </Rectangle.Fill>
         </Rectangle>
-        <Rectangle VerticalAlignment="Bottom" Height="70" Opacity="0.3" Fill="Black"/>
-        <TextBlock Foreground="White" FontFamily="{StaticResource VKSansBold}" x:Name="ArtistText" FontSize="40" Margin="10 0 0 10" VerticalAlignment="Bottom" FontWeight="Bold" Text="Artist text"/>
+        <Rectangle VerticalAlignment="Bottom" Height="70" Opacity="0.3" RadiusX="15" RadiusY="15" Fill="Black"/>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Foreground="White" FontFamily="{StaticResource VKSansBold}" x:Name="ArtistText" FontSize="40" Margin="10 0 0 10" VerticalAlignment="Bottom" FontWeight="Bold" Text="Artist text"/>
+            <!--<wpfui:Button Click="ActionArtistButton_Click" x:Name="ActionArtistButton" Margin="10 0 0 0" Appearance="Transparent" Content="Подписаться"/>-->
+
+        </StackPanel>
     </Grid>
 </UserControl>

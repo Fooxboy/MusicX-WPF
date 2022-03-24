@@ -25,6 +25,9 @@ namespace MusicX.Services
         private DispatcherTimer _positionTimer;
         private readonly MediaPlayer player;
 
+        public bool IsShuffle { get; set; }
+        public bool IsRepeat { get; set; }
+
         public event EventHandler PlayStateChangedEvent;
         public event EventHandler<TimeSpan> PositionTrackChangedEvent;
         public event EventHandler TrackChangedEvent;
@@ -67,6 +70,50 @@ namespace MusicX.Services
         {
             try
             {
+                var list = new List<object>();
+
+                var startPlayModel = new PlayTrackEvent()
+                {
+                    Event = "music_start_playback",
+                    AudioId = track.OwnerId + "_" +track.Id,
+                    Uuid = Guid.NewGuid().GetHashCode(),
+                    StartTime = "0",
+                    Shuffle = "false",
+                    Reason = "auto",
+                    PlaybackStartedAt = "0",
+                    TrackCode = track.TrackCode,
+                    Repeat = "all",
+                    State = "app",
+                    Source = track.ParentBlockId,
+                };
+
+
+                if(CurrentTrack != null)
+                {
+                    startPlayModel.PrevAudioId = CurrentTrack.OwnerId + "_" + CurrentTrack.Id;
+                    var stopTrackModel = new StopTrackEvent()
+                    {
+                        Event = "music_stop_playback",
+                        Uuid = Guid.NewGuid().GetHashCode(),
+                        Shuffle = "false",
+                        Reason = "new",
+
+                        AudioId = CurrentTrack.OwnerId + "_" + CurrentTrack.Id,
+                        StartTime = "0",
+                        PlaybackStartedAt = CurrentTrack.Duration.ToString(),
+                        TrackCode = CurrentTrack.TrackCode,
+                        StreamingType = "online",
+                        Duration = CurrentTrack.Duration.ToString(),
+                        Repeat = "all",
+                        State = "app",
+                        Source = CurrentTrack.ParentBlockId,
+
+                    };
+
+                    list.Add(stopTrackModel);
+                }
+
+                list.Add(startPlayModel);
                 logger.Info($"play track {track.Id}");
                 if (CurrentTrack?.Id == track.Id) return;
                 CurrentTrack = track;
@@ -86,6 +133,8 @@ namespace MusicX.Services
                 PositionTrackChangedEvent?.Invoke(this, TimeSpan.Zero);
 
                 logger.Info($"played track {track.Id}");
+
+                await vkService.StatsTrackEvents(list);
 
                 if(track.ParentBlockId != null)
                 {
@@ -132,6 +181,56 @@ namespace MusicX.Services
         {
             try
             {
+                Audio track = null;
+
+                if (tracks != null) track = tracks[index];
+                else track = Tracks[index];
+
+
+                var list = new List<object>();
+
+                var startPlayModel = new PlayTrackEvent()
+                {
+                    Event = "music_start_playback",
+                    AudioId = track.OwnerId + "_" + track.Id,
+                    Uuid = Guid.NewGuid().GetHashCode(),
+                    StartTime = "0",
+                    Shuffle = "false",
+                    Reason = "auto",
+                    PlaybackStartedAt = "0",
+                    TrackCode = track.TrackCode,
+                    Repeat = "all",
+                    State = "app",
+                    Source = track.ParentBlockId,
+                };
+
+
+                if (CurrentTrack != null)
+                {
+                    startPlayModel.PrevAudioId = CurrentTrack.OwnerId + "_" + CurrentTrack.Id;
+                    var stopTrackModel = new StopTrackEvent()
+                    {
+                        Event = "music_stop_playback",
+                        Uuid = Guid.NewGuid().GetHashCode(),
+                        Shuffle = "false",
+                        Reason = "new",
+                        AudioId = CurrentTrack.OwnerId + "_" + CurrentTrack.Id,
+                        StartTime = "0",
+                        PlaybackStartedAt = CurrentTrack.Duration.ToString(),
+                        TrackCode = CurrentTrack.TrackCode,
+                        StreamingType = "online",
+                        Duration = Position.TotalSeconds.ToString(),
+                        Repeat = "all",
+                        State = "app",
+                        Source = CurrentTrack.ParentBlockId,
+
+                    };
+
+                    list.Add(stopTrackModel);
+                }
+
+                list.Add(startPlayModel);
+
                 logger.Info($"play track with index = {index}");
                 currentIndex = index;
                 player.PlaybackSession.Position = TimeSpan.Zero;
@@ -141,9 +240,8 @@ namespace MusicX.Services
 
                 CurrentTrack = Tracks[index];
 
-                if (!CurrentTrack.IsAvailable)
+                if (string.IsNullOrEmpty(CurrentTrack.Url))
                 {
-                    
                     await NextTrack();
                     return;
                 }
@@ -159,19 +257,6 @@ namespace MusicX.Services
                 player.Play();
 
                 PositionTrackChangedEvent?.Invoke(this, TimeSpan.Zero);
-
-                /* var config  = await _configService.GetConfig();
-                config.NowPlayTrack = new NowPlayTrack()
-                {
-                    Track = CurrentTrack,
-                    Album = (Album)CurrentTrack.Album,
-                   
-                    Index = index,
-                    Second = 0
-                };
-                if (CurrentTrack.Artists.Count > 0) config.NowPlayTrack.Artist = (Core.Models.Artist)CurrentTrack.Artists[0];
-               
-                await _configService.SetConfig(config);*/
 
             }
             catch (Exception ex)
@@ -210,15 +295,27 @@ namespace MusicX.Services
             try
             {
                 logger.Info("Next track");
-                if (currentIndex + 1 > Tracks.Count - 1)
-                {
+               
 
-                    return;
+                if(IsShuffle)
+                {
+                    var index = new Random().Next(0, Tracks.Count);
+                    currentIndex = index;
+                    CurrentTrack = Tracks[index];
+                }else
+                {
+                    if (currentIndex + 1 > Tracks.Count - 1)
+                    {
+                        return;
+                    }
+
+                    CurrentTrack = Tracks[currentIndex + 1];
+                    currentIndex += 1;
                 }
 
-                CurrentTrack = Tracks[currentIndex + 1];
+                
                 TrackChangedEvent?.Invoke(this, EventArgs.Empty);
-                await Play(currentIndex + 1, null);
+                await Play(currentIndex, null);
             }catch(Exception ex)
             {
                 logger.Error("Error in playerService => NextTrack");
@@ -355,6 +452,12 @@ namespace MusicX.Services
         {
             try
             {
+                if(IsRepeat)
+                {
+                    this.player.Pause();
+                    Seek(TimeSpan.Zero);
+                    this.player.Play();
+                }
                 await NextTrack();
             }
             catch (Exception e)
@@ -364,6 +467,16 @@ namespace MusicX.Services
             }
         }
 
+
+        public void SetShuffle(bool shuffle)
+        {
+            this.IsShuffle = shuffle;
+        }
+
+        public void SetRepeat(bool repeat)
+        {
+            this.IsRepeat = repeat;
+        }
 
 
         private async void MediaPlayerOnMediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)

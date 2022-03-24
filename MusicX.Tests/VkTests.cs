@@ -1,4 +1,5 @@
 ﻿using MusicX.Core.Services;
+using System;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -99,6 +100,14 @@ namespace MusicX.Tests
             await vkSevice.SetTokenAsync("1ee1c5bdac35313373684b1f4b14e1f6c41040ffcc59d4640494ade97d7b8f4ce64483535225dd5de81f8", null);
 
             var res = await vkSevice.ReplaceBlockAsync("PUkZGlRNBw81HzYfURZRS3dHS08XDllKZFpZVA8WNFRkR0tOFw5fU3NZUEMBDFJKZF5LTBdrWURqSV1UDwVHRHdeS0wEGElUcElTQgABWV9zX1FPSA/PUkaGUdANAQ_SVNAGRYbCicSBR9GQDQPIklTWwQYSV9kUVtaFwVbRHxJNkQXGEleZFFdQwAGUlNyU1BaFwFJXGQ0W1QZFl9EfFpFVAQBSVx3R0tEAxZRUnNeW08AAFNfOw#PUldVA8FR0RzSVNUWE00BzMPABlGawkfGRIMF0cWR0R_SVNHGRZTRHxfXEMHDV5SflIU");
+
+            Assert.True(true);
+        }
+
+        [Fact]
+        public async Task CreateGUID()
+        {
+            var g = Guid.NewGuid().GetHashCode();
 
             Assert.True(true);
         }
