@@ -132,6 +132,8 @@
                                 <controls:Button x:Name="PlayPlaylist" Icon="Play20" Click="PlayPlaylist_Click"  Margin="20 0 0 0" Content="Воспроизвести" Appearance="Transparent"/>
 
                             </StackPanel>
+
+                            <TextBlock Text="{Binding Path=Description}" Opacity="0.6" Foreground="White"/>
                         </StackPanel>
                     </StackPanel>
                 </controls:Card>

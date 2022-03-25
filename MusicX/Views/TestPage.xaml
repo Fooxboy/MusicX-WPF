@@ -13,43 +13,21 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="TestPage">
     <Page.Resources>
-        <Storyboard x:Key="St">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="rectangle" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
-                <EasingDoubleKeyFrame KeyTime="00:00:01" Value="433">
-                    <EasingDoubleKeyFrame.EasingFunction>
-                        <CircleEase EasingMode="EaseInOut"/>
-                    </EasingDoubleKeyFrame.EasingFunction>
-                </EasingDoubleKeyFrame>
-            </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="rectangle" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
-                <EasingDoubleKeyFrame KeyTime="00:00:01" Value="-11">
-                    <EasingDoubleKeyFrame.EasingFunction>
-                        <CircleEase EasingMode="EaseInOut"/>
-                    </EasingDoubleKeyFrame.EasingFunction>
-                </EasingDoubleKeyFrame>
-            </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="rectangle" Storyboard.TargetProperty="(UIElement.Opacity)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
-                <EasingDoubleKeyFrame KeyTime="00:00:00.4000000" Value="1"/>
-                <EasingDoubleKeyFrame KeyTime="00:00:01" Value="1"/>
-                <EasingDoubleKeyFrame KeyTime="00:00:01.1000000" Value="0"/>
-            </DoubleAnimationUsingKeyFrames>
-        </Storyboard>
+       
     </Page.Resources>
 
     <Grid>
-        <Rectangle x:Name="rectangle" HorizontalAlignment="Left" Height="100" Margin="38,108,0,0" Stroke="Black" VerticalAlignment="Top" Width="100" Fill="Red" RenderTransformOrigin="0.5,0.5">
-            <Rectangle.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform/>
-                    <SkewTransform/>
-                    <RotateTransform/>
-                    <TranslateTransform/>
-                </TransformGroup>
-            </Rectangle.RenderTransform>
-            <Rectangle.Effect>
-                <hc:ColorMatrixEffect/>
-            </Rectangle.Effect>
-        </Rectangle>
+        <StackPanel Margin="0 30 0 0">
+            <Button HorizontalAlignment="Left" Width="300" x:Name="OpenModal" Content="Открыть модалку" Click="OpenModal_Click"/>
+
+            <TextBlock Foreground="White" Margin="0 30 0 0" FontSize="20" FontFamily="{StaticResource VKSansBold}" Text="Открыть секцию по id"/>
+            <TextBox Margin="0 10 0 0" Width="400" HorizontalAlignment="Left" x:Name="section"/>
+            <wpfui:Button Width="300" Click="OpenSectionButton_Click" x:Name="OpenSectionButton" HorizontalAlignment="Left" Margin="0 10 0 0" Content="Открыть" Appearance="Transparent"/>
+
+
+            <TextBlock Foreground="White" Margin="0 30 0 0" FontSize="20" FontFamily="{StaticResource VKSansBold}" Text="Открыть страницу исполнителя по id"/>
+            <TextBox Margin="0 10 0 0" Width="400" HorizontalAlignment="Left" x:Name="artist"/>
+            <wpfui:Button Width="300" Click="openArtist_Click"  x:Name="openArtist" HorizontalAlignment="Left" Margin="0 10 0 0" Content="Открыть" Appearance="Transparent"/>
+        </StackPanel>
     </Grid>
 </Page>

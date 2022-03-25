@@ -22,6 +22,7 @@ namespace MusicX.ViewModels
         public string Genres { get; set; }
         public string Year { get; set; }
         public string Plays { get; set; }
+        public string Description { get; set; }
         public Visibility VisibleLoading { get; set; } = Visibility.Visible;
         public Visibility VisibleContent { get; set; } = Visibility.Collapsed;
         public BitmapImage Cover { get; set; }
@@ -59,13 +60,28 @@ namespace MusicX.ViewModels
                 Changed("VisibleContent");
                 Changed("VisibleLoading");
 
+                var p = await vkService.GetPlaylistAsync(100, playlist.Id, playlist.AccessKey, playlist.OwnerId);
+
+                if(p.Playlist.MainArtists.Count == 0)
+                {
+                    if(p.Playlist.OwnerId < 0)
+                    {
+                        if(p.Groups != null)
+                        {
+                            p.Playlist.OwnerName = p.Groups[0].Name;
+                            
+                        }
+                    }
+                }
+                playlist = p.Playlist;
+                playlist.Audios = p.Audios;
+                Tracks = p.Audios; 
+
                 this.Playlist = playlist;
                 Title = playlist.Title;
                 Year = playlist.Year.ToString();
-                if(playlist.Year == 0)
-                {
-                    VisibileAddInfo = Visibility.Collapsed;
-                }
+                Description = playlist.Description;
+               
                 var genres = string.Empty;
                 logger.Info($"load playlist {Playlist.Genres.Count} genres ");
                 foreach (var genre in Playlist.Genres)
@@ -84,6 +100,14 @@ namespace MusicX.ViewModels
 
                 }
 
+                if (playlist.Year == 0)
+                {
+                    var date = new DateTime(1970, 1, 1) + TimeSpan.FromSeconds(playlist.UpdateTime);
+                    Year = $"Обновлен {date.ToString("dd MMMM")}";
+                    Genres = "Подборка";
+                    //VisibileAddInfo = Visibility.Collapsed;
+                }
+
                 logger.Info($"load {Playlist.MainArtists} artists playlist");
                 if (Playlist.MainArtists.Count > 0)
                 {
@@ -99,7 +123,7 @@ namespace MusicX.ViewModels
                 }
                 else
                 {
-                    ArtistText = "";
+                    ArtistText = playlist.OwnerName;
                 }
 
 
@@ -115,6 +139,7 @@ namespace MusicX.ViewModels
                 VisibleLoading = Visibility.Collapsed;
 
                 Changed("Title");
+                Changed("Description");
                 Changed("ArtistText");
                 Changed("VisibileAddInfo");
                 Changed("Genres");
@@ -124,7 +149,11 @@ namespace MusicX.ViewModels
                 Changed("Tracks");
                 Changed("VisibleContent");
                 Changed("VisibleLoading");
-            }catch(Exception ex)
+
+                this.PlaylistLoaded?.Invoke(this, playlist);
+
+            }
+            catch (Exception ex)
             {
                 logger.Error("Fatal error in load playlist");
                 logger.Error(ex, ex.Message);

@@ -22,15 +22,19 @@ namespace MusicX.Core.Helpers
                         if (playlist.Original?.OwnerId < 0)
                         {
                             var id = (playlist.Original.OwnerId * -1);
-                            var value = response.Response.Groups.SingleOrDefault(g => g.Id == id);
-                            playlist.OwnerName = value?.Name;
-                        }else
+                            if(response.Response.Groups != null)
+                            {
+                                var value = response.Response.Groups.SingleOrDefault(g => g.Id == id);
+                                playlist.OwnerName = value?.Name;
+
+                            }
+
+                        }
+                        else
                         {
                             var value = response.Response.Profiles.SingleOrDefault(p => p.Id == playlist.Original?.OwnerId);
 
                             playlist.OwnerName = value?.FirstName + " " + value?.LastName;
-
-
                         }
                     }
                     else
@@ -38,9 +42,14 @@ namespace MusicX.Core.Helpers
                         if (playlist.OwnerId < 0)
                         {
                             var id = (playlist.OwnerId * -1);
-                            var value = response.Response.Groups.SingleOrDefault(g => g.Id == id);
-                            playlist.OwnerName = value?.Name;
-                        }else
+                            if(response.Response.Groups != null)
+                            {
+                                var value = response.Response.Groups.SingleOrDefault(g => g.Id == id);
+
+                                playlist.OwnerName = value?.Name;
+                            }
+                        }
+                        else
                         {
                             var value = response.Response.Profiles.SingleOrDefault(p => p.Id == playlist?.OwnerId);
 

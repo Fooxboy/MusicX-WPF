@@ -1,4 +1,6 @@
-﻿using MusicX.Services;
+﻿using DryIoc;
+using MusicX.Services;
+using MusicX.Views.Modals;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +31,30 @@ namespace MusicX.Views
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             //new PlayerService().Play();
+        }
+
+        private void OpenModal_Click(object sender, RoutedEventArgs e)
+        {
+            var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
+
+            navigationService.OpenModal(new TestModal(), 340, 500);
+        }
+
+        private async void OpenSectionButton_Click(object sender, RoutedEventArgs e)
+        {
+            var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
+
+            navigationService.CurrentFrame.Navigate(navigationService.SectionView);
+            await navigationService.OpenSection(section.Text);
+        }
+
+        private async void openArtist_Click(object sender, RoutedEventArgs e)
+        {
+            var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
+
+            navigationService.CurrentFrame.Navigate(navigationService.SectionView);
+
+            await navigationService.OpenArtistSection(artist.Text);
         }
     }
 }

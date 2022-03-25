@@ -70,7 +70,6 @@
         </Grid.RowDefinitions>
 
 
-
         <Grid Grid.Row="1" Margin="5 10 0 0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -95,9 +94,21 @@
             </Rectangle.Fill>
         </Rectangle>
 
+        <Grid Grid.ColumnSpan="4" x:Name="ModalGrid" Visibility="Collapsed" Grid.RowSpan="5">
+            <Rectangle Fill="Black" Opacity="0.6"/>
+            <Frame x:Name="ModalFrame"/>
+            <wpfui:Button x:Name="CloseModalButton" Height="20" Width="20" HorizontalAlignment="Left" VerticalAlignment="Top" Appearance="Transparent" Icon="ClosedCaption24"/>
+        </Grid>
+        
         <wpfui:TitleBar Grid.Row="0" Height="40" ApplicationNavigation="True" />
 
-        <wpfui:SearchBox x:Name="SearchBox" MouseEnter="SearchBox_MouseEnter" MouseLeave="SearchBox_MouseLeave" KeyUp="TextBox_KeyUp" Margin="0 10 0 0" Grid.RowSpan="2" Width="500" VerticalAlignment="Top"  HorizontalAlignment="Center" Placeholder="Поиск музыки, плейлистов, исполнителей" />
+        <wpfui:SearchBox x:Name="SearchBox" MouseLeftButtonUp="SearchBox_MouseLeftButtonUp" MouseEnter="SearchBox_MouseEnter" MouseLeave="SearchBox_MouseLeave" KeyUp="TextBox_KeyUp" Margin="0 10 0 0" Grid.RowSpan="2" Width="500" VerticalAlignment="Top"  HorizontalAlignment="Center" Placeholder="Поиск музыки, плейлистов, исполнителей" />
+
+        <!--<Rectangle Fill="#414141" Grid.ColumnSpan="3" Height="300" Grid.RowSpan="5"  RadiusY="10" RadiusX="10" Width="500" VerticalAlignment="Top" Margin="0 45 0 0">
+            <Rectangle.Effect>
+                <DropShadowEffect Color="Black" Opacity="0.2" ShadowDepth="0" BlurRadius="20"/>
+            </Rectangle.Effect>
+        </Rectangle>-->
 
         <controls:PlayerControl MouseDoubleClick="playerControl_MouseDoubleClick"  x:Name="playerControl" Visibility="Collapsed" Margin="18,0,12,10" Height="100" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5" Grid.Row="1">
             <controls:PlayerControl.RenderTransform>

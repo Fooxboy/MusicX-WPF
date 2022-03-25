@@ -61,7 +61,6 @@ namespace MusicX.Controls
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            this.Visibility = Visibility.Collapsed;
             var result = await vkService.GetAudioSearchAsync(Suggestion.Title, Suggestion.Context);
 
             await navigationService.OpenSection(result.Catalog.DefaultSection);

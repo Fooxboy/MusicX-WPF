@@ -1,5 +1,8 @@
 ﻿
 using DryIoc;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using MusicX.Core.Services;
 using MusicX.Services;
 using MusicX.ViewModels;
@@ -15,11 +18,10 @@ namespace MusicX
     {
         protected async override void OnStartup(StartupEventArgs e)
         {
-            
-
+            base.OnStartup(e);
+            AppCenter.Start("02130c6d-0a3b-4aa2-b46c-8aeb66c3fd71",
+                   typeof(Analytics), typeof(Crashes));
 
         }
     }
-
-   
 }

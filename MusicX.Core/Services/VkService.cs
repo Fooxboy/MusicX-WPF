@@ -221,7 +221,7 @@ namespace MusicX.Core.Services
 
         }
 
-        public async Task<ResponseData> GetAudioSearchAsync(string query, string context= null)
+        public async Task<ResponseData> GetAudioSearchAsync(string query = null, string context= null)
         {
             try
             {
@@ -234,9 +234,13 @@ namespace MusicX.Core.Services
                     {"extended", "1"},
                     {"access_token", vkApi.Token},
                     {"device_id", deviceId},
-                    {"query", query}
                 };
 
+                if (query != null)
+                {
+                    parameters.Add("query", query);
+                }
+                else parameters.Add("need_blocks", "1");
                 if (context != null) parameters.Add("context", context);
 
 
@@ -776,8 +780,38 @@ namespace MusicX.Core.Services
 
         }
 
-        public async  Task AudioSendStartEvent()
+        public async Task<RestrictionPopupData> AudioGetRestrictionPopup(string trackCode, string audio)
         {
+            try
+            {
+                logger.Info($"invoke 'audio.getRestrictionPopup' with trackCode= {trackCode} and audio = {audio} ");
+
+                var parameters = new VkParameters
+                {
+                    {"v", vkApiVersion},
+                    {"lang", "ru"},
+                    {"device_id", deviceId},
+                    {"access_token", vkApi.Token},
+                    {"track_code", trackCode},
+                    {"audio_id", audio }
+                };
+
+
+                var json = await vkApi.InvokeAsync("audio.getRestrictionPopup", parameters);
+
+                var model = JsonConvert.DeserializeObject<ResponseRestrictionPopup>(json);
+
+
+                logger.Debug("RESULT OF 'audio.getRestrictionPopup'" + json);
+
+                return model.Response;
+            }
+            catch (Exception ex)
+            {
+                logger.Error("VK API ERROR:");
+                logger.Error(ex, ex.Message);
+                throw;
+            }
 
         }
     }

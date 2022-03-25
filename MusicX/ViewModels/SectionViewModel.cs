@@ -87,6 +87,7 @@ namespace MusicX.ViewModels
 
         public async Task ReplaceBlocks(string replaceId)
         {
+            nowOpenSearchSug = false;
             try
             {
                 logger.Info("Replace blocks...");
@@ -154,6 +155,7 @@ namespace MusicX.ViewModels
 
         public async Task LoadBlocks(List<Block> blocks)
         {
+            nowOpenSearchSug = false;
             navigationService.AddHistory(Models.Enums.NavigationSource.Section, blocks);
 
             await Task.Run(async () =>
@@ -188,6 +190,17 @@ namespace MusicX.ViewModels
                         }
 
                     });
+
+                    await Application.Current.Dispatcher.BeginInvoke(() =>
+                    {
+                        VisibleLoading = Visibility.Collapsed;
+                        VisibleContent = Visibility.Visible;
+
+                        Changed("VisibleLoading");
+                        Changed("VisibleContent");
+                        Changed("Blocks");
+
+                    });
                     GC.Collect();
 
                 }
@@ -201,6 +214,7 @@ namespace MusicX.ViewModels
 
         public async Task LoadSection(string sectionId, bool showTitle = false)
         {
+            nowOpenSearchSug = false;
             await Task.Run(async () =>
             {
                 try
@@ -293,6 +307,7 @@ namespace MusicX.ViewModels
 
         public async Task LoadArtistSection(string artistId)
         {
+            nowOpenSearchSug = false;
             try
             {
                 await Application.Current.Dispatcher.BeginInvoke(() =>
@@ -326,10 +341,12 @@ namespace MusicX.ViewModels
             }
         }
 
+        private bool nowOpenSearchSug = false;
         public async Task LoadSearchSection(string query)
         {
             try
             {
+                if (query == null && nowOpenSearchSug) return;
                 await Application.Current.Dispatcher.BeginInvoke(() =>
                 {
                     VisibleLoading = Visibility.Visible;
@@ -340,6 +357,24 @@ namespace MusicX.ViewModels
                 });
                 var res = await vkService.GetAudioSearchAsync(query);
 
+                if(query == null)
+                {
+                   
+                    try
+                    {
+                        res.Catalog.Sections[0].Blocks[1].Suggestions = res.Suggestions;
+                        await this.LoadBlocks(res.Catalog.Sections[0].Blocks);
+                        nowOpenSearchSug = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        await this.LoadBlocks(res.Catalog.Sections[0].Blocks);
+                    }
+
+                    return;
+                }
+
+                nowOpenSearchSug = false;
                 await this.LoadSection(res.Catalog.DefaultSection);
 
             }
@@ -352,7 +387,7 @@ namespace MusicX.ViewModels
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     var msgbox = new WPFUI.Controls.MessageBox();
-                    msgbox.Foreground = Brushes.Black;
+                    msgbox.Foreground = Brushes.White;
                     msgbox.Show("Exception", ex.Message);
 
                 });

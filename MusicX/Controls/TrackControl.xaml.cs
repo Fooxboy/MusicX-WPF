@@ -1,6 +1,8 @@
 ﻿using DryIoc;
 using MusicX.Core.Models;
+using MusicX.Core.Services;
 using MusicX.Services;
+using MusicX.Views.Modals;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -41,13 +43,8 @@ namespace MusicX.Controls
         private void TrackControl_Unloaded(object sender, RoutedEventArgs e)
         {
             this.Cover.ImageSource = null;
-            this.Artists = null;
             this.Audio = null;
-            this.Card = null;
-            this.ChartPositionText = null;
-            this.Title = null;
-            this.Subtitle = null;
-            this.Cover = null;
+
         }
 
         public static readonly DependencyProperty ShowCardProperty =
@@ -206,7 +203,15 @@ namespace MusicX.Controls
             {
                 await Task.Delay(100);
                 if (clickToArtist) return;
-                if (Audio.Url == String.Empty) return;
+                if (Audio.Url == String.Empty)
+                {
+                    var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
+                    var vkService = StaticService.Container.Resolve<VkService>();
+
+                    navigationService.OpenModal(new TrackNotAvalibleModal(vkService, navigationService, Audio.TrackCode, Audio.OwnerId + "_" + Audio.Id + "_" + Audio.AccessKey), 280, 550);
+
+                    return;
+                }
                 var player = StaticService.Container.Resolve<PlayerService>();
 
                 await player.PlayTrack(Audio);

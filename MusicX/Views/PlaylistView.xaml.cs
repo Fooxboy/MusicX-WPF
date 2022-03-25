@@ -43,6 +43,9 @@ namespace MusicX.Views
             ViewModel = StaticService.Container.Resolve<PlaylistViewModel>();
             logger = StaticService.Container.Resolve<Logger>();
 
+            ViewModel.PlaylistLoaded += ViewModel_PlaylistLoaded;
+
+
             DataContext = ViewModel;
             this.playlist = playlist;
         }
@@ -61,6 +64,17 @@ namespace MusicX.Views
 
         private void ViewModel_PlaylistLoaded(object? sender, Playlist e)
         {
+            BitmapImage image = null;
+
+            if (playlist?.Type == 1 && playlist?.AlbumType != "playlist")
+            {
+                image = (BitmapImage)CoverPlaylist.ImageSource;
+            }
+
+
+
+            PlaylistStackPanel.Children.Add(new AudiosListControl { BitImage = image, Audios = ViewModel.Tracks, Margin = new Thickness(0, 0, 0, 90) });
+
             this.playlist = e;
             if (e.OwnerId == currentUserId)
             {
@@ -94,16 +108,7 @@ namespace MusicX.Views
                     await ViewModel.LoadPlaylistFromData(playlistId, ownerId, accessKey);
                 }
 
-                BitmapImage image = null;
-
-                if(playlist?.Type == 1 && playlist?.AlbumType != "playlist")
-                {
-                    image = (BitmapImage)CoverPlaylist.ImageSource;
-                }
-
                
-
-                PlaylistStackPanel.Children.Add(new AudiosListControl { BitImage = image, Audios = ViewModel.Tracks, Margin = new Thickness(0,0,0, 90)});
 
                 CardPlaylist.Visibility = Visibility.Visible;
                 var amim = (Storyboard)(this.Resources["LoadedPlaylist"]);

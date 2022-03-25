@@ -13,6 +13,12 @@ namespace MusicX.Services
 {
     public class NavigationService
     {
+        private bool nowModalOpen;
+        public event OpenModalDelegate OpenedModalWindow;
+        public event CloseModalDelegate ClosedModalWindow;
+
+        public delegate void OpenModalDelegate(object Page, int height, int width);
+        public delegate void CloseModalDelegate();
 
         private readonly Logger logger;
 
@@ -31,6 +37,22 @@ namespace MusicX.Services
             if (!fromHistory) AddHistory(NavigationSource.Page, page);
 
             CurrentFrame.Navigate(page);
+        }
+
+
+        public void OpenModal(object page, int height, int width)
+        {
+            nowModalOpen = true;
+            OpenedModalWindow?.Invoke(page, height, width);
+        }
+
+        public void CloseModal()
+        {
+            if (!nowModalOpen) return;
+
+            ClosedModalWindow?.Invoke();
+
+            nowModalOpen = false;
         }
 
         public async Task OpenSection(string sectionId, bool showTitle = false)
