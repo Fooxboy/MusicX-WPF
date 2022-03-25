@@ -250,6 +250,13 @@ namespace MusicX.Controls
                     }
                 }
 
+                if (Block.DataType == "loader")
+                {
+                    BlocksPanel.Children.Add(new LoaderBlockControl());
+                    logger.Info($"loaded {Block.DataType} block ");
+                    return;
+                }
+
 
                 NotFoundBlock.Visibility = Visibility.Visible;
                 DataTypeName.Text = Block.DataType;

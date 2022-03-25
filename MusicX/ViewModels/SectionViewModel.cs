@@ -42,6 +42,8 @@ namespace MusicX.ViewModels
 
         public async Task LoadMore()
         {
+            int indexLoad = -1;
+
             await Task.Run(async () =>
             {
                 try
@@ -50,6 +52,17 @@ namespace MusicX.ViewModels
                     if (nowLoading) return;
                     if (Next == null) return;
                     nowLoading = true;
+
+                    await Application.Current.Dispatcher.BeginInvoke(new Action(async () =>
+                    {
+                        var loadBlock = new Block() { DataType = "loader" };
+
+                        Blocks.Add(loadBlock);
+                        indexLoad = Blocks.IndexOf(loadBlock);
+
+                        Changed("Blocks");
+
+                    }));
                     logger.Info($"Load more section content with next id = {Next}");
 
                     var section = await vkService.GetSectionAsync(Section.Id, Next).ConfigureAwait(false);
@@ -82,7 +95,13 @@ namespace MusicX.ViewModels
                     });
                 }
             });
-            
+
+            if(indexLoad != -1)
+            {
+                Blocks.RemoveAt(indexLoad);
+
+                Changed("Blocks");
+            }
         }
 
         public async Task ReplaceBlocks(string replaceId)

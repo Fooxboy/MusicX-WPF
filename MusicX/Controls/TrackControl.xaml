@@ -10,7 +10,21 @@
              Loaded="UserControl_Loaded"
              MouseEnter="Grid_MouseEnter" MouseLeave="Grid_MouseLeave"
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid MouseDown="Grid_MouseDown" HorizontalAlignment="Stretch">
+
+    <UserControl.ContextMenu>
+        <ContextMenu Background="#414141" Foreground="#757575" BorderBrush="#646464">
+            <StackPanel x:Name="AddRemove" MouseDown="AddRemove_MouseDown"  Orientation="Horizontal">
+                <controls:Icon x:Name="AddRemoveIcon" />
+                <TextBlock Margin="10 0 0 0" Foreground="White" x:Name="AddRemoveText"/>
+            </StackPanel>
+
+            <MenuItem Foreground="White" x:Name="GoToArtistMenu" Header="Перейти к артисту">
+              
+            </MenuItem>
+                
+        </ContextMenu>
+    </UserControl.ContextMenu>
+    <Grid MouseLeftButtonDown="Grid_MouseDown" HorizontalAlignment="Stretch">
         <TextBlock Background="Transparent"/>
 
         <controls:Card  x:Name="Card" Visibility="Visible" Margin="0 0 10 0"/>
@@ -24,10 +38,8 @@
                 <Grid Margin="6">
 
                     <Rectangle  Height="45" Width="45" Grid.Row="0" Fill="Black" Opacity="0.1" RadiusX="5" RadiusY="5"/>
-                    <controls:FontIcon Height="45" Width="45" FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontFamily="Segoe Fluent Icons" Glyph="&#xEC4F;" />
-
-                    
-                    
+                    <controls:Icon   Glyph="MusicNote124"  FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+ 
                     <Rectangle Height="45" RadiusX="3" RadiusY="3" Width="45">
                         <Rectangle.Fill>
                             <ImageBrush  x:Name="Cover"  Stretch="UniformToFill"/>
@@ -36,7 +48,8 @@
 
                     <Grid x:Name="PlayButtons" Visibility="Collapsed">
                         <Rectangle Height="45" Width="45" RadiusX="3" Fill="Black" RadiusY="3" Opacity="0.6"/>
-                        <controls:FontIcon FontSize="19" FontFamily="Segoe Fluent Icons" Glyph="&#xE102;" />
+                        <controls:Icon x:Name="IconPlay" Glyph="Play24" FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+
                     </Grid>
 
                 </Grid>

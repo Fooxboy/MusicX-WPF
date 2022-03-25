@@ -27,6 +27,8 @@ namespace MusicX.Controls
     public partial class TrackControl : UserControl
     {
         private readonly Logger logger;
+        private readonly PlayerService player;
+
 
         public BitmapImage BitImage { get; set; }
 
@@ -34,17 +36,46 @@ namespace MusicX.Controls
         {
             InitializeComponent();
             logger = StaticService.Container.Resolve<Logger>();
+            player = StaticService.Container.Resolve<PlayerService>();
+
+
+            player.TrackChangedEvent += Player_TrackChangedEvent;
+            player.PlayStateChangedEvent += Player_PlayStateChangedEvent;
 
             this.Unloaded += TrackControl_Unloaded;
-          
 
+        }
+
+        private void Player_PlayStateChangedEvent(object? sender, EventArgs e)
+        {
+            if(player.CurrentTrack.Id == this.Audio.Id)
+            {
+                if(player.IsPlaying)
+                {
+                    this.IconPlay.Glyph = WPFUI.Common.Icon.Pause24;
+
+                }else
+                {
+                    this.IconPlay.Glyph = WPFUI.Common.Icon.Play24;
+
+                }
+            }
+        }
+
+        private void Player_TrackChangedEvent(object? sender, EventArgs e)
+        {
+            if(player.CurrentTrack.Id == this.Audio.Id)
+            {
+                this.IconPlay.Glyph = WPFUI.Common.Icon.Pause24;
+            }else
+            {
+                this.IconPlay.Glyph = WPFUI.Common.Icon.Play24;
+            }
         }
 
         private void TrackControl_Unloaded(object sender, RoutedEventArgs e)
         {
             this.Cover.ImageSource = null;
-            this.Audio = null;
-
         }
 
         public static readonly DependencyProperty ShowCardProperty =
@@ -83,10 +114,12 @@ namespace MusicX.Controls
             }
         }
 
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             try
             {
+                this.IconPlay.Glyph = WPFUI.Common.Icon.Play24;
+
                 if (ShowCard) this.Card.Visibility = Visibility.Visible;
                 else this.Card.Visibility = Visibility.Collapsed;
 
@@ -134,6 +167,9 @@ namespace MusicX.Controls
                     foreach (var trackArtist in Audio.MainArtists)
                     {
                         s += trackArtist.Name + ", ";
+                        var text = new TextBlock() { Text = trackArtist.Name, Tag = trackArtist.Id, Foreground = Brushes.Black };
+                        text.MouseLeftButtonDown += Text_MouseLeftButtonDown;
+                        GoToArtistMenu.Items.Add(text);
                     }
 
                     var artists = s.Remove(s.Length - 2);
@@ -145,7 +181,26 @@ namespace MusicX.Controls
                 {
                     Artists.Text = Audio.Artist;
                 }
-            }catch(Exception ex)
+
+
+                var configService = StaticService.Container.Resolve<Services.ConfigService>();
+
+
+                var config = await configService.GetConfig();
+
+                if (Audio.OwnerId == config.UserId)
+                {
+                    AddRemoveIcon.Glyph = WPFUI.Common.Icon.Delete20;
+                    AddRemoveText.Text = "Удалить";
+                }
+                else
+                {
+                    AddRemoveIcon.Glyph = WPFUI.Common.Icon.Add24;
+                    AddRemoveText.Text = "Добавить к себе";
+
+                }
+            }
+            catch(Exception ex)
             {
                 logger.Error("Failed load track control");
                 logger.Error(ex, ex.Message);
@@ -156,6 +211,29 @@ namespace MusicX.Controls
                 Artists.Text = "Попробуйте позже";
             }
             
+        }
+
+        private async void Text_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+           var textBlock = (TextBlock)sender;
+            
+            try
+            {
+                var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
+
+                if (Audio.MainArtists == null)
+                {
+                    await navigationService.OpenSearchSection(Audio.Artist);
+                }
+                else
+                {
+                    await navigationService.OpenArtistSection(Audio.MainArtists[0].Id);
+                }
+            }catch(Exception ex)
+            {
+                logger.Error(ex, ex.Message);
+            }
+
         }
 
         private void Grid_MouseEnter(object sender, MouseEventArgs e)
@@ -212,7 +290,6 @@ namespace MusicX.Controls
 
                     return;
                 }
-                var player = StaticService.Container.Resolve<PlayerService>();
 
                 await player.PlayTrack(Audio);
             }catch(Exception ex)
@@ -279,6 +356,24 @@ namespace MusicX.Controls
                 clickToArtist = false;
 
                 logger.Error(ex, ex.Message);
+            }
+        }
+
+        private async void AddRemove_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+           var configService = StaticService.Container.Resolve<Services.ConfigService>();
+            var vkService = StaticService.Container.Resolve<VkService>();
+
+
+            var config = await configService.GetConfig();
+
+            if (Audio.OwnerId == config.UserId)
+            {
+                await vkService.AudioDeleteAsync(Audio.Id, Audio.OwnerId);
+            }else
+            {
+                await vkService.AudioAddAsync(Audio.Id, Audio.OwnerId);
+
             }
         }
     }

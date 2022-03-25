@@ -102,6 +102,20 @@
         
         <wpfui:TitleBar Grid.Row="0" Height="40" ApplicationNavigation="True" />
 
+        <!--<Rectangle RadiusX="99" RadiusY="99" HorizontalAlignment="Right" Margin="0 8 150 0" Height="35" Fill="Red" Width="35">
+            <Rectangle.ContextMenu >
+                <ContextMenu x:Name ="user">
+                    <Grid>
+                        <StackPanel>
+                            <TextBlock FontSize="18" Margin="10 10 10 0" FontFamily="{StaticResource VKSansDemiBold}" Text="Имя пользователя" x:Name="UserName"/>
+
+                            <wpfui:Button Content="Выйти" Margin="0 40 0 0" Appearance="Transparent"/>
+                        </StackPanel>
+                    </Grid>
+                </ContextMenu>
+            </Rectangle.ContextMenu>
+        </Rectangle>-->
+
         <wpfui:SearchBox x:Name="SearchBox" MouseLeftButtonUp="SearchBox_MouseLeftButtonUp" MouseEnter="SearchBox_MouseEnter" MouseLeave="SearchBox_MouseLeave" KeyUp="TextBox_KeyUp" Margin="0 10 0 0" Grid.RowSpan="2" Width="500" VerticalAlignment="Top"  HorizontalAlignment="Center" Placeholder="Поиск музыки, плейлистов, исполнителей" />
 
         <!--<Rectangle Fill="#414141" Grid.ColumnSpan="3" Height="300" Grid.RowSpan="5"  RadiusY="10" RadiusX="10" Width="500" VerticalAlignment="Top" Margin="0 45 0 0">

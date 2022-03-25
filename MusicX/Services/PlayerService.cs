@@ -71,6 +71,12 @@ namespace MusicX.Services
         {
             try
             {
+                if (CurrentTrack?.Id == track.Id)
+                {
+                    if(IsPlaying) this.Pause();
+                    else this.Play();
+                    return;
+                }
                 var list = new List<object>();
 
                 var startPlayModel = new PlayTrackEvent()
@@ -116,7 +122,7 @@ namespace MusicX.Services
 
                 list.Add(startPlayModel);
                 logger.Info($"play track {track.Id}");
-                if (CurrentTrack?.Id == track.Id) return;
+               
                 CurrentTrack = track;
                 player.PlaybackSession.Position = TimeSpan.Zero;
 
