@@ -5,18 +5,10 @@ using MusicX.Views;
 using NLog;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Interop;
-using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
 using WPFUI.Controls;
 
 namespace MusicX
@@ -29,15 +21,17 @@ namespace MusicX
         private readonly NavigationService navigationService;
         private readonly VkService vkService;
         private readonly Logger logger;
+        private readonly ConfigService configService;
 
         private bool PlayerShowed = false;
 
-        public RootWindow(NavigationService navigationService, VkService vkService, Logger logger)
+        public RootWindow(NavigationService navigationService, VkService vkService, Logger logger, ConfigService configService)
         {
             InitializeComponent();     
             this.navigationService = navigationService;
             this.vkService = vkService;
             this.logger = logger;
+            this.configService = configService;
             var playerSerivce = StaticService.Container.Resolve<PlayerService>();
 
             playerSerivce.TrackChangedEvent += PlayerSerivce_TrackChangedEvent;
@@ -111,9 +105,9 @@ namespace MusicX
 
             navigationService.CurrentFrame = RootFrame;
             navigationService.SectionView = new SectionView();
+            navigationService.SetRootWindow(this);
 
             var catalogs = await vkService.GetAudioCatalogAsync();
-
 
 
             var icons = new List<WPFUI.Common.Icon>() 
@@ -124,6 +118,7 @@ namespace MusicX
                  WPFUI.Common.Icon.FoodPizza20,
                  WPFUI.Common.Icon.Play12,
                  WPFUI.Common.Icon.Star16,
+                 WPFUI.Common.Icon.PlayCircle48,
 
             };
 
@@ -133,7 +128,7 @@ namespace MusicX
             foreach(var section in catalogs.Catalog.Sections)
             {
                 var sectionPage = navigationService.SectionView;
-                var number = rand.Next(0, icons.Count - 1);
+                var number = rand.Next(0, icons.Count);
                 var icon = icons[number];
 
                 icons.RemoveAt(number);
@@ -144,7 +139,11 @@ namespace MusicX
             }
 
             var item = new NavigationItem() { Tag = "test", Icon = WPFUI.Common.Icon.AppFolder24, Content = "TEST", Type = typeof(TestPage), Instance = new TestPage() };
+
+            var item2 = new NavigationItem() { Tag = "settings", Icon = WPFUI.Common.Icon.Settings24, Content = "Настройки", Type = typeof(SettingsView), Instance = new SettingsView(configService) };
+
             navigationBar.Items.Add(item);
+            navigationBar.Items.Add(item2);
 
             navigationBar.Navigated += NavigationBar_Navigated1;
 
@@ -153,7 +152,7 @@ namespace MusicX
 
         private async void NavigationBar_Navigated1(WPFUI.Controls.Interfaces.INavigation navigation, WPFUI.Controls.Interfaces.INavigationItem current)
         {
-            if (current.Tag == "test") return;
+            if (current.Tag == "test" || current.Tag == "settings") return;
             await navigationService.SectionView.LoadSection((string)current.Tag);
         }
 

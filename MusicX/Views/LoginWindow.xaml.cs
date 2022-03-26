@@ -72,7 +72,7 @@ namespace MusicX.Views
 
                 await configService.SetConfig(config);
 
-                var rootWindow = new RootWindow(navigationService, vkService, logger);
+                var rootWindow = new RootWindow(navigationService, vkService, logger, configService);
 
                 rootWindow.Show();
                 this.Close();

@@ -23,7 +23,7 @@
 
                 <StackPanel Orientation="Horizontal">
                     <TextBlock x:Name="CuratorText" FontFamily="{StaticResource VKSansBold}" Foreground="White" FontSize="40"  FontWeight="Black" Text="Curator name"/>
-                    <wpfui:Button Click="ActionCuratorButton_Click" x:Name="ActionCuratorButton" Margin="10 0 0 0" Appearance="Transparent" Content="Подписаться"/>
+                    <wpfui:Button Click="ActionCuratorButton_Click" x:Name="ActionCuratorButton" Margin="10 0 0 0" Appearance="Secondary" Content="Подписаться"/>
                 </StackPanel>
 
                 <TextBlock x:Name="CuratorDescription" FontFamily="{StaticResource VKSansRegular}" Foreground="White" TextWrapping="Wrap" FontSize="17"  Opacity="0.7"   Text="Curator desc"/>

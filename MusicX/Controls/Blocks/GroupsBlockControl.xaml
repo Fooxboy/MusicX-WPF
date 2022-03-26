@@ -23,7 +23,7 @@
                     <TextBlock  Foreground="White" Margin="5 0 0 3" VerticalAlignment="Bottom" Opacity="0.5" FontSize="14" Text="подписчиков"/>
 
                 </StackPanel>
-                <wpfui:Button Content="Открыть сообщество" Appearance="Transparent" Margin="0 10 0 0" Icon="Link24" Click="Button_Click"/>
+                <wpfui:Button Content="Открыть сообщество" Appearance="Secondary" Margin="0 10 0 0" Icon="Link24" Click="Button_Click"/>
             </StackPanel>
         </StackPanel>
     </Grid>

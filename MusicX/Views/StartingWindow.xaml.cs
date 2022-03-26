@@ -72,7 +72,7 @@ namespace MusicX.Views
                     else
                     {
                         await vkService.SetTokenAsync(config.AccessToken, null);
-                        var rootWindow = new RootWindow(navigationService, vkService, logger);
+                        var rootWindow = new RootWindow(navigationService, vkService, logger, configService);
                         rootWindow.Show();
                         this.Close();
                     }

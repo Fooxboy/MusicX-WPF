@@ -24,7 +24,7 @@
 
         </ComboBox>
 
-        <wpfui:Button Grid.Column="1" FontFamily="{StaticResource VKSansDemiBold}" Click="MoreButton_Click" Visibility="Collapsed" x:Name="MoreButton" Appearance="Transparent" Margin="0 0 5 0" HorizontalAlignment="Right" Height="30" Width="100" Padding="0" />
+        <wpfui:Button Grid.Column="1" FontFamily="{StaticResource VKSansDemiBold}" Click="MoreButton_Click" Visibility="Collapsed" x:Name="MoreButton" Appearance="Secondary" Margin="0 0 5 0" HorizontalAlignment="Right" Height="30" Width="100" Padding="0" />
 
     </Grid>
 </UserControl>

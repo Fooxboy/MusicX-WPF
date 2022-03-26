@@ -14,6 +14,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicX.Server", "MusicX.Server\MusicX.Server.csproj", "{AB09062A-83B9-4441-8D69-27E144875F6B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicX.Shared", "MusicX.Shared\MusicX.Shared.csproj", "{05EE1D52-3FF7-4BEE-9213-B8CE70F7240C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +36,14 @@ Global
 		{52C0E787-521A-4195-9FB1-ED920743804C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{52C0E787-521A-4195-9FB1-ED920743804C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{52C0E787-521A-4195-9FB1-ED920743804C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB09062A-83B9-4441-8D69-27E144875F6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB09062A-83B9-4441-8D69-27E144875F6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB09062A-83B9-4441-8D69-27E144875F6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB09062A-83B9-4441-8D69-27E144875F6B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05EE1D52-3FF7-4BEE-9213-B8CE70F7240C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05EE1D52-3FF7-4BEE-9213-B8CE70F7240C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05EE1D52-3FF7-4BEE-9213-B8CE70F7240C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05EE1D52-3FF7-4BEE-9213-B8CE70F7240C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

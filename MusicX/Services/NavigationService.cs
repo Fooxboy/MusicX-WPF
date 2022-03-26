@@ -21,6 +21,7 @@ namespace MusicX.Services
         public delegate void CloseModalDelegate();
 
         private readonly Logger logger;
+        private RootWindow rootWindow;
 
         public SectionView SectionView { get; set; }
         public Frame CurrentFrame { get; set; }
@@ -120,6 +121,16 @@ namespace MusicX.Services
             {
                 NavigateToPage(history.Data, true);
             }
+        }
+
+        public void SetRootWindow(RootWindow rootWindow)
+        {
+            this.rootWindow = rootWindow;
+        } 
+
+        public void CloseRootWindow()
+        {
+            rootWindow.Close();
         }
     }
 }

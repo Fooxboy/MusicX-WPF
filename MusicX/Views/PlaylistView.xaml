@@ -128,8 +128,8 @@
                                         <TranslateTransform/>
                                     </TransformGroup>
                                 </StackPanel.RenderTransform>
-                                <controls:Button x:Name="AddPlaylist" Icon="Add28" Click="AddPlaylist_Click"  Content="Добавить к себе" Appearance="Transparent"/>
-                                <controls:Button x:Name="PlayPlaylist" Icon="Play20" Click="PlayPlaylist_Click"  Margin="20 0 0 0" Content="Воспроизвести" Appearance="Transparent"/>
+                                <controls:Button x:Name="AddPlaylist" Icon="Add28" Click="AddPlaylist_Click"  Content="Добавить к себе" Appearance="Secondary"/>
+                                <controls:Button x:Name="PlayPlaylist" Icon="Play20" Click="PlayPlaylist_Click"  Margin="20 0 0 0" Content="Воспроизвести" Appearance="Secondary"/>
 
                             </StackPanel>
 

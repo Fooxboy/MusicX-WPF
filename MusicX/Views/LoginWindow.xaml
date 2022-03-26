@@ -26,7 +26,7 @@
                 <StackPanel x:Name="TwoFactorAuth"  Visibility="Collapsed">
                     <TextBlock FontSize="20" Margin="5 0 5 0" TextWrapping="Wrap" FontFamily="{StaticResource VKSansDemiBold}" Text="Введите код двухфакторной авторизации"/>
                     <TextBox x:Name="Code" Margin="5 20 0 5"/>
-                    <wpfui:Button x:Name="TwoFactorAccept" Click="TwoFactorAccept_Click" Appearance="Transparent" Margin="5 40 0 5" Content="Подтвердить"/>
+                    <wpfui:Button x:Name="TwoFactorAccept" Click="TwoFactorAccept_Click" Appearance="Secondary" Margin="5 40 0 5" Content="Подтвердить"/>
                 </StackPanel>
                 <StackPanel x:Name="content" Visibility="Visible">
                     <TextBlock FontSize="25" FontFamily="{StaticResource VKSansDemiBold}" TextWrapping="Wrap" HorizontalAlignment="Center" Text="Вход в аккаунт ВКонтакте"/>
@@ -34,7 +34,7 @@
                     <TextBox x:Name="Login" />
                     <TextBlock Text="Пароль" FontFamily="{StaticResource VKSansRegular}" Opacity="0.4" Margin="5 20 5 2"/>
                     <PasswordBox x:Name="Password" />
-                    <wpfui:Button Margin="5 20 5 0" Appearance="Transparent" Click="Button_Click" Content="Войти"/>
+                    <wpfui:Button Margin="5 20 5 0" Appearance="Secondary" Click="Button_Click" Content="Войти"/>
                 </StackPanel>
             </Grid>
                
