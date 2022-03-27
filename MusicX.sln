@@ -14,9 +14,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicX.Server", "MusicX.Server\MusicX.Server.csproj", "{AB09062A-83B9-4441-8D69-27E144875F6B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicX.Server", "MusicX.Server\MusicX.Server.csproj", "{AB09062A-83B9-4441-8D69-27E144875F6B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicX.Shared", "MusicX.Shared\MusicX.Shared.csproj", "{05EE1D52-3FF7-4BEE-9213-B8CE70F7240C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicX.Shared", "MusicX.Shared\MusicX.Shared.csproj", "{05EE1D52-3FF7-4BEE-9213-B8CE70F7240C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicX.Installer", "MusicX.Installer\MusicX.Installer.csproj", "{5B6E87D8-33EE-46FA-8C2C-D9C04F7E99F1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -44,6 +46,10 @@ Global
 		{05EE1D52-3FF7-4BEE-9213-B8CE70F7240C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05EE1D52-3FF7-4BEE-9213-B8CE70F7240C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{05EE1D52-3FF7-4BEE-9213-B8CE70F7240C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B6E87D8-33EE-46FA-8C2C-D9C04F7E99F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B6E87D8-33EE-46FA-8C2C-D9C04F7E99F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B6E87D8-33EE-46FA-8C2C-D9C04F7E99F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B6E87D8-33EE-46FA-8C2C-D9C04F7E99F1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -35,7 +35,7 @@ namespace MusicX.Views.Modals
         private void AvalibleNewUpdateModal_Loaded(object sender, RoutedEventArgs e)
         {
             OldVersion.Text = StaticService.Version;
-            NewVersion.Text = release.Name;
+            NewVersion.Text = release.TagName;
             Changelog.Text = release.Body;
         }
 

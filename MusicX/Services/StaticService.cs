@@ -10,7 +10,7 @@ namespace MusicX.Services
     public static class StaticService
     {
         public static IContainer Container { get; set; }
-        public static string Version = "1.0";
+        public static string Version = "0.1";
         public static string VersionKind = "beta";
         public static string BuildDate = "27 марта 2022";
     }
