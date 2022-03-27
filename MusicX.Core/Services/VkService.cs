@@ -814,5 +814,41 @@ namespace MusicX.Core.Services
             }
 
         }
+
+        public async Task<ResponseData> GetPodcastsAsync(string url = null)
+        {
+            try
+            {
+                logger.Info($"Invoke 'catalog.getPodcasts' with curatorId ");
+
+                var parameters = new VkParameters
+                {
+                    {"v", vkApiVersion},
+                    {"lang", "ru"},
+                    {"extended", "1"},
+                    {"device_id", deviceId},
+                    {"access_token", vkApi.Token},
+                    {"url", url},
+                };
+
+
+                var json = await vkApi.InvokeAsync("catalog.getPodcasts", parameters);
+                logger.Debug("RESULT OF 'catalog.getPodcasts'" + json);
+
+
+                var model = JsonConvert.DeserializeObject<ResponseVk>(json);
+
+                logger.Info("Successful invoke 'catalog.getAudioCurator' ");
+
+
+                return model.Proccess().Response;
+            }
+            catch (Exception ex)
+            {
+                logger.Error("VK API ERROR:");
+                logger.Error(ex, ex.Message);
+                throw;
+            }
+        }
     }
 }

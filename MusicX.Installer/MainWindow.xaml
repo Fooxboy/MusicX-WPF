@@ -60,7 +60,7 @@
                     <TextBlock x:Name="KindLeft" Opacity="0.6" FontSize="15" Text="МБ"/>
                 </StackPanel>
 
-                <ProgressBar x:Name="DownloadProgress" Margin="0 220  0 0" Value="34" VerticalAlignment="Bottom" Maximum="100"/>
+                <ProgressBar x:Name="DownloadProgress" Margin="0 220  0 0" Value="0" VerticalAlignment="Bottom" Maximum="100"/>
 
             </StackPanel>
 

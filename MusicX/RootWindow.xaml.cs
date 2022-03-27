@@ -108,7 +108,9 @@ namespace MusicX
             navigationService.SetRootWindow(this);
 
             var catalogs = await vkService.GetAudioCatalogAsync();
+            var podcast = await vkService.GetPodcastsAsync();
 
+            catalogs.Catalog.Sections.Add(podcast.Catalog.Sections[0]);
 
             var icons = new List<WPFUI.Common.Icon>() 
             {

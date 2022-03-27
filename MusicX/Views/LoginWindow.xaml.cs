@@ -30,19 +30,28 @@ namespace MusicX.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            IntPtr windowHandle = new WindowInteropHelper(this).Handle;
+
             WPFUI.Appearance.Theme.Set(WPFUI.Appearance.ThemeType.Dark);
+
+            IntPtr windowHandle = new WindowInteropHelper(this).Handle;
+            WPFUI.Appearance.Background.Remove(windowHandle);
+            WPFUI.Appearance.Background.RemoveDarkMode(windowHandle);
+            //this.Background = Brushes.Transparent;
+
+            WPFUI.Appearance.Background.Apply(windowHandle, WPFUI.Appearance.BackgroundType.Acrylic);
+
+
             var os = Environment.OSVersion;
 
             logger.Info($"OS Version: {os.VersionString}");
             logger.Info($"OS Build: {os.Version.Build}");
             if (os.Version.Build >= 22000)
             {
-                WPFUI.Appearance.Background.Remove(windowHandle);
+                //WPFUI.Appearance.Background.Remove(windowHandle);
 
-                this.Background = Brushes.Transparent;
-                WPFUI.Appearance.Background.Apply(windowHandle, WPFUI.Appearance.BackgroundType.Mica);
-                logger.Info($"OS Build >= 22000, Enabled Mica");
+                //this.Background = Brushes.Transparent;
+                //WPFUI.Appearance.Background.Apply(windowHandle, WPFUI.Appearance.BackgroundType.Mica);
+                //logger.Info($"OS Build >= 22000, Enabled Mica");
             }
 
 

@@ -4,11 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MusicX.Views"
-          xmlns:hc="https://handyorg.github.io/handycontrol"
-        
+          xmlns:hc="https://handyorg.github.io/handycontrol"       
         mc:Ignorable="d"
-        Background="#003F63"
-        
         Loaded="Window_Loaded"
          xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
         Style="{StaticResource UiWindow}"

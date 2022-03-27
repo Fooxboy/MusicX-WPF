@@ -273,7 +273,7 @@ namespace MusicX.Installer
                 {
                     Directory.CreateDirectory(PathInstall.Text);
                 }
-                ZipFile.ExtractToDirectory(CachePath, PathInstall.Text);
+                ZipFile.ExtractToDirectory(CachePath, PathInstall.Text, true);
 
                 System.IO.File.Delete(CachePath);
 

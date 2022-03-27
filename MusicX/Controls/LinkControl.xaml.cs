@@ -104,6 +104,16 @@ namespace MusicX.Controls
             {
                 if (Link.Meta.ContentType == null)
                 {
+                    var match = Regex.Match(Link.Url, "https://vk.com/podcasts\\?category=[0-9]+$");
+
+                    if (match.Success)
+                    {
+                        //var podcasts = await vkService.GetPodcastsAsync(Link.Url);
+                        //await navigationService.OpenSection(podcasts.Catalog.DefaultSection, true);
+
+                        return;
+
+                    }
                     var music = await vkService.GetAudioCatalogAsync(Link.Url);
                     await navigationService.OpenSection(music.Catalog.DefaultSection, true);
 
