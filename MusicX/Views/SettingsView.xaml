@@ -72,13 +72,13 @@
 
                         <StackPanel Margin="0 5 0 0" Orientation="Horizontal">
                             <TextBlock FontSize="18" Text="Версия приложения: "/>
-                            <TextBlock FontSize="18" Opacity="0.6" Text="1.0 beta"/>
+                            <TextBlock x:Name="VersionApp" FontSize="18" Opacity="0.6" Text="1.0 beta"/>
 
                         </StackPanel>
 
                         <StackPanel  Margin="0 5 0 0" Orientation="Horizontal">
                             <TextBlock FontSize="18" Text="Сборка от: "/>
-                            <TextBlock FontSize="18" Opacity="0.6" Text="26 марта 2022"/>
+                            <TextBlock x:Name="BuildDate" FontSize="18" Opacity="0.6" Text="26 марта 2022"/>
                         </StackPanel>
 
                         <TextBlock  FontSize="18" Margin="0 10 0 0" Text="Полезные ссылки:"/>

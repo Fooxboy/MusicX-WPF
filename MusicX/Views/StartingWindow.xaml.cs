@@ -40,6 +40,8 @@ namespace MusicX.Views
             {
                 container = new Container();
                 container.Register<VkService>(Reuse.Singleton);
+                container.Register<ServerService>(Reuse.Singleton);
+                container.Register<GithubService>(Reuse.Singleton);
                 container.RegisterInstance<Logger>(LogManager.Setup().GetLogger("Common"));
 
                 container.Register<SectionViewModel>(Reuse.Singleton);

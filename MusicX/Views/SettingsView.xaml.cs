@@ -2,6 +2,7 @@
 using MusicX.Core.Services;
 using MusicX.Models;
 using MusicX.Services;
+using MusicX.Views.Modals;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -51,7 +52,8 @@ namespace MusicX.Views
 
             var usr = await vkService.GetCurrentUserAsync();
 
-            UserImage.ImageSource = new BitmapImage(usr.Photo200);
+            if(usr.Photo200 != null) UserImage.ImageSource = new BitmapImage(usr.Photo200);
+
 
             var path = $"{AppDomain.CurrentDomain.BaseDirectory}/logs";
 
@@ -76,6 +78,9 @@ namespace MusicX.Views
 
             memory = Math.Round(memory, 2);
             MemoryLogs.Text = memory.ToString();
+
+            this.VersionApp.Text = StaticService.Version + " " + StaticService.VersionKind;
+            this.BuildDate.Text = StaticService.BuildDate;
         }
 
         private async void DeleteAccount_Click(object sender, RoutedEventArgs e)
@@ -94,9 +99,29 @@ namespace MusicX.Views
             navigation.CloseRootWindow();
         }
 
-        private void CheckUpdates_Click(object sender, RoutedEventArgs e)
+        private async void CheckUpdates_Click(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                var navigation = StaticService.Container.Resolve<Services.NavigationService>();
+                var github = StaticService.Container.Resolve<GithubService>();
 
+                var release = await github.GetLastRelease();
+
+
+
+                if (release.Name == StaticService.Version) CheckUpdates.Content = "Уже обновлено";
+                else
+                {
+                    navigation.OpenModal(new AvalibleNewUpdateModal(navigation, release), 350, 450);
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            
         }
 
         private void TelegramButton_Click(object sender, RoutedEventArgs e)

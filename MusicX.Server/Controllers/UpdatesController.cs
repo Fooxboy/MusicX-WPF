@@ -10,7 +10,7 @@ namespace MusicX.Server.Controllers
     public class UpdatesController : Controller
     {
         [HttpGet()]
-        public async Task<CheckModel> CheckVersion(string version)
+        public async Task<CheckModel> Check(string version)
         {
             var json = await System.IO.File.ReadAllTextAsync("versions.production.json");
 
