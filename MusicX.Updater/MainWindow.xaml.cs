@@ -68,6 +68,8 @@ namespace MusicX.Updater
                 this.TwoStackPanel.Visibility = Visibility.Collapsed;
                 this.Version.Text = release.TagName;
 
+                //TwoStackPanel.Visibility = Visibility.Visible;
+
                 await InstallButton_Click();
             }
             catch (Exception ex)

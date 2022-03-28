@@ -32,7 +32,12 @@
         <StackPanel x:Name="ContentPanel" Margin="0 40 0 0" Visibility="Collapsed">
             <Image Source="musicx.png" Height="100" Width="100"/>
             <TextBlock HorizontalAlignment="Center" VerticalAlignment="Top"  FontSize="45" FontWeight="DemiBold" Text="Обновление Music X"/>
-            <TextBlock x:Name="Version" Text="1.1" HorizontalAlignment="Center" Opacity="0.5" FontSize="15"/>
+
+            <StackPanel HorizontalAlignment="Center"  Orientation="Horizontal">
+                <TextBlock Opacity="0.5" Text="До версии "/>
+                <TextBlock x:Name="Version" FontWeight="DemiBold" Text="ver"  Opacity="0.7" />
+
+            </StackPanel>
 
             <StackPanel Margin="30 40 30 0" x:Name="TwoStackPanel">
 
@@ -50,7 +55,7 @@
                     <TextBlock x:Name="KindLeft" Opacity="0.6" FontSize="15" Text="МБ"/>
                 </StackPanel>
 
-                <ProgressBar x:Name="DownloadProgress" Margin="0 220  0 0" Value="0" VerticalAlignment="Bottom" Maximum="100"/>
+                <ProgressBar x:Name="DownloadProgress" Margin="0 40  0 0" Value="0" VerticalAlignment="Bottom" Maximum="100"/>
 
             </StackPanel>
 

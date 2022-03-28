@@ -65,7 +65,6 @@ namespace MusicX.Installer
 
             this.InstallButton.Visibility = Visibility.Collapsed;
 
-            CreateLogDir();
 
             try
             {
@@ -122,6 +121,11 @@ namespace MusicX.Installer
             try
             {
                 if(System.IO.File.Exists(CachePath)) System.IO.File.Delete(CachePath);
+
+                if(!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\musicx"))
+                {
+                    Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\musicx");
+                }
                 using (var client = new WebClient())
                 {
                     client.DownloadProgressChanged += Client_DownloadProgressChanged;
