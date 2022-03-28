@@ -5,8 +5,63 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MusicX.Updater"
         mc:Ignorable="d"
+        xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
+        Style="{StaticResource UiWindowNoResize}"
+        
         Title="MainWindow" Height="450" Width="800">
+
     <Grid>
 
+        <wpfui:TitleBar HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowMaximize="False" ApplicationNavigation="True" />
+
+        <Grid x:Name="ErrorGrid">
+
+            <StackPanel HorizontalAlignment="Center" Visibility="Collapsed" VerticalAlignment="Center">
+                <wpfui:Icon FontSize="90" Glyph="ErrorCircle24"/>
+                <TextBlock Margin="0 10 0 0 " FontSize="20" Text="Произошла ошибка"/>
+                <wpfui:Button Margin="0 10 0 0 " Appearance="Secondary" Click="Button_Click_1" Content="Повторить"/>
+            </StackPanel>
+
+        </Grid>
+
+        <Grid HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="LoadingGrid">
+            <wpfui:ProgressRing IsEnabled="True" IsIndeterminate="True" Height="60" Width="60"/>
+            <TextBlock Margin="0 100 0 0" Text="Ищем последнюю версию.."/>
+        </Grid>
+
+        <StackPanel x:Name="ContentPanel" Margin="0 40 0 0" Visibility="Collapsed">
+            <Image Source="musicx.png" Height="100" Width="100"/>
+            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Top"  FontSize="45" FontWeight="DemiBold" Text="Обновление Music X"/>
+            <TextBlock x:Name="Version" Text="1.1" HorizontalAlignment="Center" Opacity="0.5" FontSize="15"/>
+
+            <StackPanel Margin="30 40 30 0" x:Name="TwoStackPanel">
+
+                <TextBlock x:Name="TextState" FontSize="15" Text="Выполняется загрузка файлов Music X"/>
+
+                <StackPanel Margin="0 20 0 0" Orientation="Horizontal">
+                    <TextBlock FontSize="15" Text="Скорость загрузки: "/>
+                    <TextBlock x:Name="SpeedValue" Opacity="0.6" FontSize="15" Text="0"/>
+                    <TextBlock x:Name="SpeedKind" Opacity="0.6" FontSize="15" Text="КБ"/>
+                </StackPanel>
+
+                <StackPanel Margin="0 10 0 0" Orientation="Horizontal">
+                    <TextBlock FontSize="15" Text="Осталось: "/>
+                    <TextBlock x:Name="ValueLeft" Opacity="0.6" FontSize="15" Text="5"/>
+                    <TextBlock x:Name="KindLeft" Opacity="0.6" FontSize="15" Text="МБ"/>
+                </StackPanel>
+
+                <ProgressBar x:Name="DownloadProgress" Margin="0 220  0 0" Value="0" VerticalAlignment="Bottom" Maximum="100"/>
+
+            </StackPanel>
+
+            <StackPanel Margin="30 40 30 0" x:Name="ThreeStackPanel" Visibility="Collapsed">
+                <wpfui:Icon FontSize="80" Glyph="CheckmarkCircle48"/>
+                <TextBlock HorizontalAlignment="Center" Margin="0 40 0 0"  FontSize="25" Text="Установка завершена"/>
+                <wpfui:Button Click="Button_Click" Margin="0 40 0 0" Width="300" Appearance="Secondary" Content="Запустить"/>
+                <wpfui:Button x:Name="CloseButton" Click="CloseButton_Click" Margin="0 10 0 0" Width="300" Appearance="Secondary" Content="Выйти"/>
+            </StackPanel>
+
+        </StackPanel>
     </Grid>
+
 </Window>
