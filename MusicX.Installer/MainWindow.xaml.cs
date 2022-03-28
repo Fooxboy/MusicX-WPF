@@ -35,7 +35,7 @@ namespace MusicX.Installer
     {
         private Release release;
 
-        private string CachePath = "C:\\Users\\Fooxb\\Desktop\\Music X WPF\\release.zip";
+        private string CachePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\musicx\\release.zip";
         public MainWindow()
         {
             InitializeComponent();
@@ -333,6 +333,15 @@ namespace MusicX.Installer
             DirectorySecurity dSecurity = dir.GetAccessControl();
             dSecurity.AddAccessRule(new FileSystemAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), FileSystemRights.FullControl, InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit, PropagationFlags.NoPropagateInherit, AccessControlType.Allow));
             dir.SetAccessControl(dSecurity);
+        }
+
+        private void CreateTempDir()
+        {
+            if(!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\musicx"))
+            {
+                var dir = Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\musicx");
+
+            }
         }
 
         private void ChangePath_Click(object sender, RoutedEventArgs e)
