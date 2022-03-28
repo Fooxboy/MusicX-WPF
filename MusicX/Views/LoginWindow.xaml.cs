@@ -31,14 +31,24 @@ namespace MusicX.Views
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
 
-            WPFUI.Appearance.Theme.Set(WPFUI.Appearance.ThemeType.Dark);
-
             IntPtr windowHandle = new WindowInteropHelper(this).Handle;
-            WPFUI.Appearance.Background.Remove(windowHandle);
-            WPFUI.Appearance.Background.RemoveDarkMode(windowHandle);
-            //this.Background = Brushes.Transparent;
 
-            WPFUI.Appearance.Background.Apply(windowHandle, WPFUI.Appearance.BackgroundType.Acrylic);
+            WPFUI.Appearance.Background.Remove(windowHandle);
+
+            var appTheme = WPFUI.Appearance.Theme.GetAppTheme();
+            var systemTheme = WPFUI.Appearance.Theme.GetSystemTheme();
+            WPFUI.Appearance.Theme.Set(
+            WPFUI.Appearance.ThemeType.Dark,     // Theme type
+            WPFUI.Appearance.BackgroundType.Mica, // Background type
+            true                                  // Whether to change accents automatically
+            );
+
+            if (WPFUI.Appearance.Theme.IsAppMatchesSystem())
+            {
+                this.Background = Brushes.Transparent;
+                WPFUI.Appearance.Background.Apply(windowHandle, WPFUI.Appearance.BackgroundType.Mica);
+
+            }
 
 
             var os = Environment.OSVersion;

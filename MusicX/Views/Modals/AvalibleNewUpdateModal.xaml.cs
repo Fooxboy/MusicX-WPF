@@ -2,6 +2,7 @@
 using MusicX.Services;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,6 +43,17 @@ namespace MusicX.Views.Modals
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             navigationService.CloseModal();
+        }
+
+        private void Update_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = AppDomain.CurrentDomain.BaseDirectory + "\\MusicX.Updater.exe",
+                UseShellExecute = true
+            });
+
+            Application.Current.Shutdown();
         }
     }
 }

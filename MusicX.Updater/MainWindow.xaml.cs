@@ -16,6 +16,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
+using System.Windows.Media;
 
 namespace MusicX.Updater
 {
@@ -36,33 +37,25 @@ namespace MusicX.Updater
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            //IntPtr windowHandle = new WindowInteropHelper(this).Handle;
-            //this.Background = Brushes.Transparent;
-            //WPFUI.Appearance.Background.Remove(windowHandle);
-
-            //var appTheme = WPFUI.Appearance.Theme.GetAppTheme();
-            //var systemTheme = WPFUI.Appearance.Theme.GetSystemTheme();
-            //WPFUI.Appearance.Theme.Set(
-            //WPFUI.Appearance.ThemeType.Dark,     // Theme type
-            //WPFUI.Appearance.BackgroundType.Mica, // Background type
-            //true                                  // Whether to change accents automatically
-            //);
-
-            //WPFUI.Appearance.Background.Apply(windowHandle, WPFUI.Appearance.BackgroundType.Mica);
-
-            //var res = WPFUI.Appearance.Theme.IsAppMatchesSystem();
-
-            WPFUI.Appearance.Theme.Set(WPFUI.Appearance.ThemeType.Dark);
-
             IntPtr windowHandle = new WindowInteropHelper(this).Handle;
+
             WPFUI.Appearance.Background.Remove(windowHandle);
-            WPFUI.Appearance.Background.RemoveDarkMode(windowHandle);
-            //this.Background = Brushes.Transparent;
 
-            WPFUI.Appearance.Background.Apply(windowHandle, WPFUI.Appearance.BackgroundType.Acrylic);
+            var appTheme = WPFUI.Appearance.Theme.GetAppTheme();
+            var systemTheme = WPFUI.Appearance.Theme.GetSystemTheme();
+            WPFUI.Appearance.Theme.Set(
+            WPFUI.Appearance.ThemeType.Dark,     // Theme type
+            WPFUI.Appearance.BackgroundType.Mica, // Background type
+            true                                  // Whether to change accents automatically
+            );
 
+            if (WPFUI.Appearance.Theme.IsAppMatchesSystem())
+            {
+                this.Background = Brushes.Transparent;
+                WPFUI.Appearance.Background.Apply(windowHandle, WPFUI.Appearance.BackgroundType.Mica);
 
-            CreateLogDir();
+            }
+
 
             try
             {
@@ -118,6 +111,8 @@ namespace MusicX.Updater
         {
             try
             {
+                CreateTempDir();
+
                 if (System.IO.File.Exists(CachePath)) System.IO.File.Delete(CachePath);
                 using (var client = new WebClient())
                 {

@@ -24,7 +24,7 @@
         </StackPanel>
         
         <StackPanel VerticalAlignment="Bottom" Margin="20 0 20 30">
-            <wpfui:Button x:Name="Update" Appearance="Secondary" Content="Обновить сейчас"/>
+            <wpfui:Button x:Name="Update" Appearance="Secondary" Click="Update_Click" Content="Обновить сейчас"/>
             <wpfui:Button x:Name="CloseButton"  Margin="0 10 0 0"  Appearance="Secondary" Click="CloseButton_Click" Content="Не хочу"/>
 
         </StackPanel>
