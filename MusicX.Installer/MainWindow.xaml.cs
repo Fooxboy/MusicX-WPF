@@ -431,7 +431,7 @@ namespace MusicX.Installer
             musicX.SetValue("InstallLocation", PathInstall.Text, RegistryValueKind.String);
             musicX.SetValue("InstallSource", PathInstall.Text, RegistryValueKind.String);
             musicX.SetValue("Publisher", "Fooxboy", RegistryValueKind.String);
-            musicX.SetValue("UninstallString", PathInstall.Text + "\\uninstall.exe", RegistryValueKind.String);
+            musicX.SetValue("UninstallString", PathInstall.Text + "\\MusicX.Uninstaller.exe", RegistryValueKind.String);
             musicX.SetValue("URLInfoAbout", "https://t.me/MusicXPlayer", RegistryValueKind.String);
             musicX.SetValue("NoRepair", 1, RegistryValueKind.DWord);
             musicX.SetValue("NoModify", 1, RegistryValueKind.DWord);

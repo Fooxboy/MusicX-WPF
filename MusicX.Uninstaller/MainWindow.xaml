@@ -5,8 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MusicX.Uninstaller"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Удаление Music X" Height="450" Width="800">
     <Grid>
-
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock x:Name="TextDelete" FontSize="20" Text="Мы удаляем Music X с Вашего компьютера..."/>
+            <Button x:Name="CloseButton" Visibility="Collapsed" Click="CloseButton_Click" Width="250" Height="35" Margin="0 10 0 0" Content="Закрыть"/>
+        </StackPanel>
+        
     </Grid>
 </Window>

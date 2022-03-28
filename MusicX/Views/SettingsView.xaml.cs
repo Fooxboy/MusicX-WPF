@@ -54,7 +54,7 @@ namespace MusicX.Views
 
             if(usr.Photo200 != null) UserImage.ImageSource = new BitmapImage(usr.Photo200);
 
-
+           
             var path = $"{AppDomain.CurrentDomain.BaseDirectory}/logs";
 
             DirectoryInfo di = new DirectoryInfo(path);
@@ -89,7 +89,7 @@ namespace MusicX.Views
             config.UserName = null;
             config.UserId = 0;
 
-            //await configService.SetConfig(config);
+            await configService.SetConfig(config);
 
             var logger = StaticService.Container.Resolve<Logger>();
             var navigation = StaticService.Container.Resolve<Services.NavigationService>();
