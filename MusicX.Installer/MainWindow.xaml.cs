@@ -9,6 +9,8 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.AccessControl;
+using System.Security.Principal;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
@@ -69,6 +71,7 @@ namespace MusicX.Installer
 
             this.InstallButton.Visibility = Visibility.Collapsed;
 
+            CreateLogDir();
 
             try
             {
@@ -290,6 +293,8 @@ namespace MusicX.Installer
 
                 RegistryPath();
 
+                CreateLogDir();
+
 
                 Application.Current.Dispatcher.BeginInvoke(() =>
                 {
@@ -319,6 +324,15 @@ namespace MusicX.Installer
 
             Application.Current.Shutdown();
 
+        }
+
+        private void CreateLogDir()
+        {
+            var dir = Directory.CreateDirectory(PathInstall.Text + "\\logs");
+
+            DirectorySecurity dSecurity = dir.GetAccessControl();
+            dSecurity.AddAccessRule(new FileSystemAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), FileSystemRights.FullControl, InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit, PropagationFlags.NoPropagateInherit, AccessControlType.Allow));
+            dir.SetAccessControl(dSecurity);
         }
 
         private void ChangePath_Click(object sender, RoutedEventArgs e)

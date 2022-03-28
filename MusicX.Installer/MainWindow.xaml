@@ -27,7 +27,7 @@
         </Grid>
 
         <StackPanel x:Name="ContentPanel" Margin="0 40 0 0" Visibility="Collapsed">
-            <Rectangle Fill="Red" Height="100" Width="100"></Rectangle>
+            <Image Source="musicx.png" Height="100" Width="100"/>
             <TextBlock HorizontalAlignment="Center" VerticalAlignment="Top"  FontSize="45" FontWeight="DemiBold" Text="Установка Music X"/>
             <TextBlock x:Name="Version" Text="1.1" HorizontalAlignment="Center" Opacity="0.5" FontSize="15"/>
             <StackPanel x:Name="FirstStackPanel" Visibility="Collapsed">

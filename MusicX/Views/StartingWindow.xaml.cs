@@ -54,7 +54,15 @@ namespace MusicX.Views
 
                 var vkService = container.Resolve<VkService>();
                 var logger = container.Resolve<Logger>();
+                logger.Info("");
+                logger.Info("");
+                logger.Info("");
+                logger.Info("");
+
+                logger.Info("=====================================================================================");
                 logger.Info("Starting MusicX App...");
+                logger.Info("=====================================================================================");
+
 
 
                 var navigationService = container.Resolve<NavigationService>();
