@@ -6,10 +6,15 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>StoreLogo.scale-400.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="musicx.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="StoreLogo.scale-400.ico" />
   </ItemGroup>
 
   <ItemGroup>

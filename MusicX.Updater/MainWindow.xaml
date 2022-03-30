@@ -14,15 +14,7 @@
 
         <wpfui:TitleBar HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowMaximize="False" ApplicationNavigation="True" />
 
-        <Grid x:Name="ErrorGrid">
-
-            <StackPanel HorizontalAlignment="Center" Visibility="Collapsed" VerticalAlignment="Center">
-                <wpfui:Icon FontSize="90" Glyph="ErrorCircle24"/>
-                <TextBlock Margin="0 10 0 0 " FontSize="20" Text="Произошла ошибка"/>
-                <wpfui:Button Margin="0 10 0 0 " Appearance="Secondary" Click="Button_Click_1" Content="Повторить"/>
-            </StackPanel>
-
-        </Grid>
+        
 
         <Grid HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="LoadingGrid">
             <wpfui:ProgressRing IsEnabled="True" IsIndeterminate="True" Height="60" Width="60"/>
@@ -67,6 +59,16 @@
             </StackPanel>
 
         </StackPanel>
+
+        <Grid x:Name="ErrorGrid" Visibility="Collapsed">
+
+            <StackPanel HorizontalAlignment="Center" Visibility="Collapsed" VerticalAlignment="Center">
+                <wpfui:Icon FontSize="90" Glyph="ErrorCircle24"/>
+                <TextBlock Margin="0 10 0 0 " FontSize="20" Text="Произошла ошибка"/>
+                <wpfui:Button Margin="0 10 0 0 " Appearance="Secondary" Click="Button_Click_1" Content="Повторить"/>
+            </StackPanel>
+
+        </Grid>
     </Grid>
 
 </Window>

@@ -309,7 +309,6 @@ namespace MusicX.Updater
                 RegistryPath();
 
                 CreateLogDir();
-                ChangeFilePermissions();
 
 
                 Application.Current.Dispatcher.BeginInvoke(() =>
@@ -345,33 +344,13 @@ namespace MusicX.Updater
 
         private void CreateLogDir()
         {
-            var dir = Directory.CreateDirectory(PathInstall + "\\logs");
-
-            DirectorySecurity dSecurity = dir.GetAccessControl();
-            dSecurity.AddAccessRule(new FileSystemAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), FileSystemRights.FullControl, InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit, PropagationFlags.NoPropagateInherit, AccessControlType.Allow));
-            dir.SetAccessControl(dSecurity);
-        }
-
-        private void ChangeFilePermissions()
-        {
-            if(File.Exists(PathInstall + "\\MusicX.Updater.exe"))
+            if(!Directory.Exists(PathInstall + "\\logs"))
             {
-                var file = new FileInfo(PathInstall + "\\MusicX.Updater.exe");
+                var dir = Directory.CreateDirectory(PathInstall + "\\logs");
 
-                var fsec = file.GetAccessControl();
-                fsec.AddAccessRule(new FileSystemAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), FileSystemRights.FullControl, InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit, PropagationFlags.NoPropagateInherit, AccessControlType.Allow));
-
-                file.SetAccessControl(fsec);
-            }
-           
-            if(File.Exists(PathInstall + "\\MusicX.UpdaterNew.exe"))
-            {
-                var fileNew = new FileInfo(PathInstall + "\\MusicX.UpdaterNew.exe");
-
-                var fsecNew = fileNew.GetAccessControl();
-                fsecNew.AddAccessRule(new FileSystemAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), FileSystemRights.FullControl, InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit, PropagationFlags.NoPropagateInherit, AccessControlType.Allow));
-
-                fileNew.SetAccessControl(fsecNew);
+                DirectorySecurity dSecurity = dir.GetAccessControl();
+                dSecurity.AddAccessRule(new FileSystemAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), FileSystemRights.FullControl, InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit, PropagationFlags.NoPropagateInherit, AccessControlType.Allow));
+                dir.SetAccessControl(dSecurity);
             }
         }
 
