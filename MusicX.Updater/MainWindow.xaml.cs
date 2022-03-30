@@ -28,7 +28,7 @@ namespace MusicX.Updater
         private Release release;
 
         private string CachePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\musicx\\release.zip";
-        private string PathInstall = AppDomain.CurrentDomain.BaseDirectory;
+        private string PathInstall = String.Empty;
         public MainWindow()
         {
             InitializeComponent();
@@ -59,6 +59,17 @@ namespace MusicX.Updater
 
             try
             {
+
+                var subKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey("SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MusicX", true);
+
+                if(subKey == null)
+                {
+                    Application.Current.Shutdown();
+                }else
+                {
+                    PathInstall = (string)subKey.GetValue("InstallLocation");
+                }
+
                 release = await GetLastRelease();
 
                 this.ErrorGrid.Visibility = Visibility.Collapsed;
@@ -265,21 +276,40 @@ namespace MusicX.Updater
                 try
                 {
                     var dr = new DirectoryInfo(PathInstall);
-                    dr.Delete();
-                }catch (Exception ex) { }
+                    foreach(var file in dr.GetFiles())
+                    {
+                        if (file.Name == "config.json") continue;
+
+                        try
+                        {
+                            file.Delete();
+
+                        }catch(Exception ex)
+                        {
+
+                        }
+
+                    }
+                }catch (Exception ex) 
+                { 
+
+                }
                 
                 try
                 {
                     ZipFile.ExtractToDirectory(CachePath, PathInstall, true);
 
-                }catch(Exception ex) { }
+                }catch(Exception ex) 
+                {
+
+                }
 
                 System.IO.File.Delete(CachePath);
-
 
                 RegistryPath();
 
                 CreateLogDir();
+                ChangeFilePermissions();
 
 
                 Application.Current.Dispatcher.BeginInvoke(() =>
@@ -320,6 +350,29 @@ namespace MusicX.Updater
             DirectorySecurity dSecurity = dir.GetAccessControl();
             dSecurity.AddAccessRule(new FileSystemAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), FileSystemRights.FullControl, InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit, PropagationFlags.NoPropagateInherit, AccessControlType.Allow));
             dir.SetAccessControl(dSecurity);
+        }
+
+        private void ChangeFilePermissions()
+        {
+            if(File.Exists(PathInstall + "\\MusicX.Updater.exe"))
+            {
+                var file = new FileInfo(PathInstall + "\\MusicX.Updater.exe");
+
+                var fsec = file.GetAccessControl();
+                fsec.AddAccessRule(new FileSystemAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), FileSystemRights.FullControl, InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit, PropagationFlags.NoPropagateInherit, AccessControlType.Allow));
+
+                file.SetAccessControl(fsec);
+            }
+           
+            if(File.Exists(PathInstall + "\\MusicX.UpdaterNew.exe"))
+            {
+                var fileNew = new FileInfo(PathInstall + "\\MusicX.UpdaterNew.exe");
+
+                var fsecNew = fileNew.GetAccessControl();
+                fsecNew.AddAccessRule(new FileSystemAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), FileSystemRights.FullControl, InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit, PropagationFlags.NoPropagateInherit, AccessControlType.Allow));
+
+                fileNew.SetAccessControl(fsecNew);
+            }
         }
 
         private void CreateTempDir()

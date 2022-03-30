@@ -110,7 +110,7 @@ namespace MusicX.Views
 
 
 
-                if (release.Name == StaticService.Version) CheckUpdates.Content = "Уже обновлено";
+                if (release.TagName == StaticService.Version) CheckUpdates.Content = "Уже обновлено";
                 else
                 {
                     navigation.OpenModal(new AvalibleNewUpdateModal(navigation, release), 350, 450);

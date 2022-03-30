@@ -309,7 +309,11 @@ namespace MusicX.Services
                     return;
                 }
 
-                TrackChangedEvent?.Invoke(this, EventArgs.Empty);
+                await Application.Current.Dispatcher.BeginInvoke(() =>
+                {
+                    TrackChangedEvent?.Invoke(this, EventArgs.Empty);
+
+                });
 
                 AdaptiveMediaSourceCreationResult result = await AdaptiveMediaSource.CreateFromUriAsync(new Uri(CurrentTrack.Url));
                 var ams = result.MediaSource;
@@ -319,7 +323,12 @@ namespace MusicX.Services
                 
                 player.Play();
 
-                PositionTrackChangedEvent?.Invoke(this, TimeSpan.Zero);
+
+                await Application.Current.Dispatcher.BeginInvoke(() =>
+                {
+                    PositionTrackChangedEvent?.Invoke(this, TimeSpan.Zero);
+
+                });
 
                 await vkService.StatsTrackEvents(list);
 
@@ -379,8 +388,8 @@ namespace MusicX.Services
                     currentIndex += 1;
                 }
 
-                
-                TrackChangedEvent?.Invoke(this, EventArgs.Empty);
+
+               
                 await Play(currentIndex, null);
             }catch(Exception ex)
             {

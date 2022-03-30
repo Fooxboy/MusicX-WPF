@@ -1,5 +1,6 @@
 ﻿using MusicX.Core.Services;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -110,6 +111,19 @@ namespace MusicX.Tests
             var g = Guid.NewGuid().GetHashCode();
 
             Assert.True(true);
+        }
+
+        [Fact]
+        public async Task GetFile()
+        {
+             string PathInstall = AppDomain.CurrentDomain.BaseDirectory;
+
+            var d = new DirectoryInfo(PathInstall);
+
+            foreach(var item in d.GetFiles())
+            {
+                var n = item.Name;
+            }
         }
     }
 }

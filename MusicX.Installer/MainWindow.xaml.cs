@@ -270,9 +270,15 @@ namespace MusicX.Installer
 
                 });
 
-                if (Directory.Exists(PathInstall.Text))
+                if (!Directory.Exists(PathInstall.Text))
                 {
-                    Directory.CreateDirectory(PathInstall.Text);
+                    var dir = Directory.CreateDirectory(PathInstall.Text);
+
+
+                    DirectorySecurity dSecurity = dir.GetAccessControl();
+                    dSecurity.AddAccessRule(new FileSystemAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), FileSystemRights.FullControl, InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit, PropagationFlags.NoPropagateInherit, AccessControlType.Allow));
+                    dir.SetAccessControl(dSecurity);
+
                 }
                 ZipFile.ExtractToDirectory(CachePath, PathInstall.Text, true);
 

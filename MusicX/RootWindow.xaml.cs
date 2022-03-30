@@ -2,9 +2,12 @@
 using MusicX.Core.Services;
 using MusicX.Services;
 using MusicX.Views;
+using MusicX.Views.Modals;
 using NLog;
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
@@ -147,6 +150,9 @@ namespace MusicX
             navigationBar.Navigated += NavigationBar_Navigated1;
 
             navigationBar.Navigate(catalogs.Catalog.Sections[0].Id);
+
+            var thread = new Thread(CheckUpdatesInStart);
+            thread.Start();
         }
 
         private async void NavigationBar_Navigated1(WPFUI.Controls.Interfaces.INavigation navigation, WPFUI.Controls.Interfaces.INavigationItem current)
@@ -203,6 +209,23 @@ namespace MusicX
         private async void SearchBox_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             await navigationService.OpenSearchSection(null);
+        }
+
+        private async void CheckUpdatesInStart()
+        {
+
+            await Task.Delay(2000);
+            var github = StaticService.Container.Resolve<GithubService>();
+
+            var release = await github.GetLastRelease();
+
+
+            await Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                if (release.TagName != StaticService.Version) navigationService.OpenModal(new AvalibleNewUpdateModal(navigationService, release), 350, 450);
+
+            }));
+
         }
     }
 }

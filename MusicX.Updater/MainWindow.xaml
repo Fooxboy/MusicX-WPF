@@ -59,9 +59,9 @@
 
             </StackPanel>
 
-            <StackPanel Margin="30 40 30 0" x:Name="ThreeStackPanel" Visibility="Collapsed">
-                <wpfui:Icon FontSize="80" Glyph="CheckmarkCircle48"/>
-                <TextBlock HorizontalAlignment="Center" Margin="0 40 0 0"  FontSize="25" Text="Установка завершена"/>
+            <StackPanel Margin="30 10 30 0" x:Name="ThreeStackPanel" Visibility="Collapsed">
+                <wpfui:Icon FontSize="40" Glyph="CheckmarkCircle48"/>
+                <TextBlock HorizontalAlignment="Center" Margin="0 10 0 0"  FontSize="25" Text="Установка завершена"/>
                 <wpfui:Button Click="Button_Click" Margin="0 40 0 0" Width="300" Appearance="Secondary" Content="Запустить"/>
                 <wpfui:Button x:Name="CloseButton" Click="CloseButton_Click" Margin="0 10 0 0" Width="300" Appearance="Secondary" Content="Выйти"/>
             </StackPanel>

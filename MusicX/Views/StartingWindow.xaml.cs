@@ -5,6 +5,7 @@ using MusicX.ViewModels;
 using NLog;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -69,6 +70,23 @@ namespace MusicX.Views
                 var configService = container.Resolve<ConfigService>();
 
                 var config = await configService.GetConfig();
+
+                logger.Info("Check new updater");
+                if(File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\MusicX.UpdaterNew.exe"))
+                {
+                    logger.Info("Check old updater");
+
+                    if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\MusicX.Updater.exe"))
+                    {
+                        logger.Info("Delete old updater");
+
+                        File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\MusicX.Updater.exe");
+                    }
+
+                    logger.Info("Rename new updater");
+
+                    File.Move(AppDomain.CurrentDomain.BaseDirectory + "\\MusicX.UpdaterNew.exe", AppDomain.CurrentDomain.BaseDirectory + "\\MusicX.Updater.exe");
+                }
 
                 
                 await Application.Current.Dispatcher.BeginInvoke(async () =>
