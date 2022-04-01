@@ -80,10 +80,10 @@ namespace MusicX.Core.Models
         public List<Suggestion> Suggestions { get; set; } = new List<Suggestion>();
         public List<Artist> Artists { get; set; } = new List<Artist>();
         public List<Group> Groups { get; set; } = new List<Group>();
-
         public List<PodcastSliderItem> PodcastSliderItems { get; set; } = new List<PodcastSliderItem>();
         public List<PodcastEpisode> PodcastEpisodes { get; set; } = new List<PodcastEpisode>();
         public List<Longread> Longreads { get; set; } = new List<Longread>();
+        public List<RecommendedPlaylist> RecommendedPlaylists { get; set; } = new List<RecommendedPlaylist>();
 
     }
 }

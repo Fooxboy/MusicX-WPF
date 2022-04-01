@@ -280,6 +280,13 @@ namespace MusicX.Controls
                     return;
                 }
 
+                if(Block.DataType == "music_recommended_playlists")
+                {
+                    BlocksPanel.Children.Add(new RecommendedPlaylistsBlockControl() { Playlists = Block.RecommendedPlaylists});
+                    logger.Info($"loaded {Block.DataType} block ");
+                    return;
+                }
+
 
                 NotFoundBlock.Visibility = Visibility.Visible;
                 DataTypeName.Text = Block.DataType;

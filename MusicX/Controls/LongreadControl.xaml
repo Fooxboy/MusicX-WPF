@@ -13,7 +13,7 @@
                 <Rectangle Fill="Black" Opacity="0.5"  />
                 <StackPanel HorizontalAlignment="Center" Margin="0 20 0 0" VerticalAlignment="Center">
                     <TextBlock Foreground="White" HorizontalAlignment="Center" FontSize="19" FontFamily="{StaticResource VKSansDemiBold}" x:Name="Title" Text="Заголовок"/>
-                    <wpfui:Button Margin="0 20 0 0" Width="150" x:Name="OpenButton" Content="Открыть" Appearance="Transparent" Icon="Link12"/>
+                    <wpfui:Button Margin="0 20 0 0" Width="150" x:Name="OpenButton" Content="Открыть" Appearance="Secondary" Icon="Link12"/>
                 </StackPanel>
             </Grid>
         </wpfui:Card>

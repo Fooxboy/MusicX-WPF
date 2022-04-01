@@ -39,6 +39,19 @@ namespace MusicX.Installer
         public MainWindow()
         {
             var os = Environment.OSVersion;
+            if (os.Version.Build >= 22000)
+            {
+                var style = (Style)FindResource("UiWindowNoResize");
+                this.Style = style;
+                this.Width = 350;
+            }
+            else
+            {
+                this.WindowStyle = WindowStyle.None;
+                this.Width = 450;
+                this.ResizeMode = ResizeMode.NoResize;
+
+            }
 
             InitializeComponent();
             this.Loaded += MainWindow_Loaded;
@@ -47,40 +60,34 @@ namespace MusicX.Installer
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
 
-
             var os = Environment.OSVersion;
 
-            if (os.Version.Build < 22000)
+            if (os.Version.Build >= 22000)
             {
+                IntPtr windowHandle = new WindowInteropHelper(this).Handle;
 
-                this.Background = (Brush)new BrushConverter().ConvertFrom("#FF202020");
-            }
-            else
-            {
+                WPFUI.Appearance.Background.Remove(windowHandle);
+
+                var appTheme = WPFUI.Appearance.Theme.GetAppTheme();
+                var systemTheme = WPFUI.Appearance.Theme.GetSystemTheme();
+                WPFUI.Appearance.Theme.Set(
+                WPFUI.Appearance.ThemeType.Dark,     // Theme type
+                WPFUI.Appearance.BackgroundType.Mica, // Background type
+                true                                  // Whether to change accents automatically
+                );
+
                 if (WPFUI.Appearance.Theme.IsAppMatchesSystem())
                 {
-
-                    IntPtr windowHandle = new WindowInteropHelper(this).Handle;
-
-                    WPFUI.Appearance.Background.Remove(windowHandle);
-
-                    var appTheme = WPFUI.Appearance.Theme.GetAppTheme();
-                    var systemTheme = WPFUI.Appearance.Theme.GetSystemTheme();
-                    WPFUI.Appearance.Theme.Set(
-                    WPFUI.Appearance.ThemeType.Dark,     // Theme type
-                    WPFUI.Appearance.BackgroundType.Mica, // Background type
-                    true                                  // Whether to change accents automatically
-                    );
-
                     this.Background = Brushes.Transparent;
                     WPFUI.Appearance.Background.Apply(windowHandle, WPFUI.Appearance.BackgroundType.Mica);
 
                 }
-                else
-                {
-                    this.Background = (Brush)new BrushConverter().ConvertFrom("#FF202020");
-                }
+
+                var res = WPFUI.Appearance.Theme.IsAppMatchesSystem();
             }
+
+            
+
 
             this.InstallButton.Visibility = Visibility.Collapsed;
 

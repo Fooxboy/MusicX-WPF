@@ -10,7 +10,6 @@
         mc:Ignorable="d"
         Loaded="Window_Loaded"
          xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
-        Style="{StaticResource UiWindow}"
         Title="LoginWindow" Height="450" Width="800">
     <Grid>
         <wpfui:TitleBar  Height="40" ApplicationNavigation="False" />

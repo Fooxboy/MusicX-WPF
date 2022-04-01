@@ -5,7 +5,9 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
+	  <Version>0.20</Version>
+
+	  <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>StoreLogo.scale-400.ico</ApplicationIcon>
   </PropertyGroup>
 

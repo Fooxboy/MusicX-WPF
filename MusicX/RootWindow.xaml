@@ -9,7 +9,7 @@
         Loaded="Window_Loaded"
         Background="#202020"
         
-        Style="{StaticResource UiWindow}"
+       
          d:DesignHeight="720" d:DesignWidth="1280"
         mc:Ignorable="d">
 

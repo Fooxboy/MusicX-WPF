@@ -361,19 +361,53 @@ namespace MusicX.Core.Helpers
 
                 if (block.PlaylistsIds != null || block.PlaylistsIds.Count > 0)
                 {
-                    foreach (var playlistStringId in block.PlaylistsIds)
+
+                    if(block.DataType == "music_recommended_playlists")
                     {
-                        var playlistArray = playlistStringId.Split('_');
+                        foreach (var lid in block.PlaylistsIds)
+                        {
+                            var p = response.Response.RecommendedPlaylists.SingleOrDefault(b => b.OwnerId + "_" + b.Id == lid);
 
-                        var playlistId = long.Parse(playlistArray[1]);
-                        var ownerId = long.Parse(playlistArray[0]);
+                            if (p == null) continue;
 
-                        var playlist = response.Response.Playlists.SingleOrDefault(p => p.Id == playlistId && p.OwnerId == ownerId);
+                            var pp = response.Response.Playlists.SingleOrDefault(b => b.OwnerId + "_" + b.Id == lid);
 
-                        if (playlist == null) continue;
+                            p.Playlist = pp;
+                            block.RecommendedPlaylists.Add(p);
 
-                        block.Playlists.Add(playlist);
+                        }
 
+                        foreach (var r in block.RecommendedPlaylists)
+                        {
+                            foreach (var aid in r.AudiosIds)
+                            {
+                                var a = response.Response.Audios.SingleOrDefault(b => b.OwnerId + "_" + b.Id == aid);
+
+                                if (a == null) continue;
+
+                                r.Audios.Add(a);
+                            }
+                        }
+
+
+
+                    }
+                    else
+                    {
+                        foreach (var playlistStringId in block.PlaylistsIds)
+                        {
+                            var playlistArray = playlistStringId.Split('_');
+
+                            var playlistId = long.Parse(playlistArray[1]);
+                            var ownerId = long.Parse(playlistArray[0]);
+
+                            var playlist = response.Response.Playlists.SingleOrDefault(p => p.Id == playlistId && p.OwnerId == ownerId);
+
+                            if (playlist == null) continue;
+
+                            block.Playlists.Add(playlist);
+
+                        }
                     }
                 }
 

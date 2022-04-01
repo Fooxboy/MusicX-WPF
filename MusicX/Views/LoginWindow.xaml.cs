@@ -21,6 +21,19 @@ namespace MusicX.Views
 
         public LoginWindow(VkService vkService, ConfigService configService, Logger logger, NavigationService navigationService)
         {
+            var os = Environment.OSVersion;
+
+            if (os.Version.Build >= 22000)
+            {
+                var style = (Style)FindResource("UiWindow");
+                this.Style = style;
+            }
+            else
+            {
+                this.WindowStyle = WindowStyle.None;
+
+            }
+
             InitializeComponent();
             this.vkService = vkService;
             this.configService = configService;
@@ -31,39 +44,36 @@ namespace MusicX.Views
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
 
-            IntPtr windowHandle = new WindowInteropHelper(this).Handle;
+            var os = Environment.OSVersion;
 
-            WPFUI.Appearance.Background.Remove(windowHandle);
-
-            var appTheme = WPFUI.Appearance.Theme.GetAppTheme();
-            var systemTheme = WPFUI.Appearance.Theme.GetSystemTheme();
-            WPFUI.Appearance.Theme.Set(
-            WPFUI.Appearance.ThemeType.Dark,     // Theme type
-            WPFUI.Appearance.BackgroundType.Mica, // Background type
-            true                                  // Whether to change accents automatically
-            );
-
-            if (WPFUI.Appearance.Theme.IsAppMatchesSystem())
+            if (os.Version.Build >= 22000)
             {
-                this.Background = Brushes.Transparent;
-                WPFUI.Appearance.Background.Apply(windowHandle, WPFUI.Appearance.BackgroundType.Mica);
+                IntPtr windowHandle = new WindowInteropHelper(this).Handle;
 
+                WPFUI.Appearance.Background.Remove(windowHandle);
+
+                var appTheme = WPFUI.Appearance.Theme.GetAppTheme();
+                var systemTheme = WPFUI.Appearance.Theme.GetSystemTheme();
+                WPFUI.Appearance.Theme.Set(
+                WPFUI.Appearance.ThemeType.Dark,     // Theme type
+                WPFUI.Appearance.BackgroundType.Mica, // Background type
+                true                                  // Whether to change accents automatically
+                );
+
+                if (WPFUI.Appearance.Theme.IsAppMatchesSystem())
+                {
+                    this.Background = Brushes.Transparent;
+                    WPFUI.Appearance.Background.Apply(windowHandle, WPFUI.Appearance.BackgroundType.Mica);
+
+                }
+
+                var res = WPFUI.Appearance.Theme.IsAppMatchesSystem();
             }
 
-
-            var os = Environment.OSVersion;
 
             logger.Info($"OS Version: {os.VersionString}");
             logger.Info($"OS Build: {os.Version.Build}");
-            if (os.Version.Build >= 22000)
-            {
-                //WPFUI.Appearance.Background.Remove(windowHandle);
-
-                //this.Background = Brushes.Transparent;
-                //WPFUI.Appearance.Background.Apply(windowHandle, WPFUI.Appearance.BackgroundType.Mica);
-                //logger.Info($"OS Build >= 22000, Enabled Mica");
-            }
-
+           
 
             logger.Info("Loaded Login window");
         }

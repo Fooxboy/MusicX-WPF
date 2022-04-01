@@ -1,4 +1,7 @@
 ﻿using DryIoc;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using MusicX.Core.Services;
 using MusicX.Services;
 using MusicX.Views;
@@ -31,6 +34,18 @@ namespace MusicX
 
         public RootWindow(NavigationService navigationService, VkService vkService, Logger logger, ConfigService configService)
         {
+            //Style = "{StaticResource UiWindow}"
+            var os = Environment.OSVersion;
+            if (os.Version.Build >= 22000)
+            {
+                var style = (Style)FindResource("UiWindow");
+                this.Style = style;
+            }else
+            {
+                this.WindowStyle = WindowStyle.None;
+                
+            }
+           
             InitializeComponent();     
             this.navigationService = navigationService;
             this.vkService = vkService;
@@ -69,30 +84,33 @@ namespace MusicX
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
+
             var os = Environment.OSVersion;
 
-            IntPtr windowHandle = new WindowInteropHelper(this).Handle;
-
-            WPFUI.Appearance.Background.Remove(windowHandle);
-
-            var appTheme = WPFUI.Appearance.Theme.GetAppTheme();
-            var systemTheme = WPFUI.Appearance.Theme.GetSystemTheme();
-            WPFUI.Appearance.Theme.Set(
-            WPFUI.Appearance.ThemeType.Dark,     // Theme type
-            WPFUI.Appearance.BackgroundType.Mica, // Background type
-            true                                  // Whether to change accents automatically
-            );
-
-            if (WPFUI.Appearance.Theme.IsAppMatchesSystem())
+            if (os.Version.Build >= 22000)
             {
-                this.Background = Brushes.Transparent;
-                WPFUI.Appearance.Background.Apply(windowHandle, WPFUI.Appearance.BackgroundType.Mica);
+                IntPtr windowHandle = new WindowInteropHelper(this).Handle;
 
+                WPFUI.Appearance.Background.Remove(windowHandle);
+
+                var appTheme = WPFUI.Appearance.Theme.GetAppTheme();
+                var systemTheme = WPFUI.Appearance.Theme.GetSystemTheme();
+                WPFUI.Appearance.Theme.Set(
+                WPFUI.Appearance.ThemeType.Dark,     // Theme type
+                WPFUI.Appearance.BackgroundType.Mica, // Background type
+                true                                  // Whether to change accents automatically
+                );
+
+                if (WPFUI.Appearance.Theme.IsAppMatchesSystem())
+                {
+                    this.Background = Brushes.Transparent;
+                    WPFUI.Appearance.Background.Apply(windowHandle, WPFUI.Appearance.BackgroundType.Mica);
+
+                }
+
+                var res = WPFUI.Appearance.Theme.IsAppMatchesSystem();
             }
-
-            var res = WPFUI.Appearance.Theme.IsAppMatchesSystem();
-
-
+            
             logger.Info($"OS Version: {os.VersionString}");
             logger.Info($"OS Build: {os.Version.Build}");
 
@@ -138,6 +156,9 @@ namespace MusicX
                 var navigationItem = new NavigationItem() { Tag = section.Id, Icon= icon, Content = section.Title,  Type = typeof(SectionView), Instance = sectionPage };
                 navigationBar.Items.Add(navigationItem);
             }
+
+            AppCenter.Start("02130c6d-0a3b-4aa2-b46c-8aeb66c3fd71",
+                   typeof(Analytics), typeof(Crashes));
 
             var item = new NavigationItem() { Tag = "test", Icon = WPFUI.Common.Icon.AppFolder24, Content = "TEST", Type = typeof(TestPage), Instance = new TestPage() };
 

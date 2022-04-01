@@ -1,0 +1,52 @@
+﻿<UserControl x:Class="MusicX.Controls.RecommendedPlaylistControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MusicX.Controls"
+             xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <wpfui:Card>
+            <StackPanel x:Name="MainStackPanel">
+                <Grid Margin="0 0 0 5">
+
+                    <Rectangle x:Name="BackgroundRectangle" MouseEnter="BackgroundRectangle_MouseEnter" MouseLeave="BackgroundRectangle_MouseLeave" MouseLeftButtonDown="BackgroundRectangle_MouseLeftButtonDown" VerticalAlignment="Top" Opacity="1" RadiusX="8" RadiusY="8" Height="120">
+                    </Rectangle>
+                    <StackPanel Margin="10 10 0 0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock x:Name="Percent" FontFamily="{StaticResource VKSansDemiBold}" FontSize="17" Foreground="White" Text="98%"/>
+                            <TextBlock Foreground="White" Margin="5 0 0 0" Text="•"/>
+                            <TextBlock x:Name="Subtitle" Foreground="White" Margin="5 0 0 0" FontSize="15" FontFamily="{StaticResource VKSansRegular}" Text="совпадение с вашим вкусом"/>
+                        </StackPanel>
+
+                        <TextBlock x:Name="NamePlaylist" FontFamily="{StaticResource VKSansDemiBold}" MaxWidth="205" HorizontalAlignment="Left" TextTrimming="CharacterEllipsis" Margin="0 35 0 0" FontSize="20" Foreground="White" Text="Название плейлиста пользователя"/>
+                        <TextBlock x:Name="OwnerName" Foreground="White" Opacity="0.7" MaxWidth="205" TextTrimming="CharacterEllipsis"  HorizontalAlignment="Left" Text="Владелец плейлиста или группа или ещё что то"/>
+
+                    </StackPanel>
+                </Grid>
+
+            </StackPanel>
+
+            
+
+        </wpfui:Card>
+
+        <Grid HorizontalAlignment="Right" VerticalAlignment="Top" Margin=" 0 70 20 0" Height="50" Width="50">
+            <Rectangle x:Name="PlayButton"  RadiusX="99" RadiusY="99" Opacity="0.2"  Fill="Black" >
+
+                <Rectangle.Effect>
+                    <DropShadowEffect Opacity="1" ShadowDepth="10" Color="Black" BlurRadius="30" RenderingBias="Performance"/>
+                </Rectangle.Effect>
+            </Rectangle>
+
+            <Grid MouseEnter="PlayButton_MouseEnter" MouseLeave="PlayButton_MouseLeave" MouseLeftButtonDown="PlayButton_MouseLeftButtonDown" Height="50" Width="50" >
+                <Rectangle Fill="Black" RadiusX="99" RadiusY="99" Opacity="0"/>
+                <wpfui:Icon HorizontalAlignment="Center" HorizontalContentAlignment="Left" x:Name="Icons" Glyph="Play24"  FontSize="23"/>
+
+            </Grid>
+        </Grid>
+      
+    </Grid>
+</UserControl>

@@ -26,5 +26,9 @@ namespace MusicX.Core.Models
 
         [JsonProperty("color")]
         public string Color { get; set; }
+
+        public Playlist Playlist { get; set; }
+
+        public List<Audio> Audios { get; set; } = new List<Audio>();
     }
 }
