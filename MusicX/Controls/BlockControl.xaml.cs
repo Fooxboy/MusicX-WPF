@@ -273,6 +273,13 @@ namespace MusicX.Controls
                     return;
                 }
 
+                if (Block.DataType == "longreads")
+                {
+                    BlocksPanel.Children.Add(new LongreadsSliderBlockControl() { Longreads = Block.Longreads });
+                    logger.Info($"loaded {Block.DataType} block ");
+                    return;
+                }
+
 
                 NotFoundBlock.Visibility = Visibility.Visible;
                 DataTypeName.Text = Block.DataType;

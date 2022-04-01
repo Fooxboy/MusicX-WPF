@@ -505,7 +505,7 @@ namespace MusicX.Core.Helpers
                 {
                     foreach (var lid in block.LongreadsIds)
                     {
-                        var l = response.Response.Longreads.SingleOrDefault(b => b.Id.ToString() == lid);
+                        var l = response.Response.Longreads.SingleOrDefault(b => b.OwnerId + "_" + b.Id == lid);
 
                         if (l == null) continue;
 

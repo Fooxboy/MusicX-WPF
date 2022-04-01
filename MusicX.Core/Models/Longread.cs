@@ -28,7 +28,7 @@ namespace MusicX.Core.Models
         public string OwnerPhoto { get; set; }
 
         [JsonProperty("photo")]
-        public Photo Photo { get; set; }
+        public Cover Photo { get; set; }
 
         [JsonProperty("published_date")]
         public int PublishedDate { get; set; }

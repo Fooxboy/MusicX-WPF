@@ -34,7 +34,7 @@ namespace MusicX.Controls
             if (Podcast == null)
             {
                 this.TitlePodcast.Text = "Вам повезет!";
-                this.Author.Text = "Попробуйте послушать случайный эпизод";
+                this.Author.Text = "Послушать случайный эпизод";
                 Placeholder.Fill = Brushes.LightBlue;
                 return;
 
@@ -42,7 +42,7 @@ namespace MusicX.Controls
             this.PodcastCover.ImageSource = new BitmapImage(new Uri(Podcast.PodcastInfo.Cover.Sizes[3].Url));
             this.TitlePodcast.Text = Podcast.Title;
             this.Author.Text = Podcast.Artist;
-            this.Time.Text = Podcast.Duration.ToString();
+            this.Time.Text = new DateTime(TimeSpan.FromSeconds(Podcast.Duration).Ticks).ToString("HH:mm:ss");
         }
     }
 }

@@ -34,6 +34,8 @@ namespace MusicX.Core.Services
             var services = new ServiceCollection();
             services.AddAudioBypass();
 
+            services.ToList();
+
             vkApi = new VkApi(services);
 
 
@@ -849,6 +851,29 @@ namespace MusicX.Core.Services
                 logger.Error(ex, ex.Message);
                 throw;
             }
+        }
+
+        public async Task<ResponseData> SectionHomeAsync()
+        {
+            var code = "var catalogs = API.catalog.getAudio({\"need_blocks\": 0}).catalog.sections;return API.catalog.getSection({\"need_blocks\": 1, \"section_id\": catalogs[0].id});";
+
+            var parameters = new VkParameters
+                {
+                    {"v", vkApiVersion},
+                    {"lang", "ru"},
+                    {"extended", "1"},
+                    {"device_id", deviceId},
+                    {"access_token", vkApi.Token},
+                    {"code", code},
+                };
+
+
+            var json = await vkApi.InvokeAsync("execute", parameters);
+            var model = JsonConvert.DeserializeObject<ResponseVk>(json);
+
+            logger.Debug("RESULT OF 'execute'" + json);
+
+            return model.Proccess().Response;
         }
     }
 }

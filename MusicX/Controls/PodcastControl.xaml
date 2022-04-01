@@ -30,8 +30,8 @@
                         <TextBlock FontFamily="{StaticResource VKSansDemiBold}" FontSize="19" Foreground="White" x:Name="TitlePodcast" Text="Название подкаста" TextTrimming="CharacterEllipsis"/>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock x:Name="Author" FontSize="15" Opacity="0.6" Margin="0 5 0 0" Foreground="White" Text="Автор"/>
-                            <TextBlock FontSize="15" Opacity="0.6" Margin="0 5 0 0" Foreground="White" Text="-"/>
-                            <TextBlock x:Name="Time" FontSize="15" Opacity="0.6" Margin="0 5 0 0" Foreground="White" Text="1:23:34"/>
+                            <TextBlock FontSize="15" Opacity="0.6" Margin="5 5 0 0" Foreground="White" Text="•"/>
+                            <TextBlock x:Name="Time" FontSize="15" Opacity="0.4" Margin="5 5 0 0" Foreground="White" Text="1:23:34"/>
                         </StackPanel>
                         <wpfui:Button x:Name="Play" Appearance="Transparent" Width="200" HorizontalAlignment="Left" Margin="0 10 0 0" Content="Слушать" Icon="Play20"/>
 

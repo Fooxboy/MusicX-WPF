@@ -126,7 +126,7 @@ namespace MusicX
 
             var rand = new Random();
 
-            foreach(var section in catalogs.Catalog.Sections)
+            foreach (var section in catalogs.Catalog.Sections)
             {
                 var sectionPage = navigationService.SectionView;
                 var number = rand.Next(0, icons.Count);
