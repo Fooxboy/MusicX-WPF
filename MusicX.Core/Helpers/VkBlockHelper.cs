@@ -2,6 +2,7 @@
 using MusicX.Core.Models.General;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -465,6 +466,50 @@ namespace MusicX.Core.Helpers
                         if (curator == null) continue;
 
                         block.Curators.Add(curator);
+
+                    }
+                }
+
+                if (block.PodcastSliderItemsIds.Count > 0)
+                {
+                    foreach (var psid in block.PodcastSliderItemsIds)
+                    {
+                        try
+                        {
+                            var ps = response.Response.PodcastSliderItems.SingleOrDefault(b => b.ItemId == psid);
+                            if (ps == null) continue;
+
+                            block.PodcastSliderItems.Add(ps);
+
+                        }catch(Exception ex)
+                        {
+                            Debug.WriteLine($"Error in psid: {psid}");
+                        }
+                    }
+                }
+
+                if (block.PodcastEpisodesIds.Count > 0)
+                {
+                    foreach (var peid in block.PodcastEpisodesIds)
+                    {
+                        var pe = response.Response.PodcastEpisodes.SingleOrDefault(b => b.OwnerId+"_"+b.Id == peid);
+
+                        if (pe == null) continue;
+
+                        block.PodcastEpisodes.Add(pe);
+
+                    }
+                }
+
+                if (block.LongreadsIds.Count > 0)
+                {
+                    foreach (var lid in block.LongreadsIds)
+                    {
+                        var l = response.Response.Longreads.SingleOrDefault(b => b.Id.ToString() == lid);
+
+                        if (l == null) continue;
+
+                        block.Longreads.Add(l);
 
                     }
                 }

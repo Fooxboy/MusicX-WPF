@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MusicX.Installer" xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
         mc:Ignorable="d"
-        Style="{StaticResource UiWindowNoResize}"
+        Style="{StaticResource UiWindowNoResizeMusicX}"
+        Background="#202020"
         Title="MainWindow" Height="650" Width="350">
     <Grid>
 

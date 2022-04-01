@@ -117,7 +117,7 @@
                             </wpfui:Button>
                             
                             <ToggleButton x:Name="RepeatButton" Click="RepeatButton_Click"  HorizontalContentAlignment="Center" Height="40" Margin="0 0 10 0"  Width="40" Padding="0">
-                                <wpfui:FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE1CD;" />
+                                <wpfui:Icon Glyph="ArrowRepeatAll16" />
                             </ToggleButton>
 
                         </StackPanel>
@@ -131,11 +131,17 @@
                                     </ResourceDictionary.MergedDictionaries>
                                 </ResourceDictionary>
                             </Grid.Resources>
-                            <hc:PreviewSlider Width="150" ValueChanged="Slider_ValueChanged" HorizontalAlignment="Right" Value="1" VerticalAlignment="Center" Maximum="1">
-                                <hc:PreviewSlider.Background>
-                                    <SolidColorBrush Color="White" Opacity="0.3"/>
-                                </hc:PreviewSlider.Background>
-                            </hc:PreviewSlider>
+                            <StackPanel Orientation="Horizontal"  VerticalAlignment="Center" HorizontalAlignment="Right">
+                                <wpfui:Icon x:Name="SpeakerIcon" FontSize="20" Glyph="Speaker248"/>
+                                <hc:PreviewSlider Width="150" Margin="10 0 0 0" ValueChanged="Slider_ValueChanged" Value="1" Maximum="1">
+                                    <hc:PreviewSlider.Background>
+                                        <SolidColorBrush Color="White" Opacity="0.3"/>
+                                    </hc:PreviewSlider.Background>
+                                </hc:PreviewSlider>
+
+                                <wpfui:Button x:Name="OpenFullScreen" Click="OpenFullScreen_Click" Appearance="Transparent" BorderThickness="0" Height="40" Width="40" FontSize="17" Padding="0" Icon="ArrowMaximize16"></wpfui:Button>
+                            </StackPanel>
+                           
                             <!--<Slider Width="150" ValueChanged="Slider_ValueChanged" HorizontalAlignment="Right" Value="1" VerticalAlignment="Center" Maximum="1"/>-->
                         </Grid>
 

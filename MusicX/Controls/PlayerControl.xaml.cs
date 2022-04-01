@@ -2,6 +2,7 @@
 using MusicX.Core.Services;
 using MusicX.Models;
 using MusicX.Services;
+using MusicX.Views;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -177,6 +178,30 @@ namespace MusicX.Controls
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (playerService == null) return;
+
+            if (e.NewValue == 0.0)
+            {
+                SpeakerIcon.Glyph = WPFUI.Common.Icon.SpeakerOff28;
+            }
+            else if (e.NewValue > 0.0 && e.NewValue < 0.50)
+            {
+                SpeakerIcon.Glyph = WPFUI.Common.Icon.Speaker048;
+            }
+            else if (e.NewValue > 0.50 && e.NewValue < 0.60)
+            {
+                SpeakerIcon.Glyph = WPFUI.Common.Icon.Speaker124;
+            }
+            else if (e.NewValue > 0.60 && e.NewValue < 0.90)
+            {
+                SpeakerIcon.Glyph = WPFUI.Common.Icon.Speaker216;
+
+            }
+            else if (e.NewValue > 0.90)
+            {
+                SpeakerIcon.Glyph = WPFUI.Common.Icon.Speaker248;
+            }
+
+
             playerService.SetVolume(e.NewValue);
         }
 
@@ -287,6 +312,12 @@ namespace MusicX.Controls
         {
             this.playerService.SetRepeat(RepeatButton.IsChecked.Value);
 
+        }
+
+        private void OpenFullScreen_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new FullScreenWindow(logger, playerService);
+            win.Show();
         }
     }
 }

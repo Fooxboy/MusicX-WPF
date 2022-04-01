@@ -1,0 +1,98 @@
+﻿<Window x:Class="MusicX.Views.FullScreenWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MusicX.Views"
+      xmlns:hc="https://handyorg.github.io/handycontrol"
+        
+        KeyDown="Window_KeyDown"
+        xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
+        mc:Ignorable="d"
+        WindowStyle="None"
+        WindowState="Maximized"
+        Title="FullScreenWindow" Height="720" Width="1280">
+
+    <Grid>
+
+        <Grid.Resources>
+            <ResourceDictionary>
+                <ResourceDictionary.MergedDictionaries>
+                    <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml"/>
+                    <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml"/>
+                </ResourceDictionary.MergedDictionaries>
+            </ResourceDictionary>
+        </Grid.Resources>
+        
+        <Image HorizontalAlignment="Stretch"  Stretch="UniformToFill" VerticalAlignment="Center" x:Name="BackgroundImage">
+            <Image.Effect>
+                <BlurEffect RenderingBias="Performance" KernelType="Gaussian" Radius="100"/>
+            </Image.Effect>
+        </Image>
+        <Rectangle Fill="Black" Opacity="0.7" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+
+        <TextBlock Opacity="0.7" Text="Сейчас играет" Foreground="White" FontFamily="{StaticResource VKSansDemiBold}" HorizontalAlignment="Center" FontSize="30" Margin="0 20 0 0"/>
+
+        <wpfui:Button FontSize="30" HorizontalAlignment="Right" BorderThickness="0" Height="50" Width="50" Padding="0" VerticalAlignment="Top" Margin="0 20 20 0" x:Name="CloseButton" Icon="ArrowMinimize28" Appearance="Transparent" Click="CloseButton_Click"/>
+
+
+        <StackPanel VerticalAlignment="Center" Orientation="Horizontal" Margin="40 0 0 0">
+            <StackPanel>
+                <Rectangle Height="500" Width="500" HorizontalAlignment="Left"   RadiusX="10" RadiusY="10">
+                    <Rectangle.Fill>
+                        <ImageBrush x:Name="CoverImage"/>
+                    </Rectangle.Fill>
+
+                    <Rectangle.Effect>
+                        <DropShadowEffect BlurRadius="50" ShadowDepth="0" Opacity="0.4" Color="Black"/>
+                    </Rectangle.Effect>
+                </Rectangle>
+            </StackPanel>
+
+            <StackPanel Margin="30 0 0 0" VerticalAlignment="Center">
+                <TextBlock x:Name="TrackName" Foreground="White" FontFamily="{StaticResource VKSansDemiBold}" FontSize="60" Text="Название трека"/>
+                <TextBlock x:Name="ArtistName" Foreground="White" FontFamily="{StaticResource VKSansMedium}" Opacity="0.6" FontSize="40" Text="Имя исполнителя"/>
+
+                <hc:PreviewSlider x:Name="PositionSlider" Grid.Column="1" ValueChanged="PositionSlider_ValueChanged" Margin="0 20 0 0">
+                    <hc:PreviewSlider.Background>
+                        <SolidColorBrush Color="White" Opacity="0.3"/>
+                    </hc:PreviewSlider.Background>
+                </hc:PreviewSlider>
+            </StackPanel>
+            
+            
+
+        </StackPanel>
+
+        <TextBlock HorizontalAlignment="Right" Foreground="White" VerticalAlignment="Bottom" Margin="0 0 10 100" Width="300"  Text="Далее" FontSize="18" Opacity="0.6" FontFamily="{StaticResource VKSansRegular}"/>
+
+        <wpfui:CardAction Click="CardAction_Click" Height="80" ShowChevron="False" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 10 10" Width="300">
+            <Grid>
+                <StackPanel Orientation="Horizontal">
+
+                    <Rectangle Height="50" Width="50" RadiusX="5" RadiusY="5">
+                        <Rectangle.Fill>
+                            <ImageBrush x:Name="NextTrackCover"/>
+                        </Rectangle.Fill>
+                    </Rectangle>
+
+
+
+                    <StackPanel Margin="10 0 0 0">
+                        <TextBlock FontSize="18" Width="185" x:Name="NextTrackName" TextTrimming="CharacterEllipsis" FontFamily="{StaticResource VKSansRegular}" Text="Имя трека"/>
+
+                        <TextBlock FontSize="18" Width="185" x:Name="NextTrackArtist" TextTrimming="CharacterEllipsis" Opacity="0.6" FontFamily="{StaticResource VKSansRegular}" Text="Артист"/>
+                    </StackPanel>
+
+
+                </StackPanel>
+
+
+                <wpfui:Icon HorizontalAlignment="Right" Glyph="Next24" FontSize="25"/>
+
+            </Grid>
+        </wpfui:CardAction>
+
+
+    </Grid>
+</Window>

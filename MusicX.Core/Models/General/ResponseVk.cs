@@ -65,5 +65,17 @@ namespace MusicX.Core.Models.General
         [JsonProperty("profiles")]
         public List<User> Profiles { get; set; }
 
+        [JsonProperty("longreads")]
+        public List<Longread> Longreads { get; set; }
+
+        [JsonProperty("podcast_episodes")]
+        public List<PodcastEpisode> PodcastEpisodes { get; set; }
+
+        [JsonProperty("podcast_slider_items")]
+        public List<PodcastSliderItem> PodcastSliderItems { get; set; }
+
+        [JsonProperty("recommended_playlists")]
+        public List<RecommendedPlaylist> RecommendedPlaylists { get; set; }
+
     }
 }

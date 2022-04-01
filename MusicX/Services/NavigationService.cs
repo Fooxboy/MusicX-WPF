@@ -81,11 +81,11 @@ namespace MusicX.Services
             await SectionView.LoadSearchSection(query);
         }
 
-        public async Task OpenSectionByBlocks(List<Block> blocks)
+        public async Task OpenSectionByBlocks(List<Block> blocks, string next)
         {
             logger.Info($"Open section by {blocks.Count} blocks");
             if (History.First().Source == NavigationSource.Page) CurrentFrame.Navigate(SectionView);
-            await SectionView.SetBlocks(blocks);
+            await SectionView.SetBlocks(blocks, next);
         }
 
         public void AddHistory(NavigationSource source, object data)
@@ -113,10 +113,10 @@ namespace MusicX.Services
 
             if(history.Source == NavigationSource.Section)
             {
-                var blocks = (List<Block>) history.Data;
+                var blocks = ((List<Block> blocks, string next)) history.Data;
 
                 NavigateToPage(SectionView);
-                await OpenSectionByBlocks(blocks);
+                await OpenSectionByBlocks(blocks.blocks, blocks.next);
             }else if(history.Source == NavigationSource.Page)
             {
                 NavigateToPage(history.Data, true);

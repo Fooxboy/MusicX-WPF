@@ -172,10 +172,11 @@ namespace MusicX.ViewModels
             Changed("Blocks");
         }
 
-        public async Task LoadBlocks(List<Block> blocks)
+        public async Task LoadBlocks(List<Block> blocks, string nextValue)
         {
+            this.Next = nextValue;
             nowOpenSearchSug = false;
-            navigationService.AddHistory(Models.Enums.NavigationSource.Section, blocks);
+            navigationService.AddHistory(Models.Enums.NavigationSource.Section, (blocks, this.Next));
 
             await Task.Run(async () =>
             {
@@ -254,7 +255,7 @@ namespace MusicX.ViewModels
 
                     this.Section = section.Section;
 
-                    navigationService.AddHistory(Models.Enums.NavigationSource.Section, section.Section.Blocks);
+                    navigationService.AddHistory(Models.Enums.NavigationSource.Section, (section.Section.Blocks, section.Section.NextFrom));
 
                     this.Section = section.Section;
                     logger.Info($"Loaded {section.Section.Blocks.Count} blocks");
@@ -303,8 +304,6 @@ namespace MusicX.ViewModels
 
                     });
 
-
-                    GC.Collect();
                 }
                 catch (Exception ex)
                 {
@@ -382,12 +381,12 @@ namespace MusicX.ViewModels
                     try
                     {
                         res.Catalog.Sections[0].Blocks[1].Suggestions = res.Suggestions;
-                        await this.LoadBlocks(res.Catalog.Sections[0].Blocks);
+                        await this.LoadBlocks(res.Catalog.Sections[0].Blocks, null);
                         nowOpenSearchSug = true;
                     }
                     catch (Exception ex)
                     {
-                        await this.LoadBlocks(res.Catalog.Sections[0].Blocks);
+                        await this.LoadBlocks(res.Catalog.Sections[0].Blocks, null);
                     }
 
                     return;

@@ -7,6 +7,8 @@
         xmlns:views="clr-namespace:MusicX.Views"
         xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI" xmlns:controls="clr-namespace:MusicX.Controls"
         Loaded="Window_Loaded"
+        Background="#202020"
+        
         Style="{StaticResource UiWindow}"
          d:DesignHeight="720" d:DesignWidth="1280"
         mc:Ignorable="d">

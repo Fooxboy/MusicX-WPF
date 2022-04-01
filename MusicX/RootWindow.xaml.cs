@@ -95,12 +95,11 @@ namespace MusicX
 
             logger.Info($"OS Version: {os.VersionString}");
             logger.Info($"OS Build: {os.Version.Build}");
-            if(os.Version.Build >= 22000)
-            {
-                
-                // WPFUI.Appearance.Background.Remove(windowHandle);
 
-                logger.Info($"OS Build >= 22000, Enabled Mica");
+
+            if (os.Version.Build < 22000)
+            {
+                this.Background = (Brush)new BrushConverter().ConvertFrom("#FF202020");
             }
 
             navigationService.CurrentFrame = RootFrame;

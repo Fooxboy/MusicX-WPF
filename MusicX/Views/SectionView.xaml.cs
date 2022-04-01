@@ -77,7 +77,7 @@ namespace MusicX.Views
             }
         }
 
-        public async Task SetBlocks(List<Block> blocks)
+        public async Task SetBlocks(List<Block> blocks, string next)
         {
             try
             {
@@ -85,7 +85,7 @@ namespace MusicX.Views
                 {
                     BlocksScrollView.ScrollIntoView(BlocksScrollView.Items[0]);
                 }
-                await ViewModel.LoadBlocks(blocks);
+                await ViewModel.LoadBlocks(blocks, next);
             }catch(Exception ex)
             {
                 logger.Error("FATAL ERROR IN SET BLOCK");

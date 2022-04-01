@@ -257,6 +257,22 @@ namespace MusicX.Controls
                     return;
                 }
 
+                if(Block.DataType == "podcast_episodes")
+                {
+                    BlocksPanel.Children.Add(new PodcastsListBlockControl() { Podcasts = Block.PodcastEpisodes});
+                    logger.Info($"loaded {Block.DataType} block ");
+                    return;
+                }
+
+                if(Block.DataType == "podcast_slider_items")
+                {
+                    var p = new List<PodcastEpisode>();
+                    foreach (var item in Block.PodcastSliderItems) p.Add(item.Episode);
+                    BlocksPanel.Children.Add(new PodcastsListBlockControl() { IsSlider = true, Podcasts = p });
+                    logger.Info($"loaded {Block.DataType} block ");
+                    return;
+                }
+
 
                 NotFoundBlock.Visibility = Visibility.Visible;
                 DataTypeName.Text = Block.DataType;

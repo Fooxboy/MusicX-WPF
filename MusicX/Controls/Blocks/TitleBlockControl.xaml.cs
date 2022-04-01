@@ -44,7 +44,7 @@ namespace MusicX.Controls.Blocks
 
             if (Block.Buttons != null && Block.Buttons.Count > 0)
             {
-                if (Block.Buttons.Count > 1 || Block.Buttons[0].Options.Count > 0)
+                if (Block.Buttons[0].Options.Count > 0)
                 {
                     Buttons.Visibility = Visibility.Visible;
                     MoreButton.Visibility = Visibility.Collapsed;
@@ -68,16 +68,32 @@ namespace MusicX.Controls.Blocks
             else
             {
                 
-                if(Block.Actions.Count >0)
+                if(Block.Actions.Count > 0)
                 {
-                    MoreButton.Visibility = Visibility.Visible;
 
-                    MoreButton.Content = Block.Actions[0].Title;
+                    if (Block.Actions[0].Options.Count > 0)
+                    {
+                        Buttons.Visibility = Visibility.Visible;
+                        MoreButton.Visibility = Visibility.Collapsed;
+                        foreach (var option in Block.Actions[0].Options)
+                        {
+                            Buttons.Items.Add(new TextBlock() { Text = option.Text });
+                        }
+                        Buttons.SelectedIndex = 0;
+                        return;
+                    }
+                    else
+                    {
+                        MoreButton.Visibility = Visibility.Visible;
 
-                    return;
+                        MoreButton.Content = Block.Actions[0].Title;
+
+                        return;
+
+                    }
+
                 }
 
-                MoreButton.Visibility = Visibility.Collapsed;
                 return;
             }
         }
@@ -120,7 +136,16 @@ namespace MusicX.Controls.Blocks
 
                 if (current == 0) return;
 
-                var option = Block.Buttons[0].Options[current];
+                OptionButton option;
+                if(Block.Buttons != null)
+                {
+                    option = Block.Buttons[0].Options[current];
+
+                }else
+                {
+                    option = Block.Actions[0].Options[current];
+
+                }
 
                 var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
 

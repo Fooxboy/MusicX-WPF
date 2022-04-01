@@ -61,6 +61,15 @@ namespace MusicX.Core.Models
         [JsonProperty("text_ids")]
         public List<string> TextIds { get; set; } = new List<string>();
 
+        [JsonProperty("podcast_episodes_ids")]
+        public List<string> PodcastEpisodesIds { get; set; } = new List<string>();
+
+        [JsonProperty("podcast_slider_items_ids")]
+        public List<string> PodcastSliderItemsIds { get; set; } = new List<string>();
+
+        [JsonProperty("longreads_ids")]
+        public List<string> LongreadsIds { get; set; } = new List<string>();
+
 
         public List<Curator> Curators { get; set; } = new List<Curator>();
         public List<Text> Texts { get; set; } = new List<Text>();
@@ -71,6 +80,10 @@ namespace MusicX.Core.Models
         public List<Suggestion> Suggestions { get; set; } = new List<Suggestion>();
         public List<Artist> Artists { get; set; } = new List<Artist>();
         public List<Group> Groups { get; set; } = new List<Group>();
+
+        public List<PodcastSliderItem> PodcastSliderItems { get; set; } = new List<PodcastSliderItem>();
+        public List<PodcastEpisode> PodcastEpisodes { get; set; } = new List<PodcastEpisode>();
+        public List<Longread> Longreads { get; set; } = new List<Longread>();
 
     }
 }

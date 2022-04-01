@@ -56,6 +56,12 @@ namespace MusicX.Updater
 
             }
 
+            var os = Environment.OSVersion;
+            if (os.Version.Build < 22000)
+            {
+                this.Background = (Brush)new BrushConverter().ConvertFrom("#FF202020");
+            }
+
 
             try
             {

@@ -23,6 +23,7 @@ namespace MusicX.Services
         private long loadedPlaylistIdTracks;
         public List<Audio> Tracks;
         public Audio CurrentTrack;
+        public Audio NextPlayTrack;
         private DispatcherTimer _positionTimer;
         private readonly MediaPlayer player;
 
@@ -124,6 +125,8 @@ namespace MusicX.Services
                 logger.Info($"play track {track.Id}");
                
                 CurrentTrack = track;
+
+               
                 player.PlaybackSession.Position = TimeSpan.Zero;
 
                 player.Pause();
@@ -149,7 +152,24 @@ namespace MusicX.Services
                 {
                     Debug.WriteLine("track.ParentBlockId != null");
 
-                    if (track.ParentBlockId == this.blockId) return;
+
+
+                    if (track.ParentBlockId == this.blockId)
+                    {
+                        currentIndex = Tracks.IndexOf(Tracks.Single(a => a.Id == CurrentTrack.Id));
+
+
+                        if (currentIndex + 1 > Tracks.Count - 1)
+                        {
+                            NextPlayTrack = CurrentTrack;
+                        }
+                        else
+                        {
+                            NextPlayTrack = Tracks[currentIndex + 1];
+
+                        }
+                        return;
+                    }
 
                     Debug.WriteLine($"track.ParentBlockId = {track.ParentBlockId} | this.blockId = {this.blockId} ");
 
@@ -182,6 +202,16 @@ namespace MusicX.Services
                     currentIndex = Tracks.IndexOf(Tracks.Single(a => a.Id == track.Id));
 
                     Debug.WriteLine($"Played track with index: {currentIndex}");
+
+                    if (currentIndex + 1 > Tracks.Count - 1)
+                    {
+                        NextPlayTrack = CurrentTrack;
+                    }
+                    else
+                    {
+                        NextPlayTrack = Tracks[currentIndex + 1];
+
+                    }
                     return;
                 }
 
@@ -217,7 +247,21 @@ namespace MusicX.Services
                     }
                    
                 });
-            }catch (Exception ex)
+
+                currentIndex = Tracks.IndexOf(Tracks.Single(a => a.Id == CurrentTrack.Id));
+
+
+                if (currentIndex + 1 > Tracks.Count - 1)
+                {
+                    NextPlayTrack = CurrentTrack;
+                }
+                else
+                {
+                    NextPlayTrack = Tracks[currentIndex + 1];
+
+                }
+            }
+            catch (Exception ex)
             {
                 logger.Error("Error in playerService in PlayTrack:");
                 logger.Error(ex, ex.Message);
@@ -301,6 +345,16 @@ namespace MusicX.Services
                 Debug.WriteLine($"Now play track with index: {index}");
 
                 CurrentTrack = Tracks[index];
+
+                if (currentIndex + 1 > Tracks.Count - 1)
+                {
+                    NextPlayTrack = CurrentTrack;
+                }
+                else
+                {
+                    NextPlayTrack = Tracks[currentIndex + 1];
+
+                }
 
                 if (string.IsNullOrEmpty(CurrentTrack.Url))
                 {
