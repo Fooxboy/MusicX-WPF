@@ -43,9 +43,11 @@ namespace MusicX
             }else
             {
                 this.WindowStyle = WindowStyle.None;
-                
+                this.Foreground = Brushes.White;
+
+
             }
-           
+
             InitializeComponent();     
             this.navigationService = navigationService;
             this.vkService = vkService;

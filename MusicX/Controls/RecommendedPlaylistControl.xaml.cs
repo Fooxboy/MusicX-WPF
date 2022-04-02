@@ -38,7 +38,20 @@ namespace MusicX.Controls
         {
             try
             {
-                var value = Convert.ToDouble(Playlist.Percentage.Replace('.', ','));
+                double value;
+
+                try
+                {
+                    value = Convert.ToDouble(Playlist.Percentage);
+
+                }catch(Exception ex)
+                {
+                    value = Convert.ToDouble(Playlist.Percentage.Replace('.', ','));
+
+                }
+
+
+                value = Math.Round(value, 2);
                 Percent.Text = $"{value * 100} %";
                 Subtitle.Text = Playlist.PercentageTitle;
 

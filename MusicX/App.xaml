@@ -8,7 +8,7 @@
 
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/WPFUI;component/Styles/Theme/Light.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/WPFUI;component/Styles/Theme/Dark.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/WPFUI;component/Styles/WPFUI.xaml" />
                 <ResourceDictionary x:Name="ListViewStyles" Source="Styles/ListViewStyles.xaml" />
                 <ResourceDictionary x:Name="ListViewStyles" Source="Styles/SliderStyles.xaml" />

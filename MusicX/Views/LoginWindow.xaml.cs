@@ -31,6 +31,7 @@ namespace MusicX.Views
             else
             {
                 this.WindowStyle = WindowStyle.None;
+                this.Foreground = Brushes.White;
 
             }
 
