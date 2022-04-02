@@ -48,6 +48,14 @@ namespace MusicX.Views
         {
             this.config = await configService.GetConfig();
 
+            if(config.ShowRPC == null)
+            {
+                config.ShowRPC = true;
+            }
+
+
+            ShowRPC.IsChecked = config.ShowRPC.Value;
+
             UserName.Text = config.UserName.Split(' ')[0];
 
             var usr = await vkService.GetCurrentUserAsync();
@@ -159,6 +167,21 @@ namespace MusicX.Views
             MemoryType.Text = "КБ";
 
 
+        }
+
+        private async void ShowRPC_Checked(object sender, RoutedEventArgs e)
+        {
+
+            config.ShowRPC = true;
+
+            await configService.SetConfig(config);
+        }
+
+        private async void ShowRPC_Unchecked(object sender, RoutedEventArgs e)
+        {
+            config.ShowRPC = false;
+
+            await configService.SetConfig(config);
         }
     }
 }

@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Threading;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
+using MusicX.Models;
 using MusicX.ViewModels;
 using NLog;
 using Windows.Media.Core;
@@ -37,12 +38,18 @@ namespace MusicX.Services
         private readonly VkService vkService;
         private readonly Logger logger;
         private readonly PlaylistViewModel plViewModel;
+        private readonly DiscordService discordService;
+        private readonly ConfigService configService;
 
-        public PlayerService(VkService vkService, Logger logger, PlaylistViewModel plViewModel)
+        private ConfigModel config;
+
+        public PlayerService(VkService vkService, Logger logger, PlaylistViewModel plViewModel, DiscordService discordService, ConfigService configService)
         {
             this.vkService = vkService;
             this.logger = logger;
             this.plViewModel = plViewModel;
+            this.discordService = discordService;
+            this.configService = configService;
             player = new MediaPlayer();
             Tracks = new List<Audio>();
 
@@ -65,7 +72,7 @@ namespace MusicX.Services
             _positionTimer = new DispatcherTimer();
             _positionTimer.Interval = TimeSpan.FromMilliseconds(500);
             _positionTimer.Tick += PositionTimerOnTick;
-
+            this.discordService = discordService;
         }
 
         public async Task PlayTrack(Audio track)
@@ -137,6 +144,48 @@ namespace MusicX.Services
                 player.Source = MediaSource.CreateFromAdaptiveMediaSource(ams);
 
                 player.Play();
+
+                string artist;
+
+
+                if(config == null)
+                {
+                    config = await configService.GetConfig();
+                }
+
+                if(config.ShowRPC == null)
+                {
+                    config.ShowRPC = true;
+
+                    await configService.SetConfig(config);
+                }
+
+                if(config.ShowRPC.Value)
+                {
+                    if (CurrentTrack.MainArtists?.Count > 0)
+                    {
+                        string s = string.Empty;
+                        foreach (var trackArtist in CurrentTrack.MainArtists)
+                        {
+                            s += trackArtist.Name + ", ";
+                        }
+
+                        var artists = s.Remove(s.Length - 2);
+
+                        artist = artists;
+
+                    }
+                    else
+                    {
+                        artist = CurrentTrack.Artist;
+                    }
+
+                    TimeSpan t = TimeSpan.FromSeconds(CurrentTrack.Duration);
+                    discordService.SetTrackPlay(artist, CurrentTrack.Title, t);
+                }
+
+                
+
 
                 TrackChangedEvent?.Invoke(this, EventArgs.Empty);
 
@@ -378,6 +427,45 @@ namespace MusicX.Services
                 player.Play();
 
 
+                if (config == null)
+                {
+                    config = await configService.GetConfig();
+                }
+
+                if (config.ShowRPC == null)
+                {
+                    config.ShowRPC = true;
+
+                    await configService.SetConfig(config);
+                }
+
+
+                if(config.ShowRPC.Value)
+                {
+                    string artist;
+
+                    if (CurrentTrack.MainArtists?.Count > 0)
+                    {
+                        string s = string.Empty;
+                        foreach (var trackArtist in CurrentTrack.MainArtists)
+                        {
+                            s += trackArtist.Name + ", ";
+                        }
+
+                        var artists = s.Remove(s.Length - 2);
+
+                        artist = artists;
+
+                    }
+                    else
+                    {
+                        artist = CurrentTrack.Artist;
+                    }
+
+                    TimeSpan t = TimeSpan.FromSeconds(CurrentTrack.Duration);
+                    discordService.SetTrackPlay(artist, CurrentTrack.Title, t);
+                }
+
                 await Application.Current.Dispatcher.BeginInvoke(() =>
                 {
                     PositionTrackChangedEvent?.Invoke(this, TimeSpan.Zero);
@@ -496,6 +584,24 @@ namespace MusicX.Services
 
         public async void Pause()
         {
+
+            if (config == null)
+            {
+                config = await configService.GetConfig();
+            }
+
+            if (config.ShowRPC == null)
+            {
+                config.ShowRPC = true;
+
+                await configService.SetConfig(config);
+            }
+
+            if (config.ShowRPC.Value)
+            {
+                discordService.RemoveTrackPlay();
+            }
+
             try
             {
                 player.Pause();

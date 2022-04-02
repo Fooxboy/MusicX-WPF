@@ -39,6 +39,25 @@
 
             </wpfui:Card>
 
+
+            <TextBlock Margin="5 20 0 0" Text="Discord" FontFamily="{StaticResource VKSansDemiBold}" FontSize="30"/>
+
+            <wpfui:Card Margin="5 5 5 0">
+                <Grid>
+                    <StackPanel HorizontalAlignment="Left">
+
+                        <StackPanel Orientation="Horizontal">
+                            <wpfui:ToggleSwitch  x:Name="ShowRPC" Unchecked="ShowRPC_Unchecked" Checked="ShowRPC_Checked" />
+
+                            <TextBlock Margin="5 0 0 0" Foreground="White" FontSize="18" Text="Показывать трек в Вашей активности "/>
+
+                        </StackPanel>
+
+                    </StackPanel>
+                </Grid>
+            </wpfui:Card>
+
+
             <TextBlock Margin="5 20 0 0" Text="Логи" FontFamily="{StaticResource VKSansDemiBold}" FontSize="30"/>
 
             <wpfui:Card Margin="5 5 5 0">
@@ -62,6 +81,9 @@
                     </StackPanel>
                 </Grid>
             </wpfui:Card>
+            
+            
+            
 
             <TextBlock Margin="5 20 0 0" Text="Информация о Music X" FontFamily="{StaticResource VKSansDemiBold}" FontSize="30"/>
 
@@ -90,6 +112,7 @@
                     </StackPanel>
                 </Grid>
             </wpfui:Card>
+
         </StackPanel>
     </Grid>
 </Page>
