@@ -198,12 +198,15 @@ namespace MusicX.Controls
 
         private void PlayPlaylistGrid_MouseEnter(object sender, MouseEventArgs e)
         {
-            this.Cursor = Cursors.Hand;
+            //this.Cursor = Cursors.Hand;
+            PlayButton.Opacity = 0.7;
         }
 
         private void PlayPlaylistGrid_MouseLeave(object sender, MouseEventArgs e)
         {
-            this.Cursor = Cursors.Arrow;
+            //this.Cursor = Cursors.Arrow;
+            PlayButton.Opacity = 0.5;
+
         }
 
         bool nowLoad = false;

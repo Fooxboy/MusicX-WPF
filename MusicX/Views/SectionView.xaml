@@ -23,11 +23,23 @@
                 </EasingDoubleKeyFrame>
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
+
+
+        <Storyboard x:Key="LoaderAmimation">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LoadingContentGrid" Storyboard.TargetProperty="Opacity">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
     </Page.Resources>
 
     <Grid>
 
-        <Grid x:Name="LoadingContentGrid"
+        <Grid x:Name="LoadingContentGrid" Opacity="0"
               Visibility="{Binding Path=VisibleLoading, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
               HorizontalAlignment="Center" VerticalAlignment="Center" d:IsHidden="True" d:IsLocked="True">
             <StackPanel>
@@ -62,7 +74,7 @@
                 <ListBox.Resources>
                     <ResourceDictionary>
                         <ResourceDictionary.MergedDictionaries>
-                            <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml"/>
+                            <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDark.xaml"/>
                             <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml"/>
                         </ResourceDictionary.MergedDictionaries>
                     </ResourceDictionary>

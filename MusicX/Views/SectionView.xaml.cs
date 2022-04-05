@@ -65,6 +65,12 @@ namespace MusicX.Views
                 {
                     BlocksScrollView.ScrollIntoView(BlocksScrollView.Items[0]);
                 }
+
+
+                var amim = (Storyboard)(this.Resources["LoaderAmimation"]);
+                amim.Begin();
+
+
                 await ViewModel.LoadSection(sectionId, showTitle);
             }catch (Exception ex)
             {
@@ -96,6 +102,8 @@ namespace MusicX.Views
                 {
                     BlocksScrollView.ScrollIntoView(BlocksScrollView.Items[0]);
                 }
+
+
                 await ViewModel.LoadBlocks(blocks, next);
             }catch(Exception ex)
             {
@@ -132,6 +140,9 @@ namespace MusicX.Views
                 {
                     BlocksScrollView.ScrollIntoView(BlocksScrollView.Items[0]);
                 }
+
+                var amim = (Storyboard)(this.Resources["LoaderAmimation"]);
+                amim.Begin();
                 await ViewModel.LoadArtistSection(artistId);
             }catch(Exception ex)
             {
@@ -147,6 +158,9 @@ namespace MusicX.Views
                 {
                     BlocksScrollView.ScrollIntoView(BlocksScrollView.Items[0]);
                 }
+
+                var amim = (Storyboard)(this.Resources["LoaderAmimation"]);
+                amim.Begin();
                 await ViewModel.LoadSearchSection(query);
             }
             catch (Exception ex)

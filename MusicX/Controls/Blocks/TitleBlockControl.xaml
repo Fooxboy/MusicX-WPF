@@ -20,9 +20,16 @@
             <TextBlock FontSize="20" Visibility="Collapsed" VerticalAlignment="Center" Margin="10 5 0 0" Text="123" x:Name="BadgeHeader" Grid.Column="0" Foreground="White" Opacity="0.3"/>
         </StackPanel>
 
-        <ComboBox Grid.Column="1" Background="#2A2A2A" Foreground="White" BorderBrush="#424242" SelectedItem="0" Visibility="Collapsed" Height="30"  Margin="0 0 5 0" VerticalContentAlignment="Center" HorizontalAlignment="Right" Width="170" x:Name="Buttons">
+        <Grid Grid.Column="2" x:Name="ButtonsGrid" HorizontalAlignment="Right" Width="170" Height="30" Visibility="Collapsed"  Margin="0 0 5 0">
+            <TextBlock x:Name="TitleButtons" Foreground="White" Margin="10 5 0 0" Text="brr"/>
 
-        </ComboBox>
+            <ComboBox Grid.Column="1" Background="Transparent" Foreground="White" VerticalContentAlignment="Center" BorderBrush="#424242"    x:Name="Buttons">
+
+            </ComboBox>
+
+
+        </Grid>
+        
 
         <wpfui:Button Grid.Column="1" FontFamily="{StaticResource VKSansDemiBold}" Click="MoreButton_Click" Visibility="Collapsed" x:Name="MoreButton" Appearance="Secondary" Margin="0 0 5 0" HorizontalAlignment="Right" Height="30" Width="100" Padding="0" />
 

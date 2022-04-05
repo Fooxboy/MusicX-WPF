@@ -35,7 +35,7 @@
                 <ColumnDefinition Width="50"/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Orientation="Horizontal">
-                <Grid Margin="6">
+                <Grid Margin="8 6.5 6 6">
 
                     <Rectangle  Height="45" Width="45" Grid.Row="0" Fill="Black" Opacity="0.1" RadiusX="5" RadiusY="5"/>
                     <controls:Icon   Glyph="MusicNote124"  FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />

@@ -57,7 +57,7 @@
                 </Grid>
             </wpfui:Card>
 
-            <TextBlock Margin="5 20 0 0" Text="Полноэкранный режим" FontFamily="{StaticResource VKSansDemiBold}" FontSize="30"/>
+            <TextBlock Visibility="Collapsed" Margin="5 20 0 0" Text="Полноэкранный режим" FontFamily="{StaticResource VKSansDemiBold}" FontSize="30"/>
 
             <wpfui:Card Visibility="Collapsed" Margin="5 5 5 0">
                 <Grid>

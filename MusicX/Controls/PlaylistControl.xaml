@@ -26,9 +26,6 @@
                     <Rectangle  Height="174" Width="174" Grid.Row="0" Fill="Black" Opacity="0.1" RadiusX="5" RadiusY="5"/>
                     <controls:FontIcon Height="174" Width="174" FontSize="50" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontFamily="Segoe Fluent Icons" Glyph="&#xE90B;" />
 
-                  
-
-
                     <Rectangle Height="174" Width="174" Grid.Row="0" RadiusX="5" RadiusY="5">
                         <Rectangle.Fill>
                             <ImageBrush  x:Name="CoverImageCompact" Stretch="UniformToFill"/>
@@ -42,9 +39,14 @@
 
                     </StackPanel>
 
-                    <Grid x:Name="PlayPlaylistGrid" MouseEnter="PlayPlaylistGrid_MouseEnter" Visibility="Collapsed" MouseLeave="PlayPlaylistGrid_MouseLeave" MouseLeftButtonDown="PlayPlaylistGrid_MouseLeftButtonDown" Grid.RowSpan="2" HorizontalAlignment="Right" Margin="0 0 5 45" VerticalAlignment="Bottom">
-                        <Rectangle RadiusX="100" Height="60" Width="60" Opacity="0.8" Fill="Black" RadiusY="100"/>
-                        <controls:Icon x:Name="iconPlay" Glyph="Play28" FontSize="20"/>
+                    <Grid Visibility="Collapsed"  x:Name="PlayPlaylistGrid"  MouseEnter="PlayPlaylistGrid_MouseEnter" MouseLeave="PlayPlaylistGrid_MouseLeave" MouseLeftButtonDown="PlayPlaylistGrid_MouseLeftButtonDown" Grid.RowSpan="2" HorizontalAlignment="Right" Margin="0 0 5 45" VerticalAlignment="Bottom" >
+                        <Rectangle x:Name="PlayButton" Fill="Black"  Height="60" Width="60" RadiusX="99" RadiusY="99" Opacity="0.5">
+                            <Rectangle.Effect>
+                                <DropShadowEffect Opacity="1" ShadowDepth="10" Color="Black" BlurRadius="30" RenderingBias="Performance"/>
+                            </Rectangle.Effect>
+                        </Rectangle>
+                        <controls:Icon  x:Name="iconPlay" Glyph="Play24"  FontSize="23"/>
+
                     </Grid>
 
                 </Grid>

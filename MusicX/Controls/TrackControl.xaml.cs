@@ -167,7 +167,7 @@ namespace MusicX.Controls
                     foreach (var trackArtist in Audio.MainArtists)
                     {
                         s += trackArtist.Name + ", ";
-                        var text = new TextBlock() { Text = trackArtist.Name, Tag = trackArtist.Id, Foreground = Brushes.Black };
+                        var text = new TextBlock() { Text = trackArtist.Name, Tag = trackArtist.Id, Foreground = Brushes.White };
                         text.MouseLeftButtonDown += Text_MouseLeftButtonDown;
                         GoToArtistMenu.Items.Add(text);
                     }

@@ -1,4 +1,6 @@
-﻿using MusicX.Core.Models;
+﻿using DryIoc;
+using MusicX.Core.Models;
+using MusicX.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,6 +45,13 @@ namespace MusicX.Controls
             this.TitlePodcast.Text = Podcast.Title;
             this.Author.Text = Podcast.Artist;
             this.Time.Text = new DateTime(TimeSpan.FromSeconds(Podcast.Duration).Ticks).ToString("HH:mm:ss");
+        }
+
+        private void Play_Click(object sender, RoutedEventArgs e)
+        {
+            var notificationService = StaticService.Container.Resolve<Services.NotificationsService>();
+
+            notificationService.Show("Невозможно воспроизвести подкаст", $"Music X пока что не умеет воспроизводить подкасты.");
         }
     }
 }

@@ -42,17 +42,19 @@ namespace MusicX.Controls.Blocks
                 BadgeHeader.Visibility = Visibility.Visible;
             }
 
-            if (Block.Buttons != null && Block.Buttons.Count > 0)
+            if (Block.Buttons != null && Block.Buttons.Count > 0) //ios
             {
                 if (Block.Buttons[0].Options.Count > 0)
                 {
+                    ButtonsGrid.Visibility = Visibility.Visible;
+                    TitleButtons.Text = Block.Actions[0].Title;
                     Buttons.Visibility = Visibility.Visible;
                     MoreButton.Visibility = Visibility.Collapsed;
                     foreach (var option in Block.Buttons[0].Options)
                     {
                         Buttons.Items.Add(new TextBlock() { Text = option.Text });
                     }
-                    Buttons.SelectedIndex = 0;
+                    //Buttons.SelectedIndex = 0;
                     return;
                 }
                 else
@@ -71,15 +73,19 @@ namespace MusicX.Controls.Blocks
                 if(Block.Actions.Count > 0)
                 {
 
-                    if (Block.Actions[0].Options.Count > 0)
+                    if (Block.Actions[0].Options.Count > 0) //android
                     {
+                        ButtonsGrid.Visibility = Visibility.Visible;
+                        TitleButtons.Text = Block.Actions[0].Title;
                         Buttons.Visibility = Visibility.Visible;
                         MoreButton.Visibility = Visibility.Collapsed;
+                        
+
                         foreach (var option in Block.Actions[0].Options)
                         {
                             Buttons.Items.Add(new TextBlock() { Text = option.Text });
                         }
-                        Buttons.SelectedIndex = 0;
+                        
                         return;
                     }
                     else
@@ -133,8 +139,6 @@ namespace MusicX.Controls.Blocks
                 var comboBox = sender as ComboBox;
 
                 var current = comboBox.SelectedIndex;
-
-                if (current == 0) return;
 
                 OptionButton option;
                 if(Block.Buttons != null)

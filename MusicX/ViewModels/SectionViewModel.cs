@@ -112,39 +112,22 @@ namespace MusicX.ViewModels
 
                 foreach (var replace in replaces.Replacements.ReplacementsModels)
                 {
-                    var startIndex = Blocks.IndexOf(Blocks.SingleOrDefault(b => b.Id == replace.FromBlockId));
+                    var startIndex = Blocks.IndexOf(Blocks.SingleOrDefault(b => b.Id == replace.FromBlockIds.First()));
 
                     if (startIndex == -1)
                     {
-                        foreach (var block in replace.ToBlocks)
-                        {
-
-                            await Application.Current.Dispatcher.BeginInvoke(() =>
-                            {
-                                foreach (var block in replace.ToBlocks)
-                                {
-                                   // if (block.DataType == "none" && block.Buttons[0].Options.Count > 1) continue;
-                                    Blocks.Add(block);
-                                }
-                            });
-                        }
-
                         break;
                     }
-
-                    //startIndex += 1;
 
                     await Application.Current.Dispatcher.BeginInvoke(() =>
                     {
                         for (int i = startIndex; i < Blocks.Count - 1; i++)
                         {
                             Blocks.RemoveAt(i);
-
                         }
 
                         foreach (var block in replace.ToBlocks)
                         {
-                            //if (block.DataType == "none" && block.Buttons[0].Options.Count > 1) continue;
                             Blocks.Add(block);
                         }
                     });

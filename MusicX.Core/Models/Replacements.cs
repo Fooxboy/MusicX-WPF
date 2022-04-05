@@ -9,8 +9,8 @@ namespace MusicX.Core.Models
 {
     public class Replacement
     {
-        [JsonProperty("from_block_id")]
-        public string FromBlockId { get; set; }
+        [JsonProperty("from_block_ids")]
+        public List<string> FromBlockIds { get; set; }
 
         [JsonProperty("to_blocks")]
         public List<Block> ToBlocks { get; set; }

@@ -53,7 +53,7 @@
                 <TextBlock x:Name="TrackName" Foreground="White" FontFamily="{StaticResource VKSansDemiBold}" FontSize="60" Text="Название трека"/>
                 <TextBlock x:Name="ArtistName" Foreground="White" FontFamily="{StaticResource VKSansMedium}" Opacity="0.6" FontSize="40" Text="Имя исполнителя"/>
 
-                <hc:PreviewSlider x:Name="PositionSlider" Width="400" Grid.Column="1" ValueChanged="PositionSlider_ValueChanged" Margin="0 20 0 0">
+                <hc:PreviewSlider x:Name="PositionSlider" Width="600" Grid.Column="1" ValueChanged="PositionSlider_ValueChanged" Margin="0 20 0 0">
                     <hc:PreviewSlider.Background>
                         <SolidColorBrush Color="White" Opacity="0.3"/>
                     </hc:PreviewSlider.Background>
