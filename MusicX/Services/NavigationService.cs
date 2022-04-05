@@ -61,6 +61,11 @@ namespace MusicX.Services
             logger.Info($"Open section {sectionId}");
 
             if (History.First().Source == NavigationSource.Page) CurrentFrame.Navigate(SectionView);
+
+            if (CurrentFrame.Content != typeof(SectionView))
+            {
+                CurrentFrame.Navigate(SectionView);
+            }
             await SectionView.LoadSection(sectionId, showTitle);
         }
 
@@ -71,6 +76,11 @@ namespace MusicX.Services
             {
                 CurrentFrame.Navigate(SectionView);
             }
+
+            if (CurrentFrame.Content != typeof(SectionView))
+            {
+                CurrentFrame.Navigate(SectionView);
+            }
             await SectionView.LoadArtistSection(artistId);
         }
 
@@ -78,6 +88,12 @@ namespace MusicX.Services
         {
             logger.Info($"Open sarch section with query = {query}");
             if (History.First().Source == NavigationSource.Page) CurrentFrame.Navigate(SectionView);
+
+            if(CurrentFrame.Content != typeof(SectionView))
+            {
+                CurrentFrame.Navigate(SectionView);
+            }
+
             await SectionView.LoadSearchSection(query);
         }
 
@@ -85,6 +101,12 @@ namespace MusicX.Services
         {
             logger.Info($"Open section by {blocks.Count} blocks");
             if (History.First().Source == NavigationSource.Page) CurrentFrame.Navigate(SectionView);
+
+            if (CurrentFrame.Content != typeof(SectionView))
+            {
+                CurrentFrame.Navigate(SectionView);
+            }
+
             await SectionView.SetBlocks(blocks, next);
         }
 

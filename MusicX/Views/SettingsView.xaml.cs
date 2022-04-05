@@ -110,6 +110,8 @@ namespace MusicX.Views
 
         private async void CheckUpdates_Click(object sender, RoutedEventArgs e)
         {
+            var notifications = StaticService.Container.Resolve<Services.NotificationsService>();
+
             try
             {
                 var navigation = StaticService.Container.Resolve<Services.NavigationService>();
@@ -119,7 +121,11 @@ namespace MusicX.Views
 
 
 
-                if (release.TagName == StaticService.Version) CheckUpdates.Content = "Уже обновлено";
+                if (release.TagName == StaticService.Version)
+                {
+                    notifications.Show("Уже обновлено!", "У Вас установлена последняя версия MusicX! Обновлений пока что нет");
+
+                }
                 else
                 {
                     navigation.OpenModal(new AvalibleNewUpdateModal(navigation, release), 350, 450);
@@ -128,9 +134,10 @@ namespace MusicX.Views
             }
             catch (Exception ex)
             {
+                notifications.Show("Ошибка", "Произошла ошибка при проверке обновлений");
 
             }
-            
+
         }
 
         private void TelegramButton_Click(object sender, RoutedEventArgs e)

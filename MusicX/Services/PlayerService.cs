@@ -40,10 +40,11 @@ namespace MusicX.Services
         private readonly PlaylistViewModel plViewModel;
         private readonly DiscordService discordService;
         private readonly ConfigService configService;
+        private readonly NotificationsService notificationsService;
 
         private ConfigModel config;
 
-        public PlayerService(VkService vkService, Logger logger, PlaylistViewModel plViewModel, DiscordService discordService, ConfigService configService)
+        public PlayerService(VkService vkService, Logger logger, PlaylistViewModel plViewModel, DiscordService discordService, ConfigService configService, NotificationsService notificationsService)
         {
             this.vkService = vkService;
             this.logger = logger;
@@ -73,6 +74,7 @@ namespace MusicX.Services
             _positionTimer.Interval = TimeSpan.FromMilliseconds(500);
             _positionTimer.Tick += PositionTimerOnTick;
             this.discordService = discordService;
+            this.notificationsService = notificationsService;
         }
 
         public async Task PlayTrack(Audio track)
@@ -293,6 +295,8 @@ namespace MusicX.Services
                     {
                         logger.Error("Error in player service, playTrack => get block items");
                         logger.Error(ex, ex.Message);
+
+                        notificationsService.Show("Ошибка", "Мы не смогли загрузить очередь воспроизведения");
                     }
                    
                 });
@@ -314,6 +318,9 @@ namespace MusicX.Services
             {
                 logger.Error("Error in playerService in PlayTrack:");
                 logger.Error(ex, ex.Message);
+
+                notificationsService.Show("Ошибка", "Произошла ошибка при воспроизведении");
+
             }
         }
 
@@ -480,6 +487,9 @@ namespace MusicX.Services
             {
                 logger.Error("Error in playerService, Play(index)");
                 logger.Error(ex, ex.Message);
+
+                notificationsService.Show("Ошибка", "Произошла ошибка при воспроизведении");
+
             }
 
         }
@@ -503,6 +513,9 @@ namespace MusicX.Services
                 logger.Error("Error in try play track");
                 logger.Error(ex, ex.Message);
                 await NextTrack();
+
+                notificationsService.Show("Ошибка", "Произошла ошибка при воспроизведении");
+
             }
 
         }
@@ -537,6 +550,9 @@ namespace MusicX.Services
             {
                 logger.Error("Error in playerService => NextTrack");
                 logger.Error(ex, ex.Message);
+
+                notificationsService.Show("Ошибка", "Произошла ошибка при воспроизведении");
+
             }
         }
 
@@ -550,8 +566,11 @@ namespace MusicX.Services
             {
                 logger.Error("Error in play");
                 logger.Error(ex, ex.Message);
+
+                notificationsService.Show("Ошибка", "Произошла ошибка при воспроизведении");
+
             }
-            
+
         }
 
         public double Volume
@@ -654,6 +673,9 @@ namespace MusicX.Services
                 logger.Error("Error in playerService => PreviousTrack");
                 logger.Error(e, e.Message);
 
+                notificationsService.Show("Ошибка", "Произошла ошибка при воспроизведении");
+
+
             }
 
         }
@@ -677,6 +699,9 @@ namespace MusicX.Services
             catch (Exception e)
             {
                 logger.Error(e, e.Message);
+
+                notificationsService.Show("Ошибка", "Произошла ошибка при воспроизведении");
+
             }
 
         }
@@ -695,6 +720,7 @@ namespace MusicX.Services
             }
             catch (Exception e)
             {
+                notificationsService.Show("Ошибка", "Произошла ошибка при воспроизведении");
 
                 logger.Error(e, e.Message);
             }
@@ -731,12 +757,17 @@ namespace MusicX.Services
             {
                 logger.Error("Error SourceNotSupported player");
 
+                notificationsService.Show("Ошибка", "Произошла ошибкба SourceNotSupported");
+
+
                 //audio source url may expire
                 await TryPlay();
                 return;
             }
             else if (args.Error == MediaPlayerError.NetworkError)
             {
+                notificationsService.Show("Ошибка", "Мы не смогли воспроизвести трек из-за проблем с сетью");
+
                 logger.Error("Network Error player");
             }
 

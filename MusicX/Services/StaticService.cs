@@ -12,6 +12,6 @@ namespace MusicX.Services
         public static IContainer Container { get; set; }
         public static string Version = "0.22";
         public static string VersionKind = "beta";
-        public static string BuildDate = "2 апреля 2022";
+        public static string BuildDate = "6 апреля 2022";
     }
 }

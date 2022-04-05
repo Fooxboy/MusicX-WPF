@@ -24,13 +24,13 @@
     </UserControl.Resources>
     <Grid>
 
-        <Border CornerRadius="5" >
+        <Border CornerRadius="6" >
             <Border.Clip>
-                <RectangleGeometry x:Name="rec" Rect="0,0, 0, 100" RadiusX="5" RadiusY="5"/>
+                <RectangleGeometry x:Name="rec" Rect="0,0, 0, 100" RadiusX="6" RadiusY="6"/>
             </Border.Clip>
-            <Image x:Name="BackgroundCard" VerticalAlignment="Center" Stretch="UniformToFill">
+            <Image Margin="0.7" x:Name="BackgroundCard" VerticalAlignment="Center" Stretch="UniformToFill">
                 <Image.Effect>
-                    <BlurEffect RenderingBias="Performance" KernelType="Gaussian"  Radius="20"/>
+                    <BlurEffect RenderingBias="Performance" KernelType="Box"  Radius="20"/>
                 </Image.Effect>
             </Image>
         </Border>
