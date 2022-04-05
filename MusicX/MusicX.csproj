@@ -48,6 +48,7 @@
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.5.0" />
     <PackageReference Include="Microsoft.Toolkit.Win32.UI.SDK" Version="6.1.2" />
     <PackageReference Include="WPF-UI" Version="1.2.2" />
+    <PackageReference Include="WpfScreenHelper" Version="2.0.0" />
   </ItemGroup>
 
   <ItemGroup>

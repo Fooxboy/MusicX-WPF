@@ -18,8 +18,9 @@ namespace MusicX.Views
         private readonly ConfigService configService;
         private readonly Logger logger;
         private readonly NavigationService navigationService;
+        private readonly NotificationsService notificationsService;
 
-        public LoginWindow(VkService vkService, ConfigService configService, Logger logger, NavigationService navigationService)
+        public LoginWindow(VkService vkService, ConfigService configService, Logger logger, NavigationService navigationService, NotificationsService notificationsService)
         {
             var os = Environment.OSVersion;
 
@@ -40,6 +41,7 @@ namespace MusicX.Views
             this.configService = configService;
             this.logger = logger;
             this.navigationService = navigationService;
+            this.notificationsService = notificationsService;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -102,19 +104,32 @@ namespace MusicX.Views
 
                 await configService.SetConfig(config);
 
-                var rootWindow = new RootWindow(navigationService, vkService, logger, configService);
+                var rootWindow = new RootWindow(navigationService, vkService, logger, configService, notificationsService);
 
                 rootWindow.Show();
                 this.Close();
 
 
-            }catch (Exception ex)
+            }
+            catch (VkNet.AudioBypassService.Exceptions.VkAuthException ex)
+            {
+                logger.Error("ERROR IN LOGIN VIEW");
+                logger.Error(ex, ex.Message);
+
+                loading.Visibility = Visibility.Collapsed;
+                content.Visibility = Visibility.Visible;
+
+                await RootSnackbar.Expand("Неверные данные", "Вы ввели неверно логин или пароль");
+            }
+            catch (Exception ex)
             {
                 logger.Error("FATAL ERROR IN LOGIN VIEW");
                 logger.Error(ex, ex.Message);
 
                 loading.Visibility = Visibility.Collapsed;
                 content.Visibility = Visibility.Visible;
+
+                await RootSnackbar.Expand("Ошибка", $"Произошла неизвестная ошибка при входе: {ex.Message}");
             }
         }
 

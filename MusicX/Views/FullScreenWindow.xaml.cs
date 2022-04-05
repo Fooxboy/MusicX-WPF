@@ -23,14 +23,16 @@ namespace MusicX.Views
     {
         private readonly Logger logger;
         private readonly PlayerService playerService;
+        private readonly NotificationsService notificationsService;
 
-        public FullScreenWindow(Logger logger, PlayerService playerService)
+        public FullScreenWindow(Logger logger, PlayerService playerService, NotificationsService notificationsService)
         {
             InitializeComponent();
 
             this.Loaded += FullScreenWindow_Loaded;
             this.logger = logger;
             this.playerService = playerService;
+            this.notificationsService = notificationsService;
 
             this.playerService.TrackChangedEvent += PlayerService_TrackChangedEvent;
             playerService.PositionTrackChangedEvent += PlayerService_PositionTrackChangedEvent;
@@ -55,62 +57,73 @@ namespace MusicX.Views
         private void SetData()
         {
 
-            PositionSlider.Maximum = playerService.CurrentTrack.Duration;
-
-
-            if (playerService.CurrentTrack.Album != null)
+            try
             {
+                PositionSlider.Maximum = playerService.CurrentTrack.Duration;
 
-                var bitmapImage = new BitmapImage(new Uri(playerService.CurrentTrack.Album.Thumb.Photo600));
-                BackgroundImage.Source = bitmapImage;
-                CoverImage.ImageSource = bitmapImage;
-            }
 
-            if (playerService.NextPlayTrack != null)
-            {
-                if (playerService.NextPlayTrack.Album != null)
+                if (playerService.CurrentTrack.Album != null)
                 {
-                    NextTrackCover.ImageSource = new BitmapImage(new Uri(playerService.NextPlayTrack.Album.Cover));
 
+                    var bitmapImage = new BitmapImage(new Uri(playerService.CurrentTrack.Album.Thumb.Photo600));
+                    BackgroundImage.Source = bitmapImage;
+                    CoverImage.ImageSource = bitmapImage;
                 }
 
-                NextTrackName.Text = playerService.NextPlayTrack.Title;
-                string s2 = string.Empty;
-                if (playerService.NextPlayTrack.MainArtists != null)
+                if (playerService.NextPlayTrack != null)
                 {
-                    foreach (var trackArtist in playerService.NextPlayTrack.MainArtists)
+                    if (playerService.NextPlayTrack.Album != null)
                     {
-                        s2 += trackArtist.Name + ", ";
+                        NextTrackCover.ImageSource = new BitmapImage(new Uri(playerService.NextPlayTrack.Album.Cover));
+
                     }
 
-                    var artists2 = s2.Remove(s2.Length - 2);
+                    NextTrackName.Text = playerService.NextPlayTrack.Title;
+                    string s2 = string.Empty;
+                    if (playerService.NextPlayTrack.MainArtists != null)
+                    {
+                        foreach (var trackArtist in playerService.NextPlayTrack.MainArtists)
+                        {
+                            s2 += trackArtist.Name + ", ";
+                        }
 
-                    NextTrackArtist.Text = artists2;
+                        var artists2 = s2.Remove(s2.Length - 2);
+
+                        NextTrackArtist.Text = artists2;
+                    }
+                    else
+                    {
+                        NextTrackArtist.Text = playerService.NextPlayTrack.Artist;
+                    }
+                }
+
+
+                TrackName.Text = playerService.CurrentTrack.Title;
+                string s = string.Empty;
+                if (playerService.CurrentTrack.MainArtists != null)
+                {
+                    foreach (var trackArtist in playerService.CurrentTrack.MainArtists)
+                    {
+                        s += trackArtist.Name + ", ";
+                    }
+
+                    var artists = s.Remove(s.Length - 2);
+
+                    ArtistName.Text = artists;
                 }
                 else
                 {
-                    NextTrackArtist.Text = playerService.NextPlayTrack.Artist;
+                    ArtistName.Text = playerService.CurrentTrack.Artist;
                 }
-            }
-
-
-            TrackName.Text = playerService.CurrentTrack.Title;
-            string s = string.Empty;
-            if (playerService.CurrentTrack.MainArtists != null)
+            }catch (Exception ex)
             {
-                foreach (var trackArtist in playerService.CurrentTrack.MainArtists)
-                {
-                    s += trackArtist.Name + ", ";
-                }
+                logger.Error(ex, ex.Message);
+                notificationsService.Show("Произошла ошибка", "MusicX не смог запустить полноэкранный режим");
 
-                var artists = s.Remove(s.Length - 2);
+                this.Close();
 
-                ArtistName.Text = artists;
             }
-            else
-            {
-                ArtistName.Text = playerService.CurrentTrack.Artist;
-            }
+
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
@@ -137,6 +150,7 @@ namespace MusicX.Views
             catch (Exception ex)
             {
                 logger.Error(ex, ex.Message);
+
             }
 
         }

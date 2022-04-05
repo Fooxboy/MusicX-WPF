@@ -29,10 +29,11 @@ namespace MusicX
         private readonly VkService vkService;
         private readonly Logger logger;
         private readonly ConfigService configService;
+        private readonly NotificationsService notificationsService;
 
         private bool PlayerShowed = false;
 
-        public RootWindow(NavigationService navigationService, VkService vkService, Logger logger, ConfigService configService)
+        public RootWindow(NavigationService navigationService, VkService vkService, Logger logger, ConfigService configService, NotificationsService notificationsService)
         {
             //Style = "{StaticResource UiWindow}"
             var os = Environment.OSVersion;
@@ -53,13 +54,22 @@ namespace MusicX
             this.vkService = vkService;
             this.logger = logger;
             this.configService = configService;
+            this.notificationsService = notificationsService;
             var playerSerivce = StaticService.Container.Resolve<PlayerService>();
 
             playerSerivce.TrackChangedEvent += PlayerSerivce_TrackChangedEvent;
 
             navigationService.ClosedModalWindow += NavigationService_ClosedModalWindow;
             navigationService.OpenedModalWindow += NavigationService_OpenedModalWindow;
-            
+
+
+            notificationsService.NewNotificationEvent += NotificationsService_NewNotificationEvent;
+        }
+
+        private async void NotificationsService_NewNotificationEvent(string title, string message)
+        {
+
+            await RootSnackbar.Expand(title, message);
         }
 
         private void NavigationService_OpenedModalWindow(object Page, int height, int width)
@@ -87,51 +97,53 @@ namespace MusicX
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
 
-            var os = Environment.OSVersion;
-
-            if (os.Version.Build >= 22000)
+            try
             {
-                IntPtr windowHandle = new WindowInteropHelper(this).Handle;
+                var os = Environment.OSVersion;
 
-                WPFUI.Appearance.Background.Remove(windowHandle);
-
-                var appTheme = WPFUI.Appearance.Theme.GetAppTheme();
-                var systemTheme = WPFUI.Appearance.Theme.GetSystemTheme();
-                WPFUI.Appearance.Theme.Set(
-                WPFUI.Appearance.ThemeType.Dark,     // Theme type
-                WPFUI.Appearance.BackgroundType.Mica, // Background type
-                true                                  // Whether to change accents automatically
-                );
-
-                if (WPFUI.Appearance.Theme.IsAppMatchesSystem())
+                if (os.Version.Build >= 22000)
                 {
-                    this.Background = Brushes.Transparent;
-                    WPFUI.Appearance.Background.Apply(windowHandle, WPFUI.Appearance.BackgroundType.Mica);
+                    IntPtr windowHandle = new WindowInteropHelper(this).Handle;
 
+                    WPFUI.Appearance.Background.Remove(windowHandle);
+
+                    var appTheme = WPFUI.Appearance.Theme.GetAppTheme();
+                    var systemTheme = WPFUI.Appearance.Theme.GetSystemTheme();
+                    WPFUI.Appearance.Theme.Set(
+                    WPFUI.Appearance.ThemeType.Dark,     // Theme type
+                    WPFUI.Appearance.BackgroundType.Mica, // Background type
+                    true                                  // Whether to change accents automatically
+                    );
+
+                    if (WPFUI.Appearance.Theme.IsAppMatchesSystem())
+                    {
+                        this.Background = Brushes.Transparent;
+                        WPFUI.Appearance.Background.Apply(windowHandle, WPFUI.Appearance.BackgroundType.Mica);
+
+                    }
+
+                    var res = WPFUI.Appearance.Theme.IsAppMatchesSystem();
                 }
 
-                var res = WPFUI.Appearance.Theme.IsAppMatchesSystem();
-            }
-            
-            logger.Info($"OS Version: {os.VersionString}");
-            logger.Info($"OS Build: {os.Version.Build}");
+                logger.Info($"OS Version: {os.VersionString}");
+                logger.Info($"OS Build: {os.Version.Build}");
 
 
-            if (os.Version.Build < 22000)
-            {
-                this.Background = (Brush)new BrushConverter().ConvertFrom("#FF202020");
-            }
+                if (os.Version.Build < 22000)
+                {
+                    this.Background = (Brush)new BrushConverter().ConvertFrom("#FF202020");
+                }
 
-            navigationService.CurrentFrame = RootFrame;
-            navigationService.SectionView = new SectionView();
-            navigationService.SetRootWindow(this);
+                navigationService.CurrentFrame = RootFrame;
+                navigationService.SectionView = new SectionView();
+                navigationService.SetRootWindow(this);
 
-            var catalogs = await vkService.GetAudioCatalogAsync();
-            var podcast = await vkService.GetPodcastsAsync();
+                var catalogs = await vkService.GetAudioCatalogAsync();
+                var podcast = await vkService.GetPodcastsAsync();
 
-            catalogs.Catalog.Sections.Add(podcast.Catalog.Sections[0]);
+                catalogs.Catalog.Sections.Add(podcast.Catalog.Sections[0]);
 
-            var icons = new List<WPFUI.Common.Icon>() 
+                var icons = new List<WPFUI.Common.Icon>()
             {
                  WPFUI.Common.Icon.MusicNote120,
                  WPFUI.Common.Icon.Headphones20,
@@ -144,37 +156,43 @@ namespace MusicX
             };
 
 
-            var rand = new Random();
+                var rand = new Random();
 
-            foreach (var section in catalogs.Catalog.Sections)
-            {
-                var sectionPage = navigationService.SectionView;
-                var number = rand.Next(0, icons.Count);
-                var icon = icons[number];
+                foreach (var section in catalogs.Catalog.Sections)
+                {
+                    var sectionPage = navigationService.SectionView;
+                    var number = rand.Next(0, icons.Count);
+                    var icon = icons[number];
 
-                icons.RemoveAt(number);
+                    icons.RemoveAt(number);
 
-                if (section.Title.ToLower() == "моя музыка") section.Title = "Музыка";
-                var navigationItem = new NavigationItem() { Tag = section.Id, Icon= icon, Content = section.Title,  Type = typeof(SectionView), Instance = sectionPage };
-                navigationBar.Items.Add(navigationItem);
+                    if (section.Title.ToLower() == "моя музыка") section.Title = "Музыка";
+                    var navigationItem = new NavigationItem() { Tag = section.Id, Icon = icon, Content = section.Title, Type = typeof(SectionView), Instance = sectionPage };
+                    navigationBar.Items.Add(navigationItem);
+                }
+
+#if DEBUG
+                var item = new NavigationItem() { Tag = "test", Icon = WPFUI.Common.Icon.AppFolder24, Content = "TEST", Type = typeof(TestPage), Instance = new TestPage() };
+                navigationBar.Items.Add(item);
+#endif
+                var item2 = new NavigationItem() { Tag = "settings", Icon = WPFUI.Common.Icon.Settings24, Content = "Настройки", Type = typeof(SettingsView), Instance = new SettingsView(configService) };
+
+                navigationBar.Items.Add(item2);
+
+                navigationBar.Navigated += NavigationBar_Navigated1;
+
+                navigationBar.Navigate(catalogs.Catalog.Sections[0].Id);
+
+
+                var thread = new Thread(CheckUpdatesInStart);
+                thread.Start();
             }
-
-            AppCenter.Start("02130c6d-0a3b-4aa2-b46c-8aeb66c3fd71",
-                   typeof(Analytics), typeof(Crashes));
-
-            var item = new NavigationItem() { Tag = "test", Icon = WPFUI.Common.Icon.AppFolder24, Content = "TEST", Type = typeof(TestPage), Instance = new TestPage() };
-
-            var item2 = new NavigationItem() { Tag = "settings", Icon = WPFUI.Common.Icon.Settings24, Content = "Настройки", Type = typeof(SettingsView), Instance = new SettingsView(configService) };
-
-            navigationBar.Items.Add(item);
-            navigationBar.Items.Add(item2);
-
-            navigationBar.Navigated += NavigationBar_Navigated1;
-
-            navigationBar.Navigate(catalogs.Catalog.Sections[0].Id);
-
-            var thread = new Thread(CheckUpdatesInStart);
-            thread.Start();
+            catch (Exception ex)
+            {
+                logger.Error(ex, ex.Message);
+                notificationsService.Show("Ошибка запуска", "Попробуйте перезапустить приложение, если ошибка повторяется, напишите об этом разработчику");
+            }
+            
         }
 
         private async void NavigationBar_Navigated1(WPFUI.Controls.Interfaces.INavigation navigation, WPFUI.Controls.Interfaces.INavigationItem current)
@@ -236,17 +254,26 @@ namespace MusicX
         private async void CheckUpdatesInStart()
         {
 
-            await Task.Delay(2000);
-            var github = StaticService.Container.Resolve<GithubService>();
-
-            var release = await github.GetLastRelease();
-
-
-            await Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            try
             {
-                if (release.TagName != StaticService.Version) navigationService.OpenModal(new AvalibleNewUpdateModal(navigationService, release), 350, 450);
+                await Task.Delay(2000);
+                var github = StaticService.Container.Resolve<GithubService>();
 
-            }));
+                var release = await github.GetLastRelease();
+
+
+                await Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    if (release.TagName != StaticService.Version) navigationService.OpenModal(new AvalibleNewUpdateModal(navigationService, release), 350, 450);
+
+                }));
+            }catch(Exception ex)
+            {
+                logger.Error(ex, ex.Message);
+
+                notificationsService.Show("Ошибка проверки обновлений", "Мы не смогли проверить доступные обновления");
+            }
+           
 
         }
     }

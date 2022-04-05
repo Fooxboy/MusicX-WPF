@@ -20,5 +20,8 @@ namespace MusicX.Models
 
         [JsonProperty("show_rpc")]
         public bool? ShowRPC { get; set; }
+
+        [JsonProperty("full_screen_monitor")]
+        public int? FullScreenMonitor { get; set; }
     }
 }

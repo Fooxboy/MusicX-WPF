@@ -99,7 +99,7 @@ namespace MusicX.Controls
 
                 foreach (var playlist in Playlists)
                 {
-                    if (count >= 20) break;
+                    if (count >= 11) break;
                     StackPanelPlaylists.Children.Add(new PlaylistControl() { Playlist = playlist, Height = 250, Width = 200, Margin = new Thickness(0, 0, 10, 0) });
                     count++;
                 }

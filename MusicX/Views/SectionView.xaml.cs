@@ -14,6 +14,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -36,9 +37,19 @@ namespace MusicX.Views
 
             DataContext = ViewModel;
 
+            ViewModel.ContentLoaded += ViewModel_ContentLoaded;
+
 
             logger = StaticService.Container.Resolve<Logger>();
 
+        }
+
+        private void ViewModel_ContentLoaded()
+        {
+            var amim = (Storyboard)(this.Resources["LoadedAmination"]);
+            amim.Begin();
+
+            ContentGrid.Margin = new Thickness(0, 0, 0, 0);
         }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)

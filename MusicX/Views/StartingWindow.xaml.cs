@@ -52,6 +52,7 @@ namespace MusicX.Views
                 container.Register<NavigationService>(Reuse.Singleton);
                 container.Register<ConfigService>(Reuse.Singleton);
                 container.Register<PlayerService>(Reuse.Singleton);
+                container.Register<NotificationsService>(Reuse.Singleton);
                 StaticService.Container = container;
 
                 var vkService = container.Resolve<VkService>();
@@ -69,6 +70,7 @@ namespace MusicX.Views
 
                 var navigationService = container.Resolve<NavigationService>();
                 var configService = container.Resolve<ConfigService>();
+                var notificationsService = container.Resolve<NotificationsService>();
 
                 var config = await configService.GetConfig();
 
@@ -94,14 +96,14 @@ namespace MusicX.Views
                 {
                     if (config.AccessToken is null)
                     {
-                        var login = new LoginWindow(vkService, configService, logger, navigationService);
+                        var login = new LoginWindow(vkService, configService, logger, navigationService, notificationsService);
                         login.Show();
                         this.Close();
                     }
                     else
                     {
                         await vkService.SetTokenAsync(config.AccessToken, null);
-                        var rootWindow = new RootWindow(navigationService, vkService, logger, configService);
+                        var rootWindow = new RootWindow(navigationService, vkService, logger, configService, notificationsService);
                         rootWindow.Show();
                         this.Close();
                     }

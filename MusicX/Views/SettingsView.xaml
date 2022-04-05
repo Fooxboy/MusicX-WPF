@@ -57,6 +57,24 @@
                 </Grid>
             </wpfui:Card>
 
+            <TextBlock Margin="5 20 0 0" Text="Полноэкранный режим" FontFamily="{StaticResource VKSansDemiBold}" FontSize="30"/>
+
+            <wpfui:Card Visibility="Collapsed" Margin="5 5 5 0">
+                <Grid>
+                    <StackPanel HorizontalAlignment="Left">
+
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Margin="5 0 0 0" Foreground="White" FontSize="18" Text="Монитор на котором будет показан полноэкранный режим"/>
+                            <RadioButton Margin="0 5 0 0" GroupName="monitor" Content="Монитор 1"/>
+                            <RadioButton Margin="0 5 0 0" GroupName="monitor" Content="Монитор 2"/>
+                            <RadioButton Margin="0 5 0 0" GroupName="monitor" Content="Монитор 3"/>
+
+                        </StackPanel>
+
+                    </StackPanel>
+                </Grid>
+            </wpfui:Card>
+
 
             <TextBlock Margin="5 20 0 0" Text="Логи" FontFamily="{StaticResource VKSansDemiBold}" FontSize="30"/>
 

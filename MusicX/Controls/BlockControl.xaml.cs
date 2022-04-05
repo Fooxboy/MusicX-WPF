@@ -296,8 +296,14 @@ namespace MusicX.Controls
             }
             catch (Exception ex)
             {
+
                 logger.Error("Fatal error show block content:");
                 logger.Error(ex);
+
+                var notificationService = StaticService.Container.Resolve<Services.NotificationsService>();
+
+                notificationService.Show("Произошла ошибка", $"Music X не смог показать блок {Block.DataType}");
+
             }
         }
 
@@ -329,6 +335,10 @@ namespace MusicX.Controls
                 var logger = StaticService.Container.Resolve<Logger>();
 
                 logger.Error(ex, ex.Message);
+
+                var notificationService = StaticService.Container.Resolve<Services.NotificationsService>();
+
+                notificationService.Show("Произошла ошибка", $"Music X не смог выполнить действие в блоке {Block.DataType}");
             }
         }
     }

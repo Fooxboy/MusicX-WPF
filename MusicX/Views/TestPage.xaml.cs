@@ -56,5 +56,13 @@ namespace MusicX.Views
 
             await navigationService.OpenArtistSection(artist.Text);
         }
+
+        private void showNotification_Click(object sender, RoutedEventArgs e)
+        {
+            var notificationsService = StaticService.Container.Resolve<Services.NotificationsService>();
+
+            notificationsService.Show("Заголовок", "Сообщение");
+
+        }
     }
 }

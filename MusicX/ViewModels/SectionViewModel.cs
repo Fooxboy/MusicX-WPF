@@ -18,6 +18,9 @@ namespace MusicX.ViewModels
         private readonly VkService vkService;
         private readonly NavigationService navigationService;
         private readonly Logger logger;
+        private readonly NotificationsService notificationsService;
+
+        public event Action ContentLoaded;
 
         public Visibility VisibleLoading { get; set; }
 
@@ -28,13 +31,14 @@ namespace MusicX.ViewModels
 
         public ObservableCollection<Block> Blocks { get; set; } = new ObservableCollection<Block>();
 
-        public SectionViewModel(VkService vkService, NavigationService navigationService, Logger logger)
+        public SectionViewModel(VkService vkService, NavigationService navigationService, Logger logger, NotificationsService notificationsService)
         {
             this.vkService = vkService;
             VisibleContent = Visibility.Collapsed;
             VisibleLoading = Visibility.Collapsed;
             this.navigationService = navigationService;
             this.logger = logger;
+            this.notificationsService = notificationsService;
         }
 
         private bool nowLoading = false;
@@ -86,13 +90,7 @@ namespace MusicX.ViewModels
                 {
                     logger.Error(ex, ex.Message);
 
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        var msgbox = new WPFUI.Controls.MessageBox();
-                        msgbox.Foreground = Brushes.Black;
-                        msgbox.Show("Exception", ex.Message);
-
-                    });
+                    notificationsService.Show("Произошла ошибка", "MusicX не смог подргрузить контент");
                 }
             });
 
@@ -155,19 +153,13 @@ namespace MusicX.ViewModels
 
                 }
 
-                GC.Collect();
 
             }
             catch (Exception ex)
             {
                 logger.Error(ex, ex.Message);
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    var msgbox = new WPFUI.Controls.MessageBox();
-                    msgbox.Foreground = Brushes.Black;
-                    msgbox.Show("Exception", ex.Message);
+                    notificationsService.Show("Произошла ошибка", "MusicX не смог заменить блоки");
 
-                });
             }
             Changed("Blocks");
         }
@@ -200,13 +192,7 @@ namespace MusicX.ViewModels
                         {
                             logger.Error(ex, ex.Message);
 
-                            Application.Current.Dispatcher.Invoke(() =>
-                            {
-                                var msgbox = new WPFUI.Controls.MessageBox();
-                                msgbox.Foreground = Brushes.Black;
-                                msgbox.Show("Exception", ex.Message);
-
-                            });
+                            notificationsService.Show("Произошла ошибка", "MusicX не смог подргрузить контент");
                         }
 
                     });
@@ -220,13 +206,17 @@ namespace MusicX.ViewModels
                         Changed("VisibleContent");
                         Changed("Blocks");
 
+                        this.ContentLoaded?.Invoke();
+
                     });
-                    GC.Collect();
 
                 }
                 catch (Exception ex)
                 {
                     logger.Error(ex, ex.Message);
+
+                    notificationsService.Show("Произошла ошибка", "MusicX не смог загрузить контент");
+
                 }
             });
             
@@ -235,92 +225,90 @@ namespace MusicX.ViewModels
         public async Task LoadSection(string sectionId, bool showTitle = false)
         {
             nowOpenSearchSug = false;
-            await Task.Run(async () =>
+
+            try
             {
-                try
+                logger.Info($"Load section {sectionId}");
+
+                await Application.Current.Dispatcher.BeginInvoke(() =>
                 {
-                    logger.Info($"Load section {sectionId}");
+                    VisibleLoading = Visibility.Visible;
+                    VisibleContent = Visibility.Collapsed;
 
-                    await Application.Current.Dispatcher.BeginInvoke(() =>
-                    {
-                        VisibleLoading = Visibility.Visible;
-                        VisibleContent = Visibility.Collapsed;
-
-                        Changed("VisibleLoading");
-                        Changed("VisibleContent");
-                    });
+                    Changed("VisibleLoading");
+                    Changed("VisibleContent");
+                });
 
 
-                    var section = await vkService.GetSectionAsync(sectionId).ConfigureAwait(false);
+                var section = await vkService.GetSectionAsync(sectionId).ConfigureAwait(false);
 
-                    this.Section = section.Section;
+                this.Section = section.Section;
 
-                    navigationService.AddHistory(Models.Enums.NavigationSource.Section, (section.Section.Blocks, section.Section.NextFrom));
+                navigationService.AddHistory(Models.Enums.NavigationSource.Section, (section.Section.Blocks, section.Section.NextFrom));
 
-                    this.Section = section.Section;
-                    logger.Info($"Loaded {section.Section.Blocks.Count} blocks");
+                this.Section = section.Section;
+                logger.Info($"Loaded {section.Section.Blocks.Count} blocks");
 
 
-                    var obsCollection = new ObservableCollection<Block>();
+                var obsCollection = new ObservableCollection<Block>();
 
-                    if(showTitle)
-                    {
-                        obsCollection.Add(new Block() { DataType = "none", Layout = new Layout() { Name = "header", Title = Section.Title } });
-                    }
-                    foreach (var block in section.Section.Blocks)
-                    {
-                        obsCollection.Add(block);
-                    }
-
-                    await Application.Current.Dispatcher.BeginInvoke(() =>
-                    {
-                        try
-                        {
-                            this.Blocks = null;
-
-                            this.Blocks = obsCollection;
-
-                            obsCollection = null;
-                        }
-                        catch (Exception ex)
-                        {
-                            logger.Error("Fatal error during show blocks:");
-
-                            logger.Error(ex, ex.Message);
-                        }
-
-                    });
-
-                    Next = section.Section.NextFrom;
-
-                    await Application.Current.Dispatcher.BeginInvoke(() =>
-                    {
-                        VisibleLoading = Visibility.Collapsed;
-                        VisibleContent = Visibility.Visible;
-
-                        Changed("VisibleLoading");
-                        Changed("VisibleContent");
-                        Changed("Blocks");
-
-                    });
-
-                }
-                catch (Exception ex)
+                if (showTitle)
                 {
-                    logger.Error("Fatal error in Section View Model:");
-
-                    logger.Error(ex, ex.Message);
-
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        var msgbox = new WPFUI.Controls.MessageBox();
-                        msgbox.Foreground = Brushes.Black;
-                        msgbox.Show("Exception", ex.Message);
-
-                    });
+                    obsCollection.Add(new Block() { DataType = "none", Layout = new Layout() { Name = "header", Title = Section.Title } });
                 }
-            });
-           
+                foreach (var block in section.Section.Blocks)
+                {
+                    obsCollection.Add(block);
+                }
+
+                await Application.Current.Dispatcher.BeginInvoke(() =>
+                {
+                    try
+                    {
+                        this.Blocks = null;
+
+                        this.Blocks = obsCollection;
+
+                        obsCollection = null;
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Error("Fatal error during show blocks:");
+
+                        logger.Error(ex, ex.Message);
+                    }
+
+                });
+
+                Next = section.Section.NextFrom;
+
+
+                await Application.Current.Dispatcher.BeginInvoke(() =>
+                {
+
+                    VisibleLoading = Visibility.Collapsed;
+                    VisibleContent = Visibility.Visible;
+
+                    Changed("VisibleLoading");
+                    Changed("VisibleContent");
+                    Changed("Blocks");
+
+                    this.ContentLoaded?.Invoke();
+
+                });
+
+
+            }
+            catch (Exception ex)
+            {
+                logger.Error("Fatal error in Section View Model:");
+
+                logger.Error(ex, ex.Message);
+
+                notificationsService.Show("Произошла ошибка", "MusicX не смог загрузить контент");
+
+            }
+
         }
 
         public async Task LoadArtistSection(string artistId)
@@ -349,13 +337,8 @@ namespace MusicX.ViewModels
 
                 logger.Error(ex, ex.Message);
 
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    var msgbox = new WPFUI.Controls.MessageBox();
-                    msgbox.Foreground = Brushes.Black;
-                    msgbox.Show("Exception", ex.Message);
+                notificationsService.Show("Произошла ошибка", "MusicX не смог загрузить контент");
 
-                });
             }
         }
 
@@ -402,13 +385,8 @@ namespace MusicX.ViewModels
 
                 logger.Error(ex, ex.Message);
 
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    var msgbox = new WPFUI.Controls.MessageBox();
-                    msgbox.Foreground = Brushes.White;
-                    msgbox.Show("Exception", ex.Message);
+                notificationsService.Show("Произошла ошибка", "MusicX не смог загрузить контент");
 
-                });
             }
         }
     }

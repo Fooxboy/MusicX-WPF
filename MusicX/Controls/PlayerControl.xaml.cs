@@ -274,22 +274,31 @@ namespace MusicX.Controls
             try
             {
                 var vkService = StaticService.Container.Resolve<VkService>();
+                var notificationService = StaticService.Container.Resolve<Services.NotificationsService>();
 
                 if (playerService.CurrentTrack.OwnerId == config.UserId)
                 {
                     LikeIcon.Glyph = '\uE006';
                     await vkService.AudioDeleteAsync(playerService.CurrentTrack.Id, playerService.CurrentTrack.OwnerId);
-
+                    notificationService.Show("Удалено из вашей библиотеки", $"Трек {this.ArtistName.Text} - {this.TrackTitle.Text} теперь удален из вашей музыки");
+                    playerService.CurrentTrack.OwnerId = 0;
                 }
                 else
                 {
                     LikeIcon.Glyph = '\uE00B';
                     await vkService.AudioAddAsync(playerService.CurrentTrack.Id, playerService.CurrentTrack.OwnerId);
+
+                    notificationService.Show("Добавлено в вашу библиотеку", $"Трек {this.ArtistName.Text} - {this.TrackTitle.Text} теперь находится в Вашей музыке!");
                 }
-            }catch(Exception ex)
+            }
+            catch(Exception ex)
             {
                 logger.Error("Error in like track");
                 logger.Error(ex, ex.Message);
+
+                var notificationService = StaticService.Container.Resolve<Services.NotificationsService>();
+
+                notificationService.Show("Ошибка", $"Мы не смогли добавить этот трек :с");
             }
         }
 
@@ -314,10 +323,30 @@ namespace MusicX.Controls
 
         }
 
-        private void OpenFullScreen_Click(object sender, RoutedEventArgs e)
+        private async void OpenFullScreen_Click(object sender, RoutedEventArgs e)
         {
-            var win = new FullScreenWindow(logger, playerService);
-            win.Show();
+            var notificationService = StaticService.Container.Resolve<Services.NotificationsService>();
+
+            var win = new FullScreenWindow(logger, playerService, notificationService);
+
+            ShowOnMonitor(win);
+        }
+
+        private void ShowOnMonitor(Window window)
+        {
+
+            var screen = WpfScreenHelper.Screen.FromWindow(Application.Current.MainWindow);
+
+            window.WindowStyle = WindowStyle.None;
+            window.WindowStartupLocation = WindowStartupLocation.Manual;
+
+            window.Left = screen.Bounds.Left;
+            window.Top = screen.Bounds.Top;
+
+            window.SourceInitialized += (snd, arg) =>
+                window.WindowState = WindowState.Maximized;
+
+            window.Show();
         }
     }
 }

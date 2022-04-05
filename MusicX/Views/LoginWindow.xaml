@@ -37,6 +37,17 @@
             </Grid>
                
         </wpfui:Card>
-        
+
+        <wpfui:Snackbar
+                x:Name="RootSnackbar"
+                Title="Hello World!"
+                Grid.Row="0"
+                MaxWidth="600"
+                Icon="Info24"
+                Message="Remember that the Heat Death of Universe is coming someday, no time to explain - let's go!"
+                Show="False"
+                ShowCloseButton="True"
+                Timeout="5000" />
+
     </Grid>
 </Window>

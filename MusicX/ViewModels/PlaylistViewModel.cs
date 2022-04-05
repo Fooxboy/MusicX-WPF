@@ -34,14 +34,17 @@ namespace MusicX.ViewModels
 
         private readonly VkService vkService;
         private readonly Logger logger;
+        private readonly NotificationsService notificationsService;
 
         public ConfigService ConfigService { get; set; }
 
-        public PlaylistViewModel(VkService vkService, Logger logger, ConfigService configService)
+        public PlaylistViewModel(VkService vkService, Logger logger, ConfigService configService, NotificationsService notificationsService)
         {
             this.vkService = vkService;
             this.ConfigService = configService;
             this.logger = logger;
+
+            this.notificationsService = notificationsService;
         }
 
         public async Task LoadPlaylist(Playlist playlist, bool delete = true)
@@ -157,8 +160,11 @@ namespace MusicX.ViewModels
             {
                 logger.Error("Fatal error in load playlist");
                 logger.Error(ex, ex.Message);
+
+                notificationsService.Show("Произошла ошибка", "MusicX не смог загрузить контент");
+
             }
-            
+
 
 
         }
@@ -184,8 +190,11 @@ namespace MusicX.ViewModels
             {
                 logger.Error("Fatal error in load playlist from data");
                 logger.Error(ex, ex.Message);
+
+                notificationsService.Show("Произошла ошибка", "MusicX не смог загрузить контент");
+
             }
-            
+
         }
 
         public async Task<bool> AddPlaylist()
@@ -198,6 +207,8 @@ namespace MusicX.ViewModels
             {
                 logger.Error("Error in add playlist");
                 logger.Error(ex, ex.Message);
+                notificationsService.Show("Произошла ошибка", "MusicX не смог добавить плейлист");
+
                 return false;
             }
         }
@@ -213,6 +224,8 @@ namespace MusicX.ViewModels
             {
                 logger.Error("Error in remove playlist");
                 logger.Error(ex, ex.Message);
+                notificationsService.Show("Произошла ошибка", "MusicX не смог удалить плейлист");
+
                 return false;
             }
         }

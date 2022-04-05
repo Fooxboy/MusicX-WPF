@@ -12,12 +12,24 @@
       Loaded="Page_Loaded"
       d:DesignHeight="450" d:DesignWidth="800"
       Title="SectionView">
+    <Page.Resources>
+        <Storyboard x:Key="LoadedAmination">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ContentGrid" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="1200"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.8000000" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </Page.Resources>
 
     <Grid>
 
         <Grid x:Name="LoadingContentGrid"
               Visibility="{Binding Path=VisibleLoading, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-              HorizontalAlignment="Center" VerticalAlignment="Center">
+              HorizontalAlignment="Center" VerticalAlignment="Center" d:IsHidden="True" d:IsLocked="True">
             <StackPanel>
                 <wpfui:ProgressRing Height="60"  EngAngle="1"  IsIndeterminate="True" Width="60" IsEnabled="True"/>
                 <TextBlock Foreground="White" HorizontalAlignment="Center" Margin="0 10 0 0" 
@@ -25,7 +37,17 @@
             </StackPanel>
         </Grid>
 
-        <Grid x:Name="ContentGrid" Visibility="{Binding Path=VisibleContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+        <Grid x:Name="ContentGrid" RenderTransformOrigin="0.5,0.5" Visibility="{Binding Path=VisibleContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+
+            <Grid.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform X="1200"/>
+                </TransformGroup>
+            </Grid.RenderTransform>
+
             <ListBox BorderThickness="0"     
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
                   VerticalContentAlignment="Top" 
@@ -35,7 +57,7 @@
                     ScrollViewer.CanContentScroll="False"
                   x:Name="BlocksScrollView"
                   ItemsSource="{Binding Path=Blocks, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                  Background="Transparent">
+                  Background="Transparent" RenderTransformOrigin="0.5,0.5">
 
                 <ListBox.Resources>
                     <ResourceDictionary>
@@ -45,6 +67,14 @@
                         </ResourceDictionary.MergedDictionaries>
                     </ResourceDictionary>
                 </ListBox.Resources>
+                <ListBox.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </ListBox.RenderTransform>
 
                 <ListBox.Template>
                     <ControlTemplate TargetType="{x:Type ListBox}">
@@ -53,7 +83,7 @@
                         </hc:ScrollViewer>
                     </ControlTemplate>
                 </ListBox.Template>
-                
+
 
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
@@ -75,10 +105,10 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-            
-            
+
+
         </Grid>
 
-        
+
     </Grid>
 </Page>

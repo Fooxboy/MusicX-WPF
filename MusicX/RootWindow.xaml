@@ -137,6 +137,20 @@
             </controls:PlayerControl.RenderTransform>
 
         </controls:PlayerControl>
+
+        <wpfui:Snackbar
+                x:Name="RootSnackbar"
+                Title="Hello World!"
+            Grid.RowSpan="3"
+            Grid.ColumnSpan="3"
+                MaxWidth="600"
+            Margin="0 0 0 40"
+                Icon="PuzzlePiece24"
+                Message="Remember that the Heat Death of Universe is coming someday, no time to explain - let's go!"
+                Show="False"
+                ShowCloseButton="True"
+                Timeout="5000" />
+
         <wpfui:Button Height="40" Click="Button_Click" BorderThickness="0"  Width="70" Padding="0" HorizontalAlignment="Left" Appearance="Transparent">
             <Button.Content>
                 <wpfui:FontIcon Margin="0 0 0 0" FontFamily="Segoe Fluent Icons" Glyph="&#xE0A6;" />
