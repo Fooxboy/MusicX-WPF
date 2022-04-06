@@ -26,6 +26,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicX.Updater", "MusicX.Up
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VkNet.AudioBypassService", "VkNet.AudioBypassService\VkNet.AudioBypassService.csproj", "{F05AC765-4098-45D9-B98D-C309995FDDDA}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscordRPC", "DiscordRPC\DiscordRPC.csproj", "{B67F48FE-FE54-4E0D-8A3D-69F4BE6B6424}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -68,6 +70,10 @@ Global
 		{F05AC765-4098-45D9-B98D-C309995FDDDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F05AC765-4098-45D9-B98D-C309995FDDDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F05AC765-4098-45D9-B98D-C309995FDDDA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B67F48FE-FE54-4E0D-8A3D-69F4BE6B6424}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B67F48FE-FE54-4E0D-8A3D-69F4BE6B6424}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B67F48FE-FE54-4E0D-8A3D-69F4BE6B6424}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B67F48FE-FE54-4E0D-8A3D-69F4BE6B6424}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -183,7 +183,16 @@ namespace MusicX.Services
                     }
 
                     TimeSpan t = TimeSpan.FromSeconds(CurrentTrack.Duration);
-                    discordService.SetTrackPlay(artist, CurrentTrack.Title, t);
+
+                    string cover = "";
+                    if(track.Album == null)
+                    {
+                        cover = "album";
+                    }else
+                    {
+                        cover = track.Album.Cover;
+                    }
+                    discordService.SetTrackPlay(artist, CurrentTrack.Title, t, cover);
                 }
 
                 
@@ -470,7 +479,20 @@ namespace MusicX.Services
                     }
 
                     TimeSpan t = TimeSpan.FromSeconds(CurrentTrack.Duration);
-                    discordService.SetTrackPlay(artist, CurrentTrack.Title, t);
+
+
+                    string cover = "";
+                    if (track.Album == null)
+                    {
+                        cover = "album";
+                    }
+                    else
+                    {
+                        cover = CurrentTrack.Album.Cover;
+                    }
+
+                    discordService.SetTrackPlay(artist, CurrentTrack.Title, t, cover);
+
                 }
 
                 await Application.Current.Dispatcher.BeginInvoke(() =>
