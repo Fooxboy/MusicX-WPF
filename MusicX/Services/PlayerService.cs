@@ -150,12 +150,9 @@ namespace MusicX.Services
                 string artist;
 
 
-                if(config == null)
-                {
-                    config = await configService.GetConfig();
-                }
+                config = await configService.GetConfig();
 
-                if(config.ShowRPC == null)
+                if (config.ShowRPC == null)
                 {
                     config.ShowRPC = true;
 
@@ -442,11 +439,7 @@ namespace MusicX.Services
                 
                 player.Play();
 
-
-                if (config == null)
-                {
-                    config = await configService.GetConfig();
-                }
+                config = await configService.GetConfig();
 
                 if (config.ShowRPC == null)
                 {

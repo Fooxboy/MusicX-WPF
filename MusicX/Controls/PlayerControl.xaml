@@ -133,7 +133,7 @@
                             </Grid.Resources>
                             <StackPanel Orientation="Horizontal"  VerticalAlignment="Center" HorizontalAlignment="Right">
                                 <wpfui:Icon x:Name="SpeakerIcon" FontSize="20" Glyph="Speaker248"/>
-                                <hc:PreviewSlider Width="150" Margin="10 0 0 0" ValueChanged="Slider_ValueChanged" Value="1" Maximum="1">
+                                <hc:PreviewSlider x:Name="Volume" Width="150" Margin="10 0 0 0" ValueChanged="Slider_ValueChanged" Maximum="1">
                                     <hc:PreviewSlider.Background>
                                         <SolidColorBrush Color="White" Opacity="0.3"/>
                                     </hc:PreviewSlider.Background>

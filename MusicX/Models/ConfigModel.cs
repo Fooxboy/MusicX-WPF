@@ -23,5 +23,8 @@ namespace MusicX.Models
 
         [JsonProperty("full_screen_monitor")]
         public int? FullScreenMonitor { get; set; }
+
+        [JsonProperty("volume")]
+        public int? Volume { get; set; }
     }
 }

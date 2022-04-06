@@ -43,13 +43,13 @@ namespace MusicX.Controls
             
         }
 
-        private void PlayerService_TrackChangedEvent(object? sender, EventArgs e)
+        private async void PlayerService_TrackChangedEvent(object? sender, EventArgs e)
         {
             try
             {
                 if (playerService == null) return;
 
-                Application.Current.Dispatcher.BeginInvoke(() =>
+                await Application.Current.Dispatcher.BeginInvoke(() =>
                 {
                     TrackTitle.Text = playerService.CurrentTrack.Title;
                     string s = string.Empty;
@@ -101,11 +101,15 @@ namespace MusicX.Controls
 
                     }
                 });
+
+
+                await SaveVolume();
             }
             catch (Exception ex)
             {
                 logger.Error("Error in track changed event");
                 logger.Error(ex, ex.Message);
+                
             }
             
         }
@@ -205,9 +209,11 @@ namespace MusicX.Controls
             playerService.SetVolume(e.NewValue);
         }
 
-        private void PlayPauseButton_Click(object sender, RoutedEventArgs e)
+        private async void PlayPauseButton_Click(object sender, RoutedEventArgs e)
         {
             if (playerService == null) return;
+
+            await SaveVolume();
 
             if (playerService.IsPlaying) playerService.Pause();
             else playerService.Play();
@@ -216,6 +222,8 @@ namespace MusicX.Controls
         private async void NextButton_Click(object sender, RoutedEventArgs e)
         {
             if (playerService == null) return;
+
+            await SaveVolume();
 
             await playerService.NextTrack();
         }
@@ -245,6 +253,17 @@ namespace MusicX.Controls
             }
             this.Cursor = Cursors.Arrow;
 
+        }
+
+        private async Task SaveVolume()
+        {
+            var value = Volume.Value * 100;
+
+            config.Volume = (int)value;
+
+            var configService = StaticService.Container.Resolve<ConfigService>();
+
+            await configService.SetConfig(config);
         }
 
         private async void ArtistName_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -307,13 +326,25 @@ namespace MusicX.Controls
             var configService = StaticService.Container.Resolve<ConfigService>();
 
             this.config = await configService.GetConfig();
+            
+            if(config.Volume == null)
+            {
+                config.Volume = 100;
+
+                await configService.SetConfig(config);
+            }
+
+
+            var value = (config.Volume.Value / 100D);
+
+            playerService.SetVolume(value);
+
+            Volume.Value = value;
 
         }
 
         private void ShuffleButton_Click(object sender, RoutedEventArgs e)
         {
-            ;
-
             this.playerService.SetShuffle(ShuffleButton.IsChecked.Value);
         }
 
