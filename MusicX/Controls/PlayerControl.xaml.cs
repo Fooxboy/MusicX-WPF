@@ -368,14 +368,16 @@ namespace MusicX.Controls
 
             var screen = WpfScreenHelper.Screen.FromWindow(Application.Current.MainWindow);
 
+
             window.WindowStyle = WindowStyle.None;
             window.WindowStartupLocation = WindowStartupLocation.Manual;
 
-            window.Left = screen.Bounds.Left;
-            window.Top = screen.Bounds.Top;
+            window.Left = screen.Bounds.Left / screen.ScaleFactor;
+            window.Top = screen.Bounds.Top / screen.ScaleFactor;
 
-            window.SourceInitialized += (snd, arg) =>
-                window.WindowState = WindowState.Maximized;
+
+            window.Height = screen.Bounds.Height / screen.ScaleFactor;
+            window.Width = screen.Bounds.Width / screen.ScaleFactor;
 
             window.Show();
         }

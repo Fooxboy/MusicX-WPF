@@ -38,12 +38,12 @@ body {
 }
 
 .left-image {
-  height: 600px;
+  height: 620px;
   margin-left: 80px;
 }
 
 .right-image {
-  height: 600px;
+  height: 620px;
   margin-right: 80px;
 }
 
@@ -92,6 +92,33 @@ body {
   font-family: VkSansMedium;
 }
 
+.category-title {
+  font-size: 50px;
+  color: white;
+  font-family: VkSansDemiBold;
+}
+
+.category-title-margin {
+  margin-top: 15vh;
+  margin-bottom: 5vh;
+}
+
+.seporator-div {
+  margin-top: 10vh;
+  margin-bottom: 10vh;
+}
+
+.category-desc {
+  font-size: 25px;
+  color: white;
+  opacity: 0.7;
+  margin-left: 20px;
+  margin-right: 20px;
+  font-family: VkSansMedium;
+}
+
+
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -120,4 +147,5 @@ body {
   font-family: VkSansRegular;
   src: url(./fonts/VKSansDisplay-Regular.ttf);
 }
+
 

@@ -9,8 +9,10 @@
         KeyDown="Window_KeyDown"
         xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
         mc:Ignorable="d"
+        ResizeMode="NoResize"
         WindowStyle="None"
-        WindowState="Maximized"
+        
+        Topmost="True"
         Title="FullScreenWindow" Height="720" Width="1280">
 
     <Grid>
