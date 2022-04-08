@@ -91,8 +91,6 @@ namespace MusicX.Services
                 logger.Error(ex, ex.Message);
                 notificationsService.Show("Ошибка загрузки", "Мы не смогли загрузить трек");
             }
-
-
         } 
 
         public async Task AddToQueueAsync(Audio audio)

@@ -12,7 +12,7 @@
              d:DesignHeight="450" d:DesignWidth="800">
 
     <UserControl.ContextMenu>
-        <ContextMenu Background="#414141" Foreground="#757575" BorderBrush="#646464">
+        <ContextMenu Background="#414141" Foreground="White" BorderBrush="#646464">
             <StackPanel x:Name="AddRemove" MouseDown="AddRemove_MouseDown"  Orientation="Horizontal">
                 <controls:Icon x:Name="AddRemoveIcon" />
                 <TextBlock Margin="10 0 0 0" Foreground="White" x:Name="AddRemoveText"/>
@@ -21,6 +21,13 @@
             <MenuItem Foreground="White" x:Name="GoToArtistMenu" Header="Перейти к артисту">
               
             </MenuItem>
+
+
+            <StackPanel Orientation="Horizontal" MouseDown="Download_MouseDown">
+                <controls:Icon Glyph="ArrowDownload24"/>
+                <TextBlock Margin="10 0 0 0" Foreground="White" Text="Скачать"/>
+            </StackPanel>
+            
                 
         </ContextMenu>
     </UserControl.ContextMenu>

@@ -2,10 +2,12 @@
 using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Services;
+using MusicX.Views;
 using MusicX.Views.Modals;
 using NLog;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -374,6 +376,21 @@ namespace MusicX.Controls
             {
                 await vkService.AudioAddAsync(Audio.Id, Audio.OwnerId);
 
+            }
+        }
+
+        private async void Download_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var downloader = StaticService.Container.Resolve<Services.DownloaderService>();
+
+            try
+            {
+                await downloader.AddToQueueAsync(Audio);
+
+            }catch(FileNotFoundException)
+            {
+                var navigation = StaticService.Container.Resolve<Services.NavigationService>();
+                navigation.NavigateToPage(new DownloadsView());
             }
         }
     }
