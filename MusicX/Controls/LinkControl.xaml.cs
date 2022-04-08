@@ -59,6 +59,13 @@ namespace MusicX.Controls
         {
             try
             {
+
+                if(Link.Url != null)
+                {
+                    RectanglePlaceholder.Visibility = Visibility.Collapsed;
+                    IconPlaceholder.Visibility = Visibility.Collapsed;
+                }
+
                 LinkText.Text = Link.Title;
                 if(Link.Meta.ContentType == null)
                 {
@@ -82,6 +89,8 @@ namespace MusicX.Controls
                     StackPanelLink.Orientation = Orientation.Horizontal;
                     RectangleLink.Height = 50;
                     RectangleLink.Width = 50;
+                    RectanglePlaceholder.Width = 50;
+                    RectanglePlaceholder.Height = 50;
                     LinkText.Margin = new Thickness(10, 0, 0, 0);
                     LinkText.VerticalAlignment = VerticalAlignment.Center;
 

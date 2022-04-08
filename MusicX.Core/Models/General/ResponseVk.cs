@@ -77,5 +77,8 @@ namespace MusicX.Core.Models.General
         [JsonProperty("recommended_playlists")]
         public List<RecommendedPlaylist> RecommendedPlaylists { get; set; }
 
+        [JsonProperty("videos")]
+        public List<Video> Videos { get; set; }
+
     }
 }

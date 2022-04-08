@@ -48,7 +48,19 @@ namespace MusicX.Controls
         {
             try
             {
+
                 if (playerService == null) return;
+
+                if (playerService.CurrentTrack.IsExplicit)
+                {
+                    explicitBadge.Visibility = Visibility.Visible;
+
+                }
+                else
+                {
+                    explicitBadge.Visibility = Visibility.Collapsed;
+
+                }
 
                 await Application.Current.Dispatcher.BeginInvoke(() =>
                 {
@@ -149,12 +161,12 @@ namespace MusicX.Controls
 
                     if (playerService.IsPlaying)
                     {
-                        PlayIcon.Glyph = '\uE103';
-
+                        PlayIcon.Glyph = WPFUI.Common.Icon.Pause24;
                     }
                     else
                     {
-                        PlayIcon.Glyph = '\uE102';
+                        PlayIcon.Glyph = WPFUI.Common.Icon.Play32;
+
                     }
                 });
                 
@@ -387,6 +399,7 @@ namespace MusicX.Controls
         {
             try
             {
+                DownloadButton.IsEnabled = false;
                 var downloader = StaticService.Container.Resolve<DownloaderService>();
 
                 await downloader.AddToQueueAsync(playerService.CurrentTrack);

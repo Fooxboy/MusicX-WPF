@@ -287,6 +287,23 @@ namespace MusicX.Controls
                     return;
                 }
 
+                if(Block.DataType == "videos")
+                {
+                    if(Block.Layout.Name == "slider")
+                    {
+                        BlocksPanel.Children.Add(new VideosSliderBlockControl() { Videos = Block.Videos, ShowFull = false });
+
+                        return;
+                    }
+                    
+                    if(Block.Layout.Name == "list")
+                    {
+                        BlocksPanel.Children.Add(new VideosSliderBlockControl() { Videos = Block.Videos, ShowFull = true });
+                        return;
+                    }
+
+                }
+
 
                 NotFoundBlock.Visibility = Visibility.Visible;
                 DataTypeName.Text = Block.DataType;

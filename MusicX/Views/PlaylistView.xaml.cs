@@ -198,6 +198,7 @@ namespace MusicX.Views
         {
             try
             {
+                this.DownloadPlaylist.IsEnabled = false;
                 var downloader = StaticService.Container.Resolve<DownloaderService>();
 
                 await downloader.AddToQueueAsync(ViewModel.Tracks, ViewModel.Title);

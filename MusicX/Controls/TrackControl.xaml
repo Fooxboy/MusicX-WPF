@@ -70,7 +70,7 @@
                     <StackPanel x:Name="NamePanel" Orientation="Horizontal">
                        
                         <TextBlock MaxWidth="170" Foreground="White" FontWeight="DemiBold" FontSize="16" x:Name="Title" Text="Title"  TextTrimming="CharacterEllipsis" />
-                        <TextBlock Foreground="White" x:Name="Subtitle" Margin="5 3 0 0" Text="Subtitle" Opacity="0.3" TextTrimming="CharacterEllipsis" />
+                        <TextBlock Foreground="White" x:Name="Subtitle" Margin="5 3 2 0" Text="Subtitle" Opacity="0.3" TextTrimming="CharacterEllipsis" />
 
                         <Border x:Name="explicitBadge" Visibility="Collapsed" CornerRadius="2" Height="16" Width="16" Opacity="0.4"   BorderThickness="1" BorderBrush="White">
                             <TextBlock Text="E" Margin="0 0 0 1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="12" FontFamily="{StaticResource VKSansBold}"/>

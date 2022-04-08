@@ -548,6 +548,19 @@ namespace MusicX.Core.Helpers
                     }
                 }
 
+                if (block.VideosIds.Count > 0)
+                {
+                    foreach (var vid in block.VideosIds)
+                    {
+                        var v = response.Response.Videos.SingleOrDefault(b => b.OwnerId + "_" + b.Id == vid);
+
+                        if (v == null) continue;
+
+                        block.Videos.Add(v);
+
+                    }
+                }
+
             }
 
           

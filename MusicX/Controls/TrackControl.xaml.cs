@@ -216,19 +216,23 @@ namespace MusicX.Controls
                 }
 
                
-                NamePanel.MaxWidth = this.ActualWidth - 110;
-
-                if (Audio.IsExplicit)
+                if(this.ActualWidth > 110)
                 {
-                    Title.MaxWidth = (NamePanel.MaxWidth - 20);
+                    NamePanel.MaxWidth = this.ActualWidth - 110;
 
-                }else
-                {
-                    Title.MaxWidth = (NamePanel.MaxWidth);
+                    if (Audio.IsExplicit)
+                    {
+                        Title.MaxWidth = (NamePanel.MaxWidth - 20);
+
+                    }
+                    else
+                    {
+                        Title.MaxWidth = (NamePanel.MaxWidth);
+                    }
+
+                    Artists.MaxWidth = this.ActualWidth;
                 }
-
-
-                Artists.MaxWidth = this.ActualWidth;
+                
 
             }
             catch (Exception ex)

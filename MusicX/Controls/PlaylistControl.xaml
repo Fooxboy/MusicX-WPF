@@ -24,13 +24,15 @@
                     
 
                     <Rectangle  Height="174" Width="174" Grid.Row="0" Fill="Black" Opacity="0.1" RadiusX="5" RadiusY="5"/>
-                    <controls:FontIcon Height="174" Width="174" FontSize="50" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontFamily="Segoe Fluent Icons" Glyph="&#xE90B;" />
+                    <controls:Icon FontSize="50" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Glyph="NavigationPlay20"/>
 
                     <Rectangle Height="174" Width="174" Grid.Row="0" RadiusX="5" RadiusY="5">
                         <Rectangle.Fill>
                             <ImageBrush  x:Name="CoverImageCompact" Stretch="UniformToFill"/>
 
                         </Rectangle.Fill>
+
+                       
                     </Rectangle>
 
                     <StackPanel x:Name="PlaylistStackPanelCompact" VerticalAlignment="Center" Margin="0 5 0 0" Grid.Row="1">
@@ -60,9 +62,8 @@
             <StackPanel Orientation="Horizontal" >
                 <Grid>
                     <Rectangle  Height="85" Width="85" Grid.Row="0" Fill="Black" Opacity="0.1" RadiusX="5" RadiusY="5"/>
-                    <controls:FontIcon Height="50" Width="50" FontSize="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontFamily="Segoe Fluent Icons" Glyph="&#xE90B;" />
+                    <controls:Icon FontSize="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Glyph="NavigationPlay20"/>
 
-                    
                     <Rectangle Height="85" RadiusX="3" RadiusY="3" Width="84">
                         <Rectangle.Fill>
                             <ImageBrush  x:Name="CoverImage"  Stretch="UniformToFill"/>

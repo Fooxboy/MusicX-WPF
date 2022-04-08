@@ -153,7 +153,7 @@
 
         <wpfui:Button Height="40" Click="Button_Click" BorderThickness="0"  Width="70" Padding="0" HorizontalAlignment="Left" Appearance="Transparent">
             <Button.Content>
-                <wpfui:FontIcon Margin="0 0 0 0" FontFamily="Segoe Fluent Icons" Glyph="&#xE0A6;" />
+                <wpfui:Icon Glyph="ArrowLeft32"/>
             </Button.Content>
         </wpfui:Button>
 

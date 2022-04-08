@@ -12,14 +12,23 @@
         <controls:CardAction x:Name="Card" ShowChevron="False" Click="CardAction_Click">
             <StackPanel x:Name="StackPanelLink">
 
-                    
-                <Rectangle x:Name="RectangleLink" Height="90" Width="90" RadiusX="100" RadiusY="100">
-                    <Rectangle.Fill>
-                        <ImageBrush x:Name="LinkImage"/>
-                    </Rectangle.Fill>
-                </Rectangle>
+                <Grid>
+                    <Rectangle x:Name="RectanglePlaceholder" Height="90" Width="90" RadiusX="100" RadiusY="100" Fill="Black" Opacity="0.2">
 
+                    </Rectangle>
+
+                    <controls:Icon x:Name="IconPlaceholder" FontSize="25" Glyph="Link32"/>
+
+                    <Rectangle x:Name="RectangleLink" Height="90" Width="90" RadiusX="100" RadiusY="100">
+                        <Rectangle.Fill>
+                            <ImageBrush x:Name="LinkImage"/>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                </Grid>
+                
                 <TextBlock Margin="0 5 0 0" HorizontalAlignment="Center"  FontFamily="{StaticResource VKSansRegular}" x:Name="LinkText" TextTrimming="CharacterEllipsis" Text=""/>
+
+                
             </StackPanel>
         </controls:CardAction>
     </Grid>

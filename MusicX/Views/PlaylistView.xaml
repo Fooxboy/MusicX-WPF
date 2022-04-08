@@ -68,12 +68,17 @@
                     <StackPanel Margin="15 0 0 0"  Orientation="Horizontal">
                         <Grid>
                             <Rectangle Width="250" RadiusX="5" RadiusY="5" Height="250" Fill="Black" Opacity="0.2"/>
-                            <controls:FontIcon Width="250" Height="250" FontSize="70" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontFamily="Segoe Fluent Icons" Glyph="&#xE90B;" />
+                            <controls:Icon FontSize="70" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Glyph="NavigationPlay20"/>
+
 
                             <Rectangle Height="250" Width="250" RadiusX="5" RadiusY="5">
                                 <Rectangle.Fill>
                                     <ImageBrush x:Name="CoverPlaylist" ImageSource="{Binding Cover}"/>
                                 </Rectangle.Fill>
+
+                                <Rectangle.Effect>
+                                    <DropShadowEffect BlurRadius="40" ShadowDepth="5" Opacity="0.3"  Color="Black"/>
+                                </Rectangle.Effect>
                             </Rectangle>
                         </Grid>
                        

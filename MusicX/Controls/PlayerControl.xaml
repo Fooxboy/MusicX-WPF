@@ -87,7 +87,12 @@
 
                             </Grid>
                             <StackPanel VerticalAlignment="Center" Margin="15 0 0 0">
-                                <TextBlock x:Name="TrackTitle" Margin="0 0 0 5" FontFamily="{StaticResource VKSansDemiBold}" FontSize="16" Text="Track name"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock x:Name="TrackTitle" Margin="0 0 0 5" FontFamily="{StaticResource VKSansDemiBold}" FontSize="16" Text="Track name"/>
+                                    <Border x:Name="explicitBadge" Margin="5 0 0 0" Visibility="Collapsed" CornerRadius="2" Height="16" Width="16" Opacity="0.4"   BorderThickness="1" BorderBrush="White">
+                                        <TextBlock Text="E" Margin="0 0 0 1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="12" FontFamily="{StaticResource VKSansBold}"/>
+                                    </Border>
+                                </StackPanel>
                                 <TextBlock x:Name="ArtistName" MouseEnter="ArtistName_MouseEnter" MouseLeave="ArtistName_MouseLeave" MouseLeftButtonDown="ArtistName_MouseLeftButtonDown" Opacity="0.7" FontFamily="{StaticResource VKSansRegular}" Text="Artist name"/>
 
                             </StackPanel>
@@ -101,19 +106,26 @@
                         <StackPanel HorizontalAlignment="Center" Grid.Column="1" Orientation="Horizontal">
 
                             <ToggleButton x:Name="ShuffleButton" Click="ShuffleButton_Click" HorizontalContentAlignment="Center" Margin="0 0 10 0" Height="40" Width="40" Padding="0" >
-                                <wpfui:FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE14B;" />
+
+                                <wpfui:Icon Glyph="ArrowWrap20"/>
+
                             </ToggleButton>
 
                             <wpfui:Button x:Name="PrevButton" Click="PrevButton_Click" HorizontalContentAlignment="Center" Height="40" Margin="0 0 10 0"  Width="40" Padding="0" Appearance="Transparent">
-                                <wpfui:FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE100;" />
+
+                                <wpfui:Icon Glyph="Previous48"/>
+
                             </wpfui:Button>
 
                             <wpfui:Button x:Name="PlayPauseButton" Click="PlayPauseButton_Click" HorizontalContentAlignment="Center" Height="50" Margin="0 0 10 0"  Width="50" Padding="0" Appearance="Transparent">
-                                <wpfui:FontIcon x:Name="PlayIcon" FontSize="17" FontFamily="Segoe Fluent Icons" Glyph="&#xE102;" />
+
+                                <wpfui:Icon FontSize="20" x:Name="PlayIcon" Glyph="Play32"/>
+
                             </wpfui:Button>
 
                             <wpfui:Button x:Name="NextButton" Click="NextButton_Click" HorizontalContentAlignment="Center" Height="40" Margin="0 0 10 0"  Width="40" Padding="0" Appearance="Transparent">
-                                <wpfui:FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE101;" />
+                                <wpfui:Icon Glyph="Next48"/>
+
                             </wpfui:Button>
                             
                             <ToggleButton x:Name="RepeatButton" Click="RepeatButton_Click"  HorizontalContentAlignment="Center" Height="40" Margin="0 0 10 0"  Width="40" Padding="0">
