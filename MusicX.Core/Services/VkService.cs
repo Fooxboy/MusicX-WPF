@@ -161,6 +161,7 @@ namespace MusicX.Core.Services
                     {"access_token", vkApi.Token},
                     {"device_id", deviceId},
                     {"section_id", sectionId },
+                    {"need_blocks", 1 },
                 };
 
                 if (startFrom != null) parameters.Add("start_from", startFrom);
@@ -182,9 +183,6 @@ namespace MusicX.Core.Services
                 logger.Error(ex, ex.Message);
                 throw;
             }
-            
-
-
         }
 
         public async Task<ResponseData> GetBlockItemsAsync(string blockId)
@@ -219,8 +217,6 @@ namespace MusicX.Core.Services
                 logger.Error(ex, ex.Message);
                 throw;
             }
-            
-
         }
 
         public async Task<ResponseData> GetAudioSearchAsync(string query = null, string context= null)

@@ -16,7 +16,7 @@
         </Grid.ColumnDefinitions>
 
         <StackPanel Grid.Column="0" Orientation="Horizontal">
-            <TextBlock FontFamily="{StaticResource VKSansDemiBold}" FontWeight="DemiBold" Text="Title block" Foreground="White" x:Name="Title" FontSize="30"/>
+            <TextBlock FontFamily="{StaticResource VKSansDemiBold}" VerticalAlignment="Center" FontWeight="DemiBold" Text="Title block" Foreground="White" x:Name="Title" FontSize="30"/>
             <TextBlock FontSize="20" Visibility="Collapsed" VerticalAlignment="Center" Margin="10 5 0 0" Text="123" x:Name="BadgeHeader" Grid.Column="0" Foreground="White" Opacity="0.3"/>
         </StackPanel>
 

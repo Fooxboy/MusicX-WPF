@@ -289,5 +289,21 @@ namespace MusicX
            
 
         }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Space)
+            {
+
+                var playerService = StaticService.Container.Resolve<PlayerService>();
+
+                if (playerService == null) return;
+
+                if (playerService.CurrentTrack == null) return;
+
+                if (playerService.IsPlaying) playerService.Pause();
+                else playerService.Play();
+            }
+        }
     }
 }

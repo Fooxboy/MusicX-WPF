@@ -426,5 +426,49 @@ namespace MusicX.Controls
                 navigation.NavigateToPage(new DownloadsView());
             }
         }
+
+        private void Title_MouseEnter(object sender, MouseEventArgs e)
+        {
+            if (Audio.Album != null)
+            {
+                Title.TextDecorations.Add(TextDecorations.Underline);
+                this.Cursor = Cursors.Hand;
+            }
+        }
+
+        private void Title_MouseLeave(object sender, MouseEventArgs e)
+        {
+            foreach (var dec in TextDecorations.Underline)
+            {
+                Title.TextDecorations.Remove(dec);
+            }
+            this.Cursor = Cursors.Arrow;
+        }
+
+        private async void Title_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            clickToArtist = true;
+
+            try
+            {
+                if (Audio.Album != null)
+                {
+                    var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
+                    navigationService.NavigateToPage(new PlaylistView(Audio.Album.Id, Audio.Album.OwnerId, Audio.Album.AccessKey));
+                }
+
+                await Task.Delay(100);
+
+                clickToArtist = false;
+
+            }
+            catch (Exception ex)
+            {
+                clickToArtist = false;
+
+                logger.Error(ex, ex.Message);
+            }
+            
+        }
     }
 }

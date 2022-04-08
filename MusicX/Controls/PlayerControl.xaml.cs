@@ -414,5 +414,40 @@ namespace MusicX.Controls
 
 
         }
+
+        private async void UserControl_KeyDown(object sender, KeyEventArgs e)
+        {
+           
+        }
+
+        private void TrackTitle_MouseEnter(object sender, MouseEventArgs e)
+        {
+            if(playerService.CurrentTrack.Album != null)
+            {
+                TrackTitle.TextDecorations.Add(TextDecorations.Underline);
+                this.Cursor = Cursors.Hand;
+            }
+           
+        }
+
+
+        private void TrackTitle_MouseLeave(object sender, MouseEventArgs e)
+        {
+
+            foreach (var dec in TextDecorations.Underline)
+            {
+                TrackTitle.TextDecorations.Remove(dec);
+            }
+            this.Cursor = Cursors.Arrow;
+        }
+
+        private void TrackTitle_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (playerService.CurrentTrack.Album != null)
+            {
+                var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
+                navigationService.NavigateToPage(new PlaylistView(playerService.CurrentTrack.Album.Id, playerService.CurrentTrack.Album.OwnerId, playerService.CurrentTrack.Album.AccessKey));
+            }
+        }
     }
 }

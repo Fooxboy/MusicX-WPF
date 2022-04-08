@@ -56,7 +56,7 @@
         </Grid>
         <hc:ScrollViewer IsInertiaEnabled="True" HorizontalScrollBarVisibility="Disabled" >
             <StackPanel x:Name="PlaylistStackPanel" Visibility="{Binding VisibleContent}">
-                <controls:Card x:Name="CardPlaylist" Visibility="Collapsed" Height="300" Margin="0 10 15 40" RenderTransformOrigin="0.5,0.5">
+                <controls:Card x:Name="CardPlaylist" Visibility="Collapsed" Height="300" Margin="0 10 15 -40" RenderTransformOrigin="0.5,0.5">
                     <controls:Card.RenderTransform>
                         <TransformGroup>
                             <ScaleTransform/>
@@ -81,7 +81,7 @@
                                 </Rectangle.Effect>
                             </Rectangle>
                         </Grid>
-                       
+
 
 
                         <StackPanel Margin="20 0 0 0" >
@@ -143,7 +143,6 @@
                         </StackPanel>
                     </StackPanel>
                 </controls:Card>
-
             </StackPanel>
         </hc:ScrollViewer>
 

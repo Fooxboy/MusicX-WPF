@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MusicX.Controls"
              mc:Ignorable="d" 
+             KeyDown="UserControl_KeyDown"
       xmlns:hc="https://handyorg.github.io/handycontrol"
              
              xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
@@ -88,7 +89,7 @@
                             </Grid>
                             <StackPanel VerticalAlignment="Center" Margin="15 0 0 0">
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock x:Name="TrackTitle" Margin="0 0 0 5" FontFamily="{StaticResource VKSansDemiBold}" FontSize="16" Text="Track name"/>
+                                    <TextBlock x:Name="TrackTitle" MouseEnter="TrackTitle_MouseEnter" MouseLeave="TrackTitle_MouseLeave" MouseLeftButtonDown="TrackTitle_MouseLeftButtonDown"  Margin="0 0 0 5" FontFamily="{StaticResource VKSansDemiBold}" FontSize="16" Text="Track name"/>
                                     <Border x:Name="explicitBadge" Margin="5 0 0 0" Visibility="Collapsed" CornerRadius="2" Height="16" Width="16" Opacity="0.4"   BorderThickness="1" BorderBrush="White">
                                         <TextBlock Text="E" Margin="0 0 0 1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="12" FontFamily="{StaticResource VKSansBold}"/>
                                     </Border>

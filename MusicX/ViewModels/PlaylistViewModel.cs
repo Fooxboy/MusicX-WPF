@@ -64,8 +64,10 @@ namespace MusicX.ViewModels
                 Changed("VisibleLoading");
 
                 var p = await vkService.GetPlaylistAsync(100, playlist.Id, playlist.AccessKey, playlist.OwnerId);
+                this.PlaylistLoaded.Invoke(this, p.Playlist);
 
-                if(p.Playlist.MainArtists.Count == 0)
+
+                if (p.Playlist.MainArtists.Count == 0)
                 {
                     if(p.Playlist.OwnerId < 0)
                     {
@@ -174,18 +176,15 @@ namespace MusicX.ViewModels
             try
             {
                 logger.Info($"Load playlist from data: playlistId = {playlistId}, ownerId = {ownerId}, accessKey = {accessKey}");
+
+                await this.LoadPlaylist(new Playlist() { Id = playlistId, AccessKey = accessKey, OwnerId = ownerId }, true);
+
                 if (Tracks.Count > 0) Tracks.RemoveRange(0, Tracks.Count);
-                VisibleContent = Visibility.Collapsed;
-                VisibleLoading = Visibility.Visible;
-                Changed("VisibleContent");
-                Changed("VisibleLoading");
+                //VisibleContent = Visibility.Collapsed;
+                //VisibleLoading = Visibility.Visible;
+                //Changed("VisibleContent");
+                //Changed("VisibleLoading");
 
-                var playlist = await vkService.GetPlaylistAsync(100, playlistId, accessKey, ownerId, 0, 1);
-
-                Tracks.AddRange(playlist.Audios);
-
-                this.PlaylistLoaded.Invoke(this, playlist.Playlist);
-                await this.LoadPlaylist(playlist.Playlist, false);
             }catch (Exception ex)
             {
                 logger.Error("Fatal error in load playlist from data");
