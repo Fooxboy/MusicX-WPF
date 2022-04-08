@@ -53,6 +53,7 @@ namespace MusicX.Views
                 container.Register<ConfigService>(Reuse.Singleton);
                 container.Register<PlayerService>(Reuse.Singleton);
                 container.Register<NotificationsService>(Reuse.Singleton);
+                container.Register<DownloaderService>(Reuse.Singleton);
                 StaticService.Container = container;
 
                 var vkService = container.Resolve<VkService>();

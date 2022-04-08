@@ -87,5 +87,7 @@ namespace MusicX.Core.Models
         public List<MainArtist> FeaturedArtists { get; set; }
 
         public string ParentBlockId { get; set; }
+
+        public string? DownloadPlaylistName { get; set; }
     }
 }

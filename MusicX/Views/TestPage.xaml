@@ -56,6 +56,11 @@
             <TextBox Margin="0 10 0 0" Width="400" HorizontalAlignment="Left" x:Name="artist"/>
             <wpfui:Button Width="300" Click="openArtist_Click"  x:Name="openArtist" HorizontalAlignment="Left" Margin="0 10 0 0" Content="Открыть" Appearance="Transparent"/>
             <wpfui:Button Width="300" Click="showNotification_Click"  x:Name="showNotification" HorizontalAlignment="Left" Margin="0 50 0 0" Content="Показать уведомление" Appearance="Secondary"/>
+
+            <TextBlock Foreground="White" Margin="0 30 0 0" FontSize="20" FontFamily="{StaticResource VKSansBold}" Text="Скачать трек по ссылке"/>
+            <TextBox Margin="0 10 0 0" Width="400" HorizontalAlignment="Left" x:Name="url"/>
+            <wpfui:Button Width="300" Click="download_Click"  x:Name="download" HorizontalAlignment="Left" Margin="0 10 0 0" Content="Скачать" Appearance="Secondary"/>
+
         </StackPanel>
     </Grid>
 </Page>

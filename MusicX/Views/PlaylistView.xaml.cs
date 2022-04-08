@@ -6,6 +6,7 @@ using MusicX.ViewModels;
 using NLog;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -190,6 +191,25 @@ namespace MusicX.Views
             {
                 var logger = StaticService.Container.Resolve<Logger>();
                 logger.Error(ex, ex.Message);
+            }
+        }
+
+        private async void DownloadPlaylist_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var downloader = StaticService.Container.Resolve<DownloaderService>();
+
+                await downloader.AddToQueueAsync(ViewModel.Tracks, ViewModel.Title);
+            }
+            catch (FileNotFoundException ex)
+            {
+
+                //go to download page
+
+                var navigation = StaticService.Container.Resolve<Services.NavigationService>();
+
+                navigation.NavigateToPage(new DownloadsView());
             }
         }
     }

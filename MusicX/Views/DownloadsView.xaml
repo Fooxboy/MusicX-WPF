@@ -1,0 +1,123 @@
+﻿<Page x:Class="MusicX.Views.DownloadsView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:MusicX.Views" 
+      xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI" xmlns:hc="https://handyorg.github.io/handycontrol" xmlns:controls="clr-namespace:MusicX.Controls"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="DownloadsView">
+
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDark.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <Grid>
+        <Grid x:Name="NoAvalible" HorizontalAlignment="Center" Visibility="Collapsed" VerticalAlignment="Center">
+            <StackPanel>
+                <wpfui:Icon Glyph="Warning20" Margin="0 0 0 0" FontSize="80"/>
+                <TextBlock Foreground="White" FontSize="20" Margin="0 30 0 0 " FontFamily="{StaticResource VKSansDemiBold}" TextWrapping="Wrap" Text="Для загрузки треков необходимо загрузить дополнительный компонент"/>
+                <TextBlock Foreground="White" FontSize="18" HorizontalAlignment="Center" Opacity="0.7" Margin="0 10 0 0 " FontFamily="{StaticResource VKSansRegular}" TextWrapping="Wrap" Text="Размер: 114МБ"/>
+                <wpfui:Button x:Name="DownloadButton" Click="DownloadButton_Click" Width="240" Margin="0 30 0 0" Icon="ArrowDownload16" Appearance="Secondary" Content="Скачать"/>
+            </StackPanel>
+        </Grid>
+
+        <Grid x:Name="DownloadFfmpeg" HorizontalAlignment="Center" Visibility="Collapsed" VerticalAlignment="Center" >
+            <StackPanel>
+                <wpfui:Icon Glyph="ArrowDownload48" Margin="0 0 0 0" FontSize="80"/>
+                <TextBlock HorizontalAlignment="Center" Foreground="White" FontSize="23" Margin="0 30 0 0 " FontFamily="{StaticResource VKSansDemiBold}" TextWrapping="Wrap" Text="Выполняется загрузка компонента"/>
+                <TextBlock Foreground="White" FontSize="18" HorizontalAlignment="Center" Opacity="0.7" Margin="0 10 0 0 " FontFamily="{StaticResource VKSansRegular}" TextWrapping="Wrap" Text="Мы сообщим Вам о результате"/>
+
+                <StackPanel Margin="0 30 0 0" Orientation="Horizontal">
+                    <TextBlock Foreground="White" Text="Осталось: "/>
+                    <TextBlock x:Name="DownloadedCount" Opacity="0.7" Foreground="White" Text="0"/>
+                    <TextBlock x:Name="DownloadedKind" Opacity="0.7" Foreground="White" Text="МБ"/>
+
+                </StackPanel>
+
+                <ProgressBar x:Name="DonloadProgress" Margin="0 10 0 0"  />
+
+            </StackPanel>
+        </Grid>
+
+        <Grid x:Name="ContentGrid" Visibility="Collapsed">
+
+            <hc:ScrollViewer hc:ScrollViewerAttach.AutoHide="True" IsInertiaEnabled="True" Focusable="False" HorizontalScrollBarVisibility="Disabled"  Margin="0" VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="0 0 0 0">
+                    <StackPanel x:Name="NowDownload" Margin="0 10 0 0" Visibility="Collapsed">
+                        <TextBlock Text="Сейчас загружается" Foreground="White" FontSize="29" FontFamily="{StaticResource VKSansDemiBold}"/>
+
+                        <Grid>
+                            <wpfui:Card Margin="0 10 0 0">
+                                <StackPanel Orientation="Horizontal">
+                                    <Rectangle RadiusX="10" Height="100" Width="100" RadiusY="10">
+                                        <Rectangle.Fill>
+                                            <ImageBrush x:Name="NowDownloadCover"/>
+                                        </Rectangle.Fill>
+                                    </Rectangle>
+
+                                    <StackPanel Margin="15 0 0 0" VerticalAlignment="Center">
+                                        <TextBlock x:Name="NowDownloadTitle" Foreground="White" FontSize="18" FontFamily="{StaticResource VKSansDemiBold}" Text="Название аудио"/>
+                                        <TextBlock x:Name="NowDownloadArtist" Foreground="White" FontSize="16" Opacity="0.7" FontFamily="{StaticResource VKSansMedium}" Text="Имя исполнителя "/>
+
+
+                                        <StackPanel Orientation="Horizontal" Margin="0 20 0 0">
+                                            <TextBlock Foreground="White" FontSize="16"  Opacity="0.7" Text="Загружено: "/>
+
+                                            <TextBlock x:Name="NowDownloadValue" Foreground="White" FontSize="16"  Opacity="0.7" Text="0"/>
+                                            <TextBlock x:Name="NowDownloadValueKind" Foreground="White" FontSize="16"  Opacity="0.7" Text="КБ"/>
+                                        </StackPanel>
+
+                                    </StackPanel>
+
+                                </StackPanel>
+                            </wpfui:Card>
+
+                            <ProgressBar Height="126" Margin="0 8 0 0" Value="20" Opacity="0.2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="NowDownloadProgress"/>
+                        </Grid>
+                        
+
+                    </StackPanel>
+
+
+                    <StackPanel x:Name="Actions">
+                        <TextBlock Text="Действия" Foreground="White" FontSize="29" Margin="0 10 0 0" FontFamily="{StaticResource VKSansDemiBold}"/>
+
+                        <hc:ScrollViewer CanMouseWheel="False" hc:ScrollViewerAttach.AutoHide="True"  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden" IsInertiaEnabled="True">
+                            <StackPanel Margin="0 10 0 0" Orientation="Horizontal">
+                                <wpfui:Button Click="DownloadAllTracksButton_Click" x:Name="DownloadAllTracksButton" Height="50" Width="300" Icon="MusicNote220" Content="Скачать все мои аудиозаписи" Appearance="Secondary"/>
+                                <wpfui:Button Click="DownloadAllPlaylistsButton_Click" x:Name="DownloadAllPlaylistsButton" Height="50" Width="300" Icon="Stream24"  Margin="5 0 0 0" Content="Скачать все мои плейлисты" Appearance="Secondary"/>
+                                <wpfui:Button Click="ShowAudiosButton_Click" x:Name="ShowAudiosButton" Height="50" Width="300" Icon="Folder32"  Margin="5 0 0 0" Content="Открыть папку с музыкой" Appearance="Secondary"/>
+                            </StackPanel>
+                        </hc:ScrollViewer>
+
+                    </StackPanel>
+
+                    <StackPanel x:Name="QueueDownloads" Visibility="Collapsed">
+                        <TextBlock Text="Очередь загрузки" Foreground="White" FontSize="29" Margin="0 20 0 0" FontFamily="{StaticResource VKSansDemiBold}"/>
+
+                        <StackPanel x:Name="QueueTracks" Margin="0 10 0 0">
+
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel x:Name="DownloadedMusic" Visibility="Collapsed">
+                        <TextBlock Text="Загруженные треки" Foreground="White" FontSize="29" Margin="0 20 0 0" FontFamily="{StaticResource VKSansDemiBold}"/>
+
+                        <StackPanel x:Name="DownloadedTracks" >
+
+                        </StackPanel>
+                    </StackPanel>
+
+                </StackPanel>
+            </hc:ScrollViewer>
+            
+        </Grid>
+    </Grid>
+</Page>

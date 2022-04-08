@@ -175,6 +175,8 @@ namespace MusicX
                 var item = new NavigationItem() { Tag = "test", Icon = WPFUI.Common.Icon.AppFolder24, Content = "TEST", Type = typeof(TestPage), Instance = new TestPage() };
                 navigationBar.Items.Add(item);
 #endif
+
+                navigationBar.Items.Add(new NavigationItem() { Tag = "downloads", Icon = WPFUI.Common.Icon.ArrowDownload48, Content = "Загрузки", Type = typeof(DownloadsView), Instance = new DownloadsView() });
                 var item2 = new NavigationItem() { Tag = "settings", Icon = WPFUI.Common.Icon.Settings24, Content = "Настройки", Type = typeof(SettingsView), Instance = new SettingsView(configService) };
 
                 navigationBar.Items.Add(item2);
@@ -197,7 +199,7 @@ namespace MusicX
 
         private async void NavigationBar_Navigated1(WPFUI.Controls.Interfaces.INavigation navigation, WPFUI.Controls.Interfaces.INavigationItem current)
         {
-            if (current.Tag == "test" || current.Tag == "settings") return;
+            if (current.Tag == "test" || current.Tag == "settings" || current.Tag == "downloads") return;
             await navigationService.SectionView.LoadSection((string)current.Tag);
         }
 

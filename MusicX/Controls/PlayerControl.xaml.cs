@@ -6,6 +6,7 @@ using MusicX.Views;
 using NLog;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -380,6 +381,25 @@ namespace MusicX.Controls
             window.Width = screen.Bounds.Width / screen.ScaleFactor;
 
             window.Show();
+        }
+
+        private async void DownloadButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var downloader = StaticService.Container.Resolve<DownloaderService>();
+
+                await downloader.AddToQueueAsync(playerService.CurrentTrack);
+            }catch(FileNotFoundException ex)
+            {
+
+                var navigation = StaticService.Container.Resolve<Services.NavigationService>();
+
+                navigation.NavigateToPage(new DownloadsView());
+                //go to download page
+            }
+
+
         }
     }
 }

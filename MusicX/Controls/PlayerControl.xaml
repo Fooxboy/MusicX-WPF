@@ -132,8 +132,13 @@
                                 </ResourceDictionary>
                             </Grid.Resources>
                             <StackPanel Orientation="Horizontal"  VerticalAlignment="Center" HorizontalAlignment="Right">
-                                <wpfui:Icon x:Name="SpeakerIcon" FontSize="20" Glyph="Speaker248"/>
-                                <hc:PreviewSlider x:Name="Volume" Width="150" Margin="10 0 0 0" ValueChanged="Slider_ValueChanged" Maximum="1">
+                                
+                                <wpfui:Button x:Name="DownloadButton" Click="DownloadButton_Click"  HorizontalContentAlignment="Center" Height="40" Margin="0 0 20 0" Width="40" Padding="0" Appearance="Transparent">
+                                    <wpfui:Icon Glyph="ArrowDownload24"/>
+                                </wpfui:Button>
+                                
+                                <wpfui:Icon x:Name="SpeakerIcon" FontSize="20"  Glyph="Speaker248"/>
+                                <hc:PreviewSlider x:Name="Volume" Width="150" Margin="5 0 0 0" ValueChanged="Slider_ValueChanged" Maximum="1">
                                     <hc:PreviewSlider.Background>
                                         <SolidColorBrush Color="White" Opacity="0.3"/>
                                     </hc:PreviewSlider.Background>

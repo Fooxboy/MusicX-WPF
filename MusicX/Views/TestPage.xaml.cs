@@ -1,4 +1,5 @@
 ﻿using DryIoc;
+using MusicX.Core.Models;
 using MusicX.Services;
 using MusicX.Views.Modals;
 using System;
@@ -62,6 +63,21 @@ namespace MusicX.Views
             var notificationsService = StaticService.Container.Resolve<Services.NotificationsService>();
 
             notificationsService.Show("Заголовок", "Сообщение");
+
+        }
+
+        private async void download_Click(object sender, RoutedEventArgs e)
+        {
+            var downloader = StaticService.Container.Resolve<Services.DownloaderService>();
+
+            var audio = new Audio()
+            {
+                Artist = "artist name",
+                Title = "track name",
+                Url = url.Text
+            };
+
+            await downloader.AddToQueueAsync(audio);
 
         }
     }
