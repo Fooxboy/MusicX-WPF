@@ -250,7 +250,18 @@ namespace MusicX
 
         private async void SearchBox_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            await navigationService.OpenSearchSection(null);
+            try
+            {
+                await navigationService.OpenSearchSection(null);
+
+            }catch (Exception ex)
+            {
+                logger.Error(ex, ex.Message);
+
+                notificationsService.Show("Ошибка открытия поиска", "Мы не смогли открыть подсказки поиска");
+
+
+            }
         }
 
         private async void CheckUpdatesInStart()

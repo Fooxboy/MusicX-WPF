@@ -120,6 +120,9 @@ namespace MusicX.Controls
         {
             try
             {
+
+              
+
                 this.IconPlay.Glyph = WPFUI.Common.Icon.Play24;
 
                 if (ShowCard) this.Card.Visibility = Visibility.Visible;
@@ -201,8 +204,34 @@ namespace MusicX.Controls
                     AddRemoveText.Text = "Добавить к себе";
 
                 }
+
+
+                if(Audio.IsExplicit)
+                {
+                    explicitBadge.Visibility = Visibility.Visible;
+                }else
+                {
+                    explicitBadge.Visibility = Visibility.Collapsed;
+
+                }
+
+               
+                NamePanel.MaxWidth = this.ActualWidth - 110;
+
+                if (Audio.IsExplicit)
+                {
+                    Title.MaxWidth = (NamePanel.MaxWidth - 20);
+
+                }else
+                {
+                    Title.MaxWidth = (NamePanel.MaxWidth);
+                }
+
+
+                Artists.MaxWidth = this.ActualWidth;
+
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 logger.Error("Failed load track control");
                 logger.Error(ex, ex.Message);
