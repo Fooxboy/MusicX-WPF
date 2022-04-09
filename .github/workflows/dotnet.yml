@@ -17,9 +17,7 @@ jobs:
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: 6.0.x
-    - name: SetPath
-      run: cd MusicX
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore MusicX/MusicX.csproj
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build MusicX/MusicX.csproj --no-restore
