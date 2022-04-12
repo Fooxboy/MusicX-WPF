@@ -15,7 +15,6 @@ namespace MusicX.Services
         public static string VersionKind = "beta";
         public static string BuildDate = "8 апреля 2022";
 
-
         public static WebClient WebClient { get; set; }
     }
 }

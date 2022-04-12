@@ -730,6 +730,7 @@ namespace MusicX.Services
                     this.player.Pause();
                     Seek(TimeSpan.Zero);
                     this.player.Play();
+                    return;
                 }
                 await NextTrack();
             }
