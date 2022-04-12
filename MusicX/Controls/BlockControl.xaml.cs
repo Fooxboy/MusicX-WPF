@@ -200,6 +200,17 @@ namespace MusicX.Controls
 
                     }
 
+                    if (Block.Layout.Name == "music_chart_list")
+                    {
+
+                        BlocksPanel.Children.Add(new AudiosListControl() { Audios = Block.Audios });
+
+                        logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
+
+                        return;
+
+                    }
+
                 }
 
                 if (Block.DataType == "action")
