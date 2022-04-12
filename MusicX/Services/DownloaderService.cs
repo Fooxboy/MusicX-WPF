@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -254,23 +255,61 @@ namespace MusicX.Services
 
             }
 
+            TagLib.Id3v2.Tag.DefaultVersion = 3;
+            TagLib.Id3v2.Tag.ForceDefaultVersion = true;
+
             var tfile = TagLib.File.Create($"{pathFile}\\{fileName}");
 
             tfile.Tag.Title = CurrentDownload.Title;
             tfile.Tag.Artists = new string[] { CurrentDownload.Artist };
             tfile.Tag.AlbumArtists = new string[] {CurrentDownload.Artist};
-            if(CurrentDownload.Album != null)
+
+            var r = new Random().Next(0, int.MaxValue);
+
+            if (CurrentDownload.Album != null)
             {
                 tfile.Tag.Album = CurrentDownload.Album.Title;
                 tfile.Tag.Year = 2022;
-                
+
+
+
+                using(var client = new WebClient())
+                {
+                    await client.DownloadFileTaskAsync(CurrentDownload.Album.Thumb.Photo600, musicFolder + $"\\{r}.jpg");
+                }
+
+                byte[] imageBytes;
+
+                using (WebClient client = new WebClient())
+                {
+                    imageBytes = client.DownloadData(CurrentDownload.Album.Thumb.Photo600);
+                }
+
+                TagLib.Id3v2.AttachedPictureFrame cover = new TagLib.Id3v2.AttachedPictureFrame
+                {
+                    Type = TagLib.PictureType.FrontCover,
+                    Description = "Cover",
+                    MimeType = System.Net.Mime.MediaTypeNames.Image.Jpeg,
+                    Data = imageBytes,
+                    TextEncoding = TagLib.StringType.UTF16
+                };
+                tfile.Tag.Pictures = new TagLib.IPicture[] { cover };
             }
 
             tfile.Tag.Comment = "Загружено с помощью Music X. https://t.me/MusicXPlayer";
             tfile.Tag.Copyright = "Music X Player - https://t.me/MusicXPlayer";
             tfile.Tag.MusicIpId = CurrentDownload.OwnerId + "_" + CurrentDownload.Id + "_" + CurrentDownload.OwnerId;
 
+            tfile.Tag.Conductor = "Music X Player";
+
             tfile.Save();
+
+
+            if(CurrentDownload.Album != null)
+            {
+                File.Delete(musicFolder + $"\\{r}.jpg");
+            }
+
 
             await Application.Current.Dispatcher.BeginInvoke(() =>
             {

@@ -90,7 +90,6 @@ namespace MusicX.Controls
 
                     PositionSlider.Maximum = playerService.CurrentTrack.Duration;
 
-
                     MaxPosition.Text = playerService.CurrentTrack.DurationString;
 
 
@@ -102,6 +101,10 @@ namespace MusicX.Controls
                         var bitmapImage = new BitmapImage(new Uri(playerService.CurrentTrack.Album.Cover));
                         TrackCover.ImageSource = bitmapImage;
                         BackgroundCard.Source = bitmapImage;
+                    }else
+                    {
+                        TrackCover.ImageSource = null;
+                        BackgroundCard.Source = null;
                     }
 
                     if (playerService.CurrentTrack.OwnerId == config.UserId)
@@ -200,22 +203,17 @@ namespace MusicX.Controls
             {
                 SpeakerIcon.Glyph = WPFUI.Common.Icon.SpeakerOff28;
             }
-            else if (e.NewValue > 0.0 && e.NewValue < 0.50)
+            else if (e.NewValue > 0.0 && e.NewValue < 0.30)
             {
-                SpeakerIcon.Glyph = WPFUI.Common.Icon.Speaker048;
+                SpeakerIcon.Glyph = WPFUI.Common.Icon.Speaker032;
             }
-            else if (e.NewValue > 0.50 && e.NewValue < 0.60)
+            else if (e.NewValue > 0.30 && e.NewValue < 0.60)
             {
-                SpeakerIcon.Glyph = WPFUI.Common.Icon.Speaker124;
+                SpeakerIcon.Glyph = WPFUI.Common.Icon.Speaker132;
             }
-            else if (e.NewValue > 0.60 && e.NewValue < 0.90)
+            else if (e.NewValue > 0.80)
             {
-                SpeakerIcon.Glyph = WPFUI.Common.Icon.Speaker216;
-
-            }
-            else if (e.NewValue > 0.90)
-            {
-                SpeakerIcon.Glyph = WPFUI.Common.Icon.Speaker248;
+                SpeakerIcon.Glyph = WPFUI.Common.Icon.Speaker232;
             }
 
 

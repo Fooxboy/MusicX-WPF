@@ -55,6 +55,9 @@ namespace MusicX.ViewModels
 
                     if (nowLoading) return;
                     if (Next == null) return;
+
+                    logger.Info($"Load more for {Next} next");
+
                     nowLoading = true;
 
                     await Application.Current.Dispatcher.BeginInvoke(new Action(async () =>
