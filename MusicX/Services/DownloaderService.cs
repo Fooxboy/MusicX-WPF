@@ -217,7 +217,6 @@ namespace MusicX.Services
 
             Debug.WriteLine(e.Data);
 
-            //throw new NotImplementedException();
         }
 
         private string ReplaceSymbols(string text)
@@ -270,13 +269,6 @@ namespace MusicX.Services
             {
                 tfile.Tag.Album = CurrentDownload.Album.Title;
                 tfile.Tag.Year = 2022;
-
-
-
-                using(var client = new WebClient())
-                {
-                    await client.DownloadFileTaskAsync(CurrentDownload.Album.Thumb.Photo600, musicFolder + $"\\{r}.jpg");
-                }
 
                 byte[] imageBytes;
 
