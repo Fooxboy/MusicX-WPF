@@ -144,16 +144,19 @@ namespace MusicX
                 catalogs.Catalog.Sections.Add(podcast.Catalog.Sections[0]);
 
                 var icons = new List<WPFUI.Common.Icon>()
-            {
-                 WPFUI.Common.Icon.MusicNote120,
-                 WPFUI.Common.Icon.Headphones20,
-                 WPFUI.Common.Icon.MusicNote2Play20,
-                 WPFUI.Common.Icon.FoodPizza20,
-                 WPFUI.Common.Icon.Play12,
-                 WPFUI.Common.Icon.Star16,
-                 WPFUI.Common.Icon.PlayCircle48,
+                {
+                    WPFUI.Common.Icon.MusicNote120,
+                    WPFUI.Common.Icon.Headphones20,
+                    WPFUI.Common.Icon.MusicNote2Play20,
+                    WPFUI.Common.Icon.FoodPizza20,
+                    WPFUI.Common.Icon.Play12,
+                    WPFUI.Common.Icon.Star16,
+                    WPFUI.Common.Icon.PlayCircle48,
+                    WPFUI.Common.Icon.HeadphonesSoundWave20,
+                    WPFUI.Common.Icon.Speaker228,
 
-            };
+
+                };
 
 
                 var rand = new Random();

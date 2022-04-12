@@ -134,7 +134,6 @@ namespace MusicX.Services
                 logger.Info($"play track {track.Id}");
                
                 CurrentTrack = track;
-
                
                 player.PlaybackSession.Position = TimeSpan.Zero;
 
@@ -189,6 +188,8 @@ namespace MusicX.Services
                     {
                         cover = track.Album.Cover;
                     }
+
+                    discordService.RemoveTrackPlay();
                     discordService.SetTrackPlay(artist, CurrentTrack.Title, t, cover);
                 }
 
@@ -208,8 +209,6 @@ namespace MusicX.Services
                 if(track.ParentBlockId != null)
                 {
                     Debug.WriteLine("track.ParentBlockId != null");
-
-
 
                     if (track.ParentBlockId == this.blockId)
                     {
@@ -238,7 +237,21 @@ namespace MusicX.Services
                 {
                     Debug.WriteLine("LOAD FROM PLAYLIST");
 
-                    if (loadedPlaylistIdTracks == plViewModel.Playlist.Id) return;
+                    if (loadedPlaylistIdTracks == plViewModel.Playlist.Id)
+                    {
+                        currentIndex = Tracks.IndexOf(Tracks.Single(a => a.Id == track.Id));
+
+                        if(currentIndex + 1 > Tracks.Count - 1)
+                        {
+                            NextPlayTrack = CurrentTrack;
+                        }
+                        else
+                        {
+                            NextPlayTrack = Tracks[currentIndex + 1];
+
+                        }
+                        return;
+                    }
 
                     Debug.WriteLine($"loadedPlaylistIdTracks = {loadedPlaylistIdTracks} |  plViewModel.Playlist.Id = { plViewModel.Playlist.Id}");
 
@@ -483,6 +496,8 @@ namespace MusicX.Services
                     {
                         cover = CurrentTrack.Album.Cover;
                     }
+
+                    discordService.RemoveTrackPlay();
 
                     discordService.SetTrackPlay(artist, CurrentTrack.Title, t, cover);
 
@@ -730,6 +745,7 @@ namespace MusicX.Services
                     this.player.Pause();
                     Seek(TimeSpan.Zero);
                     this.player.Play();
+                    return;
                 }
                 await NextTrack();
             }

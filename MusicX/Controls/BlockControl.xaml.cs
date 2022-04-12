@@ -3,21 +3,12 @@ using MusicX.Controls.Blocks;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Services;
-using MusicX.Views;
 using NLog;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WPFUI.Controls;
 
@@ -200,6 +191,17 @@ namespace MusicX.Controls
 
                     }
 
+                    if (Block.Layout.Name == "music_chart_list")
+                    {
+
+                        BlocksPanel.Children.Add(new AudiosListControl() { Audios = Block.Audios });
+
+                        logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
+
+                        return;
+
+                    }
+
                 }
 
                 if (Block.DataType == "action")
@@ -297,6 +299,23 @@ namespace MusicX.Controls
                     }
                     
                     if(Block.Layout.Name == "list")
+                    {
+                        BlocksPanel.Children.Add(new VideosSliderBlockControl() { Videos = Block.Videos, ShowFull = true });
+                        return;
+                    }
+
+                }
+
+                if (Block.DataType == "artist_videos")
+                {
+                    if (Block.Layout.Name == "slider")
+                    {
+                        BlocksPanel.Children.Add(new VideosSliderBlockControl() { Videos = Block.Videos, ShowFull = false });
+
+                        return;
+                    }
+
+                    if (Block.Layout.Name == "list")
                     {
                         BlocksPanel.Children.Add(new VideosSliderBlockControl() { Videos = Block.Videos, ShowFull = true });
                         return;
