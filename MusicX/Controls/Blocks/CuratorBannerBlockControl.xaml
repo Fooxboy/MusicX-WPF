@@ -26,7 +26,6 @@
                     <wpfui:Button Click="ActionCuratorButton_Click" x:Name="ActionCuratorButton" Margin="10 0 0 0" Appearance="Secondary" Content="Подписаться"/>
                 </StackPanel>
 
-                <TextBlock x:Name="CuratorDescription" FontFamily="{StaticResource VKSansRegular}" Foreground="White" TextWrapping="Wrap" FontSize="17"  Opacity="0.7"   Text="Curator desc"/>
             </StackPanel>
         </Grid>
     </Grid>

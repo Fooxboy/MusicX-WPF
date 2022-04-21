@@ -30,7 +30,7 @@ namespace MusicX.Controls.Blocks
         {
             CuratorBannerImage.ImageSource = new BitmapImage(new Uri(Block.Curators[0].Photo[2].Url));
             CuratorText.Text = Block.Curators[0].Name;
-            CuratorDescription.Text = Block.Curators[0].Description;
+            //CuratorDescription.Text = Block.Curators[0].Description;
 
             if (Block.Curators[0].IsFollowed)
             {

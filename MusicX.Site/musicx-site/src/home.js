@@ -13,10 +13,11 @@ class Home extends React.Component {
                     <div className="uk-navbar-left">
                         <ul className="uk-navbar-nav">
                             <li className="uk-active"><a href="#">Music X</a></li>
+                           
+                            <li><a href="#opportunities">Возможности</a></li>
                             <li>
-                                <a href="#">Скачать</a>
+                                <a href="#download">Скачать</a>
                             </li>
-                            <li><a href="#">Брр</a></li>
                         </ul>
                     </div>
                 </nav>
@@ -34,18 +35,18 @@ class Home extends React.Component {
                         </p>
 
                         <div>
-                               <a className="uk-button uk-button-secondary" href="#">
+                               <a className="uk-button uk-button-secondary" target="_blank" href="https://fooxboy.blob.core.windows.net/musicx/MusicXSetup.exe">
                                     <div>
                                         <p className="download-button">Скачать</p>
                                     </div>
                                 </a>
                           
-                            <a className="uk-button uk-button-secondary telegram-button" href="#">Телеграм</a>
+                            <a className="uk-button uk-button-secondary telegram-button" href="https://t.me/MusicXPlayer">Телеграм</a>
                         </div>
                     </div>
                 </div>
 
-                <div className="uk-panel">
+                <div id="opportunities" className="uk-panel">
                     <div>
                         <p className="category-title category-title-margin">Основные возможности</p>
                     </div>
@@ -53,7 +54,7 @@ class Home extends React.Component {
 
                 <div className="uk-panel">
                     <img src={explore} className="right-image uk-align-right uk-margin-remove-adjacent uk-border-rounded uk-box-shadow-xlarge" alt="image one"/>
-                    <div className="uk-panel">
+                    <div >
                         <p className="desc-title">Рекомендации</p>
                         <p className="desc-subtitle">Раздел "Обзор" содержит все самые популярные и трендовые песни и альбомы всей музыкальной библиотеки ВКонтакте. Вы точно тут найдете что послушать!</p>
                     </div>
@@ -64,7 +65,7 @@ class Home extends React.Component {
 
                 <div className="uk-panel">
                     <img src={playlists} className="left-image uk-align-left uk-margin-remove-adjacent uk-border-rounded uk-box-shadow-xlarge" alt="image one"/>
-                    <div className="uk-panel">
+                    <div>
                         <p className="desc-title">Специальные подборки</p>
                         <p className="desc-subtitle">Это подобранные алгоритмами специально для Вас 5 плейлистов, которые постоянно обновляются, подстраиваясь под Ваш музыкальный вкус. А подборки от редакции помогут узнать новые жанры и стили!</p>
                     </div>
@@ -75,7 +76,7 @@ class Home extends React.Component {
 
                 <div className="uk-panel">
                     <img src={search} className="right-image uk-align-right uk-margin-remove-adjacent uk-border-rounded uk-box-shadow-xlarge" alt="image one"/>
-                    <div className="uk-panel">
+                    <div >
                         <p className="desc-title">Поиск</p>
                         <p className="desc-subtitle">Найдите все Ваши любимые треки, плейлисты, любимых артитов в одном запросе.</p>
                     </div>
@@ -86,7 +87,7 @@ class Home extends React.Component {
 
                 <div className="uk-panel">
                     <img src={podcasts} className="left-image uk-align-left uk-margin-remove-adjacent uk-border-rounded uk-box-shadow-xlarge" alt="image one"/>
-                    <div className="uk-panel">
+                    <div >
                         <p className="desc-title">Подкасты</p>
                         <p className="desc-subtitle">Если Вам надоела музыка, Вы всегда сможете послушать прекрасных дикторов с их интереснешими историями!</p>
                     </div>
@@ -95,7 +96,7 @@ class Home extends React.Component {
                <div className="seporator-div"></div>
 
 
-                <div className="uk-panel">
+                <div id="download" className="uk-panel block-dark">
                     <div className="uk-card uk-card-body">
                         <p className="category-title">
                             И ещё много чего разного!
@@ -105,10 +106,8 @@ class Home extends React.Component {
                             Попробуйте сами все возможности загрузив Music X для Windows 11, 10
                         </p>
 
-                        
-                        <span class="material-icons-outlined">file_download</span>
 
-                        <a className="uk-button uk-button-secondary" href="#">
+                        <a className="uk-button uk-button-secondary" target="_blank" href="https://fooxboy.blob.core.windows.net/musicx/MusicXSetup.exe">
 
                             <div>
                                 <p className="download-button">Скачать</p>

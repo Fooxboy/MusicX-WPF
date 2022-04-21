@@ -37,18 +37,28 @@ body {
   background-color: #202020;
 }
 
+.block-dark {
+  background-color: #1C1C1C;
+
+}
+
 .left-image {
-  height: 620px;
-  margin-left: 80px;
+  height: 70vh;
+  margin-left: -105px;
+  margin-right: 10px;
+
 }
 
 .right-image {
-  height: 620px;
-  margin-right: 80px;
+  height: 70vh;
+  margin-right: -105px;
+  margin-left: 10px;
+
 }
 
+
 .title-app {
-  font-size: 120px;
+  font-size: 8rem;
   color: white;
   margin-top: 5vh;
 
@@ -130,22 +140,42 @@ body {
 
 @font-face {
   font-family: VkSansBold;
-  src: url(./fonts/VKSansDisplay-Bold.ttf);
+  src: url(fonts/VKSansDisplay-Bold.ttf);
 }
 
 @font-face {
   font-family: VkSansDemiBold;
-  src: url(./fonts/VKSansDisplay-DemiBold.ttf);
+  src: url(fonts/VKSansDisplay-DemiBold.ttf);
 }
 
 @font-face {
   font-family: VkSansMedium;
-  src: url(./fonts/VKSansDisplay-Medium.ttf);
+  src: url(fonts/VKSansDisplay-Medium.ttf);
 }
 
 @font-face {
   font-family: VkSansRegular;
-  src: url(./fonts/VKSansDisplay-Regular.ttf);
+  src: url(fonts/VKSansDisplay-Regular.ttf);
+}
+
+@media screen and (max-width:768px){
+  .left-image, .right-image {
+    width: 95vw;
+    margin-left: 10px;
+    margin-right: 10px;
+    height: auto;
+  }
+
+  .title-app {
+    font-size: 5rem;
+  }
+
+  .subtitle-app {
+    font-size: 2rem;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+  
 }
 
 
