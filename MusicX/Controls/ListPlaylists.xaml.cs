@@ -64,6 +64,8 @@ namespace MusicX.Controls
             }
         }
 
+        public bool ShowChart { get; set; } = false;
+
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
@@ -75,11 +77,11 @@ namespace MusicX.Controls
                     StackPanelPlaylists.Orientation = Orientation.Vertical;
 
                     var content = new List<object>();
-                    
+
+
                     foreach (var playlist in Playlists)
                     {
 
-                        StackPanelPlaylists.Children.Add(new PlaylistControl() { Playlist = playlist, HorizontalAlignment = HorizontalAlignment.Left, ShowFull = true, Height = 85, Margin = new Thickness(0, 0, 0, 10) });
                         StackPanelPlaylists.Children.Add(new Rectangle() { Height = 1, Fill = Brushes.White, Margin = new Thickness(5, 5, 5, 15), Opacity = 0.1 });
 
                     }
@@ -100,7 +102,22 @@ namespace MusicX.Controls
                 foreach (var playlist in Playlists)
                 {
                     if (count >= 11) break;
-                    StackPanelPlaylists.Children.Add(new PlaylistControl() { Playlist = playlist, Height = 250, Width = 200, Margin = new Thickness(0, 0, 10, 0) });
+
+                    int chartPosition = 0;
+
+                    if (ShowChart)
+                    {
+                        chartPosition++;
+
+                        StackPanelPlaylists.Children.Add(new PlaylistControl() { Playlist = playlist, ChartPosition = chartPosition.ToString(), Height = 250, Width = 200, Margin = new Thickness(0, 0, 10, 0) });
+                    }
+                    else
+                    {
+                        StackPanelPlaylists.Children.Add(new PlaylistControl() { Playlist = playlist, Height = 250, Width = 200, Margin = new Thickness(0, 0, 10, 0) });
+
+                    }
+
+                    
                     count++;
                 }
             }catch (Exception ex)

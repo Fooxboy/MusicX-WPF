@@ -274,7 +274,7 @@ namespace MusicX.Controls
 
 
         double oldWidth = 0;
-
+        double oldWidthArtists = 0;
 
         private void Grid_MouseEnter(object sender, MouseEventArgs e)
         {
@@ -284,10 +284,14 @@ namespace MusicX.Controls
                 if (ShowCard)
                 {
                     oldWidth = Title.ActualWidth;
+                    oldWidthArtists = Artists.ActualWidth;
                     Title.MaxWidth = 120;
                     Subtitle.Visibility = Visibility.Collapsed;
                     Artists.MaxWidth = 120;
+
                 }
+
+                explicitBadge.Margin = new Thickness(7, 0, 0, 0);
 
                 RecommendedAudio.Visibility = Visibility.Visible;
                 PlayButtons.Visibility = Visibility.Visible;
@@ -296,6 +300,8 @@ namespace MusicX.Controls
                     Card.Visibility = Visibility.Visible;
 
                 }
+
+
                 Card.Opacity = 0.5;
             }catch(Exception ex)
             {
@@ -315,8 +321,11 @@ namespace MusicX.Controls
                     Title.MaxWidth = oldWidth + 2;
                     Subtitle.Visibility = Visibility.Visible;
 
-                    Artists.MaxWidth = oldWidth + 2;
+                    Artists.MaxWidth = oldWidthArtists + 2;
                 }
+
+                explicitBadge.Margin = new Thickness(0, 0, 0, 0);
+
 
                 RecommendedAudio.Visibility = Visibility.Collapsed;
                 if (Card == null) return;

@@ -53,7 +53,7 @@ namespace MusicX.Controls
             {
                 if (Block.DataType == "artist")
                 {
-                    BlocksPanel.Children.Add(new ArtistBannerBlockControl() { Block = Block });
+                    BlocksPanel.Children.Add(new ArtistBannerBlockControl(Block) { Block = Block });
                   
                     logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
                     return;
@@ -101,7 +101,7 @@ namespace MusicX.Controls
 
                     if (Block.Layout.Name == "music_chart_large_slider")
                     {
-                        BlocksPanel.Children.Add(new ListPlaylists() { Playlists = Block.Playlists, ShowFull = false });
+                        BlocksPanel.Children.Add(new ListPlaylists() { Playlists = Block.Playlists, ShowChart = true, ShowFull = false });
                         logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
 
                         return;
@@ -159,7 +159,10 @@ namespace MusicX.Controls
 
                 if (Block.DataType == "catalog_banners")
                 {
-                    if (Block.Banners[0].Buttons != null) return;
+
+                    if(Block.Banners[0].ClickAction.Action.Url.Contains("subscription")) return;
+                    if(Block.Banners[0].ClickAction.Action.Url.Contains("combo")) return;
+                    //if (Block.Banners[0].Buttons != null) 
 
                     BlocksPanel.Children.Add(new BigBannerControl() { Banners = Block.Banners, Margin = new Thickness(0,0,-10,0) });
 

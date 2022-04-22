@@ -45,8 +45,6 @@ namespace MusicX.Controls.Blocks
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            
-
             return;
         }
 

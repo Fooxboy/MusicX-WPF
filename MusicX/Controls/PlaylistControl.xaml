@@ -27,10 +27,40 @@
             
 
         </Storyboard>
+        <Storyboard x:Key="LoadedAnimation">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="rectangle" Storyboard.TargetProperty="(Shape.Fill).(Brush.RelativeTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="1.1"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:01.0000000" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="rectangle" Storyboard.TargetProperty="(Shape.Fill).(Brush.RelativeTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="1.1"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:01.0000000" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="rectangle" Storyboard.TargetProperty="(Shape.Fill).(Brush.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:01.0000000" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="PlaylistStackPanelCompact" Storyboard.TargetProperty="(FrameworkElement.Margin)">
+                <EasingThicknessKeyFrame KeyTime="00:00:00" Value="0,50,0,0"/>
+                <EasingThicknessKeyFrame KeyTime="00:00:01.0000000" Value="0,5,0,0"/>
+            </ThicknessAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PlaylistStackPanelCompact" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:01.0000000" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
 
     </UserControl.Resources>
+
+    <UserControl.Triggers>
+        <EventTrigger RoutedEvent="Loaded">
+            <BeginStoryboard Storyboard="{StaticResource LoadedAnimation}"/>
+        </EventTrigger>
+    </UserControl.Triggers>
+    
     <Grid >
 
+        
         <Grid x:Name="CompactGrid" Visibility="Visible">
             <controls:CardAction MouseEnter="cardAction_MouseEnter" MouseLeave="cardAction_MouseLeave" x:Name="cardAction" Click="CardAction_Click" ShowChevron="False" RenderTransformOrigin="0.5,0.5">
                 <controls:CardAction.RenderTransform>
@@ -72,6 +102,8 @@
 
                     </Rectangle>
 
+                    
+
                     <StackPanel x:Name="PlaylistStackPanelCompact" VerticalAlignment="Center" Margin="0 5 0 0" Grid.Row="1">
                         <TextBlock x:Name="TitleCompact"  FontFamily="{StaticResource VKSansDemiBold}"  FontWeight="DemiBold"  TextTrimming="CharacterEllipsis" FontSize="16" Text="Album title"/>
                         <TextBlock x:Name="ArtistCompact"  Opacity="0.6" TextTrimming="CharacterEllipsis" FontSize="12" Text="Artist"/>
@@ -91,6 +123,16 @@
                 </Grid>
 
             </controls:CardAction>
+
+            <Grid Margin="5 5 0 0" x:Name="Chart" Visibility="Collapsed" HorizontalAlignment="Left" VerticalAlignment="Top" Width="50"  Height="50">
+                <Rectangle Fill="#202020" RadiusX="99"  RadiusY="99" Width="40"  Height="40">
+
+                </Rectangle>
+
+                <TextBlock Foreground="White" x:Name="ChartPositionValue" FontFamily="{StaticResource VKSansBold}" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Text="1"/>
+            </Grid>
+
+          
         </Grid>
 
         <Grid x:Name="FullGrid" MouseLeftButtonDown="FullGrid_MouseLeftButtonDown" HorizontalAlignment="Stretch" Visibility="Collapsed">

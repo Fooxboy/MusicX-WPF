@@ -8,11 +8,45 @@
              
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <Storyboard x:Key="OpenAnimation">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="rectangle" Storyboard.TargetProperty="(Shape.Fill).(Brush.RelativeTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="1.1"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="1.1"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="rectangle" Storyboard.TargetProperty="(Shape.Fill).(Brush.RelativeTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="1.1"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="1.1"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="rectangle" Storyboard.TargetProperty="(Shape.Fill).(Brush.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="ArtistText" Storyboard.TargetProperty="(FrameworkElement.Margin)">
+                <EasingThicknessKeyFrame KeyTime="00:00:00" Value="30,100,0,10"/>
+                <EasingThicknessKeyFrame KeyTime="00:00:00.5000000" Value="30,0,0,10"/>
+            </ThicknessAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ArtistText" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </UserControl.Resources>
 
     <Grid x:Name="ArtistBanner">
-        <Rectangle Height="450" Margin="0 0 -15 0" RadiusX="15" RadiusY="15">
+        <Rectangle x:Name="rectangle" Height="450" Margin="0 0 -15 0" RadiusX="15" RadiusY="15">
             <Rectangle.Fill>
                 <ImageBrush  Stretch="UniformToFill" x:Name="ArtistBannerImage">
+                    <ImageBrush.RelativeTransform>
+                        <TransformGroup>
+                            <ScaleTransform CenterY="0.5" CenterX="0.5"/>
+                            <SkewTransform CenterX="0.5" CenterY="0.5"/>
+                            <RotateTransform CenterX="0.5" CenterY="0.5"/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </ImageBrush.RelativeTransform>
 
                 </ImageBrush>
             </Rectangle.Fill>
@@ -23,7 +57,7 @@
                     <GradientStop Offset="0.95" Color="Transparent"></GradientStop>
                 </LinearGradientBrush>
             </Rectangle.OpacityMask>
-            
+
         </Rectangle>
 
         <Rectangle Visibility="Visible" Margin="0 0 -15 0" Height="450" Opacity="0.7" RadiusX="15" RadiusY="15">
@@ -42,7 +76,7 @@
             </Rectangle.OpacityMask>
         </Rectangle>
 
-        <TextBlock Foreground="White" FontFamily="{StaticResource VKSansBold}" x:Name="ArtistText" FontSize="50" Margin="30 0 0 10" VerticalAlignment="Center" FontWeight="Bold" Text="Artist text"/>
+        <TextBlock Foreground="White" FontFamily="{StaticResource VKSansBold}" x:Name="ArtistText" FontSize="50" Margin="30,0,0,10" VerticalAlignment="Center" FontWeight="Bold" Text="Artist text"/>
 
     </Grid>
 </UserControl>

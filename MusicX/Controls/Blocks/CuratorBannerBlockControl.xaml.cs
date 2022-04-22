@@ -22,12 +22,16 @@ namespace MusicX.Controls.Blocks
         public Block Block { get; set; }
         public CuratorBannerBlockControl()
         {
-            InitializeComponent();
             this.Loaded += CuratorBannerBlockControl_Loaded;
+            this.Initialized += CuratorBannerBlockControl_Initialized;
+            InitializeComponent();
+
+            
         }
 
-        private void CuratorBannerBlockControl_Loaded(object sender, RoutedEventArgs e)
+        private void CuratorBannerBlockControl_Initialized(object? sender, EventArgs e)
         {
+
             CuratorBannerImage.ImageSource = new BitmapImage(new Uri(Block.Curators[0].Photo[2].Url));
             CuratorText.Text = Block.Curators[0].Name;
             //CuratorDescription.Text = Block.Curators[0].Description;
@@ -36,12 +40,18 @@ namespace MusicX.Controls.Blocks
             {
                 ActionCuratorButton.Content = "Отписаться";
                 ActionCuratorButton.Icon = WPFUI.Common.Icon.DeleteDismiss20;
-            }else
+            }
+            else
             {
 
                 ActionCuratorButton.Content = "Подписаться";
                 ActionCuratorButton.Icon = WPFUI.Common.Icon.Add24;
             }
+        }
+
+        private void CuratorBannerBlockControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            
 
 
         }
