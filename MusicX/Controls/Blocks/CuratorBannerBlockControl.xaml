@@ -9,22 +9,42 @@
              
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid x:Name="CuratorBanner" Margin="0 0 0 10">
-        <Rectangle Height="280" RadiusX="15" RadiusY="15">
+        <Rectangle Height="280" Margin="0 0 -15 0" RadiusX="15" RadiusY="15">
             <Rectangle.Fill>
                 <ImageBrush  Stretch="UniformToFill" x:Name="CuratorBannerImage"/>
             </Rectangle.Fill>
+
+            <Rectangle.OpacityMask>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Offset="0.0" Color="Black"></GradientStop>
+                    <GradientStop Offset="0.95" Color="Transparent"></GradientStop>
+                </LinearGradientBrush>
+            </Rectangle.OpacityMask>
         </Rectangle>
 
-        <Grid Margin="0 0 0 0" VerticalAlignment="Bottom">
+        <Rectangle Visibility="Visible" Margin="0 0 -15 0" Height="280" Opacity="0.7" RadiusX="15" RadiusY="15">
+            <Rectangle.Fill>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Color="Black" Offset="0.1"></GradientStop>
+                    <GradientStop Color="Transparent" Offset="1.5"></GradientStop>
+                </LinearGradientBrush>
+            </Rectangle.Fill>
 
-            <Rectangle VerticalAlignment="Stretch" HorizontalAlignment="Stretch" RadiusX="15" RadiusY="15" Opacity="0.3" Fill="Black"/>
-            <StackPanel Margin="10">
+            <Rectangle.OpacityMask>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Offset="0.0" Color="Black"></GradientStop>
+                    <GradientStop Offset="0.95" Color="Transparent"></GradientStop>
+                </LinearGradientBrush>
+            </Rectangle.OpacityMask>
+        </Rectangle>
+
+        <Grid Margin="20 0 0 0" VerticalAlignment="Center">
+
+            <StackPanel HorizontalAlignment="Left" Margin="10">
                 <TextBlock FontSize="14" Foreground="White" Opacity="0.7" FontWeight="DemiBold" Text="Сообщество-куратор"/>
 
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock x:Name="CuratorText" FontFamily="{StaticResource VKSansBold}" Foreground="White" FontSize="40"  FontWeight="Black" Text="Curator name"/>
-                    <wpfui:Button Click="ActionCuratorButton_Click" x:Name="ActionCuratorButton" Margin="10 0 0 0" Appearance="Secondary" Content="Подписаться"/>
-                </StackPanel>
+                <TextBlock x:Name="CuratorText" FontFamily="{StaticResource VKSansBold}" Foreground="White" FontSize="40"  FontWeight="Black" Text="Curator name"/>
+                <wpfui:Button Click="ActionCuratorButton_Click" Width="200" x:Name="ActionCuratorButton" Margin="0 20 0 0" Appearance="Secondary" Content="Подписаться"/>
 
             </StackPanel>
         </Grid>

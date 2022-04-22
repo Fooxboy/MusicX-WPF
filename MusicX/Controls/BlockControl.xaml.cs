@@ -115,6 +115,14 @@ namespace MusicX.Controls
                         return;
                     }
 
+                    if (Block.Layout.Name == "slider")
+                    {
+                        BlocksPanel.Children.Add(new ListPlaylists() { Playlists = Block.Playlists, ShowFull = false });
+                        logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
+
+                        return;
+                    }
+
                     if (Block.Layout.Name == "recomms_slider")
                     {
                         BlocksPanel.Children.Add(new ListPlaylists() { Playlists = Block.Playlists, ShowFull = false });
@@ -153,7 +161,7 @@ namespace MusicX.Controls
                 {
                     if (Block.Banners[0].Buttons != null) return;
 
-                    BlocksPanel.Children.Add(new ListBanners() { Banners = Block.Banners });
+                    BlocksPanel.Children.Add(new BigBannerControl() { Banners = Block.Banners, Margin = new Thickness(0,0,-10,0) });
 
                     logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
 

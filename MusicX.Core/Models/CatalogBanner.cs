@@ -22,6 +22,9 @@ namespace MusicX.Core.Models
         [JsonProperty("text")]
         public string Text { get; set; }
 
+        [JsonProperty("subtext")]
+        public string SubText { get; set; }
+
         [JsonProperty("title")]
         public string Title { get; set; }
 

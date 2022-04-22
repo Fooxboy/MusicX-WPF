@@ -9,20 +9,40 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
-    <Grid x:Name="ArtistBanner" Margin="0 0 0 10">
-        <Rectangle Height="450" RadiusX="15" RadiusY="15">
+    <Grid x:Name="ArtistBanner">
+        <Rectangle Height="450" Margin="0 0 -15 0" RadiusX="15" RadiusY="15">
             <Rectangle.Fill>
                 <ImageBrush  Stretch="UniformToFill" x:Name="ArtistBannerImage">
 
                 </ImageBrush>
-
             </Rectangle.Fill>
-        </Rectangle>
-        <Rectangle VerticalAlignment="Bottom" Height="70" Opacity="0.3" RadiusX="15" RadiusY="15" Fill="Black"/>
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Foreground="White" FontFamily="{StaticResource VKSansBold}" x:Name="ArtistText" FontSize="40" Margin="10 0 0 10" VerticalAlignment="Bottom" FontWeight="Bold" Text="Artist text"/>
-            <!--<wpfui:Button Click="ActionArtistButton_Click" x:Name="ActionArtistButton" Margin="10 0 0 0" Appearance="Transparent" Content="Подписаться"/>-->
 
-        </StackPanel>
+            <Rectangle.OpacityMask>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Offset="0.0" Color="Black"></GradientStop>
+                    <GradientStop Offset="0.95" Color="Transparent"></GradientStop>
+                </LinearGradientBrush>
+            </Rectangle.OpacityMask>
+            
+        </Rectangle>
+
+        <Rectangle Visibility="Visible" Margin="0 0 -15 0" Height="450" Opacity="0.7" RadiusX="15" RadiusY="15">
+            <Rectangle.Fill>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Color="Black" Offset="0.1"></GradientStop>
+                    <GradientStop Color="Transparent" Offset="1.5"></GradientStop>
+                </LinearGradientBrush>
+            </Rectangle.Fill>
+
+            <Rectangle.OpacityMask>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Offset="0.0" Color="Black"></GradientStop>
+                    <GradientStop Offset="0.95" Color="Transparent"></GradientStop>
+                </LinearGradientBrush>
+            </Rectangle.OpacityMask>
+        </Rectangle>
+
+        <TextBlock Foreground="White" FontFamily="{StaticResource VKSansBold}" x:Name="ArtistText" FontSize="50" Margin="30 0 0 10" VerticalAlignment="Center" FontWeight="Bold" Text="Artist text"/>
+
     </Grid>
 </UserControl>

@@ -15,6 +15,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -59,11 +60,32 @@ namespace MusicX.Controls
            
         }
 
-        private async void Button_Click(object sender, RoutedEventArgs e)
-        {
-            var result = await vkService.GetAudioSearchAsync(Suggestion.Title, Suggestion.Context);
 
-            await navigationService.OpenSection(result.Catalog.DefaultSection);
+        private async void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                var result = await vkService.GetAudioSearchAsync(Suggestion.Title, Suggestion.Context);
+
+                await navigationService.OpenSection(result.Catalog.DefaultSection);
+            }catch(Exception ex)
+            {
+                logger.Error(ex, ex.Message);
+            }
+        }
+
+        private void Grid_MouseEnter(object sender, MouseEventArgs e)
+        {
+            this.Cursor = Cursors.Hand;
+            var amim = (Storyboard)(this.Resources["OpenAnimation"]);
+            amim.Begin();
+        }
+
+        private void Grid_MouseLeave(object sender, MouseEventArgs e)
+        {
+            this.Cursor = Cursors.Arrow;
+            var amim = (Storyboard)(this.Resources["CloseAnimation"]);
+            amim.Begin();
         }
     }
 }

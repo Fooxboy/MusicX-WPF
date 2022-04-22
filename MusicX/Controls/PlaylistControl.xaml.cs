@@ -15,6 +15,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -250,6 +251,18 @@ namespace MusicX.Controls
             {
                 nowLoad = false;
             }
+        }
+
+        private void cardAction_MouseEnter(object sender, MouseEventArgs e)
+        {
+            var amim = (Storyboard)(this.Resources["OpenAnimation"]);
+            amim.Begin();
+        }
+
+        private void cardAction_MouseLeave(object sender, MouseEventArgs e)
+        {
+            var amim = (Storyboard)(this.Resources["CloseAnimation"]);
+            amim.Begin();
         }
     }
 }

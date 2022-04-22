@@ -36,31 +36,42 @@
     </Page.Resources>
 
     <Grid x:Name="ContentGrid">
-        <StackPanel x:Name="stackPanel" Margin="0,20,-800,10" RenderTransformOrigin="0.5,0.5">
-            <StackPanel.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform/>
-                    <SkewTransform/>
-                    <RotateTransform/>
-                    <TranslateTransform/>
-                </TransformGroup>
-            </StackPanel.RenderTransform>
-            <Button HorizontalAlignment="Left" Width="300" x:Name="OpenModal" Content="Открыть модалку" Click="OpenModal_Click"/>
 
-            <TextBlock Foreground="White" Margin="0 30 0 0" FontSize="20" FontFamily="{StaticResource VKSansBold}" Text="Открыть секцию по id"/>
-            <TextBox Margin="0 10 0 0" Width="400" HorizontalAlignment="Left" x:Name="section"/>
-            <wpfui:Button Width="300" Click="OpenSectionButton_Click" x:Name="OpenSectionButton" HorizontalAlignment="Left" Margin="0 10 0 0" Content="Открыть" Appearance="Transparent"/>
+        <StackPanel>
+            <!--<music:BigBannerControl HorizontalAlignment="Stretch" Margin="-00 0 -20 0" Height="600" />-->
+
+            <StackPanel x:Name="stackPanel" Margin="0,20,-800,10" RenderTransformOrigin="0.5,0.5">
+                <StackPanel.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </StackPanel.RenderTransform>
 
 
-            <TextBlock Foreground="White" Margin="0 30 0 0" FontSize="20" FontFamily="{StaticResource VKSansBold}" Text="Открыть страницу исполнителя по id"/>
-            <TextBox Margin="0 10 0 0" Width="400" HorizontalAlignment="Left" x:Name="artist"/>
-            <wpfui:Button Width="300" Click="openArtist_Click"  x:Name="openArtist" HorizontalAlignment="Left" Margin="0 10 0 0" Content="Открыть" Appearance="Transparent"/>
-            <wpfui:Button Width="300" Click="showNotification_Click"  x:Name="showNotification" HorizontalAlignment="Left" Margin="0 50 0 0" Content="Показать уведомление" Appearance="Secondary"/>
 
-            <TextBlock Foreground="White" Margin="0 30 0 0" FontSize="20" FontFamily="{StaticResource VKSansBold}" Text="Скачать трек по ссылке"/>
-            <TextBox Margin="0 10 0 0" Width="400" HorizontalAlignment="Left" x:Name="url"/>
-            <wpfui:Button Width="300" Click="download_Click"  x:Name="download" HorizontalAlignment="Left" Margin="0 10 0 0" Content="Скачать" Appearance="Secondary"/>
 
+                <Button HorizontalAlignment="Left" Width="300" x:Name="OpenModal" Content="Открыть модалку" Click="OpenModal_Click"/>
+
+                <TextBlock Foreground="White" Margin="0 30 0 0" FontSize="20" FontFamily="{StaticResource VKSansBold}" Text="Открыть секцию по id"/>
+                <TextBox Margin="0 10 0 0" Width="400" HorizontalAlignment="Left" x:Name="section"/>
+                <wpfui:Button Width="300" Click="OpenSectionButton_Click" x:Name="OpenSectionButton" HorizontalAlignment="Left" Margin="0 10 0 0" Content="Открыть" Appearance="Transparent"/>
+
+
+                <TextBlock Foreground="White" Margin="0 30 0 0" FontSize="20" FontFamily="{StaticResource VKSansBold}" Text="Открыть страницу исполнителя по id"/>
+                <TextBox Margin="0 10 0 0" Width="400" HorizontalAlignment="Left" x:Name="artist"/>
+                <wpfui:Button Width="300" Click="openArtist_Click"  x:Name="openArtist" HorizontalAlignment="Left" Margin="0 10 0 0" Content="Открыть" Appearance="Transparent"/>
+                <wpfui:Button Width="300" Click="showNotification_Click"  x:Name="showNotification" HorizontalAlignment="Left" Margin="0 50 0 0" Content="Показать уведомление" Appearance="Secondary"/>
+
+                <TextBlock Foreground="White" Margin="0 30 0 0" FontSize="20" FontFamily="{StaticResource VKSansBold}" Text="Скачать трек по ссылке"/>
+                <TextBox Margin="0 10 0 0" Width="400" HorizontalAlignment="Left" x:Name="url"/>
+                <wpfui:Button Width="300" Click="download_Click"  x:Name="download" HorizontalAlignment="Left" Margin="0 10 0 0" Content="Скачать" Appearance="Secondary"/>
+
+            </StackPanel>
         </StackPanel>
+
+        
     </Grid>
 </Page>
