@@ -289,9 +289,11 @@ namespace MusicX.Controls
                     Subtitle.Visibility = Visibility.Collapsed;
                     Artists.MaxWidth = 120;
 
+                    explicitBadge.Margin = new Thickness(7, 0, 0, 0);
+
                 }
 
-                explicitBadge.Margin = new Thickness(7, 0, 0, 0);
+              
 
                 RecommendedAudio.Visibility = Visibility.Visible;
                 PlayButtons.Visibility = Visibility.Visible;
@@ -322,9 +324,9 @@ namespace MusicX.Controls
                     Subtitle.Visibility = Visibility.Visible;
 
                     Artists.MaxWidth = oldWidthArtists + 2;
-                }
 
-                explicitBadge.Margin = new Thickness(0, 0, 0, 0);
+                    explicitBadge.Margin = new Thickness(0, 0, 0, 0);
+                }
 
 
                 RecommendedAudio.Visibility = Visibility.Collapsed;

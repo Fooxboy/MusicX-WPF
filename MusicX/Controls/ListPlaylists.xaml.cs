@@ -99,11 +99,12 @@ namespace MusicX.Controls
 
                 int count = 0;
 
+                int chartPosition = 0;
+
                 foreach (var playlist in Playlists)
                 {
                     if (count >= 11) break;
 
-                    int chartPosition = 0;
 
                     if (ShowChart)
                     {
