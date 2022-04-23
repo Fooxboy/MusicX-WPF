@@ -24,7 +24,7 @@ namespace MusicX.Core.Services
 
         public readonly VkApi vkApi;
         private readonly Logger logger;
-        private readonly string vkApiVersion = "5.178";
+        private readonly string vkApiVersion = "5.135";
         private readonly string deviceId = "c3427adfd2595c73:A092cf601fef615c8b594f6ad2c63d159";
 
         public bool IsAuth = false;
@@ -353,7 +353,7 @@ namespace MusicX.Core.Services
                     {"need_owner", needOwner }
                 };
 
-                var json = await vkApi.InvokeAsync("execute.getPlaylist", parameters);
+                var json  = await vkApi.InvokeAsync("execute.getPlaylist", parameters);
                 logger.Debug("RESULT OF 'execute.getPlaylist'" + json);
 
 

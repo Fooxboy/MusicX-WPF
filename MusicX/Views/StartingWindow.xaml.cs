@@ -104,10 +104,30 @@ namespace MusicX.Views
                     }
                     else
                     {
-                        await vkService.SetTokenAsync(config.AccessToken, null);
-                        var rootWindow = new RootWindow(navigationService, vkService, logger, configService, notificationsService);
-                        rootWindow.Show();
-                        this.Close();
+                        try
+                        {
+                            await vkService.SetTokenAsync(config.AccessToken, null);
+                            var rootWindow = new RootWindow(navigationService, vkService, logger, configService, notificationsService);
+                            rootWindow.Show();
+                            this.Close();
+                        }
+                        catch (VkNet.Exception.UserAuthorizationFailException e)
+                        {
+                            config.AccessToken = null;
+                            config.UserName = null;
+                            config.UserId = 0;
+
+                            await configService.SetConfig(config);
+
+                            var logger = StaticService.Container.Resolve<Logger>();
+                            var navigation = StaticService.Container.Resolve<Services.NavigationService>();
+                            var notifications = StaticService.Container.Resolve<Services.NotificationsService>();
+
+                            new LoginWindow(vkService, configService, logger, navigation, notifications, true).Show();
+
+                            this.Close();
+                        }
+                        
                     }
                 });
 

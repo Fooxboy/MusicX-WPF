@@ -234,6 +234,13 @@ namespace MusicX.Controls
                         text.Text = "Создать плейлист";
                     }
 
+                    if (Block.Buttons[0].Action.Type == "open_section")
+                    {
+                        return;
+                        card.Icon = WPFUI.Common.Icon.Open48;
+                        text.Text = Block.Buttons[0].Title;
+                    }
+
                     card.Content = text;
 
                     BlocksPanel.Children.Add(card);
@@ -375,9 +382,22 @@ namespace MusicX.Controls
 
                 if (Block.Buttons[0].Action.Type == "create_playlist")
                 {
+                    var notificationService = StaticService.Container.Resolve<Services.NotificationsService>();
+                    notificationService.Show("Ошибка", "MusicX пока что не умеет создавать плейлисты");
 
                 }
-            }catch(Exception ex)
+
+                if (Block.Buttons[0].Action.Type == "open_section")
+                {
+
+                    var navigation = StaticService.Container.Resolve<Services.NavigationService>();
+
+                    await navigation.OpenSection(Block.Buttons[0].SectionId, true);
+
+                }
+
+            }
+            catch(Exception ex)
             {
                 var logger = StaticService.Container.Resolve<Logger>();
 
