@@ -32,6 +32,12 @@ namespace MusicX.Controls.Blocks
         private void CuratorBannerBlockControl_Initialized(object? sender, EventArgs e)
         {
 
+           
+        }
+
+        private void CuratorBannerBlockControl_Loaded(object sender, RoutedEventArgs e)
+        {
+
             CuratorBannerImage.ImageSource = new BitmapImage(new Uri(Block.Curators[0].Photo[2].Url));
             CuratorText.Text = Block.Curators[0].Name;
             //CuratorDescription.Text = Block.Curators[0].Description;
@@ -47,12 +53,6 @@ namespace MusicX.Controls.Blocks
                 ActionCuratorButton.Content = "Подписаться";
                 ActionCuratorButton.Icon = WPFUI.Common.Icon.Add24;
             }
-        }
-
-        private void CuratorBannerBlockControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            
-
 
         }
 
