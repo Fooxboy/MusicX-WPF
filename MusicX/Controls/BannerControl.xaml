@@ -9,9 +9,14 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <wpfui:CardAction ShowChevron="False" Click="CardAction_Click">
+        <wpfui:CardAction Margin="0 10 0 10" ShowChevron="False" Click="CardAction_Click">
             <Grid>
-                <Image Stretch="UniformToFill" x:Name="BannerCover"/>
+                <Rectangle RadiusX="5" VerticalAlignment="Stretch" Height="200" RadiusY="5">
+                    <Rectangle.Fill>
+                        <ImageBrush Stretch="UniformToFill" x:Name="BannerCover"/>
+                    </Rectangle.Fill>
+                </Rectangle>
+                
                 <Rectangle VerticalAlignment="Bottom" Height="45" Opacity="0.4" Fill="Black"/>
                 <StackPanel VerticalAlignment="Bottom" Margin="0 0 0 5" HorizontalAlignment="Center">
                     <TextBlock FontWeight="DemiBold" FontFamily="{StaticResource VKSansDemiBold}" x:Name="BannerTitle"/>

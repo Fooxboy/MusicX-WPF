@@ -164,12 +164,25 @@ namespace MusicX
                 foreach (var section in catalogs.Catalog.Sections)
                 {
                     var sectionPage = navigationService.SectionView;
-                    var number = rand.Next(0, icons.Count);
-                    var icon = icons[number];
 
-                    icons.RemoveAt(number);
+                    WPFUI.Common.Icon icon;
+
+                    if (section.Title.ToLower() == "главная") icon = WPFUI.Common.Icon.Home24;
+                    else if (section.Title.ToLower() == "моя музыка") icon = WPFUI.Common.Icon.MusicNote120;
+                    else if (section.Title.ToLower() == "обзор") icon = WPFUI.Common.Icon.CompassNorthwest28;
+                    else if (section.Title.ToLower() == "подкасты") icon = WPFUI.Common.Icon.HeadphonesSoundWave20;
+                    else
+                    {
+                        var number = rand.Next(0, icons.Count);
+                        icon = icons[number];
+                        icons.RemoveAt(number);
+                    }
+
+
 
                     if (section.Title.ToLower() == "моя музыка") section.Title = "Музыка";
+
+
                     var navigationItem = new NavigationItem() { Tag = section.Id, Icon = icon, Content = section.Title, Type = typeof(SectionView), Instance = sectionPage };
                     navigationBar.Items.Add(navigationItem);
                 }

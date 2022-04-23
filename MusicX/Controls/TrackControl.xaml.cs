@@ -17,6 +17,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -271,16 +272,38 @@ namespace MusicX.Controls
 
         }
 
+
+        double oldWidth = 0;
+        double oldWidthArtists = 0;
+
         private void Grid_MouseEnter(object sender, MouseEventArgs e)
         {
             try
             {
+
+                if (ShowCard)
+                {
+                    oldWidth = Title.ActualWidth;
+                    oldWidthArtists = Artists.ActualWidth;
+                    Title.MaxWidth = 120;
+                    Subtitle.Visibility = Visibility.Collapsed;
+                    Artists.MaxWidth = 120;
+
+                    explicitBadge.Margin = new Thickness(7, 0, 0, 0);
+
+                }
+
+              
+
+                RecommendedAudio.Visibility = Visibility.Visible;
                 PlayButtons.Visibility = Visibility.Visible;
                 if (!ShowCard)
                 {
                     Card.Visibility = Visibility.Visible;
 
                 }
+
+
                 Card.Opacity = 0.5;
             }catch(Exception ex)
             {
@@ -294,6 +317,19 @@ namespace MusicX.Controls
         {
             try
             {
+
+                if (ShowCard)
+                {
+                    Title.MaxWidth = oldWidth + 2;
+                    Subtitle.Visibility = Visibility.Visible;
+
+                    Artists.MaxWidth = oldWidthArtists + 2;
+
+                    explicitBadge.Margin = new Thickness(0, 0, 0, 0);
+                }
+
+
+                RecommendedAudio.Visibility = Visibility.Collapsed;
                 if (Card == null) return;
                 PlayButtons.Visibility = Visibility.Collapsed;
 
@@ -469,6 +505,73 @@ namespace MusicX.Controls
                 logger.Error(ex, ex.Message);
             }
             
+        }
+
+        private void RecommendedAudio_MouseEnter(object sender, MouseEventArgs e)
+        {
+            this.Cursor = Cursors.Hand;
+
+          
+            var amim = (Storyboard)(this.Resources["OpenAnimation"]);
+            amim.Begin();
+        }
+
+        private void RecommendedAudio_MouseLeave(object sender, MouseEventArgs e)
+        {
+            this.Cursor = Cursors.Arrow;
+
+          
+
+            var amim = (Storyboard)(this.Resources["CloseAnimation"]);
+            amim.Begin();
+        }
+
+        private async void RecommendedAudio_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                var notifications = StaticService.Container.Resolve<Services.NotificationsService>();
+
+                notifications.Show("Уже ищем", "Сейчас мы найдем похожие треки, подождите");
+
+                clickToArtist = true;
+                var vk = StaticService.Container.Resolve<VkService>();
+
+                var items = await vk.GetRecommendationsAudio(Audio.OwnerId + "_" + Audio.Id);
+
+                var navigation = StaticService.Container.Resolve<Services.NavigationService>();
+
+                var ids = new List<string>();
+
+                foreach (var audio in items.Response.Items)
+                {
+                    ids.Add(audio.OwnerId + "_" + audio.Id + "_" + audio.AccessKey);
+                }
+
+                var block = new MusicX.Core.Models.Block { Audios = items.Response.Items, AudiosIds = ids, DataType = "music_audios", Layout = new Layout() { Name = "list" } };
+                var title = new MusicX.Core.Models.Block { DataType = "none", Layout = new Layout() { Name = "header", Title = $"Треки похожие на \"{Audio.Title}\"" } };
+
+                var blocks = new List<Core.Models.Block>();
+                blocks.Add(title);
+                blocks.Add(block);
+
+                await navigation.OpenSectionByBlocks(blocks);
+
+
+                clickToArtist = false;
+            }
+            catch (Exception ex)
+            {
+                clickToArtist = false;
+
+                logger.Error(ex, ex.Message);
+                var notifications = StaticService.Container.Resolve<Services.NotificationsService>();
+
+                notifications.Show("Ошибка", "Мы не смогли найти подходящие треки");
+
+            }
+
+
         }
     }
 }

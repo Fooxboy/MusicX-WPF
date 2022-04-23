@@ -9,7 +9,53 @@
              
              Loaded="UserControl_Loaded"
              MouseEnter="Grid_MouseEnter" MouseLeave="Grid_MouseLeave"
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="100" d:DesignWidth="800">
+    <UserControl.Resources>
+        <Storyboard x:Key="OpenAnimation">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="border" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0.2"/>
+            </DoubleAnimationUsingKeyFrames>
+
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="IconRecommended" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.7"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <Storyboard x:Key="CloseAnimation">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="border" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.2"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="IconRecommended" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="1"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0.7"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        
+        <Storyboard x:Key="LoadedAnimation">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="rectangle" Storyboard.TargetProperty="(Shape.Fill).(Brush.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:01.9000000" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="rectangle" Storyboard.TargetProperty="(Shape.Fill).(Brush.RelativeTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="1.1"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:01.9000000" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="rectangle" Storyboard.TargetProperty="(Shape.Fill).(Brush.RelativeTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="1.1"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:01.9000000" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </UserControl.Resources>
+
+    <UserControl.Triggers>
+        <EventTrigger RoutedEvent="Loaded">
+            <BeginStoryboard Storyboard="{StaticResource LoadedAnimation}"/>
+        </EventTrigger>
+    </UserControl.Triggers>
 
     <UserControl.ContextMenu>
         <ContextMenu Background="#414141" Foreground="White" BorderBrush="#646464">
@@ -19,7 +65,7 @@
             </StackPanel>
 
             <MenuItem Foreground="White" x:Name="GoToArtistMenu" Header="Перейти к артисту">
-              
+
             </MenuItem>
 
 
@@ -27,12 +73,12 @@
                 <controls:Icon Glyph="ArrowDownload24"/>
                 <TextBlock Margin="10 0 0 0" Foreground="White" Text="Скачать"/>
             </StackPanel>
-            
-                
+
+
         </ContextMenu>
     </UserControl.ContextMenu>
-    
-    
+
+
     <Grid MouseLeftButtonDown="Grid_MouseDown" HorizontalAlignment="Stretch">
         <TextBlock Background="Transparent"/>
 
@@ -48,10 +94,19 @@
 
                     <Rectangle  Height="45" Width="45" Grid.Row="0" Fill="Black" Opacity="0.1" RadiusX="5" RadiusY="5"/>
                     <controls:Icon   Glyph="MusicNote124"  FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
- 
-                    <Rectangle Height="45" RadiusX="3" RadiusY="3" Width="45">
+
+                    <Rectangle x:Name="rectangle" Height="45" RadiusX="3" RadiusY="3" Width="45">
                         <Rectangle.Fill>
-                            <ImageBrush  x:Name="Cover"  Stretch="UniformToFill"/>
+                            <ImageBrush  x:Name="Cover"  Stretch="UniformToFill">
+                                <ImageBrush.RelativeTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform CenterY="0.5" CenterX="0.5"/>
+                                        <SkewTransform CenterX="0.5" CenterY="0.5"/>
+                                        <RotateTransform CenterX="0.5" CenterY="0.5"/>
+                                        <TranslateTransform/>
+                                    </TransformGroup>
+                                </ImageBrush.RelativeTransform>
+                            </ImageBrush>
                         </Rectangle.Fill>
                     </Rectangle>
 
@@ -68,7 +123,7 @@
                 </Grid>
                 <StackPanel Margin="5 0 0 0" VerticalAlignment="Center">
                     <StackPanel x:Name="NamePanel" Orientation="Horizontal">
-                       
+
                         <TextBlock MouseEnter="Title_MouseEnter" MouseLeave="Title_MouseLeave" MouseLeftButtonDown="Title_MouseLeftButtonDown" MaxWidth="170" Foreground="White" FontWeight="DemiBold" FontSize="16" x:Name="Title" Text="Title"  TextTrimming="CharacterEllipsis" />
                         <TextBlock Foreground="White" x:Name="Subtitle" Margin="5 3 2 0" Text="Subtitle" Opacity="0.3" TextTrimming="CharacterEllipsis" />
 
@@ -77,14 +132,25 @@
                         </Border>
 
                     </StackPanel>
-                    <TextBlock Foreground="White" MouseEnter="Artists_MouseEnter" MouseLeave="Artists_MouseLeave" MouseLeftButtonDown="Artists_MouseLeftButtonDown" Margin="0 2 0 0" x:Name="Artists" Text="Artist" FontSize="11" Opacity="0.6"   TextTrimming="CharacterEllipsis" />
+                    <TextBlock Foreground="White" HorizontalAlignment="Left" MouseEnter="Artists_MouseEnter" MouseLeave="Artists_MouseLeave" MouseLeftButtonDown="Artists_MouseLeftButtonDown" Margin="0 2 0 0" x:Name="Artists" Text="Artist" FontSize="11" Opacity="0.6"   TextTrimming="CharacterEllipsis" />
 
                 </StackPanel>
             </StackPanel>
 
+
+            <Grid x:Name="RecommendedAudio" MouseLeftButtonDown="RecommendedAudio_MouseLeftButtonDown" Visibility="Collapsed" MouseEnter="RecommendedAudio_MouseEnter" MouseLeave="RecommendedAudio_MouseLeave" HorizontalAlignment="Right" Margin="0 0 10 0">
+                <Border x:Name="border" BorderBrush="White" BorderThickness="1" CornerRadius="5" Height="40" Width="40" Opacity="0.0">
+                    <Rectangle Height="40" Width="40" Fill="Red" Opacity="0"/>
+                </Border>
+                <controls:Icon x:Name="IconRecommended" Opacity="0.7" FontSize="20" Glyph="Sparkle48"/>
+            </Grid>
+
+
+
+
             <TextBlock Foreground="White" Opacity="0.5" x:Name="Time" HorizontalAlignment="Right"  Grid.Column="1" VerticalAlignment="Center" Margin=" 0 0 20 0 " Text="02:20"/>
         </Grid>
-       
+
 
     </Grid>
 </UserControl>

@@ -24,7 +24,7 @@ namespace MusicX.Controls
 
         private void BannerControl_Unloaded(object sender, RoutedEventArgs e)
         {
-            this.BannerCover.Source = null;
+            this.BannerCover.ImageSource = null;
             this.BannerCover = null;
 
             this.BannerTitle = null;
@@ -49,7 +49,7 @@ namespace MusicX.Controls
             {
                 BannerTitle.Text = Banner.Title;
                 BannerText.Text = Banner.Text;
-                BannerCover.Source = new BitmapImage(new Uri(Banner.Images.Last().Url)) { DecodePixelHeight = 200, DecodePixelWidth = 500, CacheOption = BitmapCacheOption.None };
+                BannerCover.ImageSource = new BitmapImage(new Uri(Banner.Images.Last().Url)) { DecodePixelHeight = 200, DecodePixelWidth = 500, CacheOption = BitmapCacheOption.None };
             }catch (Exception ex)
             {
                 var logger = StaticService.Container.Resolve<Logger>();

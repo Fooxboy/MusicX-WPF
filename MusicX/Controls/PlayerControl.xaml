@@ -75,7 +75,7 @@
                         </Grid.ColumnDefinitions>
 
 
-                        <StackPanel Grid.Column="0" Orientation="Horizontal">
+                        <StackPanel Grid.Column="0" Margin="0 5 0 0" Orientation="Horizontal">
                             <Grid >
                                 <Rectangle Height="50" Width="50" Fill="Black" RadiusX="5" RadiusY="5" Opacity="0.1"/>
                                 <wpfui:FontIcon Foreground="White" Height="50" Width="50" FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontFamily="Segoe Fluent Icons" Glyph="&#xEC4F;" />
@@ -87,7 +87,7 @@
                                 </Rectangle>
 
                             </Grid>
-                            <StackPanel VerticalAlignment="Center" Margin="15 0 0 0">
+                            <StackPanel VerticalAlignment="Center" Margin="15 -10 0 0">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock x:Name="TrackTitle" MouseEnter="TrackTitle_MouseEnter" MouseLeave="TrackTitle_MouseLeave" MouseLeftButtonDown="TrackTitle_MouseLeftButtonDown"  Margin="0 0 0 5" FontFamily="{StaticResource VKSansDemiBold}" FontSize="16" Text="Track name"/>
                                     <Border x:Name="explicitBadge" Margin="5 0 0 0" Visibility="Collapsed" CornerRadius="2" Height="16" Width="16" Opacity="0.4"   BorderThickness="1" BorderBrush="White">

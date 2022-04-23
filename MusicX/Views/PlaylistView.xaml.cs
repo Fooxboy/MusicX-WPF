@@ -74,7 +74,7 @@ namespace MusicX.Views
 
 
 
-            PlaylistStackPanel.Children.Add(new AudiosListControl { BitImage = image, Audios = ViewModel.Tracks, Margin = new Thickness(0, 0, 0, 90) });
+            PlaylistStackPanel.Children.Add(new AudiosListControl { BitImage = image, Audios = ViewModel.Tracks, Margin = new Thickness(0, 0, 0, 45) });
 
             this.playlist = e;
             if (e.OwnerId == currentUserId)

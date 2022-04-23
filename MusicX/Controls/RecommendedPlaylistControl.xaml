@@ -13,6 +13,11 @@
                 <Grid Margin="0 0 0 5">
 
                     <Rectangle x:Name="BackgroundRectangle" MouseEnter="BackgroundRectangle_MouseEnter" MouseLeave="BackgroundRectangle_MouseLeave" MouseLeftButtonDown="BackgroundRectangle_MouseLeftButtonDown" VerticalAlignment="Top" Opacity="1" RadiusX="8" RadiusY="8" Height="120">
+
+                        <Rectangle.Fill>
+                            <LinearGradientBrush x:Name="GradientBackground" StartPoint="0,0" EndPoint="1,1"/>
+                        </Rectangle.Fill>
+                        
                     </Rectangle>
                     <StackPanel Margin="10 10 0 0">
                         <StackPanel Orientation="Horizontal">

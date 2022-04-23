@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,6 +16,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -62,6 +64,8 @@ namespace MusicX.Controls
         }
 
         public bool ShowFull { get; set; } = false;
+
+        public string ChartPosition { get; set; } = null;
 
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
@@ -126,6 +130,13 @@ namespace MusicX.Controls
                 }
                 else
                 {
+
+                    if(ChartPosition != null)
+                    {
+                        Chart.Visibility = Visibility.Visible;
+                        ChartPositionValue.Text = ChartPosition;
+                    }
+
                     TitleCompact.Text = Playlist.Title;
                     if (Playlist.Cover != null)
                     {
@@ -156,6 +167,30 @@ namespace MusicX.Controls
                     {
                         ArtistCompact.Text = Playlist.Subtitle;
                     }
+
+
+
+                    //rectangle.Visibility = Visibility.Collapsed;
+                   // PlaylistStackPanelCompact.Visibility = Visibility.Collapsed;
+
+                    /*new Thread(() =>
+                    {
+                        var r = new Random();
+                        var value = r.Next(800, 2000);
+
+                        Thread.Sleep(value);
+
+
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            rectangle.Visibility = Visibility.Visible;
+                            PlaylistStackPanelCompact.Visibility = Visibility.Visible;
+                            var amim = (Storyboard)(this.Resources["OpenAnimation"]);
+                            amim.Begin();
+                        });
+
+
+                    }).Start();*/
                 }
             }catch (Exception ex)
             {
@@ -250,6 +285,18 @@ namespace MusicX.Controls
             {
                 nowLoad = false;
             }
+        }
+
+        private void cardAction_MouseEnter(object sender, MouseEventArgs e)
+        {
+            var amim = (Storyboard)(this.Resources["OpenAnimation"]);
+            amim.Begin();
+        }
+
+        private void cardAction_MouseLeave(object sender, MouseEventArgs e)
+        {
+            var amim = (Storyboard)(this.Resources["CloseAnimation"]);
+            amim.Begin();
         }
     }
 }

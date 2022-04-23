@@ -145,6 +145,12 @@ namespace MusicX.Services
             }
         }
 
+
+        public async Task OpenSectionByBlocks(List<Block> blocks)
+        {
+            await OpenSectionByBlocks(blocks, null);
+        }
+
         public void SetRootWindow(RootWindow rootWindow)
         {
             this.rootWindow = rootWindow;

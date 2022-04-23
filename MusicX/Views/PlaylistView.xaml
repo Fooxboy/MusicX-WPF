@@ -16,37 +16,49 @@
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <Storyboard x:Key="LoadedPlaylist">
-                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CardPlaylist" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
-                    <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.017"/>
-                    <EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="1.077">
-                        <EasingDoubleKeyFrame.EasingFunction>
-                            <BackEase EasingMode="EaseInOut"/>
-                        </EasingDoubleKeyFrame.EasingFunction>
-                    </EasingDoubleKeyFrame>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="rectangle" Storyboard.TargetProperty="(Shape.Fill).(Brush.Opacity)">
+                    <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
+                    <EasingDoubleKeyFrame KeyTime="00:00:00.7000000" Value="1"/>
                 </DoubleAnimationUsingKeyFrames>
-                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CardPlaylist" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
-                    <EasingDoubleKeyFrame KeyTime="00:00:00" Value="-147.5"/>
-                    <EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="11.5">
-                        <EasingDoubleKeyFrame.EasingFunction>
-                            <BackEase EasingMode="EaseInOut"/>
-                        </EasingDoubleKeyFrame.EasingFunction>
-                    </EasingDoubleKeyFrame>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="rectangle" Storyboard.TargetProperty="(Shape.Fill).(Brush.RelativeTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                    <EasingDoubleKeyFrame KeyTime="00:00:00" Value="1.1"/>
+                    <EasingDoubleKeyFrame KeyTime="00:00:00.7000000" Value="1"/>
                 </DoubleAnimationUsingKeyFrames>
-                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="stackPanel" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
-                    <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="-1.5"/>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="rectangle" Storyboard.TargetProperty="(Shape.Fill).(Brush.RelativeTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                    <EasingDoubleKeyFrame KeyTime="00:00:00" Value="1.1"/>
+                    <EasingDoubleKeyFrame KeyTime="00:00:00.7000000" Value="1"/>
                 </DoubleAnimationUsingKeyFrames>
-                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="stackPanel" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
-                    <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="-26.462"/>
+                <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="textBlock" Storyboard.TargetProperty="(FrameworkElement.Margin)">
+                    <EasingThicknessKeyFrame KeyTime="00:00:00" Value="0,70,20,0"/>
+                    <EasingThicknessKeyFrame KeyTime="00:00:00.5000000" Value="0,30,20,0"/>
+                </ThicknessAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="textBlock" Storyboard.TargetProperty="(UIElement.Opacity)">
+                    <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
+                    <EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="1"/>
+                </DoubleAnimationUsingKeyFrames>
+                <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="textBlock1" Storyboard.TargetProperty="(FrameworkElement.Margin)">
+                    <EasingThicknessKeyFrame KeyTime="00:00:00" Value="0,40,0,0"/>
+                    <EasingThicknessKeyFrame KeyTime="00:00:00.5000000" Value="0,10,0,0"/>
+                </ThicknessAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="textBlock1" Storyboard.TargetProperty="(UIElement.Opacity)">
+                    <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
+                    <EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="0.8"/>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="__" Storyboard.TargetProperty="(UIElement.Opacity)">
+                    <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
+                    <EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="0.615"/>
                 </DoubleAnimationUsingKeyFrames>
             </Storyboard>
         </ResourceDictionary>
     </Page.Resources>
 
     <Grid>
-        
+
+        <!-- -->
+        <!-- -->
 
         <Grid x:Name="LoadingContentGrid"
-              Visibility="{Binding Path=VisibleLoading, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+            Visibility="{Binding Path=VisibleLoading, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
               HorizontalAlignment="Center" VerticalAlignment="Center">
             <StackPanel>
                 <controls:ProgressRing Height="60"  IsIndeterminate="True" Width="60" IsEnabled="True"/>
@@ -55,6 +67,8 @@
             </StackPanel>
         </Grid>
         <hc:ScrollViewer IsInertiaEnabled="True" HorizontalScrollBarVisibility="Disabled" >
+            <!-- Visibility="{Binding VisibleContent}"-->
+
             <StackPanel x:Name="PlaylistStackPanel" Visibility="{Binding VisibleContent}">
                 <controls:Card x:Name="CardPlaylist" Visibility="Collapsed" Height="300" Margin="0 10 15 -40" RenderTransformOrigin="0.5,0.5">
                     <controls:Card.RenderTransform>
@@ -71,9 +85,18 @@
                             <controls:Icon FontSize="70" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Glyph="NavigationPlay20"/>
 
 
-                            <Rectangle Height="250" Width="250" RadiusX="5" RadiusY="5">
+                            <Rectangle x:Name="rectangle" Height="250" Width="250" RadiusX="5" RadiusY="5">
                                 <Rectangle.Fill>
-                                    <ImageBrush x:Name="CoverPlaylist" ImageSource="{Binding Cover}"/>
+                                    <ImageBrush x:Name="CoverPlaylist" ImageSource="{Binding Cover}">
+                                        <ImageBrush.RelativeTransform>
+                                            <TransformGroup>
+                                                <ScaleTransform CenterY="0.5" CenterX="0.5"/>
+                                                <SkewTransform CenterX="0.5" CenterY="0.5"/>
+                                                <RotateTransform CenterX="0.5" CenterY="0.5"/>
+                                                <TranslateTransform/>
+                                            </TransformGroup>
+                                        </ImageBrush.RelativeTransform>
+                                    </ImageBrush>
                                 </Rectangle.Fill>
 
                                 <Rectangle.Effect>
@@ -85,9 +108,9 @@
 
 
                         <StackPanel Margin="20 0 0 0" >
-                            <TextBlock HorizontalAlignment="Left"  FontFamily="{StaticResource VKSansBold}" TextTrimming="CharacterEllipsis"  VerticalAlignment="Center" FontSize="40" Margin="0 30 20 0" FontWeight="ExtraBlack"  Foreground="White" Text="{Binding Title}"/>
+                            <TextBlock x:Name="textBlock" HorizontalAlignment="Left"  FontFamily="{StaticResource VKSansBold}" TextTrimming="CharacterEllipsis"  VerticalAlignment="Center" FontSize="40" Margin="0 30 20 0" FontWeight="ExtraBlack"  Foreground="White" Text="{Binding Title}"/>
 
-                            <TextBlock TextTrimming="CharacterEllipsis" FontFamily="{StaticResource VKSansRegular}"  Opacity="0.8"  Foreground="White" FontSize="22" Margin="0 10 0 0" Text="{Binding ArtistText}"/>
+                            <TextBlock x:Name="textBlock1" TextTrimming="CharacterEllipsis" FontFamily="{StaticResource VKSansRegular}"  Opacity="0.8"  Foreground="White" FontSize="22" Margin="0 10 0 0" Text="{Binding ArtistText}"/>
                             <StackPanel x:Name="AddInfo" Visibility="{Binding Path=VisibileAddInfo}" Opacity="0.5" Margin="0 10 0 0" Orientation="Horizontal">
 
                                 <TextBlock
@@ -139,7 +162,7 @@
 
                             </StackPanel>
 
-                            <TextBlock Text="{Binding Path=Description}" Opacity="0.6" Foreground="White"/>
+                            <TextBlock x:Name="__" Text="{Binding Path=Description}" Opacity="0.6" Foreground="White"/>
                         </StackPanel>
                     </StackPanel>
                 </controls:Card>

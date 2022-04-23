@@ -58,7 +58,7 @@ namespace MusicX.Controls
             {
                 foreach (var banner in Banners)
                 {
-                    StackPanelBanners.Items.Add(new BannerControl() { Banner = banner, Height = 200, Width = 500, Margin = new Thickness(0, 0, 10, 30) });
+                    StackPanelBanners.Items.Add(new BannerControl() { Banner = banner, Height = 250, Width = 500, Margin = new Thickness(0, 0, 10, 30) });
                     //StackPanelBanners.Children.Add(new BannerControl() { Banner = banner, Height = 200, Width = 500, Margin = new Thickness(0, 0, 10, 0) });
                 }
             }catch (Exception ex)

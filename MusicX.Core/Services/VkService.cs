@@ -865,11 +865,33 @@ namespace MusicX.Core.Services
 
 
             var json = await vkApi.InvokeAsync("execute", parameters);
+
+
             var model = JsonConvert.DeserializeObject<ResponseVk>(json);
 
             logger.Debug("RESULT OF 'execute'" + json);
 
             return model.Proccess().Response;
+        }
+
+        public async Task<ResponseVk> GetRecommendationsAudio(string audio)
+        {
+            var parameters = new VkParameters
+                {
+                    {"v", vkApiVersion},
+                    {"lang", "ru"},
+                    {"device_id", deviceId},
+                    {"access_token", vkApi.Token},
+                    {"target_audio", audio},
+                };
+
+
+            var json = await vkApi.InvokeAsync("audio.getRecommendations", parameters);
+
+
+            var model = JsonConvert.DeserializeObject<ResponseVk>(json);
+
+            return model;
         }
     }
 }

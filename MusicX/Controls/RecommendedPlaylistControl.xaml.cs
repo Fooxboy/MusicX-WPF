@@ -47,17 +47,29 @@ namespace MusicX.Controls
                 }catch(Exception ex)
                 {
                     value = Convert.ToDouble(Playlist.Percentage.Replace('.', ','));
-
                 }
 
 
                 value = Math.Round(value, 2);
-                Percent.Text = $"{value * 100} %";
+                Percent.Text = $"{value * 100}%";
                 Subtitle.Text = Playlist.PercentageTitle;
 
                 NamePlaylist.Text = Playlist.Playlist.Title;
                 OwnerName.Text = Playlist.Playlist.OwnerName;
-                BackgroundRectangle.Fill = (Brush)new BrushConverter().ConvertFrom(Playlist.Color);
+                var brr = (SolidColorBrush)new BrushConverter().ConvertFrom(Playlist.Color);
+
+                var brrTwo = brr.Clone();
+
+
+                Color color = brrTwo.Color;
+                color.R += 50;
+                color.B += 20;
+                color.G += 72;
+
+                GradientBackground.GradientStops.Add(new GradientStop() { Color = brr.Color, Offset = 0.0 });
+                GradientBackground.GradientStops.Add(new GradientStop() { Color = color, Offset = 1.1 });
+
+                //BackgroundRectangle.Fill = 
 
                 foreach (var audio in Playlist.Audios)
                 {

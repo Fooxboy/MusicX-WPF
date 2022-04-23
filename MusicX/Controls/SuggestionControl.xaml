@@ -8,13 +8,32 @@
              mc:Ignorable="d" 
              Loaded="UserControl_Loaded"
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <controls:Button Padding="10 5 10 5" Click="Button_Click" Appearance="Transparent">
-            <StackPanel Orientation="Horizontal">
-                <controls:FontIcon Margin="0 2 0 0" FontFamily="Segoe Fluent Icons" Glyph="&#xE721;" />
-                <TextBlock Foreground="White"  Margin="5 0 0 0" x:Name="Title"/>
-                <TextBlock Foreground="White" Opacity="0.7" Margin="5 0 0 0" x:Name="Subtitle"/>
-            </StackPanel>
-        </controls:Button>
+    <UserControl.Resources>
+        <Storyboard x:Key="OpenAnimation">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="border" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.2"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0.4"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <Storyboard x:Key="CloseAnimation">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="border" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.4"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0.2"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </UserControl.Resources>
+    <Grid MouseLeftButtonDown="Grid_MouseLeftButtonDown" Height="35" MouseEnter="Grid_MouseEnter" MouseLeave="Grid_MouseLeave">
+
+        <Border x:Name="border" CornerRadius="19" Height="35" BorderThickness="1" Opacity="0.2" BorderBrush="White">
+            <Rectangle Height="35" Fill="Red" RadiusX="20" RadiusY="20" Opacity="0"/>
+        </Border>
+
+        <StackPanel VerticalAlignment="Center"  Margin="15 0 15 0" Orientation="Horizontal">
+            <controls:Icon Margin="0 0 0 0" Glyph="Search20" />
+            <TextBlock Foreground="White"  Text="Title" Margin="5 0 0 0" x:Name="Title"/>
+            <TextBlock Foreground="White"  Text="Subtitle" Opacity="0.7" Margin="5 0 0 0" x:Name="Subtitle"/>
+        </StackPanel>
+
     </Grid>
 </UserControl>

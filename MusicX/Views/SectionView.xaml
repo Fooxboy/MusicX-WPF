@@ -37,6 +37,7 @@
         </Storyboard>
     </Page.Resources>
 
+
     <Grid>
 
         <Grid x:Name="LoadingContentGrid" Opacity="0"
