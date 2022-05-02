@@ -16,7 +16,7 @@
                             
                         </Rectangle>
 
-                        <wpfui:Icon FontSize="40" HorizontalAlignment="Center" VerticalAlignment="Center" Glyph="Mic48"/>
+                        <wpfui:SymbolIcon FontSize="40" HorizontalAlignment="Center" VerticalAlignment="Center" Symbol="Mic48"/>
 
                         <Rectangle RadiusX="10" Height="90" Width="90" RadiusY="10">
                             <Rectangle.Fill>

@@ -17,7 +17,7 @@
 
                     </Rectangle>
 
-                    <controls:Icon x:Name="IconPlaceholder" FontSize="25" Glyph="Link32"/>
+                    <controls:SymbolIcon x:Name="IconPlaceholder" FontSize="25" Symbol="Link32"/>
 
                     <Rectangle x:Name="RectangleLink" Height="90" Width="90" RadiusX="100" RadiusY="100">
                         <Rectangle.Fill>

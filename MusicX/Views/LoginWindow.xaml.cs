@@ -84,7 +84,7 @@ namespace MusicX.Views
 
             if(tokenRefresh)
             {
-                await RootSnackbar.Expand("Токен устарел", "Войдите в аккаунт снова, чтобы продолжить пользоваться MusicX");
+                await RootSnackbar.ShowAsync("Токен устарел", "Войдите в аккаунт снова, чтобы продолжить пользоваться MusicX");
             }
         }
 
@@ -126,7 +126,7 @@ namespace MusicX.Views
                 loading.Visibility = Visibility.Collapsed;
                 content.Visibility = Visibility.Visible;
 
-                await RootSnackbar.Expand("Неверные данные", "Вы ввели неверно логин или пароль");
+                await RootSnackbar.ShowAsync("Неверные данные", "Вы ввели неверно логин или пароль");
             }
             catch (Exception ex)
             {
@@ -136,7 +136,7 @@ namespace MusicX.Views
                 loading.Visibility = Visibility.Collapsed;
                 content.Visibility = Visibility.Visible;
 
-                await RootSnackbar.Expand("Ошибка", $"Произошла неизвестная ошибка при входе: {ex.Message}");
+                await RootSnackbar.ShowAsync("Ошибка", $"Произошла неизвестная ошибка при входе: {ex.Message}");
             }
         }
 

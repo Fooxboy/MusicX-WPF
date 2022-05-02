@@ -15,7 +15,7 @@
             <TextBlock HorizontalAlignment="Center" FontFamily="{StaticResource VKSansDemiBold}" Foreground="White" FontSize="30" Text="Доступно обновление"/>
             <StackPanel Margin="20 10 0 0" HorizontalAlignment="Center" Orientation="Horizontal">
                 <TextBlock x:Name="OldVersion" FontSize="18" Foreground="White" Opacity="0.4" Text="1.0"/>
-                <wpfui:Icon VerticalAlignment="Center" Margin="5 2 5 0" Glyph="ArrowRight48"/>
+                <wpfui:SymbolIcon VerticalAlignment="Center" Margin="5 2 5 0" Symbol="ArrowRight48"/>
                 <TextBlock x:Name="NewVersion" FontSize="18" Foreground="White" Text="1.1"/>
             </StackPanel>
 

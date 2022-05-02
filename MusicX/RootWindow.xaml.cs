@@ -69,7 +69,7 @@ namespace MusicX
         private async void NotificationsService_NewNotificationEvent(string title, string message)
         {
 
-            await RootSnackbar.Expand(title, message);
+            await RootSnackbar.ShowAsync(title, message);
         }
 
         private void NavigationService_OpenedModalWindow(object Page, int height, int width)
@@ -107,22 +107,20 @@ namespace MusicX
 
                     WPFUI.Appearance.Background.Remove(windowHandle);
 
-                    var appTheme = WPFUI.Appearance.Theme.GetAppTheme();
-                    var systemTheme = WPFUI.Appearance.Theme.GetSystemTheme();
                     WPFUI.Appearance.Theme.Set(
                     WPFUI.Appearance.ThemeType.Dark,     // Theme type
                     WPFUI.Appearance.BackgroundType.Mica, // Background type
-                    true                                  // Whether to change accents automatically
+                    true  ,                                // Whether to change accents automatically
+                    forceBackground: true
                     );
 
-                    if (WPFUI.Appearance.Theme.IsAppMatchesSystem())
-                    {
-                        this.Background = Brushes.Transparent;
-                        WPFUI.Appearance.Background.Apply(windowHandle, WPFUI.Appearance.BackgroundType.Mica);
+                    WPFUI.Appearance.Theme.Apply(WPFUI.Appearance.ThemeType.Dark, WPFUI.Appearance.BackgroundType.Mica, true, true);
 
-                    }
 
-                    var res = WPFUI.Appearance.Theme.IsAppMatchesSystem();
+                    WPFUI.Appearance.Background.ApplyDarkMode(windowHandle);
+                    this.Background = Brushes.Transparent;
+                    WPFUI.Appearance.Background.Apply(windowHandle, WPFUI.Appearance.BackgroundType.Mica, true);
+
                 }
 
                 logger.Info($"OS Version: {os.VersionString}");
@@ -143,17 +141,17 @@ namespace MusicX
 
                 catalogs.Catalog.Sections.Add(podcast.Catalog.Sections[0]);
 
-                var icons = new List<WPFUI.Common.Icon>()
+                var icons = new List<WPFUI.Common.SymbolRegular>()
                 {
-                    WPFUI.Common.Icon.MusicNote120,
-                    WPFUI.Common.Icon.Headphones20,
-                    WPFUI.Common.Icon.MusicNote2Play20,
-                    WPFUI.Common.Icon.FoodPizza20,
-                    WPFUI.Common.Icon.Play12,
-                    WPFUI.Common.Icon.Star16,
-                    WPFUI.Common.Icon.PlayCircle48,
-                    WPFUI.Common.Icon.HeadphonesSoundWave20,
-                    WPFUI.Common.Icon.Speaker228,
+                    WPFUI.Common.SymbolRegular.MusicNote120,
+                    WPFUI.Common.SymbolRegular.Headphones20,
+                    WPFUI.Common.SymbolRegular.MusicNote2Play20,
+                    WPFUI.Common.SymbolRegular.FoodPizza20,
+                    WPFUI.Common.SymbolRegular.Play12,
+                    WPFUI.Common.SymbolRegular.Star16,
+                    WPFUI.Common.SymbolRegular.PlayCircle48,
+                    WPFUI.Common.SymbolRegular.HeadphonesSoundWave20,
+                    WPFUI.Common.SymbolRegular.Speaker228,
 
 
                 };
@@ -165,12 +163,12 @@ namespace MusicX
                 {
                     var sectionPage = navigationService.SectionView;
 
-                    WPFUI.Common.Icon icon;
+                    WPFUI.Common.SymbolRegular icon;
 
-                    if (section.Title.ToLower() == "главная") icon = WPFUI.Common.Icon.Home24;
-                    else if (section.Title.ToLower() == "моя музыка") icon = WPFUI.Common.Icon.MusicNote120;
-                    else if (section.Title.ToLower() == "обзор") icon = WPFUI.Common.Icon.CompassNorthwest28;
-                    else if (section.Title.ToLower() == "подкасты") icon = WPFUI.Common.Icon.HeadphonesSoundWave20;
+                    if (section.Title.ToLower() == "главная") icon = WPFUI.Common.SymbolRegular.Home24;
+                    else if (section.Title.ToLower() == "моя музыка") icon = WPFUI.Common.SymbolRegular.MusicNote120;
+                    else if (section.Title.ToLower() == "обзор") icon = WPFUI.Common.SymbolRegular.CompassNorthwest28;
+                    else if (section.Title.ToLower() == "подкасты") icon = WPFUI.Common.SymbolRegular.HeadphonesSoundWave20;
                     else
                     {
                         var number = rand.Next(0, icons.Count);
@@ -183,21 +181,21 @@ namespace MusicX
                     if (section.Title.ToLower() == "моя музыка") section.Title = "Музыка";
 
 
-                    var navigationItem = new NavigationItem() { Tag = section.Id, Icon = icon, Content = section.Title, Type = typeof(SectionView), Instance = sectionPage };
+                    var navigationItem = new NavigationItem() { Tag = section.Id, Icon = icon, Content = section.Title, Page = typeof(SectionView), Instance = sectionPage };
                     navigationBar.Items.Add(navigationItem);
                 }
 
 #if DEBUG
-                var item = new NavigationItem() { Tag = "test", Icon = WPFUI.Common.Icon.AppFolder24, Content = "TEST", Type = typeof(TestPage), Instance = new TestPage() };
+                var item = new NavigationItem() { Tag = "test", Icon = WPFUI.Common.SymbolRegular.AppFolder24, Content = "TEST", Page = typeof(TestPage), Instance = new TestPage() };
                 navigationBar.Items.Add(item);
 #endif
 
-                navigationBar.Items.Add(new NavigationItem() { Tag = "downloads", Icon = WPFUI.Common.Icon.ArrowDownload48, Content = "Загрузки", Type = typeof(DownloadsView), Instance = new DownloadsView() });
-                var item2 = new NavigationItem() { Tag = "settings", Icon = WPFUI.Common.Icon.Settings24, Content = "Настройки", Type = typeof(SettingsView), Instance = new SettingsView(configService) };
+                navigationBar.Items.Add(new NavigationItem() { Tag = "downloads", Icon = WPFUI.Common.SymbolRegular.ArrowDownload48, Content = "Загрузки", Page = typeof(DownloadsView), Instance = new DownloadsView() });
+                var item2 = new NavigationItem() { Tag = "settings", Icon = WPFUI.Common.SymbolRegular.Settings24, Content = "Настройки", Page = typeof(SettingsView), Instance = new SettingsView(configService) };
 
                 navigationBar.Items.Add(item2);
 
-                navigationBar.Navigated += NavigationBar_Navigated1;
+                navigationBar.Navigated += NavigationBar_Navigated; ;
 
                 navigationBar.Navigate(catalogs.Catalog.Sections[0].Id);
 
@@ -213,8 +211,10 @@ namespace MusicX
             
         }
 
-        private async void NavigationBar_Navigated1(WPFUI.Controls.Interfaces.INavigation navigation, WPFUI.Controls.Interfaces.INavigationItem current)
+        private async void NavigationBar_Navigated([System.Diagnostics.CodeAnalysis.NotNull] WPFUI.Controls.Interfaces.INavigation sender, WPFUI.Common.RoutedNavigationEventArgs e)
         {
+            var current = e.CurrentPage;
+
             if (current.Tag == "test" || current.Tag == "settings" || current.Tag == "downloads") return;
             await navigationService.SectionView.LoadSection((string)current.Tag);
         }

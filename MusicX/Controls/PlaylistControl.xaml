@@ -82,7 +82,7 @@
 
 
                     <Rectangle  Height="174" Width="174" Grid.Row="0" Fill="Black" Opacity="0.1" RadiusX="5" RadiusY="5"/>
-                    <controls:Icon FontSize="50" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Glyph="NavigationPlay20"/>
+                    <controls:SymbolIcon FontSize="50" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Symbol="NavigationPlay20"/>
 
                     <Rectangle x:Name="rectangle" Height="174" Width="174" Grid.Row="0" RadiusX="5" RadiusY="5">
                         <Rectangle.Fill>
@@ -116,7 +116,7 @@
                                 <DropShadowEffect Opacity="1" ShadowDepth="10" Color="Black" BlurRadius="30" RenderingBias="Performance"/>
                             </Rectangle.Effect>
                         </Rectangle>
-                        <controls:Icon  x:Name="iconPlay" Glyph="Play24"  FontSize="23"/>
+                        <controls:SymbolIcon  x:Name="iconPlay" Symbol="Play24"  FontSize="23"/>
 
                     </Grid>
 
@@ -141,7 +141,7 @@
             <StackPanel Orientation="Horizontal" >
                 <Grid>
                     <Rectangle  Height="85" Width="85" Grid.Row="0" Fill="Black" Opacity="0.1" RadiusX="5" RadiusY="5"/>
-                    <controls:Icon FontSize="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Glyph="NavigationPlay20"/>
+                    <controls:SymbolIcon FontSize="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Symbol="NavigationPlay20"/>
 
                     <Rectangle Height="85" RadiusX="3" RadiusY="3" Width="84">
                         <Rectangle.Fill>

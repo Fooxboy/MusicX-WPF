@@ -164,11 +164,11 @@ namespace MusicX.Controls
 
                     if (playerService.IsPlaying)
                     {
-                        PlayIcon.Glyph = WPFUI.Common.Icon.Pause24;
+                        PlayIcon.Symbol = WPFUI.Common.SymbolRegular.Pause24;
                     }
                     else
                     {
-                        PlayIcon.Glyph = WPFUI.Common.Icon.Play32;
+                        PlayIcon.Symbol = WPFUI.Common.SymbolRegular.Play32;
 
                     }
                 });
@@ -201,19 +201,19 @@ namespace MusicX.Controls
 
             if (e.NewValue == 0.0)
             {
-                SpeakerIcon.Glyph = WPFUI.Common.Icon.SpeakerOff28;
+                SpeakerIcon.Symbol = WPFUI.Common.SymbolRegular.SpeakerOff28;
             }
             else if (e.NewValue > 0.0 && e.NewValue < 0.30)
             {
-                SpeakerIcon.Glyph = WPFUI.Common.Icon.Speaker032;
+                SpeakerIcon.Symbol = WPFUI.Common.SymbolRegular.Speaker032;
             }
             else if (e.NewValue > 0.30 && e.NewValue < 0.60)
             {
-                SpeakerIcon.Glyph = WPFUI.Common.Icon.Speaker132;
+                SpeakerIcon.Symbol = WPFUI.Common.SymbolRegular.Speaker132;
             }
             else if (e.NewValue > 0.80)
             {
-                SpeakerIcon.Glyph = WPFUI.Common.Icon.Speaker232;
+                SpeakerIcon.Symbol = WPFUI.Common.SymbolRegular.Speaker232;
             }
 
 

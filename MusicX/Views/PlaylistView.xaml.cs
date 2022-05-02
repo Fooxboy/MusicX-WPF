@@ -80,7 +80,7 @@ namespace MusicX.Views
             if (e.OwnerId == currentUserId)
             {
                 this.AddPlaylist.Content = "Удалить плейлист";
-                this.AddPlaylist.Icon = WPFUI.Common.Icon.Delete24;
+                this.AddPlaylist.Icon = WPFUI.Common.SymbolRegular.Delete24;
             }
         }
 
@@ -96,7 +96,7 @@ namespace MusicX.Views
                     if (playlist.OwnerId == currentUserId)
                     {
                         this.AddPlaylist.Content = "Удалить плейлист";
-                        this.AddPlaylist.Icon = WPFUI.Common.Icon.Delete24;
+                        this.AddPlaylist.Icon = WPFUI.Common.SymbolRegular.Delete24;
                     }
                 }
                
@@ -128,36 +128,36 @@ namespace MusicX.Views
             if(playlist.OwnerId != currentUserId)
             {
                 this.AddPlaylist.Content = "Добавление...";
-                this.AddPlaylist.Icon = WPFUI.Common.Icon.Timer12;
+                this.AddPlaylist.Icon = WPFUI.Common.SymbolRegular.Timer12;
 
                 var res = await ViewModel.AddPlaylist();
 
                 if (res)
                 {
                     this.AddPlaylist.Content = "Удалить плейлист";
-                    this.AddPlaylist.Icon = WPFUI.Common.Icon.Delete24;
+                    this.AddPlaylist.Icon = WPFUI.Common.SymbolRegular.Delete24;
                 }
                 else
                 {
                     this.AddPlaylist.Content = "Ошибка";
-                    this.AddPlaylist.Icon = WPFUI.Common.Icon.ErrorCircle20;
+                    this.AddPlaylist.Icon = WPFUI.Common.SymbolRegular.ErrorCircle20;
                 }
             }else
             {
                 this.AddPlaylist.Content = "Удаление...";
-                this.AddPlaylist.Icon = WPFUI.Common.Icon.Timer12;
+                this.AddPlaylist.Icon = WPFUI.Common.SymbolRegular.Timer12;
 
                 var res = await ViewModel.RemovePlaylist();
 
                 if (res)
                 {
                     this.AddPlaylist.Content = "Добавить к себе";
-                    this.AddPlaylist.Icon = WPFUI.Common.Icon.Add28;
+                    this.AddPlaylist.Icon = WPFUI.Common.SymbolRegular.Add28;
                 }
                 else
                 {
                     this.AddPlaylist.Content = "Ошибка";
-                    this.AddPlaylist.Icon = WPFUI.Common.Icon.ErrorCircle20;
+                    this.AddPlaylist.Icon = WPFUI.Common.SymbolRegular.ErrorCircle20;
                 }
             }
         }
@@ -173,7 +173,7 @@ namespace MusicX.Views
                     _nowPlay = false;
 
                     PlayPlaylist.Content = "Возпроизвести";
-                    PlayPlaylist.Icon = WPFUI.Common.Icon.Play20;
+                    PlayPlaylist.Icon = WPFUI.Common.SymbolRegular.Play20;
 
 
                     player.Pause();
@@ -183,7 +183,7 @@ namespace MusicX.Views
                     _nowPlay = true;
 
                     PlayPlaylist.Content = "Остановить воспроизведение";
-                    PlayPlaylist.Icon = WPFUI.Common.Icon.Pause20;
+                    PlayPlaylist.Icon = WPFUI.Common.SymbolRegular.Pause20;
 
                     await player.Play(0, ViewModel.Tracks);
                 }

@@ -21,7 +21,7 @@
     <Grid>
         <Grid x:Name="NoAvalible" HorizontalAlignment="Center" Visibility="Collapsed" VerticalAlignment="Center">
             <StackPanel>
-                <wpfui:Icon Glyph="Warning20" Margin="0 0 0 0" FontSize="80"/>
+                <wpfui:SymbolIcon Symbol="Warning20" Margin="0 0 0 0" FontSize="80"/>
                 <TextBlock Foreground="White" FontSize="20" Margin="0 30 0 0 " FontFamily="{StaticResource VKSansDemiBold}" TextWrapping="Wrap" Text="Для загрузки треков необходимо загрузить дополнительный компонент"/>
                 <TextBlock Foreground="White" FontSize="18" HorizontalAlignment="Center" Opacity="0.7" Margin="0 10 0 0 " FontFamily="{StaticResource VKSansRegular}" TextWrapping="Wrap" Text="Размер: 114МБ"/>
                 <wpfui:Button x:Name="DownloadButton" Click="DownloadButton_Click" Width="240" Margin="0 30 0 0" Icon="ArrowDownload16" Appearance="Secondary" Content="Скачать"/>
@@ -30,7 +30,7 @@
 
         <Grid x:Name="DownloadFfmpeg" HorizontalAlignment="Center" Visibility="Collapsed" VerticalAlignment="Center" >
             <StackPanel>
-                <wpfui:Icon Glyph="ArrowDownload48" Margin="0 0 0 0" FontSize="80"/>
+                <wpfui:SymbolIcon Symbol="ArrowDownload48" Margin="0 0 0 0" FontSize="80"/>
                 <TextBlock HorizontalAlignment="Center" Foreground="White" FontSize="23" Margin="0 30 0 0 " FontFamily="{StaticResource VKSansDemiBold}" TextWrapping="Wrap" Text="Выполняется загрузка компонента"/>
                 <TextBlock Foreground="White" FontSize="18" HorizontalAlignment="Center" Opacity="0.7" Margin="0 10 0 0 " FontFamily="{StaticResource VKSansRegular}" TextWrapping="Wrap" Text="Мы сообщим Вам о результате"/>
 

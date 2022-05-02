@@ -82,7 +82,7 @@
                     <StackPanel Margin="15 0 0 0"  Orientation="Horizontal">
                         <Grid>
                             <Rectangle Width="250" RadiusX="5" RadiusY="5" Height="250" Fill="Black" Opacity="0.2"/>
-                            <controls:Icon FontSize="70" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Glyph="NavigationPlay20"/>
+                            <controls:SymbolIcon FontSize="70" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Symbol="NavigationPlay20"/>
 
 
                             <Rectangle x:Name="rectangle" Height="250" Width="250" RadiusX="5" RadiusY="5">

@@ -30,7 +30,7 @@
         </Border>
 
         <StackPanel VerticalAlignment="Center"  Margin="15 0 15 0" Orientation="Horizontal">
-            <controls:Icon Margin="0 0 0 0" Glyph="Search20" />
+            <controls:SymbolIcon Margin="0 0 0 0" Symbol="Search20" />
             <TextBlock Foreground="White"  Text="Title" Margin="5 0 0 0" x:Name="Title"/>
             <TextBlock Foreground="White"  Text="Subtitle" Opacity="0.7" Margin="5 0 0 0" x:Name="Subtitle"/>
         </StackPanel>
