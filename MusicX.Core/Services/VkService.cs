@@ -558,7 +558,7 @@ namespace MusicX.Core.Services
             }
         }
 
-        public async Task<ResponseData> AudioGetAsync(long playlistId, long ownerId, string assessKey)
+        public async Task<ResponseData> AudioGetAsync(long? playlistId, long? ownerId, string? assessKey, long offset = 0, long count = 100)
         {
             try
             {
@@ -570,11 +570,24 @@ namespace MusicX.Core.Services
                     {"v", vkApiVersion},
                     {"lang", "ru"},
                     {"access_token", vkApi.Token},
-                    {"playlist_id", playlistId},
-                    {"access_key", playlistId},
-                    {"owner_id", ownerId},
-
+                    {"offset", offset },
+                    {"count", count }
                 };
+
+                if(playlistId != null)
+                {
+                    parameters.Add("playlist_id", playlistId);
+                }
+
+                if (ownerId != null)
+                {
+                    parameters.Add("owner_id", ownerId);
+                }
+
+                if (assessKey != null)
+                {
+                    parameters.Add("access_key", assessKey);
+                }
 
 
                 var json = await vkApi.InvokeAsync("audio.get", parameters);

@@ -68,8 +68,9 @@ namespace MusicX
 
         private async void NotificationsService_NewNotificationEvent(string title, string message)
         {
-
-            await RootSnackbar.ShowAsync(title, message);
+            RootSnackbar.Title = title;
+            RootSnackbar.Message = message;
+            await RootSnackbar.ShowAsync();
         }
 
         private void NavigationService_OpenedModalWindow(object Page, int height, int width)

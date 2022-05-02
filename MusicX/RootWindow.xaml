@@ -140,13 +140,12 @@
 
         <wpfui:Snackbar
                 x:Name="RootSnackbar"
-                Title="Hello World!"
+
             Grid.RowSpan="3"
             Grid.ColumnSpan="3"
                 MaxWidth="600"
             Margin="0 0 0 40"
-                Icon="PuzzlePiece24"
-                Message="Remember that the Heat Death of Universe is coming someday, no time to explain - let's go!"
+                Icon="Info20"
                 IsShown="False"
                 ShowCloseButton="True"
                 Timeout="5000" />

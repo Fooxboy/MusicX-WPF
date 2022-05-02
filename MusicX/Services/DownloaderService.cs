@@ -1,5 +1,6 @@
 ﻿using FFmpeg.NET;
 using MusicX.Core.Models;
+using MusicX.Core.Services;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -36,13 +37,15 @@ namespace MusicX.Services
 
         private readonly Logger logger;
         private readonly NotificationsService notificationsService;
+        private readonly VkService vkService;
 
         private Engine ffmpeg;
 
-        public DownloaderService(Logger logger, NotificationsService notificationsService)
+        public DownloaderService(Logger logger, NotificationsService notificationsService, VkService vkService)
         {
             this.logger = logger;
             this.notificationsService = notificationsService;
+            this.vkService = vkService;
         }
 
         public async Task AddToQueueAsync(List<Audio> audios, string name)
@@ -332,6 +335,33 @@ namespace MusicX.Services
             {
                 if(e.SizeKb != null) ChangeProgress?.Invoke(CurrentDownload, e.SizeKb.Value);
             });
+        }
+
+        public async Task DownloadAllTracks()
+        {
+
+            if (CheckExistAllDownloadTracks()) return;
+            var tracks = new List<Audio>();
+
+            while (true)
+            {
+                var tr = await vkService.AudioGetAsync(null, null, null, tracks.Count);
+
+                tracks.AddRange(tr.Items);
+
+                if (tr.Items.Count < 100) break;
+            }
+
+            await this.AddToQueueAsync(tracks, "Музыка ВКонтакте");
+        }
+
+      
+
+        public bool CheckExistAllDownloadTracks()
+        {
+            var path = musicFolder += "\\Музыка Вконтакте";
+
+            return (Directory.Exists(path));
         }
     }
 }
