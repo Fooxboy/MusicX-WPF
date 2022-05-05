@@ -66,8 +66,8 @@ namespace MusicX.Services
 
             player.CommandManager.NextBehavior.EnablingRule = MediaCommandEnablingRule.Always;
             player.CommandManager.PreviousBehavior.EnablingRule = MediaCommandEnablingRule.Always;
-            player.CommandManager.ShuffleBehavior.EnablingRule = MediaCommandEnablingRule.Always;
-            player.CommandManager.AutoRepeatModeBehavior.EnablingRule = MediaCommandEnablingRule.Always;
+            //player.CommandManager.ShuffleBehavior.EnablingRule = MediaCommandEnablingRule.Always;
+            //player.CommandManager.AutoRepeatModeBehavior.EnablingRule = MediaCommandEnablingRule.Always;
 
             player.SystemMediaTransportControls.DisplayUpdater.Type = Windows.Media.MediaPlaybackType.Music;
 
