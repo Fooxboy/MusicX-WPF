@@ -130,20 +130,27 @@ namespace MusicX.Controls
             while(runAutoNext)
             {
                 Thread.Sleep(5000);
-                Application.Current.Dispatcher.Invoke(() =>
+                try
                 {
-                    var bannerService = StaticService.Container.Resolve<BannerService>();
-
-                    var currentIndex = Banners.IndexOf(CurrentBanner);
-
-                    if (currentIndex + 1 > Banners.Count - 1)
+                    Application.Current.Dispatcher.Invoke(() =>
                     {
-                        currentIndex = -1;
-                    }
+                        var bannerService = StaticService.Container.Resolve<BannerService>();
 
-                    bannerService.OpenBanner(Banners[currentIndex + 1]);
+                        var currentIndex = Banners.IndexOf(CurrentBanner);
 
-                });
+                        if (currentIndex + 1 > Banners.Count - 1)
+                        {
+                            currentIndex = -1;
+                        }
+
+                        bannerService.OpenBanner(Banners[currentIndex + 1]);
+
+                    });
+                }catch (Exception ex)
+                {
+                    runAutoNext = false;
+                }
+                
             }
            
         }

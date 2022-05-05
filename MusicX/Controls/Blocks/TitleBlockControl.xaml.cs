@@ -47,7 +47,7 @@ namespace MusicX.Controls.Blocks
                 if (Block.Buttons[0].Options.Count > 0)
                 {
                     ButtonsGrid.Visibility = Visibility.Visible;
-                    TitleButtons.Text = Block.Actions[0].Title;
+                    TitleButtons.Text = Block.Buttons[0].Title;
                     Buttons.Visibility = Visibility.Visible;
                     MoreButton.Visibility = Visibility.Collapsed;
                     foreach (var option in Block.Buttons[0].Options)

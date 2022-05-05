@@ -12,6 +12,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -34,11 +35,23 @@ namespace MusicX.Views
             //new PlayerService().Play();
         }
 
-        private void OpenModal_Click(object sender, RoutedEventArgs e)
+        private async void OpenModal_Click(object sender, RoutedEventArgs e)
         {
+
+            var window = Application.Current.MainWindow;
+            // ...
+            IntPtr hwnd = new WindowInteropHelper(window).Handle;
+
+
+
+            var brr =new Windows.UI.Popups.MessageDialog("brrrrrrrr", "brrrrr");
+            WinRT.Interop.InitializeWithWindow.Initialize(brr, hwnd);
+
+            await brr.ShowAsync();
+
             var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
 
-            navigationService.OpenModal(new TestModal(), 340, 500);
+            //navigationService.OpenModal(new TestModal(), 340, 500);
         }
 
         private async void OpenSectionButton_Click(object sender, RoutedEventArgs e)

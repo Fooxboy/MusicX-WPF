@@ -166,9 +166,6 @@ namespace MusicX.ViewModels
                 notificationsService.Show("Произошла ошибка", "MusicX не смог загрузить контент");
 
             }
-
-
-
         }
 
         public async Task LoadPlaylistFromData(long playlistId, long ownerId, string accessKey)

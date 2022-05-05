@@ -217,21 +217,28 @@ namespace MusicX.Controls
 
                 if (Block.DataType == "action")
                 {
-                    var card = new CardAction() { Margin = new Thickness(0, 10, 15,10), Icon = WPFUI.Common.Icon.AlertOn24 };
+                    var card = new CardAction() { Margin = new Thickness(0, 10, 15,10), Icon = WPFUI.Common.SymbolRegular.AlertOn24 };
                     card.Click += CardAction_Click;
                     var text = new TextBlock() { Text = "content" };
 
                     if (Block.Buttons == null) return;
                     if (Block.Buttons[0].Action.Type == "play_shuffled_audios_from_block")
                     {
-                        card.Icon = WPFUI.Common.Icon.MusicNote2Play20;
+                        card.Icon = WPFUI.Common.SymbolRegular.MusicNote2Play20;
                         text.Text = "Перемешать все";
                     }
 
                     if (Block.Buttons[0].Action.Type == "create_playlist")
                     {
-                        card.Icon = WPFUI.Common.Icon.Add24;
+                        card.Icon = WPFUI.Common.SymbolRegular.Add24;
                         text.Text = "Создать плейлист";
+                    }
+
+                    if (Block.Buttons[0].Action.Type == "open_section")
+                    {
+                        return;
+                        card.Icon = WPFUI.Common.SymbolRegular.Open48;
+                        text.Text = Block.Buttons[0].Title;
                     }
 
                     card.Content = text;
@@ -375,9 +382,22 @@ namespace MusicX.Controls
 
                 if (Block.Buttons[0].Action.Type == "create_playlist")
                 {
+                    var notificationService = StaticService.Container.Resolve<Services.NotificationsService>();
+                    notificationService.Show("Ошибка", "MusicX пока что не умеет создавать плейлисты");
 
                 }
-            }catch(Exception ex)
+
+                if (Block.Buttons[0].Action.Type == "open_section")
+                {
+
+                    var navigation = StaticService.Container.Resolve<Services.NavigationService>();
+
+                    await navigation.OpenSection(Block.Buttons[0].SectionId, true);
+
+                }
+
+            }
+            catch(Exception ex)
             {
                 var logger = StaticService.Container.Resolve<Logger>();
 

@@ -24,7 +24,7 @@ namespace MusicX.Core.Services
 
         public readonly VkApi vkApi;
         private readonly Logger logger;
-        private readonly string vkApiVersion = "5.178";
+        private readonly string vkApiVersion = "5.135";
         private readonly string deviceId = "c3427adfd2595c73:A092cf601fef615c8b594f6ad2c63d159";
 
         public bool IsAuth = false;
@@ -353,7 +353,7 @@ namespace MusicX.Core.Services
                     {"need_owner", needOwner }
                 };
 
-                var json = await vkApi.InvokeAsync("execute.getPlaylist", parameters);
+                var json  = await vkApi.InvokeAsync("execute.getPlaylist", parameters);
                 logger.Debug("RESULT OF 'execute.getPlaylist'" + json);
 
 
@@ -558,7 +558,7 @@ namespace MusicX.Core.Services
             }
         }
 
-        public async Task<ResponseData> AudioGetAsync(long playlistId, long ownerId, string assessKey)
+        public async Task<ResponseData> AudioGetAsync(long? playlistId, long? ownerId, string? assessKey, long offset = 0, long count = 100)
         {
             try
             {
@@ -570,11 +570,24 @@ namespace MusicX.Core.Services
                     {"v", vkApiVersion},
                     {"lang", "ru"},
                     {"access_token", vkApi.Token},
-                    {"playlist_id", playlistId},
-                    {"access_key", playlistId},
-                    {"owner_id", ownerId},
-
+                    {"offset", offset },
+                    {"count", count }
                 };
+
+                if(playlistId != null)
+                {
+                    parameters.Add("playlist_id", playlistId);
+                }
+
+                if (ownerId != null)
+                {
+                    parameters.Add("owner_id", ownerId);
+                }
+
+                if (assessKey != null)
+                {
+                    parameters.Add("access_key", assessKey);
+                }
 
 
                 var json = await vkApi.InvokeAsync("audio.get", parameters);

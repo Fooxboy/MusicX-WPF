@@ -32,6 +32,12 @@ namespace MusicX.Controls.Blocks
         private void CuratorBannerBlockControl_Initialized(object? sender, EventArgs e)
         {
 
+           
+        }
+
+        private void CuratorBannerBlockControl_Loaded(object sender, RoutedEventArgs e)
+        {
+
             CuratorBannerImage.ImageSource = new BitmapImage(new Uri(Block.Curators[0].Photo[2].Url));
             CuratorText.Text = Block.Curators[0].Name;
             //CuratorDescription.Text = Block.Curators[0].Description;
@@ -39,20 +45,14 @@ namespace MusicX.Controls.Blocks
             if (Block.Curators[0].IsFollowed)
             {
                 ActionCuratorButton.Content = "Отписаться";
-                ActionCuratorButton.Icon = WPFUI.Common.Icon.DeleteDismiss20;
+                ActionCuratorButton.Icon = WPFUI.Common.SymbolRegular.DeleteDismiss20;
             }
             else
             {
 
                 ActionCuratorButton.Content = "Подписаться";
-                ActionCuratorButton.Icon = WPFUI.Common.Icon.Add24;
+                ActionCuratorButton.Icon = WPFUI.Common.SymbolRegular.Add24;
             }
-        }
-
-        private void CuratorBannerBlockControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            
-
 
         }
 
@@ -65,7 +65,7 @@ namespace MusicX.Controls.Blocks
                 {
                     ActionCuratorButton.IsEnabled = false;
                     ActionCuratorButton.Content = "Секунду..";
-                    ActionCuratorButton.Icon = WPFUI.Common.Icon.Timer28;
+                    ActionCuratorButton.Icon = WPFUI.Common.SymbolRegular.Timer28;
 
                     await vkService.UnfollowCurator(Block.Curators[0].Id);
 
@@ -73,20 +73,20 @@ namespace MusicX.Controls.Blocks
 
                     Block.Curators[0].IsFollowed = false;
                     ActionCuratorButton.Content = "Подписаться";
-                    ActionCuratorButton.Icon = WPFUI.Common.Icon.Add24;
+                    ActionCuratorButton.Icon = WPFUI.Common.SymbolRegular.Add24;
                 }
                 else
                 {
                     ActionCuratorButton.IsEnabled = false;
                     ActionCuratorButton.Content = "Секунду..";
-                    ActionCuratorButton.Icon = WPFUI.Common.Icon.Timer28;
+                    ActionCuratorButton.Icon = WPFUI.Common.SymbolRegular.Timer28;
 
                     await vkService.FollowCurator(Block.Curators[0].Id);
 
                     ActionCuratorButton.IsEnabled = true;
                     Block.Curators[0].IsFollowed = true;
                     ActionCuratorButton.Content = "Отписаться";
-                    ActionCuratorButton.Icon = WPFUI.Common.Icon.DeleteDismiss20;
+                    ActionCuratorButton.Icon = WPFUI.Common.SymbolRegular.DeleteDismiss20;
                 }
             }catch (Exception ex)
             {

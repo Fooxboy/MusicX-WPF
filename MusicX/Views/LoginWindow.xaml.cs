@@ -20,7 +20,8 @@ namespace MusicX.Views
         private readonly NavigationService navigationService;
         private readonly NotificationsService notificationsService;
 
-        public LoginWindow(VkService vkService, ConfigService configService, Logger logger, NavigationService navigationService, NotificationsService notificationsService)
+        private readonly bool tokenRefresh;
+        public LoginWindow(VkService vkService, ConfigService configService, Logger logger, NavigationService navigationService, NotificationsService notificationsService, bool tokenRefresh = false)
         {
             var os = Environment.OSVersion;
 
@@ -42,9 +43,10 @@ namespace MusicX.Views
             this.logger = logger;
             this.navigationService = navigationService;
             this.notificationsService = notificationsService;
+            this.tokenRefresh = tokenRefresh;
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
 
             var os = Environment.OSVersion;
@@ -79,6 +81,11 @@ namespace MusicX.Views
            
 
             logger.Info("Loaded Login window");
+
+            if(tokenRefresh)
+            {
+                await RootSnackbar.ShowAsync("Токен устарел", "Войдите в аккаунт снова, чтобы продолжить пользоваться MusicX");
+            }
         }
 
         public bool CodeAccepted = false;
@@ -119,7 +126,7 @@ namespace MusicX.Views
                 loading.Visibility = Visibility.Collapsed;
                 content.Visibility = Visibility.Visible;
 
-                await RootSnackbar.Expand("Неверные данные", "Вы ввели неверно логин или пароль");
+                await RootSnackbar.ShowAsync("Неверные данные", "Вы ввели неверно логин или пароль");
             }
             catch (Exception ex)
             {
@@ -129,7 +136,7 @@ namespace MusicX.Views
                 loading.Visibility = Visibility.Collapsed;
                 content.Visibility = Visibility.Visible;
 
-                await RootSnackbar.Expand("Ошибка", $"Произошла неизвестная ошибка при входе: {ex.Message}");
+                await RootSnackbar.ShowAsync("Ошибка", $"Произошла неизвестная ошибка при входе: {ex.Message}");
             }
         }
 

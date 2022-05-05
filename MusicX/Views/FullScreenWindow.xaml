@@ -90,7 +90,7 @@
                 </StackPanel>
 
 
-                <wpfui:Icon HorizontalAlignment="Right" Glyph="Next24" FontSize="25"/>
+                <wpfui:SymbolIcon HorizontalAlignment="Right" Symbol="Next24" FontSize="25"/>
 
             </Grid>
         </wpfui:CardAction>

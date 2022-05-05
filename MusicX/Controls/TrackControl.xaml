@@ -60,7 +60,7 @@
     <UserControl.ContextMenu>
         <ContextMenu Background="#414141" Foreground="White" BorderBrush="#646464">
             <StackPanel x:Name="AddRemove" MouseDown="AddRemove_MouseDown"  Orientation="Horizontal">
-                <controls:Icon x:Name="AddRemoveIcon" />
+                <controls:SymbolIcon x:Name="AddRemoveIcon" />
                 <TextBlock Margin="10 0 0 0" Foreground="White" x:Name="AddRemoveText"/>
             </StackPanel>
 
@@ -70,7 +70,7 @@
 
 
             <StackPanel Orientation="Horizontal" MouseDown="Download_MouseDown">
-                <controls:Icon Glyph="ArrowDownload24"/>
+                <controls:SymbolIcon Symbol="ArrowDownload24"/>
                 <TextBlock Margin="10 0 0 0" Foreground="White" Text="Скачать"/>
             </StackPanel>
 
@@ -93,7 +93,7 @@
                 <Grid Margin="8 6.5 6 6">
 
                     <Rectangle  Height="45" Width="45" Grid.Row="0" Fill="Black" Opacity="0.1" RadiusX="5" RadiusY="5"/>
-                    <controls:Icon   Glyph="MusicNote124"  FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                    <controls:SymbolIcon   Symbol="MusicNote124"  FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
 
                     <Rectangle x:Name="rectangle" Height="45" RadiusX="3" RadiusY="3" Width="45">
                         <Rectangle.Fill>
@@ -112,7 +112,7 @@
 
                     <Grid x:Name="PlayButtons" Visibility="Collapsed">
                         <Rectangle Height="45" Width="45" RadiusX="3" Fill="Black" RadiusY="3" Opacity="0.6"/>
-                        <controls:Icon x:Name="IconPlay" Glyph="Play24" FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                        <controls:SymbolIcon x:Name="IconPlay" Symbol="Play24" FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
 
                     </Grid>
 
@@ -142,7 +142,7 @@
                 <Border x:Name="border" BorderBrush="White" BorderThickness="1" CornerRadius="5" Height="40" Width="40" Opacity="0.0">
                     <Rectangle Height="40" Width="40" Fill="Red" Opacity="0"/>
                 </Border>
-                <controls:Icon x:Name="IconRecommended" Opacity="0.7" FontSize="20" Glyph="Sparkle48"/>
+                <controls:SymbolIcon x:Name="IconRecommended" Opacity="0.7" FontSize="20" Symbol="Sparkle48"/>
             </Grid>
 
 

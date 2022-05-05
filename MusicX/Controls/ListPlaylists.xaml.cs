@@ -81,6 +81,7 @@ namespace MusicX.Controls
 
                     foreach (var playlist in Playlists)
                     {
+                        StackPanelPlaylists.Children.Add(new PlaylistControl() { Playlist = playlist, HorizontalAlignment = HorizontalAlignment.Left, ShowFull = true, Height = 85, Margin = new Thickness(0, 0, 0, 10) });
 
                         StackPanelPlaylists.Children.Add(new Rectangle() { Height = 1, Fill = Brushes.White, Margin = new Thickness(5, 5, 5, 15), Opacity = 0.1 });
 

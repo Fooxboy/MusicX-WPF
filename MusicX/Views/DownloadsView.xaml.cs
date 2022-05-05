@@ -58,9 +58,15 @@ namespace MusicX.Views
                 return;
             }
 
+
             ContentGrid.Visibility = Visibility.Visible;
 
             this.downloaderService = StaticService.Container.Resolve<DownloaderService>();
+
+            if(downloaderService.CheckExistAllDownloadTracks())
+            {
+                DownloadAllTracksButton.IsEnabled = false;
+            }
 
             downloaderService.ChangeProgress += DownloaderService_ChangeProgress;
             downloaderService.StartedDownload += DownloaderService_StartedDownload;
@@ -108,6 +114,7 @@ namespace MusicX.Views
         private void DownloaderService_CompleteDownload(Core.Models.Audio audio)
         {
             NowDownload.Visibility = Visibility.Collapsed;
+            NoAvalible.Visibility = Visibility.Collapsed;
         }
 
         private void DownloaderService_StartedDownload(Core.Models.Audio audio)
@@ -246,12 +253,17 @@ namespace MusicX.Views
 
         }
 
-        private void DownloadAllTracksButton_Click(object sender, RoutedEventArgs e)
+        private async void DownloadAllTracksButton_Click(object sender, RoutedEventArgs e)
         {
             var notifications = StaticService.Container.Resolve<Services.NotificationsService>();
 
 
-            notifications.Show("Временно недоступно", "Загрузка всех треков временно недоступна, но в следующем обновлении обязательно заработает!");
+            notifications.Show("Добавлено", "Мы скоро наченем загрузку всех треков");
+
+
+            await downloaderService.DownloadAllTracks();
+
+            DownloadAllTracksButton.IsEnabled = false;
 
         }
     }

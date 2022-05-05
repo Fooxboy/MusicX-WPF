@@ -48,7 +48,7 @@
 
             <Grid MouseEnter="PlayButton_MouseEnter" MouseLeave="PlayButton_MouseLeave" MouseLeftButtonDown="PlayButton_MouseLeftButtonDown" Height="50" Width="50" >
                 <Rectangle Fill="Black" RadiusX="99" RadiusY="99" Opacity="0"/>
-                <wpfui:Icon HorizontalAlignment="Center" HorizontalContentAlignment="Left" x:Name="Icons" Glyph="Play24"  FontSize="23"/>
+                <wpfui:SymbolIcon HorizontalAlignment="Center" HorizontalContentAlignment="Left" x:Name="Icons" Symbol="Play24"  FontSize="23"/>
 
             </Grid>
         </Grid>

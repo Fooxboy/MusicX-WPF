@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:MusicX.Views"
       xmlns:music="clr-namespace:MusicX.Controls" 
       xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
-      
+      xmlns:uwp="clr-namespace:System.Windows.Controls;assembly=PresentationFramework"
       xmlns:hc="https://handyorg.github.io/handycontrol" x:Class="MusicX.Views.TestPage"
       mc:Ignorable="d"
       
@@ -38,6 +38,8 @@
     <Grid x:Name="ContentGrid">
 
         <StackPanel>
+
+            <Button Content="Test"/>
             <!--<music:BigBannerControl HorizontalAlignment="Stretch" Margin="-00 0 -20 0" Height="600" />-->
 
             <StackPanel x:Name="stackPanel" Margin="0,20,-800,10" RenderTransformOrigin="0.5,0.5">

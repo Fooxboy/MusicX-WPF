@@ -108,29 +108,29 @@
 
                             <ToggleButton x:Name="ShuffleButton" Click="ShuffleButton_Click" HorizontalContentAlignment="Center" Margin="0 0 10 0" Height="40" Width="40" Padding="0" >
 
-                                <wpfui:Icon Glyph="ArrowWrap20"/>
+                                <wpfui:SymbolIcon Symbol="ArrowWrap20"/>
 
                             </ToggleButton>
 
                             <wpfui:Button x:Name="PrevButton" Click="PrevButton_Click" HorizontalContentAlignment="Center" Height="40" Margin="0 0 10 0"  Width="40" Padding="0" Appearance="Transparent">
 
-                                <wpfui:Icon Glyph="Previous48"/>
+                                <wpfui:SymbolIcon Symbol="Previous48"/>
 
                             </wpfui:Button>
 
                             <wpfui:Button x:Name="PlayPauseButton" Click="PlayPauseButton_Click" HorizontalContentAlignment="Center" Height="50" Margin="0 0 10 0"  Width="50" Padding="0" Appearance="Transparent">
 
-                                <wpfui:Icon FontSize="20" x:Name="PlayIcon" Glyph="Play32"/>
+                                <wpfui:SymbolIcon FontSize="20" x:Name="PlayIcon" Symbol="Play32"/>
 
                             </wpfui:Button>
 
                             <wpfui:Button x:Name="NextButton" Click="NextButton_Click" HorizontalContentAlignment="Center" Height="40" Margin="0 0 10 0"  Width="40" Padding="0" Appearance="Transparent">
-                                <wpfui:Icon Glyph="Next48"/>
+                                <wpfui:SymbolIcon Symbol="Next48"/>
 
                             </wpfui:Button>
                             
                             <ToggleButton x:Name="RepeatButton" Click="RepeatButton_Click"  HorizontalContentAlignment="Center" Height="40" Margin="0 0 10 0"  Width="40" Padding="0">
-                                <wpfui:Icon Glyph="ArrowRepeatAll16" />
+                                <wpfui:SymbolIcon Symbol="ArrowRepeatAll16" />
                             </ToggleButton>
 
                         </StackPanel>
@@ -147,10 +147,10 @@
                             <StackPanel Orientation="Horizontal"  VerticalAlignment="Center" HorizontalAlignment="Right">
                                 
                                 <wpfui:Button x:Name="DownloadButton" Click="DownloadButton_Click"  HorizontalContentAlignment="Center" Height="40" Margin="0 0 20 0" Width="40" Padding="0" Appearance="Transparent">
-                                    <wpfui:Icon Glyph="ArrowDownload24"/>
+                                    <wpfui:SymbolIcon Symbol="ArrowDownload24"/>
                                 </wpfui:Button>
-                                
-                                <wpfui:Icon x:Name="SpeakerIcon" FontSize="20"  Glyph="Speaker248"/>
+
+                                <wpfui:SymbolIcon x:Name="SpeakerIcon" FontSize="20"  Symbol="Speaker248"/>
                                 <hc:PreviewSlider x:Name="Volume" Width="150" Margin="5 0 0 0" ValueChanged="Slider_ValueChanged" Maximum="1">
                                     <hc:PreviewSlider.Background>
                                         <SolidColorBrush Color="White" Opacity="0.3"/>

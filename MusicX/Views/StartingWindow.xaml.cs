@@ -96,19 +96,52 @@ namespace MusicX.Views
                 
                 await Application.Current.Dispatcher.BeginInvoke(async () =>
                 {
-                    if (config.AccessToken is null)
+                    try
                     {
-                        var login = new LoginWindow(vkService, configService, logger, navigationService, notificationsService);
-                        login.Show();
+                        if (config.AccessToken is null)
+                        {
+                            var login = new LoginWindow(vkService, configService, logger, navigationService, notificationsService);
+                            login.Show();
+                            this.Close();
+                        }
+                        else
+                        {
+                            try
+                            {
+
+                                await vkService.SetTokenAsync(config.AccessToken, null);
+                                var rootWindow = new RootWindow(navigationService, vkService, logger, configService, notificationsService);
+                                rootWindow.Show();
+                                this.Close();
+                            }
+                            catch (VkNet.Exception.UserAuthorizationFailException e)
+                            {
+                                config.AccessToken = null;
+                                config.UserName = null;
+                                config.UserId = 0;
+
+                                await configService.SetConfig(config);
+
+                                var logger = StaticService.Container.Resolve<Logger>();
+                                var navigation = StaticService.Container.Resolve<Services.NavigationService>();
+                                var notifications = StaticService.Container.Resolve<Services.NotificationsService>();
+
+                                new LoginWindow(vkService, configService, logger, navigation, notifications, true).Show();
+
+                                this.Close();
+                            }
+
+                        }
+                    }catch(Exception ex)
+                    {
+                        logger.Error(ex, ex.Message);
+
+                        var error = new FatalErrorView(ex);
+
+                        error.Show();
                         this.Close();
                     }
-                    else
-                    {
-                        await vkService.SetTokenAsync(config.AccessToken, null);
-                        var rootWindow = new RootWindow(navigationService, vkService, logger, configService, notificationsService);
-                        rootWindow.Show();
-                        this.Close();
-                    }
+                    
                 });
 
                 

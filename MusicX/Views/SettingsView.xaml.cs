@@ -46,49 +46,58 @@ namespace MusicX.Views
 
         private async void SettingsView_Loaded(object sender, RoutedEventArgs e)
         {
-            this.config = await configService.GetConfig();
-
-            if(config.ShowRPC == null)
+            try
             {
-                config.ShowRPC = true;
+                this.config = await configService.GetConfig();
+
+                if (config.ShowRPC == null)
+                {
+                    config.ShowRPC = true;
+                }
+
+
+                ShowRPC.IsChecked = config.ShowRPC.Value;
+
+                UserName.Text = config.UserName.Split(' ')[0];
+
+                var usr = await vkService.GetCurrentUserAsync();
+
+                if (usr.Photo200 != null) UserImage.ImageSource = new BitmapImage(usr.Photo200);
+
+
+                var path = $"{AppDomain.CurrentDomain.BaseDirectory}/logs";
+
+                DirectoryInfo di = new DirectoryInfo(path);
+
+                double memory = 0;
+
+                foreach (FileInfo file in di.GetFiles())
+                {
+                    memory += file.Length / 1024;
+                }
+
+                if (memory > 1024)
+                {
+                    memory /= 1024;
+                    MemoryType.Text = "МБ";
+                }
+                else
+                {
+                    MemoryType.Text = "КБ";
+
+                }
+
+                memory = Math.Round(memory, 2);
+                MemoryLogs.Text = memory.ToString();
+
+                this.VersionApp.Text = StaticService.Version + " " + StaticService.VersionKind;
+                this.BuildDate.Text = StaticService.BuildDate;
+            }catch (Exception ex)
+            {
+                var logger = StaticService.Container.Resolve<Logger>();
+                logger.Error(ex, ex.Message);
             }
 
-
-            ShowRPC.IsChecked = config.ShowRPC.Value;
-
-            UserName.Text = config.UserName.Split(' ')[0];
-
-            var usr = await vkService.GetCurrentUserAsync();
-
-            if(usr.Photo200 != null) UserImage.ImageSource = new BitmapImage(usr.Photo200);
-
-           
-            var path = $"{AppDomain.CurrentDomain.BaseDirectory}/logs";
-
-            DirectoryInfo di = new DirectoryInfo(path);
-
-            double memory = 0;
-
-            foreach (FileInfo file in di.GetFiles())
-            {
-                memory += file.Length / 1024;
-            }
-
-            if (memory > 1024)
-            {
-                memory /= 1024;
-                MemoryType.Text = "МБ";
-            }else
-            {
-                MemoryType.Text = "КБ";
-
-            }
-
-            memory = Math.Round(memory, 2);
-            MemoryLogs.Text = memory.ToString();
-
-            this.VersionApp.Text = StaticService.Version + " " + StaticService.VersionKind;
-            this.BuildDate.Text = StaticService.BuildDate;
         }
 
         private async void DeleteAccount_Click(object sender, RoutedEventArgs e)

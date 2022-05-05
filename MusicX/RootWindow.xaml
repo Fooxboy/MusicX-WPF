@@ -101,8 +101,34 @@
             <Frame x:Name="ModalFrame"/>
             <wpfui:Button x:Name="CloseModalButton" Height="20" Width="20" HorizontalAlignment="Left" VerticalAlignment="Top" Appearance="Transparent" Icon="ClosedCaption24"/>
         </Grid>
-        
-        <wpfui:TitleBar Grid.Row="0" Height="40" ApplicationNavigation="True" />
+
+        <wpfui:TitleBar UseSnapLayout="True" MinimizeToTray="False" Grid.Row="0" Height="40">
+            <!--<wpfui:TitleBar.Tray>
+                <wpfui:NotifyIcon
+                    FocusOnLeftClick="True"
+                    Icon="pack://application:,,,/Assets/icon.ico"
+                    MenuOnRightClick="True"
+                    TooltipText="MusicX">
+                    <wpfui:NotifyIcon.Menu>
+                        <ContextMenu>
+                            <MenuItem
+                                Header="Home"
+                                Tag="home" />
+                            <MenuItem
+                                Header="Save"
+                                Tag="save" />
+                            <MenuItem
+                                Header="Open"
+                                Tag="open" />
+                            <Separator />
+                            <MenuItem
+                                Header="Reload"
+                                Tag="reload" />
+                        </ContextMenu>
+                    </wpfui:NotifyIcon.Menu>
+                </wpfui:NotifyIcon>
+            </wpfui:TitleBar.Tray>-->
+        </wpfui:TitleBar>
 
         <!--<Rectangle RadiusX="99" RadiusY="99" HorizontalAlignment="Right" Margin="0 8 150 0" Height="35" Fill="Red" Width="35">
             <Rectangle.ContextMenu >
@@ -140,20 +166,19 @@
 
         <wpfui:Snackbar
                 x:Name="RootSnackbar"
-                Title="Hello World!"
+
             Grid.RowSpan="3"
             Grid.ColumnSpan="3"
                 MaxWidth="600"
             Margin="0 0 0 40"
-                Icon="PuzzlePiece24"
-                Message="Remember that the Heat Death of Universe is coming someday, no time to explain - let's go!"
-                Show="False"
+                Icon="Info20"
+                IsShown="False"
                 ShowCloseButton="True"
                 Timeout="5000" />
 
         <wpfui:Button Height="40" Click="Button_Click" BorderThickness="0"  Width="70" Padding="0" HorizontalAlignment="Left" Appearance="Transparent">
             <Button.Content>
-                <wpfui:Icon Glyph="ArrowLeft32"/>
+                <wpfui:SymbolIcon Symbol="ArrowLeft32"/>
             </Button.Content>
         </wpfui:Button>
 

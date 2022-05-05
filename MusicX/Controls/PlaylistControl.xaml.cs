@@ -258,14 +258,14 @@ namespace MusicX.Controls
                 {
                     nowPlay = true;
 
-                    iconPlay.Glyph = WPFUI.Common.Icon.Timer20;
+                    iconPlay.Symbol = WPFUI.Common.SymbolRegular.Timer20;
                     var vkService = StaticService.Container.Resolve<VkService>();
 
                     var audios = await vkService.AudioGetAsync(Playlist.Id, Playlist.OwnerId, Playlist.AccessKey);
 
                     await playerService.Play(0, audios.Items);
 
-                    iconPlay.Glyph = WPFUI.Common.Icon.Pause24;
+                    iconPlay.Symbol = WPFUI.Common.SymbolRegular.Pause24;
 
                     nowLoad = false;
 
@@ -273,7 +273,7 @@ namespace MusicX.Controls
                 else
                 {
                     playerService.Pause();
-                    iconPlay.Glyph = WPFUI.Common.Icon.Play24;
+                    iconPlay.Symbol = WPFUI.Common.SymbolRegular.Play24;
 
                     await Task.Delay(400);
                     nowLoad = false;
