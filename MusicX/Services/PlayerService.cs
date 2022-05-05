@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
@@ -14,6 +15,7 @@ using NLog;
 using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.Media.Streaming.Adaptive;
+using Windows.Storage.Streams;
 
 namespace MusicX.Services
 {
@@ -55,6 +57,7 @@ namespace MusicX.Services
             Tracks = new List<Audio>();
 
             player.AudioCategory = MediaPlayerAudioCategory.Media;
+            player.Play();
 
 
             player.PlaybackSession.PlaybackStateChanged += MediaPlayerOnCurrentStateChanged;
@@ -63,18 +66,24 @@ namespace MusicX.Services
 
             player.CommandManager.NextBehavior.EnablingRule = MediaCommandEnablingRule.Always;
             player.CommandManager.PreviousBehavior.EnablingRule = MediaCommandEnablingRule.Always;
+            player.CommandManager.ShuffleBehavior.EnablingRule = MediaCommandEnablingRule.Always;
+            player.CommandManager.AutoRepeatModeBehavior.EnablingRule = MediaCommandEnablingRule.Always;
+
+            player.SystemMediaTransportControls.DisplayUpdater.Type = Windows.Media.MediaPlaybackType.Music;
+
 
             player.CommandManager.NextReceived += async (c, e) => await NextTrack();
             player.CommandManager.PreviousReceived += async (c, e) => await PreviousTrack();
             player.CommandManager.PlayReceived += (c, e) => Play();
             player.CommandManager.PauseReceived += (c, e) => Pause();
 
-
             _positionTimer = new DispatcherTimer();
             _positionTimer.Interval = TimeSpan.FromMilliseconds(500);
             _positionTimer.Tick += PositionTimerOnTick;
             this.discordService = discordService;
             this.notificationsService = notificationsService;
+
+           
         }
 
         public async Task PlayTrack(Audio track)
@@ -145,6 +154,11 @@ namespace MusicX.Services
                 player.Source = MediaSource.CreateFromAdaptiveMediaSource(ams);
 
                 player.Play();
+
+
+                new Thread(UpdateWindowsData).Start();
+                //player.SystemMediaTransportControls.DisplayUpdater.ClearAll();
+
 
                 string artist;
 
@@ -343,6 +357,32 @@ namespace MusicX.Services
             }
         }
 
+
+        private void UpdateWindowsData()
+        {
+            Thread.Sleep(1000);
+
+            var updater = player.SystemMediaTransportControls.DisplayUpdater;
+
+
+            updater.MusicProperties.Title = CurrentTrack.Title;
+            updater.MusicProperties.Artist = CurrentTrack.Artist;
+            updater.MusicProperties.TrackNumber = 1;
+            updater.MusicProperties.AlbumArtist = CurrentTrack.Artist;
+            updater.MusicProperties.AlbumTitle = CurrentTrack.Title;
+            updater.MusicProperties.AlbumTrackCount = 1;
+
+
+
+            if (CurrentTrack.Album != null)
+            {
+                player.SystemMediaTransportControls.DisplayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri(CurrentTrack.Album.Cover));
+
+            }
+
+            player.SystemMediaTransportControls.DisplayUpdater.Update();
+        }
+
         public async Task Play(int index, List<Audio> tracks = null)
         {
             try
@@ -452,6 +492,10 @@ namespace MusicX.Services
                 
                 player.Play();
 
+
+                new Thread(UpdateWindowsData).Start();
+
+
                 config = await configService.GetConfig();
 
                 if (config.ShowRPC == null)
@@ -536,6 +580,8 @@ namespace MusicX.Services
                 var ams = result.MediaSource;
                 player.Source = MediaSource.CreateFromAdaptiveMediaSource(ams);
                 player.Play();
+                new Thread(UpdateWindowsData).Start();
+
                 PositionTrackChangedEvent?.Invoke(this, TimeSpan.Zero);
             }
             catch (Exception ex)

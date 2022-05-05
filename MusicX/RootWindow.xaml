@@ -101,8 +101,34 @@
             <Frame x:Name="ModalFrame"/>
             <wpfui:Button x:Name="CloseModalButton" Height="20" Width="20" HorizontalAlignment="Left" VerticalAlignment="Top" Appearance="Transparent" Icon="ClosedCaption24"/>
         </Grid>
-        
-        <wpfui:TitleBar Grid.Row="0" Height="40"/>
+
+        <wpfui:TitleBar UseSnapLayout="True" MinimizeToTray="False" Grid.Row="0" Height="40">
+            <!--<wpfui:TitleBar.Tray>
+                <wpfui:NotifyIcon
+                    FocusOnLeftClick="True"
+                    Icon="pack://application:,,,/Assets/icon.ico"
+                    MenuOnRightClick="True"
+                    TooltipText="MusicX">
+                    <wpfui:NotifyIcon.Menu>
+                        <ContextMenu>
+                            <MenuItem
+                                Header="Home"
+                                Tag="home" />
+                            <MenuItem
+                                Header="Save"
+                                Tag="save" />
+                            <MenuItem
+                                Header="Open"
+                                Tag="open" />
+                            <Separator />
+                            <MenuItem
+                                Header="Reload"
+                                Tag="reload" />
+                        </ContextMenu>
+                    </wpfui:NotifyIcon.Menu>
+                </wpfui:NotifyIcon>
+            </wpfui:TitleBar.Tray>-->
+        </wpfui:TitleBar>
 
         <!--<Rectangle RadiusX="99" RadiusY="99" HorizontalAlignment="Right" Margin="0 8 150 0" Height="35" Fill="Red" Width="35">
             <Rectangle.ContextMenu >

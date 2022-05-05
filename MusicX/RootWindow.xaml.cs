@@ -37,17 +37,20 @@ namespace MusicX
         {
             //Style = "{StaticResource UiWindow}"
             var os = Environment.OSVersion;
-            if (os.Version.Build >= 22000)
-            {
-                var style = (Style)FindResource("UiWindow");
-                this.Style = style;
-            }else
-            {
-                this.WindowStyle = WindowStyle.None;
-                this.Foreground = Brushes.White;
+
+            var style = (Style)FindResource("UiWindow");
+            this.Style = style;
+            //if (os.Version.Build >= 22000)
+            //{
+            //    var style = (Style)FindResource("UiWindow");
+            //    this.Style = style;
+            //}else
+            //{
+            //    this.WindowStyle = WindowStyle.None;
+            //    this.Foreground = Brushes.White;
 
 
-            }
+            //}
 
             InitializeComponent();     
             this.navigationService = navigationService;

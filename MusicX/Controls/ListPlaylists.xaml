@@ -17,9 +17,10 @@
         </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>
     </UserControl.Resources>
+
+
     <hc:ScrollViewer CanMouseWheel="False"  hc:ScrollViewerAttach.AutoHide="True"  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden" IsInertiaEnabled="True">
         <StackPanel Orientation="Horizontal" x:Name="StackPanelPlaylists">
-
         </StackPanel>
     </hc:ScrollViewer>
    
