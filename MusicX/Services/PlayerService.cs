@@ -60,22 +60,29 @@ namespace MusicX.Services
             player.Play();
 
 
-            player.PlaybackSession.PlaybackStateChanged += MediaPlayerOnCurrentStateChanged;
-            player.MediaEnded += MediaPlayerOnMediaEnded;
-            player.MediaFailed += MediaPlayerOnMediaFailed;
+            try
+            {
+                player.PlaybackSession.PlaybackStateChanged += MediaPlayerOnCurrentStateChanged;
+                player.MediaEnded += MediaPlayerOnMediaEnded;
+                player.MediaFailed += MediaPlayerOnMediaFailed;
 
-            player.CommandManager.NextBehavior.EnablingRule = MediaCommandEnablingRule.Always;
-            player.CommandManager.PreviousBehavior.EnablingRule = MediaCommandEnablingRule.Always;
-            //player.CommandManager.ShuffleBehavior.EnablingRule = MediaCommandEnablingRule.Always;
-            //player.CommandManager.AutoRepeatModeBehavior.EnablingRule = MediaCommandEnablingRule.Always;
+                player.CommandManager.NextBehavior.EnablingRule = MediaCommandEnablingRule.Always;
+                player.CommandManager.PreviousBehavior.EnablingRule = MediaCommandEnablingRule.Always;
+                //player.CommandManager.ShuffleBehavior.EnablingRule = MediaCommandEnablingRule.Always;
+                //player.CommandManager.AutoRepeatModeBehavior.EnablingRule = MediaCommandEnablingRule.Always;
 
-            player.SystemMediaTransportControls.DisplayUpdater.Type = Windows.Media.MediaPlaybackType.Music;
+                player.SystemMediaTransportControls.DisplayUpdater.Type = Windows.Media.MediaPlaybackType.Music;
 
 
-            player.CommandManager.NextReceived += async (c, e) => await NextTrack();
-            player.CommandManager.PreviousReceived += async (c, e) => await PreviousTrack();
-            player.CommandManager.PlayReceived += (c, e) => Play();
-            player.CommandManager.PauseReceived += (c, e) => Pause();
+                player.CommandManager.NextReceived += async (c, e) => await NextTrack();
+                player.CommandManager.PreviousReceived += async (c, e) => await PreviousTrack();
+                player.CommandManager.PlayReceived += (c, e) => Play();
+                player.CommandManager.PauseReceived += (c, e) => Pause();
+            }catch(Exception ex)
+            {
+                logger.Error(ex, ex.Message);
+            }
+          
 
             _positionTimer = new DispatcherTimer();
             _positionTimer.Interval = TimeSpan.FromMilliseconds(500);
@@ -360,27 +367,34 @@ namespace MusicX.Services
 
         private void UpdateWindowsData()
         {
-            Thread.Sleep(1000);
-
-            var updater = player.SystemMediaTransportControls.DisplayUpdater;
-
-
-            updater.MusicProperties.Title = CurrentTrack.Title;
-            updater.MusicProperties.Artist = CurrentTrack.Artist;
-            updater.MusicProperties.TrackNumber = 1;
-            updater.MusicProperties.AlbumArtist = CurrentTrack.Artist;
-            updater.MusicProperties.AlbumTitle = CurrentTrack.Title;
-            updater.MusicProperties.AlbumTrackCount = 1;
-
-
-
-            if (CurrentTrack.Album != null)
+            try
             {
-                player.SystemMediaTransportControls.DisplayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri(CurrentTrack.Album.Cover));
+                Thread.Sleep(1000);
 
+                var updater = player.SystemMediaTransportControls.DisplayUpdater;
+
+
+                updater.MusicProperties.Title = CurrentTrack.Title;
+                updater.MusicProperties.Artist = CurrentTrack.Artist;
+                updater.MusicProperties.TrackNumber = 1;
+                updater.MusicProperties.AlbumArtist = CurrentTrack.Artist;
+                updater.MusicProperties.AlbumTitle = CurrentTrack.Title;
+                updater.MusicProperties.AlbumTrackCount = 1;
+
+
+
+                if (CurrentTrack.Album != null)
+                {
+                    player.SystemMediaTransportControls.DisplayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri(CurrentTrack.Album.Cover));
+
+                }
+
+                player.SystemMediaTransportControls.DisplayUpdater.Update();
+            }catch(Exception ex)
+            {
+                logger.Error(ex, ex.Message);
             }
-
-            player.SystemMediaTransportControls.DisplayUpdater.Update();
+           
         }
 
         public async Task Play(int index, List<Audio> tracks = null)
