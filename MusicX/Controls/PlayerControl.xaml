@@ -78,7 +78,8 @@
                         <StackPanel Grid.Column="0" Margin="0 5 0 0" Orientation="Horizontal">
                             <Grid >
                                 <Rectangle Height="50" Width="50" Fill="Black" RadiusX="5" RadiusY="5" Opacity="0.1"/>
-                                <wpfui:FontIcon Foreground="White" Height="50" Width="50" FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontFamily="Segoe Fluent Icons" Glyph="&#xEC4F;" />
+
+                                <wpfui:SymbolIcon  Foreground="White" Symbol="MusicNote124" HorizontalContentAlignment="Center"   FontSize="20"  VerticalContentAlignment="Center" />
 
                                 <Rectangle RadiusX="5" RadiusY="5"  Height="50" Width="50">
                                     <Rectangle.Fill>
@@ -99,7 +100,8 @@
                             </StackPanel>
 
                             <wpfui:Button Margin="10 0 0 0" x:Name="LikeTrack" Click="LikeTrack_Click" Appearance="Transparent" HorizontalContentAlignment="Center" Padding="0" Height="40" Width="40">
-                                <wpfui:FontIcon FontSize="15" x:Name="LikeIcon"  FontFamily="Segoe Fluent Icons" Glyph="&#xE006;" />
+
+                                <wpfui:SymbolIcon x:Name="LikeIcon" Symbol="Heart20"/>
                             </wpfui:Button>
                         </StackPanel>
 

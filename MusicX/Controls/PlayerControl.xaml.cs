@@ -109,11 +109,12 @@ namespace MusicX.Controls
 
                     if (playerService.CurrentTrack.OwnerId == config.UserId)
                     {
-                        LikeIcon.Glyph = '\uE00B';
+                        LikeIcon.Filled = true;
+
                     }
                     else
                     {
-                        LikeIcon.Glyph = '\uE006';
+                        LikeIcon.Filled = false;
 
                     }
                 });
@@ -308,14 +309,15 @@ namespace MusicX.Controls
 
                 if (playerService.CurrentTrack.OwnerId == config.UserId)
                 {
-                    LikeIcon.Glyph = '\uE006';
+
+                    LikeIcon.Filled = false;
                     await vkService.AudioDeleteAsync(playerService.CurrentTrack.Id, playerService.CurrentTrack.OwnerId);
                     notificationService.Show("Удалено из вашей библиотеки", $"Трек {this.ArtistName.Text} - {this.TrackTitle.Text} теперь удален из вашей музыки");
                     playerService.CurrentTrack.OwnerId = 0;
                 }
                 else
                 {
-                    LikeIcon.Glyph = '\uE00B';
+                    LikeIcon.Filled = true;
                     await vkService.AudioAddAsync(playerService.CurrentTrack.Id, playerService.CurrentTrack.OwnerId);
 
                     notificationService.Show("Добавлено в вашу библиотеку", $"Трек {this.ArtistName.Text} - {this.TrackTitle.Text} теперь находится в Вашей музыке!");
