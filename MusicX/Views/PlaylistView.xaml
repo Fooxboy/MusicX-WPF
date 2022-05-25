@@ -1,52 +1,57 @@
-﻿<Page x:Class="MusicX.Views.PlaylistView"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:MusicX.Views" xmlns:controls="clr-namespace:WPFUI.Controls;assembly=WPFUI" xmlns:hc="https://handyorg.github.io/handycontrol" xmlns:blocks="clr-namespace:MusicX.Controls.Blocks"
-      mc:Ignorable="d" 
-      d:DesignHeight="720" d:DesignWidth="1280"
-      Loaded="Page_Loaded"
-      Title="PlaylistView">
+﻿<Page
+    x:Class="MusicX.Views.PlaylistView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:blocks="clr-namespace:MusicX.Controls.Blocks"
+    xmlns:controls="clr-namespace:WPFUI.Controls;assembly=WPFUI"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:local="clr-namespace:MusicX.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="PlaylistView"
+    d:DesignHeight="720"
+    d:DesignWidth="1280"
+    Loaded="Page_Loaded"
+    mc:Ignorable="d">
 
     <Page.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDark.xaml"/>
-                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDark.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <Storyboard x:Key="LoadedPlaylist">
                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="rectangle" Storyboard.TargetProperty="(Shape.Fill).(Brush.Opacity)">
-                    <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
-                    <EasingDoubleKeyFrame KeyTime="00:00:00.7000000" Value="1"/>
+                    <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                    <EasingDoubleKeyFrame KeyTime="00:00:00.7000000" Value="1" />
                 </DoubleAnimationUsingKeyFrames>
                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="rectangle" Storyboard.TargetProperty="(Shape.Fill).(Brush.RelativeTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
-                    <EasingDoubleKeyFrame KeyTime="00:00:00" Value="1.1"/>
-                    <EasingDoubleKeyFrame KeyTime="00:00:00.7000000" Value="1"/>
+                    <EasingDoubleKeyFrame KeyTime="00:00:00" Value="1.1" />
+                    <EasingDoubleKeyFrame KeyTime="00:00:00.7000000" Value="1" />
                 </DoubleAnimationUsingKeyFrames>
                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="rectangle" Storyboard.TargetProperty="(Shape.Fill).(Brush.RelativeTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
-                    <EasingDoubleKeyFrame KeyTime="00:00:00" Value="1.1"/>
-                    <EasingDoubleKeyFrame KeyTime="00:00:00.7000000" Value="1"/>
+                    <EasingDoubleKeyFrame KeyTime="00:00:00" Value="1.1" />
+                    <EasingDoubleKeyFrame KeyTime="00:00:00.7000000" Value="1" />
                 </DoubleAnimationUsingKeyFrames>
                 <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="textBlock" Storyboard.TargetProperty="(FrameworkElement.Margin)">
-                    <EasingThicknessKeyFrame KeyTime="00:00:00" Value="0,70,20,0"/>
-                    <EasingThicknessKeyFrame KeyTime="00:00:00.5000000" Value="0,30,20,0"/>
+                    <EasingThicknessKeyFrame KeyTime="00:00:00" Value="0,70,20,0" />
+                    <EasingThicknessKeyFrame KeyTime="00:00:00.5000000" Value="0,30,20,0" />
                 </ThicknessAnimationUsingKeyFrames>
                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="textBlock" Storyboard.TargetProperty="(UIElement.Opacity)">
-                    <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
-                    <EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="1"/>
+                    <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                    <EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="1" />
                 </DoubleAnimationUsingKeyFrames>
                 <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="textBlock1" Storyboard.TargetProperty="(FrameworkElement.Margin)">
-                    <EasingThicknessKeyFrame KeyTime="00:00:00" Value="0,40,0,0"/>
-                    <EasingThicknessKeyFrame KeyTime="00:00:00.5000000" Value="0,10,0,0"/>
+                    <EasingThicknessKeyFrame KeyTime="00:00:00" Value="0,40,0,0" />
+                    <EasingThicknessKeyFrame KeyTime="00:00:00.5000000" Value="0,10,0,0" />
                 </ThicknessAnimationUsingKeyFrames>
                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="textBlock1" Storyboard.TargetProperty="(UIElement.Opacity)">
-                    <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
-                    <EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="0.8"/>
+                    <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                    <EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="0.8" />
                 </DoubleAnimationUsingKeyFrames>
                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="__" Storyboard.TargetProperty="(UIElement.Opacity)">
-                    <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
-                    <EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="0.615"/>
+                    <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                    <EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="0.615" />
                 </DoubleAnimationUsingKeyFrames>
             </Storyboard>
         </ResourceDictionary>
@@ -54,115 +59,201 @@
 
     <Grid>
 
-        <!-- -->
-        <!-- -->
+        <!--    -->
+        <!--    -->
 
-        <Grid x:Name="LoadingContentGrid"
-            Visibility="{Binding Path=VisibleLoading, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-              HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Grid
+            x:Name="LoadingContentGrid"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Visibility="{Binding Path=VisibleLoading, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
             <StackPanel>
-                <controls:ProgressRing Height="60"  IsIndeterminate="True" Width="60" IsEnabled="True"/>
-                <TextBlock Foreground="White" HorizontalAlignment="Center" Margin="0 10 0 0" 
-                           VerticalAlignment="Center" FontSize="16" FontWeight="DemiBold"  Text="Стучусь к серверам ВКонтакте..."/>
+                <controls:ProgressRing
+                    Width="60"
+                    Height="60"
+                    IsEnabled="True"
+                    IsIndeterminate="True" />
+                <TextBlock
+                    Margin="0,10,0,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="16"
+                    FontWeight="DemiBold"
+                    Foreground="White"
+                    Text="Стучусь к серверам ВКонтакте..." />
             </StackPanel>
         </Grid>
-        <hc:ScrollViewer IsInertiaEnabled="True" HorizontalScrollBarVisibility="Disabled" >
-            <!-- Visibility="{Binding VisibleContent}"-->
+        <hc:ScrollViewer HorizontalScrollBarVisibility="Disabled" IsInertiaEnabled="True">
+            <!--  Visibility="{Binding VisibleContent}"  -->
 
             <StackPanel x:Name="PlaylistStackPanel" Visibility="{Binding VisibleContent}">
-                <controls:Card x:Name="CardPlaylist" Visibility="Collapsed" Height="300" Margin="0 10 15 -40" RenderTransformOrigin="0.5,0.5">
+                <controls:Card
+                    x:Name="CardPlaylist"
+                    Height="300"
+                    Margin="0,10,15,-40"
+                    RenderTransformOrigin="0.5,0.5"
+                    Visibility="Collapsed">
                     <controls:Card.RenderTransform>
                         <TransformGroup>
-                            <ScaleTransform/>
-                            <SkewTransform/>
-                            <RotateTransform/>
-                            <TranslateTransform/>
+                            <ScaleTransform />
+                            <SkewTransform />
+                            <RotateTransform />
+                            <TranslateTransform />
                         </TransformGroup>
                     </controls:Card.RenderTransform>
-                    <StackPanel Margin="15 0 0 0"  Orientation="Horizontal">
+                    <StackPanel Margin="15,0,0,0" Orientation="Horizontal">
                         <Grid>
-                            <Rectangle Width="250" RadiusX="5" RadiusY="5" Height="250" Fill="Black" Opacity="0.2"/>
-                            <controls:SymbolIcon FontSize="70" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Symbol="NavigationPlay20"/>
+                            <Rectangle
+                                Width="250"
+                                Height="250"
+                                Fill="Black"
+                                Opacity="0.2"
+                                RadiusX="5"
+                                RadiusY="5" />
+                            <controls:SymbolIcon
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                FontSize="70"
+                                Symbol="NavigationPlay20" />
 
 
-                            <Rectangle x:Name="rectangle" Height="250" Width="250" RadiusX="5" RadiusY="5">
+                            <Rectangle
+                                x:Name="rectangle"
+                                Width="250"
+                                Height="250"
+                                RadiusX="5"
+                                RadiusY="5">
                                 <Rectangle.Fill>
                                     <ImageBrush x:Name="CoverPlaylist" ImageSource="{Binding Cover}">
                                         <ImageBrush.RelativeTransform>
                                             <TransformGroup>
-                                                <ScaleTransform CenterY="0.5" CenterX="0.5"/>
-                                                <SkewTransform CenterX="0.5" CenterY="0.5"/>
-                                                <RotateTransform CenterX="0.5" CenterY="0.5"/>
-                                                <TranslateTransform/>
+                                                <ScaleTransform CenterX="0.5" CenterY="0.5" />
+                                                <SkewTransform CenterX="0.5" CenterY="0.5" />
+                                                <RotateTransform CenterX="0.5" CenterY="0.5" />
+                                                <TranslateTransform />
                                             </TransformGroup>
                                         </ImageBrush.RelativeTransform>
                                     </ImageBrush>
                                 </Rectangle.Fill>
 
                                 <Rectangle.Effect>
-                                    <DropShadowEffect BlurRadius="40" ShadowDepth="5" Opacity="0.3"  Color="Black"/>
+                                    <DropShadowEffect
+                                        BlurRadius="40"
+                                        Opacity="0.3"
+                                        ShadowDepth="5"
+                                        Color="Black" />
                                 </Rectangle.Effect>
                             </Rectangle>
                         </Grid>
 
 
 
-                        <StackPanel Margin="20 0 0 0" >
-                            <TextBlock x:Name="textBlock" HorizontalAlignment="Left"  FontFamily="{StaticResource VKSansBold}" TextTrimming="CharacterEllipsis"  VerticalAlignment="Center" FontSize="40" Margin="0 30 20 0" FontWeight="ExtraBlack"  Foreground="White" Text="{Binding Title}"/>
+                        <StackPanel Margin="20,0,0,0">
+                            <TextBlock
+                                x:Name="textBlock"
+                                MaxWidth="{Binding ElementName=CardPlaylist, Path=ActualWidth}"
+                                Margin="0,30,20,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                FontFamily="{StaticResource VKSansBold}"
+                                FontSize="40"
+                                FontWeight="ExtraBlack"
+                                Foreground="White"
+                                Text="{Binding Title}"
+                                TextTrimming="CharacterEllipsis" />
 
-                            <TextBlock x:Name="textBlock1" TextTrimming="CharacterEllipsis" FontFamily="{StaticResource VKSansRegular}"  Opacity="0.8"  Foreground="White" FontSize="22" Margin="0 10 0 0" Text="{Binding ArtistText}"/>
-                            <StackPanel x:Name="AddInfo" Visibility="{Binding Path=VisibileAddInfo}" Opacity="0.5" Margin="0 10 0 0" Orientation="Horizontal">
+                            <TextBlock
+                                x:Name="textBlock1"
+                                Margin="0,10,0,0"
+                                FontFamily="{StaticResource VKSansRegular}"
+                                FontSize="22"
+                                Foreground="White"
+                                Opacity="0.8"
+                                Text="{Binding ArtistText}"
+                                TextTrimming="CharacterEllipsis" />
+                            <StackPanel
+                                x:Name="AddInfo"
+                                Margin="0,10,0,0"
+                                Opacity="0.5"
+                                Orientation="Horizontal"
+                                Visibility="{Binding Path=VisibileAddInfo}">
 
                                 <TextBlock
-                                x:Name="Genres"
-                                Foreground="White"
+                                    x:Name="Genres"
                                     FontFamily="{StaticResource VKSansRegular}"
-                                Text="{Binding Genres}" />
+                                    Foreground="White"
+                                    Text="{Binding Genres}" />
                                 <TextBlock
-                                x:Name="Dot2"
-                                Foreground="White"
-                                Margin="3,0,0,0"
-                                Text="•" />
+                                    x:Name="Dot2"
+                                    Margin="3,0,0,0"
+                                    Foreground="White"
+                                    Text="•" />
                                 <TextBlock
-                                x:Name="Year"
-                                Foreground="White"
+                                    x:Name="Year"
+                                    Margin="3,0,0,0"
                                     FontFamily="{StaticResource VKSansRegular}"
-                                Margin="3,0,0,0"
-                                Text="{Binding Year}" />
+                                    Foreground="White"
+                                    Text="{Binding Year}" />
                                 <TextBlock
-                                x:Name="Dot3"
-                                Foreground="White"
-                                Margin="3,0,0,0"
-                                Text="•" />
+                                    x:Name="Dot3"
+                                    Margin="3,0,0,0"
+                                    Foreground="White"
+                                    Text="•" />
                                 <TextBlock
-                                x:Name="Plays"
-                                Foreground="White"
+                                    x:Name="Plays"
+                                    Margin="3,0,0,0"
                                     FontFamily="{StaticResource VKSansRegular}"
-                                Margin="3,0,0,0"
-                                Text="{Binding Plays}" />
+                                    Foreground="White"
+                                    Text="{Binding Plays}" />
                                 <TextBlock
-                                x:Name="PlaysText"
-                                Foreground="White"
-                                Margin="3,0,0,0"
-                                Text="прослушиваний" />
+                                    x:Name="PlaysText"
+                                    Margin="3,0,0,0"
+                                    Foreground="White"
+                                    Text="прослушиваний" />
                             </StackPanel>
 
-                            <StackPanel x:Name="stackPanel"  Margin="0 50 0 0" Orientation="Horizontal" RenderTransformOrigin="0.5,0.5">
+                            <StackPanel
+                                x:Name="stackPanel"
+                                Margin="0,50,0,0"
+                                Orientation="Horizontal"
+                                RenderTransformOrigin="0.5,0.5">
                                 <StackPanel.RenderTransform>
                                     <TransformGroup>
-                                        <ScaleTransform/>
-                                        <SkewTransform/>
-                                        <RotateTransform/>
-                                        <TranslateTransform/>
+                                        <ScaleTransform />
+                                        <SkewTransform />
+                                        <RotateTransform />
+                                        <TranslateTransform />
                                     </TransformGroup>
                                 </StackPanel.RenderTransform>
-                                <controls:Button x:Name="AddPlaylist" Icon="Add28" Click="AddPlaylist_Click"  Content="Добавить к себе" Appearance="Secondary"/>
-                                <controls:Button x:Name="PlayPlaylist" Icon="Play20" Click="PlayPlaylist_Click"  Margin="20 0 0 0" Content="Воспроизвести" Appearance="Secondary"/>
-                                <controls:Button x:Name="DownloadPlaylist" Icon="ArrowDownload48" Click="DownloadPlaylist_Click" Margin="20 0 0 0" Content="Скачать" Appearance="Secondary"/>
+                                <controls:Button
+                                    x:Name="AddPlaylist"
+                                    Appearance="Secondary"
+                                    Click="AddPlaylist_Click"
+                                    Content="Добавить к себе"
+                                    Icon="Add28" />
+                                <controls:Button
+                                    x:Name="PlayPlaylist"
+                                    Margin="20,0,0,0"
+                                    Appearance="Secondary"
+                                    Click="PlayPlaylist_Click"
+                                    Content="Воспроизвести"
+                                    Icon="Play20" />
+                                <controls:Button
+                                    x:Name="DownloadPlaylist"
+                                    Margin="20,0,0,0"
+                                    Appearance="Secondary"
+                                    Click="DownloadPlaylist_Click"
+                                    Content="Скачать"
+                                    Icon="ArrowDownload48" />
 
                             </StackPanel>
 
-                            <TextBlock x:Name="__" Text="{Binding Path=Description}" Margin="0 10 0 0" Opacity="0.6" Foreground="White"/>
+                            <TextBlock
+                                x:Name="__"
+                                Margin="0,10,0,0"
+                                Foreground="White"
+                                Opacity="0.6"
+                                Text="{Binding Path=Description}" />
                         </StackPanel>
                     </StackPanel>
                 </controls:Card>

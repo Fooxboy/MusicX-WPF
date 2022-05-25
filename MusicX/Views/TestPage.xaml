@@ -1,33 +1,34 @@
 ﻿<Page
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:MusicX.Views"
-      xmlns:music="clr-namespace:MusicX.Controls" 
-      xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
-      xmlns:uwp="clr-namespace:System.Windows.Controls;assembly=PresentationFramework"
-      xmlns:hc="https://handyorg.github.io/handycontrol" x:Class="MusicX.Views.TestPage"
-      mc:Ignorable="d"
-      
-      d:DesignHeight="450" d:DesignWidth="800"
-      Title="TestPage">
+    x:Class="MusicX.Views.TestPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:local="clr-namespace:MusicX.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:music="clr-namespace:MusicX.Controls"
+    xmlns:uwp="clr-namespace:System.Windows.Controls;assembly=PresentationFramework"
+    xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
+    Title="TestPage"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
     <Page.Resources>
 
         <Storyboard x:Key="LoadedAmination">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="stackPanel" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="803.712"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="803.712" />
                 <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0">
                     <EasingDoubleKeyFrame.EasingFunction>
-                        <CircleEase EasingMode="EaseOut"/>
+                        <CircleEase EasingMode="EaseOut" />
                     </EasingDoubleKeyFrame.EasingFunction>
                 </EasingDoubleKeyFrame>
             </DoubleAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="stackPanel" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
                 <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="-2.948">
                     <EasingDoubleKeyFrame.EasingFunction>
-                        <CircleEase EasingMode="EaseOut"/>
+                        <CircleEase EasingMode="EaseOut" />
                     </EasingDoubleKeyFrame.EasingFunction>
                 </EasingDoubleKeyFrame>
             </DoubleAnimationUsingKeyFrames>
@@ -39,41 +40,104 @@
 
         <StackPanel>
 
-            <Button Content="Test"/>
+            <Button Content="Test" />
             <!--<music:BigBannerControl HorizontalAlignment="Stretch" Margin="-00 0 -20 0" Height="600" />-->
 
-            <StackPanel x:Name="stackPanel" Margin="0,20,-800,10" RenderTransformOrigin="0.5,0.5">
+            <StackPanel
+                x:Name="stackPanel"
+                Margin="0,20,-800,10"
+                RenderTransformOrigin="0.5,0.5">
                 <StackPanel.RenderTransform>
                     <TransformGroup>
-                        <ScaleTransform/>
-                        <SkewTransform/>
-                        <RotateTransform/>
-                        <TranslateTransform/>
+                        <ScaleTransform />
+                        <SkewTransform />
+                        <RotateTransform />
+                        <TranslateTransform />
                     </TransformGroup>
                 </StackPanel.RenderTransform>
 
 
 
 
-                <Button HorizontalAlignment="Left" Width="300" x:Name="OpenModal" Content="Открыть модалку" Click="OpenModal_Click"/>
+                <Button
+                    x:Name="OpenModal"
+                    Width="300"
+                    HorizontalAlignment="Left"
+                    Click="OpenModal_Click"
+                    Content="Открыть модалку" />
 
-                <TextBlock Foreground="White" Margin="0 30 0 0" FontSize="20" FontFamily="{StaticResource VKSansBold}" Text="Открыть секцию по id"/>
-                <TextBox Margin="0 10 0 0" Width="400" HorizontalAlignment="Left" x:Name="section"/>
-                <wpfui:Button Width="300" Click="OpenSectionButton_Click" x:Name="OpenSectionButton" HorizontalAlignment="Left" Margin="0 10 0 0" Content="Открыть" Appearance="Transparent"/>
+                <TextBlock
+                    Margin="0,30,0,0"
+                    FontFamily="{StaticResource VKSansBold}"
+                    FontSize="20"
+                    Foreground="White"
+                    Text="Открыть секцию по id" />
+                <TextBox
+                    x:Name="section"
+                    Width="400"
+                    Margin="0,10,0,0"
+                    HorizontalAlignment="Left" />
+                <wpfui:Button
+                    x:Name="OpenSectionButton"
+                    Width="300"
+                    Margin="0,10,0,0"
+                    HorizontalAlignment="Left"
+                    Appearance="Transparent"
+                    Click="OpenSectionButton_Click"
+                    Content="Открыть" />
 
 
-                <TextBlock Foreground="White" Margin="0 30 0 0" FontSize="20" FontFamily="{StaticResource VKSansBold}" Text="Открыть страницу исполнителя по id"/>
-                <TextBox Margin="0 10 0 0" Width="400" HorizontalAlignment="Left" x:Name="artist"/>
-                <wpfui:Button Width="300" Click="openArtist_Click"  x:Name="openArtist" HorizontalAlignment="Left" Margin="0 10 0 0" Content="Открыть" Appearance="Transparent"/>
-                <wpfui:Button Width="300" Click="showNotification_Click"  x:Name="showNotification" HorizontalAlignment="Left" Margin="0 50 0 0" Content="Показать уведомление" Appearance="Secondary"/>
+                <TextBlock
+                    Margin="0,30,0,0"
+                    FontFamily="{StaticResource VKSansBold}"
+                    FontSize="20"
+                    Foreground="White"
+                    Text="Открыть страницу исполнителя по id" />
+                <TextBox
+                    x:Name="artist"
+                    Width="400"
+                    Margin="0,10,0,0"
+                    HorizontalAlignment="Left" />
+                <wpfui:Button
+                    x:Name="openArtist"
+                    Width="300"
+                    Margin="0,10,0,0"
+                    HorizontalAlignment="Left"
+                    Appearance="Transparent"
+                    Click="openArtist_Click"
+                    Content="Открыть" />
+                <wpfui:Button
+                    x:Name="showNotification"
+                    Width="300"
+                    Margin="0,50,0,0"
+                    HorizontalAlignment="Left"
+                    Appearance="Secondary"
+                    Click="showNotification_Click"
+                    Content="Показать уведомление" />
 
-                <TextBlock Foreground="White" Margin="0 30 0 0" FontSize="20" FontFamily="{StaticResource VKSansBold}" Text="Скачать трек по ссылке"/>
-                <TextBox Margin="0 10 0 0" Width="400" HorizontalAlignment="Left" x:Name="url"/>
-                <wpfui:Button Width="300" Click="download_Click"  x:Name="download" HorizontalAlignment="Left" Margin="0 10 0 0" Content="Скачать" Appearance="Secondary"/>
+                <TextBlock
+                    Margin="0,30,0,0"
+                    FontFamily="{StaticResource VKSansBold}"
+                    FontSize="20"
+                    Foreground="White"
+                    Text="Скачать трек по ссылке" />
+                <TextBox
+                    x:Name="url"
+                    Width="400"
+                    Margin="0,10,0,0"
+                    HorizontalAlignment="Left" />
+                <wpfui:Button
+                    x:Name="download"
+                    Width="300"
+                    Margin="0,10,0,0"
+                    HorizontalAlignment="Left"
+                    Appearance="Secondary"
+                    Click="download_Click"
+                    Content="Скачать" />
 
             </StackPanel>
         </StackPanel>
 
-        
+
     </Grid>
 </Page>

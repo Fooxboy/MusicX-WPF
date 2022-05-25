@@ -5,21 +5,14 @@ using MusicX.Services;
 using MusicX.Views;
 using NLog;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+
 
 namespace MusicX.Controls
 {
@@ -328,7 +321,7 @@ namespace MusicX.Controls
                 logger.Error("Error in like track");
                 logger.Error(ex, ex.Message);
 
-                var notificationService = StaticService.Container.Resolve<Services.NotificationsService>();
+                var notificationService = StaticService.Container.Resolve<NotificationsService>();
 
                 notificationService.Show("Ошибка", $"Мы не смогли добавить этот трек :с");
             }

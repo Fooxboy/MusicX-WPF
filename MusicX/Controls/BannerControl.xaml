@@ -1,26 +1,45 @@
-﻿<UserControl x:Class="MusicX.Controls.BannerControl"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:MusicX.Controls" 
-             xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
-             Loaded="UserControl_Loaded"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+﻿<UserControl
+    x:Class="MusicX.Controls.BannerControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:MusicX.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    Loaded="UserControl_Loaded"
+    mc:Ignorable="d">
     <Grid>
-        <wpfui:CardAction Margin="0 10 0 10" ShowChevron="False" Click="CardAction_Click">
+        <wpfui:CardAction
+            Margin="0,10,0,10"
+            Click="CardAction_Click"
+            ShowChevron="False">
             <Grid>
-                <Rectangle RadiusX="5" VerticalAlignment="Stretch" Height="200" RadiusY="5">
+                <Rectangle
+                    Height="200"
+                    VerticalAlignment="Stretch"
+                    RadiusX="5"
+                    RadiusY="5">
                     <Rectangle.Fill>
-                        <ImageBrush Stretch="UniformToFill" x:Name="BannerCover"/>
+                        <ImageBrush x:Name="BannerCover" Stretch="UniformToFill" />
                     </Rectangle.Fill>
                 </Rectangle>
-                
-                <Rectangle VerticalAlignment="Bottom" Height="45" Opacity="0.4" Fill="Black"/>
-                <StackPanel VerticalAlignment="Bottom" Margin="0 0 0 5" HorizontalAlignment="Center">
-                    <TextBlock FontWeight="DemiBold" FontFamily="{StaticResource VKSansDemiBold}" x:Name="BannerTitle"/>
-                    <TextBlock HorizontalAlignment="Center"  x:Name="BannerText"/>
+
+                <Rectangle
+                    Height="45"
+                    VerticalAlignment="Bottom"
+                    Fill="Black"
+                    Opacity="0.4" />
+                <StackPanel
+                    Margin="0,0,0,5"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Bottom">
+                    <TextBlock
+                        x:Name="BannerTitle"
+                        FontFamily="{StaticResource VKSansDemiBold}"
+                        FontWeight="DemiBold" />
+                    <TextBlock x:Name="BannerText" HorizontalAlignment="Center" />
                 </StackPanel>
             </Grid>
         </wpfui:CardAction>
