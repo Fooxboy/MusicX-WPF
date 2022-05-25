@@ -359,7 +359,7 @@ namespace MusicX.Services
 
         public bool CheckExistAllDownloadTracks()
         {
-            var path = musicFolder += "\\Музыка Вконтакте";
+            var path = musicFolder + "\\Музыка Вконтакте";
 
             return (Directory.Exists(path));
         }
