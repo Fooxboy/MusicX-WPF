@@ -91,7 +91,7 @@ namespace MusicX.Core.Models
         public List<Longread> Longreads { get; set; } = new List<Longread>();
         public List<RecommendedPlaylist> RecommendedPlaylists { get; set; } = new List<RecommendedPlaylist>();
         public List<Video> Videos { get; set; } = new List<Video>();
-        public List<Video> AritstVideos { get; set; } = new List<Video>();
+        public List<Video> ArtistVideos { get; set; } = new List<Video>();
 
     }
 }

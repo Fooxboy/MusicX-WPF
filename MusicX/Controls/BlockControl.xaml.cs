@@ -328,14 +328,14 @@ namespace MusicX.Controls
                 {
                     if (Block.Layout.Name == "slider")
                     {
-                        BlocksPanel.Children.Add(new VideosSliderBlockControl() { Videos = Block.Videos, ShowFull = false });
+                        BlocksPanel.Children.Add(new VideosSliderBlockControl() { Videos = Block.ArtistVideos, ShowFull = false });
 
                         return;
                     }
 
                     if (Block.Layout.Name == "list")
                     {
-                        BlocksPanel.Children.Add(new VideosSliderBlockControl() { Videos = Block.Videos, ShowFull = true });
+                        BlocksPanel.Children.Add(new VideosSliderBlockControl() { Videos = Block.ArtistVideos, ShowFull = true });
                         return;
                     }
 
