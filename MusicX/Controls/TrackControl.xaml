@@ -199,7 +199,11 @@
                             MouseLeave="Title_MouseLeave"
                             MouseLeftButtonDown="Title_MouseLeftButtonDown"
                             Text="Title"
-                            TextTrimming="CharacterEllipsis" />
+                            TextTrimming="CharacterEllipsis">
+                            <TextBlock.ToolTip>
+                                <ToolTip Content="Перейти к альбому" />
+                            </TextBlock.ToolTip>
+                        </TextBlock>
                         <TextBlock
                             x:Name="Subtitle"
                             Margin="5,3,2,0"
@@ -239,7 +243,11 @@
                         MouseLeftButtonDown="Artists_MouseLeftButtonDown"
                         Opacity="0.6"
                         Text="Artist"
-                        TextTrimming="CharacterEllipsis" />
+                        TextTrimming="CharacterEllipsis">
+                        <TextBlock.ToolTip>
+                            <ToolTip Content="Перейти к исполнителю" />
+                        </TextBlock.ToolTip>
+                    </TextBlock>
 
                 </StackPanel>
             </StackPanel>
@@ -272,6 +280,10 @@
                     FontSize="20"
                     Opacity="0.7"
                     Symbol="Sparkle48" />
+
+                <Grid.ToolTip>
+                    <ToolTip Content="Показать похожие треки" />
+                </Grid.ToolTip>
             </Grid>
 
 

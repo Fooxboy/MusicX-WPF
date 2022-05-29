@@ -156,7 +156,11 @@
                                             MouseEnter="TrackTitle_MouseEnter"
                                             MouseLeave="TrackTitle_MouseLeave"
                                             MouseLeftButtonDown="TrackTitle_MouseLeftButtonDown"
-                                            Text="Track name" />
+                                            Text="Track name">
+                                            <TextBlock.ToolTip>
+                                                <ToolTip Content="Перейти к альбому" />
+                                            </TextBlock.ToolTip>
+                                        </TextBlock>
 
                                     </ScrollViewer>
 
@@ -188,7 +192,11 @@
                                     MouseLeave="ArtistName_MouseLeave"
                                     MouseLeftButtonDown="ArtistName_MouseLeftButtonDown"
                                     Opacity="0.7"
-                                    Text="Artist name" />
+                                    Text="Artist name">
+                                    <TextBlock.ToolTip>
+                                        <ToolTip Content="Перейти к исполнителю" />
+                                    </TextBlock.ToolTip>
+                                </TextBlock>
 
                             </StackPanel>
 
@@ -203,6 +211,10 @@
                                 Click="LikeTrack_Click">
 
                                 <wpfui:SymbolIcon x:Name="LikeIcon" Symbol="Heart20" />
+
+                                <wpfui:Button.ToolTip>
+                                    <ToolTip Content="Добавить/убрать в библиотеку" />
+                                </wpfui:Button.ToolTip>
                             </wpfui:Button>
                         </StackPanel>
 
@@ -223,6 +235,10 @@
 
                                 <wpfui:SymbolIcon Symbol="ArrowWrap20" />
 
+                                <ToggleButton.ToolTip>
+                                    <ToolTip Content="В рандомном порядке" />
+                                </ToggleButton.ToolTip>
+
                             </ToggleButton>
 
                             <wpfui:Button
@@ -236,6 +252,10 @@
                                 Click="PrevButton_Click">
 
                                 <wpfui:SymbolIcon Symbol="Previous48" />
+
+                                <wpfui:Button.ToolTip>
+                                    <ToolTip Content="Предыдущий трек" />
+                                </wpfui:Button.ToolTip>
 
                             </wpfui:Button>
 
@@ -254,6 +274,10 @@
                                     FontSize="20"
                                     Symbol="Play32" />
 
+                                <wpfui:Button.ToolTip>
+                                    <ToolTip Content="Пауза/Воспроизвести" />
+                                </wpfui:Button.ToolTip>
+
                             </wpfui:Button>
 
                             <wpfui:Button
@@ -267,6 +291,11 @@
                                 Click="NextButton_Click">
                                 <wpfui:SymbolIcon Symbol="Next48" />
 
+                                <wpfui:Button.ToolTip>
+                                    <ToolTip Content="Следующий трек" />
+                                </wpfui:Button.ToolTip>
+
+
                             </wpfui:Button>
 
                             <ToggleButton
@@ -278,6 +307,10 @@
                                 HorizontalContentAlignment="Center"
                                 Click="RepeatButton_Click">
                                 <wpfui:SymbolIcon Symbol="ArrowRepeatAll16" />
+
+                                <ToggleButton.ToolTip>
+                                    <ToolTip Content="Повтор трека" />
+                                </ToggleButton.ToolTip>
                             </ToggleButton>
 
                         </StackPanel>
@@ -306,6 +339,10 @@
                                     Appearance="Transparent"
                                     Click="DownloadButton_Click">
                                     <wpfui:SymbolIcon Symbol="ArrowDownload24" />
+
+                                    <wpfui:Button.ToolTip>
+                                        <ToolTip Content="Скачать трек" />
+                                    </wpfui:Button.ToolTip>
                                 </wpfui:Button>
 
                                 <wpfui:SymbolIcon
@@ -334,7 +371,11 @@
                                     BorderThickness="0"
                                     Click="OpenFullScreen_Click"
                                     FontSize="17"
-                                    Icon="ArrowMaximize16" />
+                                    Icon="ArrowMaximize16">
+                                    <wpfui:Button.ToolTip>
+                                        <ToolTip Content="Открыть полноэкранный режим" />
+                                    </wpfui:Button.ToolTip>
+                                </wpfui:Button>
                             </StackPanel>
 
                             <!--<Slider Width="150" ValueChanged="Slider_ValueChanged" HorizontalAlignment="Right" Value="1" VerticalAlignment="Center" Maximum="1"/>-->
