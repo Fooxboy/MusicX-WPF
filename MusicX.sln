@@ -28,6 +28,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VkNet.AudioBypassService", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscordRPC", "DiscordRPC\DiscordRPC.csproj", "{B67F48FE-FE54-4E0D-8A3D-69F4BE6B6424}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfAnimatedGif", "WpfAnimatedGif\WpfAnimatedGif.csproj", "{9A7108E9-98F6-4D90-AB03-788DA1769566}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -74,6 +76,10 @@ Global
 		{B67F48FE-FE54-4E0D-8A3D-69F4BE6B6424}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B67F48FE-FE54-4E0D-8A3D-69F4BE6B6424}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B67F48FE-FE54-4E0D-8A3D-69F4BE6B6424}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A7108E9-98F6-4D90-AB03-788DA1769566}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A7108E9-98F6-4D90-AB03-788DA1769566}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A7108E9-98F6-4D90-AB03-788DA1769566}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A7108E9-98F6-4D90-AB03-788DA1769566}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -14,6 +14,8 @@
 
   <ItemGroup>
     <None Remove="Assets\icon.ico" />
+    <None Remove="Assets\lottie\play.json" />
+    <None Remove="Assets\play.gif" />
     <None Remove="Fonts\VKSansDisplay-Bold.ttf" />
     <None Remove="Fonts\VKSansDisplay-DemiBold.ttf" />
     <None Remove="Fonts\VKSansDisplay-Medium.ttf" />
@@ -50,6 +52,7 @@
     <PackageReference Include="HandyControl" Version="3.3.0" />
     <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.5.1" />
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.5.1" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
     <PackageReference Include="taglib-sharp-netstandard2.0" Version="2.1.0" />
     <PackageReference Include="WPF-UI" Version="1.2.7" />
     <PackageReference Include="WpfScreenHelper" Version="2.0.0" />
@@ -58,6 +61,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MusicX.Core\MusicX.Core.csproj" />
+    <ProjectReference Include="..\WpfAnimatedGif\WpfAnimatedGif.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -70,6 +74,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\lottie\play.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Content Include="Assets\play.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Resource Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>

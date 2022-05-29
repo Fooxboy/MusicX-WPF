@@ -21,6 +21,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using WpfAnimatedGif;
 
 namespace MusicX.Controls
 {
@@ -51,7 +52,7 @@ namespace MusicX.Controls
 
         private void Player_PlayStateChangedEvent(object? sender, EventArgs e)
         {
-            if(player.CurrentTrack.Id == this.Audio.Id)
+            if(player.CurrentTrack != null && player.CurrentTrack.Id == this.Audio.Id)
             {
                 if(player.IsPlaying)
                 {
@@ -60,7 +61,6 @@ namespace MusicX.Controls
                 }else
                 {
                     this.IconPlay.Symbol = WPFUI.Common.SymbolRegular.Play24;
-
                 }
             }
         }
@@ -69,9 +69,49 @@ namespace MusicX.Controls
         {
             if(player.CurrentTrack.Id == this.Audio.Id)
             {
-                this.IconPlay.Symbol = WPFUI.Common.SymbolRegular.Pause24;
-            }else
+
+                if(!ShowCard)
+                {
+                    Card.Visibility = Visibility.Visible;
+                    Card.Opacity = 100;
+                }
+
+                var img = new System.Windows.Controls.Image();
+
+                var image = new BitmapImage();
+                image.BeginInit();
+                var local = AppDomain.CurrentDomain.BaseDirectory;
+                image.UriSource = new Uri($"{local}/Assets/play.gif");
+                image.EndInit();
+                ImageBehavior.SetAnimatedSource(img, image);
+
+
+                PlayButtons.Visibility = Visibility.Visible;
+                Rect.Fill = Brushes.White;
+                IconPlay.Visibility = Visibility.Collapsed;
+
+                this.IconPlay.Visibility = Visibility.Collapsed;
+
+                PanelAnim.Children.Add(img);
+            }
+            else
             {
+                PlayButtons.Visibility = Visibility.Collapsed;
+                Rect.Fill = Brushes.Black;
+
+                IconPlay.Visibility = Visibility.Visible;
+                PanelAnim.Children.Clear();
+
+                if (!ShowCard)
+                {
+                    Card.Visibility = Visibility.Collapsed;
+                    Card.Opacity = 1;
+                }
+
+
+
+
+                this.IconPlay.Visibility = Visibility.Visible;
                 this.IconPlay.Symbol = WPFUI.Common.SymbolRegular.Play24;
             }
         }
@@ -121,8 +161,6 @@ namespace MusicX.Controls
         {
             try
             {
-
-              
 
                 this.IconPlay.Symbol = WPFUI.Common.SymbolRegular.Play24;
 
@@ -233,7 +271,36 @@ namespace MusicX.Controls
 
                     Artists.MaxWidth = this.ActualWidth;
                 }
-                
+
+
+                if (player.CurrentTrack != null && player.CurrentTrack.Id == this.Audio.Id)
+                {
+                    var img = new System.Windows.Controls.Image();
+
+                    var image = new BitmapImage();
+                    image.BeginInit();
+                    var local = AppDomain.CurrentDomain.BaseDirectory;
+                    image.UriSource = new Uri($"{local}/Assets/play.gif");
+                    image.EndInit();
+                    ImageBehavior.SetAnimatedSource(img, image);
+
+
+                    PlayButtons.Visibility = Visibility.Visible;
+                    Rect.Fill = Brushes.White;
+                    IconPlay.Visibility = Visibility.Collapsed;
+
+                    this.IconPlay.Visibility = Visibility.Collapsed;
+
+                    PanelAnim.Children.Add(img);
+
+                    if (!ShowCard)
+                    {
+                        Card.Visibility = Visibility.Visible;
+                        Card.Opacity = 100;
+                    }
+                }
+                  
+
 
             }
             catch (Exception ex)
@@ -280,6 +347,14 @@ namespace MusicX.Controls
         {
             try
             {
+                RecommendedAudio.Visibility = Visibility.Visible;
+
+
+
+                if(player.CurrentTrack == null || player.CurrentTrack.Id != this.Audio.Id)
+                {
+                    PlayButtons.Visibility = Visibility.Visible;
+                }
 
                 if (ShowCard)
                 {
@@ -295,11 +370,14 @@ namespace MusicX.Controls
 
               
 
-                RecommendedAudio.Visibility = Visibility.Visible;
-                PlayButtons.Visibility = Visibility.Visible;
+             
                 if (!ShowCard)
                 {
-                    Card.Visibility = Visibility.Visible;
+                    if(player.CurrentTrack == null || player.CurrentTrack.Id != this.Audio.Id)
+                    {
+                        Card.Visibility = Visibility.Visible;
+
+                    }
 
                 }
 
@@ -317,6 +395,14 @@ namespace MusicX.Controls
         {
             try
             {
+                RecommendedAudio.Visibility = Visibility.Collapsed;
+
+               
+
+                if (player.CurrentTrack == null || player.CurrentTrack.Id != this.Audio.Id)
+                {
+                    PlayButtons.Visibility = Visibility.Collapsed;
+                }
 
                 if (ShowCard)
                 {
@@ -329,13 +415,18 @@ namespace MusicX.Controls
                 }
 
 
-                RecommendedAudio.Visibility = Visibility.Collapsed;
                 if (Card == null) return;
-                PlayButtons.Visibility = Visibility.Collapsed;
+              
 
                 if (!ShowCard)
                 {
-                    Card.Visibility = Visibility.Collapsed;
+
+                    if (player.CurrentTrack == null || player.CurrentTrack.Id != this.Audio.Id)
+                    {
+                        Card.Visibility = Visibility.Collapsed;
+                    }
+
+                    
                 }
 
                 Card.Opacity = 1;

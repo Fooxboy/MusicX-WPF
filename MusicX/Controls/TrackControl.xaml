@@ -146,6 +146,7 @@
 
                     <Grid x:Name="PlayButtons" Visibility="Collapsed">
                         <Rectangle
+                            x:Name="Rect"
                             Width="45"
                             Height="45"
                             Fill="Black"
@@ -160,6 +161,11 @@
                             Symbol="Play24" />
 
                     </Grid>
+
+                    <StackPanel
+                        x:Name="PanelAnim"
+                        Width="45"
+                        Height="45" />
 
                 </Grid>
                 <Grid x:Name="ChartGrid" Visibility="Collapsed">

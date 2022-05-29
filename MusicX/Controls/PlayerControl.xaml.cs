@@ -358,10 +358,6 @@ namespace MusicX.Controls
             playerService.SetVolume(value);
 
             Volume.Value = value;
-
-            
-
-
         }
 
         DispatcherTimer timer = new DispatcherTimer();
@@ -371,7 +367,6 @@ namespace MusicX.Controls
             timer.Tick += (ss, ee) =>
             {
                 if (TitleScroll.ScrollableWidth == 0) return;
-                //each time set the offset to scrollviewer.HorizontalOffset + 5
 
                 if (backscroll == false)
                 {
@@ -379,7 +374,7 @@ namespace MusicX.Controls
                     if (TitleScroll.HorizontalOffset == TitleScroll.ScrollableWidth)
                         backscroll = true;
                 }
-                //if the scrollviewer scrolls to the end, scroll it back to the start.
+
                 if (backscroll == true)
                 {
                     TitleScroll.ScrollToHorizontalOffset(TitleScroll.HorizontalOffset - 0.8);
