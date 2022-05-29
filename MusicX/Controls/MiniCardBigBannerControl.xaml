@@ -132,12 +132,14 @@
 
                 <TextBlock
                     x:Name="TextAlbum"
+                    MaxWidth="160"
                     Margin="10,0,0,0"
                     VerticalAlignment="Center"
                     FontFamily="{StaticResource VKSansMedium}"
                     FontSize="16"
                     Foreground="White"
-                    Text="Имя альбома" />
+                    Text="Имя альбома"
+                    TextTrimming="CharacterEllipsis" />
             </Grid>
 
         </Border>
