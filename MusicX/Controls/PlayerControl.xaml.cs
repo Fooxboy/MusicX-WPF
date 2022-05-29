@@ -12,7 +12,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
-
+using System.Windows.Threading;
 
 namespace MusicX.Controls
 {
@@ -359,6 +359,38 @@ namespace MusicX.Controls
 
             Volume.Value = value;
 
+            
+
+
+        }
+
+        DispatcherTimer timer = new DispatcherTimer();
+        private void ScrollTrackName()
+        {
+            bool backscroll = false;
+            timer.Tick += (ss, ee) =>
+            {
+                if (TitleScroll.ScrollableWidth == 0) return;
+                //each time set the offset to scrollviewer.HorizontalOffset + 5
+
+                if (backscroll == false)
+                {
+                    TitleScroll.ScrollToHorizontalOffset(TitleScroll.HorizontalOffset + 0.6);
+                    if (TitleScroll.HorizontalOffset == TitleScroll.ScrollableWidth)
+                        backscroll = true;
+                }
+                //if the scrollviewer scrolls to the end, scroll it back to the start.
+                if (backscroll == true)
+                {
+                    TitleScroll.ScrollToHorizontalOffset(TitleScroll.HorizontalOffset - 0.8);
+                    if (TitleScroll.HorizontalOffset == 0)
+                    {
+                        backscroll = false;
+                    }
+                }
+            };
+            timer.Interval = TimeSpan.FromMilliseconds(15);
+            timer.Start();
         }
 
         private void ShuffleButton_Click(object sender, RoutedEventArgs e)
@@ -465,6 +497,11 @@ namespace MusicX.Controls
         private void Volume_MouseLeave(object sender, MouseEventArgs e)
         {
             this.mouseEnteredInVolume = false;
+        }
+
+        private void TitleScroll_Loaded(object sender, RoutedEventArgs e)
+        {
+            ScrollTrackName();
         }
     }
 }

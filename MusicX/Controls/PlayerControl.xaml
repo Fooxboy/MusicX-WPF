@@ -41,8 +41,12 @@
                 Stretch="UniformToFill">
                 <Image.Effect>
                     <BlurEffect
-                        KernelType="Box"
+                        KernelType="Gaussian"
                         Radius="20"
+                        RenderOptions.BitmapScalingMode="LowQuality"
+                        RenderOptions.CachingHint="Unspecified"
+                        RenderOptions.ClearTypeHint="Enabled"
+                        RenderOptions.EdgeMode="Aliased"
                         RenderingBias="Performance" />
                 </Image.Effect>
             </Image>
@@ -135,15 +139,25 @@
                             </Grid>
                             <StackPanel Margin="15,-10,0,0" VerticalAlignment="Center">
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock
-                                        x:Name="TrackTitle"
-                                        Margin="0,0,0,5"
-                                        FontFamily="{StaticResource VKSansDemiBold}"
-                                        FontSize="16"
-                                        MouseEnter="TrackTitle_MouseEnter"
-                                        MouseLeave="TrackTitle_MouseLeave"
-                                        MouseLeftButtonDown="TrackTitle_MouseLeftButtonDown"
-                                        Text="Track name" />
+
+                                    <ScrollViewer
+                                        x:Name="TitleScroll"
+                                        MaxWidth="230"
+                                        HorizontalScrollBarVisibility="Hidden"
+                                        Loaded="TitleScroll_Loaded"
+                                        VerticalScrollBarVisibility="Hidden">
+                                        <TextBlock
+                                            x:Name="TrackTitle"
+                                            Margin="0,0,0,5"
+                                            FontFamily="{StaticResource VKSansDemiBold}"
+                                            FontSize="16"
+                                            MouseEnter="TrackTitle_MouseEnter"
+                                            MouseLeave="TrackTitle_MouseLeave"
+                                            MouseLeftButtonDown="TrackTitle_MouseLeftButtonDown"
+                                            Text="Track name" />
+
+                                    </ScrollViewer>
+
                                     <Border
                                         x:Name="explicitBadge"
                                         Width="16"
@@ -163,6 +177,7 @@
                                             Foreground="White"
                                             Text="E" />
                                     </Border>
+
                                 </StackPanel>
                                 <TextBlock
                                     x:Name="ArtistName"
