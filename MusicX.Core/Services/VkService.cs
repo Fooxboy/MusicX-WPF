@@ -911,10 +911,15 @@ namespace MusicX.Core.Services
           
         }
 
-        public async Task SetBroadcast(Audio audio)
+        public async Task SetBroadcastAsync(Audio? audio)
         {
             try
             {
+                if (audio is null) await vkApi.Audio.SetBroadcastAsync();
+                return;
+
+
+
                 await vkApi.Audio.SetBroadcastAsync(audio.OwnerId + "_" + audio.Id + "_" + audio.AccessKey);
             }
             catch (Exception ex)

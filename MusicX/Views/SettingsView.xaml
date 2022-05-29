@@ -81,7 +81,7 @@
                 Margin="5,20,0,0"
                 FontFamily="{StaticResource VKSansDemiBold}"
                 FontSize="30"
-                Text="Discord" />
+                Text="Трансляция активности" />
 
             <wpfui:Card Margin="5,5,5,0">
                 <Grid>
@@ -97,7 +97,22 @@
                                 Margin="5,0,0,0"
                                 FontSize="18"
                                 Foreground="White"
-                                Text="Показывать трек в Вашей активности " />
+                                Text="Показывать трек в Discord " />
+
+                        </StackPanel>
+
+
+                        <StackPanel Margin="0,20,0,0" Orientation="Horizontal">
+                            <wpfui:ToggleSwitch
+                                x:Name="BroacastVK"
+                                Checked="BroacastVK_Checked"
+                                Unchecked="BroacastVK_Unchecked" />
+
+                            <TextBlock
+                                Margin="5,0,0,0"
+                                FontSize="18"
+                                Foreground="White"
+                                Text="Показывать трек в статусе ВКонтакте" />
 
                         </StackPanel>
 

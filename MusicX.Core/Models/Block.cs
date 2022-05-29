@@ -73,6 +73,9 @@ namespace MusicX.Core.Models
         [JsonProperty("videos_ids")]
         public List<string> VideosIds { get; set; } = new List<string>();
 
+        [JsonProperty("artist_videos_ids")]
+        public List<string> ArtistVideosIds { get; set; } = new List<string>();
+
 
         public List<Curator> Curators { get; set; } = new List<Curator>();
         public List<Text> Texts { get; set; } = new List<Text>();
@@ -88,6 +91,7 @@ namespace MusicX.Core.Models
         public List<Longread> Longreads { get; set; } = new List<Longread>();
         public List<RecommendedPlaylist> RecommendedPlaylists { get; set; } = new List<RecommendedPlaylist>();
         public List<Video> Videos { get; set; } = new List<Video>();
+        public List<Video> AritstVideos { get; set; } = new List<Video>();
 
     }
 }

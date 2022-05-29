@@ -200,5 +200,20 @@ namespace MusicX.Views
 
             await configService.SetConfig(config);
         }
+
+        private async void BroacastVK_Checked(object sender, RoutedEventArgs e)
+        {
+            config.BroadcastVK = true;
+
+            await configService.SetConfig(config);
+        }
+
+        private async void BroacastVK_Unchecked(object sender, RoutedEventArgs e)
+        {
+            config.ShowRPC = false;
+
+            await configService.SetConfig(config);
+            await vkService.SetBroadcastAsync(null);
+        }
     }
 }

@@ -300,6 +300,8 @@
                                     Width="150"
                                     Margin="5,0,0,0"
                                     Maximum="1"
+                                    MouseEnter="Volume_MouseEnter"
+                                    MouseLeave="Volume_MouseLeave"
                                     ValueChanged="Slider_ValueChanged">
                                     <hc:PreviewSlider.Background>
                                         <SolidColorBrush Opacity="0.3" Color="White" />

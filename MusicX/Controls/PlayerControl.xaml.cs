@@ -34,7 +34,19 @@ namespace MusicX.Controls
             playerService.PlayStateChangedEvent += PlayerService_PlayStateChangedEvent;
             playerService.PositionTrackChangedEvent += PlayerService_PositionTrackChangedEvent;
             playerService.TrackChangedEvent += PlayerService_TrackChangedEvent;
+
+            this.MouseWheel += PlayerControl_MouseWheel;
             
+        }
+
+        private void PlayerControl_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (!mouseEnteredInVolume) return;
+
+            if (playerService == null) return;
+
+            var delta = e.Delta/1000d;
+            Volume.Value += delta;
         }
 
         private async void PlayerService_TrackChangedEvent(object? sender, EventArgs e)
@@ -441,6 +453,18 @@ namespace MusicX.Controls
                 var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
                 navigationService.NavigateToPage(new PlaylistView(playerService.CurrentTrack.Album.Id, playerService.CurrentTrack.Album.OwnerId, playerService.CurrentTrack.Album.AccessKey));
             }
+        }
+
+
+        private bool mouseEnteredInVolume = false;
+        private void Volume_MouseEnter(object sender, MouseEventArgs e)
+        {
+            this.mouseEnteredInVolume = true;
+        }
+
+        private void Volume_MouseLeave(object sender, MouseEventArgs e)
+        {
+            this.mouseEnteredInVolume = false;
         }
     }
 }

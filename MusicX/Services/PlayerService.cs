@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -179,7 +178,20 @@ namespace MusicX.Services
                     await configService.SetConfig(config);
                 }
 
-                if(config.ShowRPC.Value)
+                if(config.BroadcastVK == null)
+                {
+                    config.BroadcastVK = false;
+
+                    await configService.SetConfig(config);
+                }
+
+
+                if(config.BroadcastVK.Value)
+                {
+                    await vkService.SetBroadcastAsync(track);
+                }
+
+                if (config.ShowRPC.Value)
                 {
                     if (CurrentTrack.MainArtists?.Count > 0)
                     {
@@ -507,6 +519,9 @@ namespace MusicX.Services
                 player.Play();
 
 
+                await vkService.SetBroadcastAsync(track);
+
+
                 new Thread(UpdateWindowsData).Start();
 
 
@@ -519,8 +534,21 @@ namespace MusicX.Services
                     await configService.SetConfig(config);
                 }
 
+                if (config.BroadcastVK == null)
+                {
+                    config.BroadcastVK = false;
 
-                if(config.ShowRPC.Value)
+                    await configService.SetConfig(config);
+                }
+
+
+                if (config.BroadcastVK.Value)
+                {
+                    await vkService.SetBroadcastAsync(track);
+                }
+
+
+                if (config.ShowRPC.Value)
                 {
                     string artist;
 
