@@ -4,12 +4,7 @@ using MusicX.Core.Models;
 using MusicX.Core.Models.General;
 using Newtonsoft.Json;
 using NLog;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using VkNet;
 using VkNet.AudioBypassService.Extensions;
 using VkNet.Enums.Filters;
@@ -889,7 +884,9 @@ namespace MusicX.Core.Services
 
         public async Task<ResponseVk> GetRecommendationsAudio(string audio)
         {
-            var parameters = new VkParameters
+            try
+            {
+                var parameters = new VkParameters
                 {
                     {"v", vkApiVersion},
                     {"lang", "ru"},
@@ -899,12 +896,33 @@ namespace MusicX.Core.Services
                 };
 
 
-            var json = await vkApi.InvokeAsync("audio.getRecommendations", parameters);
+                var json = await vkApi.InvokeAsync("audio.getRecommendations", parameters);
 
 
-            var model = JsonConvert.DeserializeObject<ResponseVk>(json);
+                var model = JsonConvert.DeserializeObject<ResponseVk>(json);
 
-            return model;
+                return model;
+            }catch (Exception ex)
+            {
+                logger.Error("VK API ERROR:");
+                logger.Error(ex, ex.Message);
+                throw;
+            }
+          
+        }
+
+        public async Task SetBroadcast(Audio audio)
+        {
+            try
+            {
+                await vkApi.Audio.SetBroadcastAsync(audio.OwnerId + "_" + audio.Id + "_" + audio.AccessKey);
+            }
+            catch (Exception ex)
+            {
+                logger.Error("VK API ERROR:");
+                logger.Error(ex, ex.Message);
+                throw;
+            }
         }
     }
 }
