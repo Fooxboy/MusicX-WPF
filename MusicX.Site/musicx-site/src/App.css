@@ -46,17 +46,19 @@ body {
   height: 70vh;
   margin-left: -105px;
   margin-right: 10px;
-
+  overflow: hidden;
 }
 
 .right-image {
   height: 70vh;
   margin-right: -105px;
   margin-left: 10px;
-
+  overflow:hidden;
 }
 
-
+.hiden {
+  overflow:hidden;
+}
 .title-app {
   font-size: 8rem;
   color: white;

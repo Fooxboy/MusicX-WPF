@@ -52,7 +52,7 @@ class Home extends React.Component {
                     </div>
                 </div>
 
-                <div className="uk-panel">
+                <div className="uk-panel hiden">
                     <img src={explore} className="right-image uk-align-right uk-margin-remove-adjacent uk-border-rounded uk-box-shadow-xlarge" alt="image one"/>
                     <div >
                         <p className="desc-title">Рекомендации</p>
@@ -74,7 +74,7 @@ class Home extends React.Component {
                <div className="seporator-div"></div>
 
 
-                <div className="uk-panel">
+                <div className="uk-panel  hiden">
                     <img src={search} className="right-image uk-align-right uk-margin-remove-adjacent uk-border-rounded uk-box-shadow-xlarge" alt="image one"/>
                     <div >
                         <p className="desc-title">Поиск</p>
