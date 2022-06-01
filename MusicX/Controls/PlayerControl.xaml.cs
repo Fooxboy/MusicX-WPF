@@ -275,12 +275,13 @@ namespace MusicX.Controls
         private async Task SaveVolume()
         {
             var value = Volume.Value * 100;
-
-            config.Volume = (int)value;
-
             var configService = StaticService.Container.Resolve<ConfigService>();
 
-            await configService.SetConfig(config);
+            var conf = await configService.GetConfig();
+            conf.Volume = (int)value;
+
+
+            await configService.SetConfig(conf);
         }
 
         private async void ArtistName_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
