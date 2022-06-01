@@ -915,8 +915,12 @@ namespace MusicX.Core.Services
         {
             try
             {
-                if (audio is null) await vkApi.Audio.SetBroadcastAsync();
-                return;
+                if (audio is null)
+                {
+                    await vkApi.Audio.SetBroadcastAsync();
+                     return;
+                }
+               
 
 
 

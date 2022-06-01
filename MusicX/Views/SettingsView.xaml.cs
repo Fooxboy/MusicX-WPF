@@ -55,8 +55,14 @@ namespace MusicX.Views
                     config.ShowRPC = true;
                 }
 
+                if(config.BroadcastVK == null)
+                {
+                    config.BroadcastVK = false;
+                }
+
 
                 ShowRPC.IsChecked = config.ShowRPC.Value;
+                BroacastVK.IsChecked = config.BroadcastVK.Value;
 
                 UserName.Text = config.UserName.Split(' ')[0];
 
@@ -203,17 +209,31 @@ namespace MusicX.Views
 
         private async void BroacastVK_Checked(object sender, RoutedEventArgs e)
         {
-            config.BroadcastVK = true;
+            try
+            {
+                config.BroadcastVK = true;
 
-            await configService.SetConfig(config);
+                await configService.SetConfig(config);
+            }catch (Exception ex)
+            {
+
+            }
+            
         }
 
         private async void BroacastVK_Unchecked(object sender, RoutedEventArgs e)
         {
-            config.ShowRPC = false;
+            try
+            {
+                config.BroadcastVK = false;
 
-            await configService.SetConfig(config);
-            await vkService.SetBroadcastAsync(null);
+                await configService.SetConfig(config);
+                await vkService.SetBroadcastAsync(null);
+            }catch (Exception ex)
+            {
+                
+            }
+           
         }
     }
 }
