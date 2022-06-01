@@ -5,21 +5,14 @@ using MusicX.Services;
 using MusicX.Views;
 using NLog;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace MusicX.Controls
 {
@@ -41,7 +34,19 @@ namespace MusicX.Controls
             playerService.PlayStateChangedEvent += PlayerService_PlayStateChangedEvent;
             playerService.PositionTrackChangedEvent += PlayerService_PositionTrackChangedEvent;
             playerService.TrackChangedEvent += PlayerService_TrackChangedEvent;
+
+            this.MouseWheel += PlayerControl_MouseWheel;
             
+        }
+
+        private void PlayerControl_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (!mouseEnteredInVolume) return;
+
+            if (playerService == null) return;
+
+            var delta = e.Delta/1000d;
+            Volume.Value += delta;
         }
 
         private async void PlayerService_TrackChangedEvent(object? sender, EventArgs e)
@@ -109,11 +114,12 @@ namespace MusicX.Controls
 
                     if (playerService.CurrentTrack.OwnerId == config.UserId)
                     {
-                        LikeIcon.Glyph = '\uE00B';
+                        LikeIcon.Filled = true;
+
                     }
                     else
                     {
-                        LikeIcon.Glyph = '\uE006';
+                        LikeIcon.Filled = false;
 
                     }
                 });
@@ -308,14 +314,15 @@ namespace MusicX.Controls
 
                 if (playerService.CurrentTrack.OwnerId == config.UserId)
                 {
-                    LikeIcon.Glyph = '\uE006';
+
+                    LikeIcon.Filled = false;
                     await vkService.AudioDeleteAsync(playerService.CurrentTrack.Id, playerService.CurrentTrack.OwnerId);
                     notificationService.Show("Удалено из вашей библиотеки", $"Трек {this.ArtistName.Text} - {this.TrackTitle.Text} теперь удален из вашей музыки");
                     playerService.CurrentTrack.OwnerId = 0;
                 }
                 else
                 {
-                    LikeIcon.Glyph = '\uE00B';
+                    LikeIcon.Filled = true;
                     await vkService.AudioAddAsync(playerService.CurrentTrack.Id, playerService.CurrentTrack.OwnerId);
 
                     notificationService.Show("Добавлено в вашу библиотеку", $"Трек {this.ArtistName.Text} - {this.TrackTitle.Text} теперь находится в Вашей музыке!");
@@ -326,7 +333,7 @@ namespace MusicX.Controls
                 logger.Error("Error in like track");
                 logger.Error(ex, ex.Message);
 
-                var notificationService = StaticService.Container.Resolve<Services.NotificationsService>();
+                var notificationService = StaticService.Container.Resolve<NotificationsService>();
 
                 notificationService.Show("Ошибка", $"Мы не смогли добавить этот трек :с");
             }
@@ -351,7 +358,34 @@ namespace MusicX.Controls
             playerService.SetVolume(value);
 
             Volume.Value = value;
+        }
 
+        DispatcherTimer timer = new DispatcherTimer();
+        private void ScrollTrackName()
+        {
+            bool backscroll = false;
+            timer.Tick += (ss, ee) =>
+            {
+                if (TitleScroll.ScrollableWidth == 0) return;
+
+                if (backscroll == false)
+                {
+                    TitleScroll.ScrollToHorizontalOffset(TitleScroll.HorizontalOffset + 0.6);
+                    if (TitleScroll.HorizontalOffset == TitleScroll.ScrollableWidth)
+                        backscroll = true;
+                }
+
+                if (backscroll == true)
+                {
+                    TitleScroll.ScrollToHorizontalOffset(TitleScroll.HorizontalOffset - 0.8);
+                    if (TitleScroll.HorizontalOffset == 0)
+                    {
+                        backscroll = false;
+                    }
+                }
+            };
+            timer.Interval = TimeSpan.FromMilliseconds(15);
+            timer.Start();
         }
 
         private void ShuffleButton_Click(object sender, RoutedEventArgs e)
@@ -446,6 +480,23 @@ namespace MusicX.Controls
                 var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
                 navigationService.NavigateToPage(new PlaylistView(playerService.CurrentTrack.Album.Id, playerService.CurrentTrack.Album.OwnerId, playerService.CurrentTrack.Album.AccessKey));
             }
+        }
+
+
+        private bool mouseEnteredInVolume = false;
+        private void Volume_MouseEnter(object sender, MouseEventArgs e)
+        {
+            this.mouseEnteredInVolume = true;
+        }
+
+        private void Volume_MouseLeave(object sender, MouseEventArgs e)
+        {
+            this.mouseEnteredInVolume = false;
+        }
+
+        private void TitleScroll_Loaded(object sender, RoutedEventArgs e)
+        {
+            ScrollTrackName();
         }
     }
 }

@@ -1,34 +1,36 @@
-﻿<Window x:Class="MusicX.RootWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:MusicX"
-        xmlns:views="clr-namespace:MusicX.Views"
-        xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI" xmlns:controls="clr-namespace:MusicX.Controls"
-        Loaded="Window_Loaded"
-        Background="#202020"
-        
-       KeyDown="Window_KeyDown"
-         d:DesignHeight="720" d:DesignWidth="1280"
-        mc:Ignorable="d">
+﻿<Window
+    x:Class="MusicX.RootWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:MusicX.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:MusicX"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:views="clr-namespace:MusicX.Views"
+    xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
+    d:DesignHeight="720"
+    d:DesignWidth="1280"
+    Background="#202020"
+    KeyDown="Window_KeyDown"
+    Loaded="Window_Loaded"
+    mc:Ignorable="d">
 
     <Window.Resources>
         <FontFamily x:Key="SegoeFluentIcons">pack://application:,,,/;component/Fonts/#Segoe Fluent Icons</FontFamily>
         <Storyboard x:Key="AminationShowPlayer">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="playerControl" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="117"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="117" />
                 <EasingDoubleKeyFrame KeyTime="00:00:00.8000000" Value="-9">
                     <EasingDoubleKeyFrame.EasingFunction>
-                        <CircleEase EasingMode="EaseInOut"/>
+                        <CircleEase EasingMode="EaseInOut" />
                     </EasingDoubleKeyFrame.EasingFunction>
                 </EasingDoubleKeyFrame>
             </DoubleAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="playerControl" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="-10.5"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="-10.5" />
                 <EasingDoubleKeyFrame KeyTime="00:00:00.8000000" Value="-4.5">
                     <EasingDoubleKeyFrame.EasingFunction>
-                        <CircleEase EasingMode="EaseInOut"/>
+                        <CircleEase EasingMode="EaseInOut" />
                     </EasingDoubleKeyFrame.EasingFunction>
                 </EasingDoubleKeyFrame>
             </DoubleAnimationUsingKeyFrames>
@@ -37,28 +39,28 @@
             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="playerControl" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00.6000000" Value="0.058">
                     <EasingDoubleKeyFrame.EasingFunction>
-                        <QuarticEase EasingMode="EaseInOut"/>
+                        <QuarticEase EasingMode="EaseInOut" />
                     </EasingDoubleKeyFrame.EasingFunction>
                 </EasingDoubleKeyFrame>
             </DoubleAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="playerControl" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00.6000000" Value="-500">
                     <EasingDoubleKeyFrame.EasingFunction>
-                        <QuarticEase EasingMode="EaseInOut"/>
+                        <QuarticEase EasingMode="EaseInOut" />
                     </EasingDoubleKeyFrame.EasingFunction>
                 </EasingDoubleKeyFrame>
             </DoubleAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="playerControl" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00.6000000" Value="22.333">
                     <EasingDoubleKeyFrame.EasingFunction>
-                        <QuarticEase EasingMode="EaseInOut"/>
+                        <QuarticEase EasingMode="EaseInOut" />
                     </EasingDoubleKeyFrame.EasingFunction>
                 </EasingDoubleKeyFrame>
             </DoubleAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="playerControl" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00.6000000" Value="0.78">
                     <EasingDoubleKeyFrame.EasingFunction>
-                        <QuarticEase EasingMode="EaseInOut"/>
+                        <QuarticEase EasingMode="EaseInOut" />
                     </EasingDoubleKeyFrame.EasingFunction>
                 </EasingDoubleKeyFrame>
             </DoubleAnimationUsingKeyFrames>
@@ -72,37 +74,61 @@
         </Grid.RowDefinitions>
 
 
-        <Grid Grid.Row="1" Margin="5 10 0 0">
+        <Grid Grid.Row="1" Margin="5,10,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <wpfui:NavigationStore Grid.Column="0" x:Name="navigationBar" Margin="0,0,12,0" Frame="{Binding ElementName=RootFrame}" >
-
-            </wpfui:NavigationStore>
+            <wpfui:NavigationStore
+                x:Name="navigationBar"
+                Grid.Column="0"
+                Margin="0,0,12,0"
+                Frame="{Binding ElementName=RootFrame}" />
 
 
         </Grid>
 
-        <Frame x:Name="RootFrame" Margin="73 50 0 0"  Grid.Column="1" Grid.RowSpan="2" />
+        <Frame
+            x:Name="RootFrame"
+            Grid.RowSpan="2"
+            Grid.Column="1"
+            Margin="73,50,0,0" />
 
-        <Rectangle Height="60" Opacity="1" Visibility="Collapsed" >
+        <Rectangle
+            Height="60"
+            Opacity="1"
+            Visibility="Collapsed">
             <Rectangle.Fill>
-                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                    <GradientStop Color="Black" Offset="0.2"/>
-                    <GradientStop Color="#00000000" Offset="1"/>
+                <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                    <GradientStop Offset="0.2" Color="Black" />
+                    <GradientStop Offset="1" Color="#00000000" />
                 </LinearGradientBrush>
             </Rectangle.Fill>
         </Rectangle>
 
-        <Grid Grid.ColumnSpan="4" x:Name="ModalGrid" Visibility="Collapsed" Grid.RowSpan="5">
-            <Rectangle Fill="Black" Opacity="0.6"/>
-            <Frame x:Name="ModalFrame"/>
-            <wpfui:Button x:Name="CloseModalButton" Height="20" Width="20" HorizontalAlignment="Left" VerticalAlignment="Top" Appearance="Transparent" Icon="ClosedCaption24"/>
+        <Grid
+            x:Name="ModalGrid"
+            Grid.RowSpan="5"
+            Grid.ColumnSpan="4"
+            Visibility="Collapsed">
+            <Rectangle Fill="Black" Opacity="0.6" />
+            <Frame x:Name="ModalFrame" />
+            <wpfui:Button
+                x:Name="CloseModalButton"
+                Width="20"
+                Height="20"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Appearance="Transparent"
+                Icon="ClosedCaption24" />
         </Grid>
 
-        <wpfui:TitleBar UseSnapLayout="True" MinimizeToTray="False" Grid.Row="0" Height="40">
+        <wpfui:TitleBar
+            Grid.Row="0"
+            Height="40"
+            MinimizeToTray="False"
+            UseSnapLayout="True">
             <!--<wpfui:TitleBar.Tray>
                 <wpfui:NotifyIcon
                     FocusOnLeftClick="True"
@@ -144,7 +170,18 @@
             </Rectangle.ContextMenu>
         </Rectangle>-->
 
-        <wpfui:SearchBox x:Name="SearchBox" MouseLeftButtonUp="SearchBox_MouseLeftButtonUp" MouseEnter="SearchBox_MouseEnter" MouseLeave="SearchBox_MouseLeave" KeyUp="TextBox_KeyUp" Margin="0 10 0 0" Grid.RowSpan="2" Width="500" VerticalAlignment="Top"  HorizontalAlignment="Center" Placeholder="Поиск музыки, плейлистов, исполнителей" />
+        <wpfui:SearchBox
+            x:Name="SearchBox"
+            Grid.RowSpan="2"
+            Width="500"
+            Margin="0,10,0,0"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Top"
+            KeyUp="TextBox_KeyUp"
+            MouseEnter="SearchBox_MouseEnter"
+            MouseLeave="SearchBox_MouseLeave"
+            MouseLeftButtonUp="SearchBox_MouseLeftButtonUp"
+            Placeholder="Поиск музыки, плейлистов, исполнителей" />
 
         <!--<Rectangle Fill="#414141" Grid.ColumnSpan="3" Height="300" Grid.RowSpan="5"  RadiusY="10" RadiusX="10" Width="500" VerticalAlignment="Top" Margin="0 45 0 0">
             <Rectangle.Effect>
@@ -152,33 +189,47 @@
             </Rectangle.Effect>
         </Rectangle>-->
 
-        <controls:PlayerControl MouseDoubleClick="playerControl_MouseDoubleClick"  x:Name="playerControl" Visibility="Collapsed" Margin="18,0,12,10" Height="100" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5" Grid.Row="1">
+        <controls:PlayerControl
+            x:Name="playerControl"
+            Grid.Row="1"
+            Height="100"
+            Margin="18,0,12,10"
+            VerticalAlignment="Bottom"
+            MouseDoubleClick="playerControl_MouseDoubleClick"
+            RenderTransformOrigin="0.5,0.5"
+            Visibility="Collapsed">
             <controls:PlayerControl.RenderTransform>
                 <TransformGroup>
-                    <ScaleTransform/>
-                    <SkewTransform/>
-                    <RotateTransform/>
-                    <TranslateTransform/>
+                    <ScaleTransform />
+                    <SkewTransform />
+                    <RotateTransform />
+                    <TranslateTransform />
                 </TransformGroup>
             </controls:PlayerControl.RenderTransform>
 
         </controls:PlayerControl>
 
         <wpfui:Snackbar
-                x:Name="RootSnackbar"
-
+            x:Name="RootSnackbar"
             Grid.RowSpan="3"
             Grid.ColumnSpan="3"
-                MaxWidth="600"
-            Margin="0 0 0 40"
-                Icon="Info20"
-                IsShown="False"
-                ShowCloseButton="True"
-                Timeout="5000" />
+            MaxWidth="600"
+            Margin="0,0,0,40"
+            Icon="Info20"
+            IsShown="False"
+            ShowCloseButton="True"
+            Timeout="5000" />
 
-        <wpfui:Button Height="40" Click="Button_Click" BorderThickness="0"  Width="70" Padding="0" HorizontalAlignment="Left" Appearance="Transparent">
+        <wpfui:Button
+            Width="70"
+            Height="40"
+            Padding="0"
+            HorizontalAlignment="Left"
+            Appearance="Transparent"
+            BorderThickness="0"
+            Click="Button_Click">
             <Button.Content>
-                <wpfui:SymbolIcon Symbol="ArrowLeft32"/>
+                <wpfui:SymbolIcon Symbol="ArrowLeft32" />
             </Button.Content>
         </wpfui:Button>
 

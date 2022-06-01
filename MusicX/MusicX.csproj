@@ -7,13 +7,15 @@
     <UseWPF>true</UseWPF>
     <SupportedOSPlatformVersion>10.0.18362.0</SupportedOSPlatformVersion>
     <ApplicationIcon>StoreLogo.scale-400.ico</ApplicationIcon>
-	  	  <Version>0.27</Version>
+	  	  <Version>0.28</Version>
 
     <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Assets\icon.ico" />
+    <None Remove="Assets\lottie\play.json" />
+    <None Remove="Assets\play.gif" />
     <None Remove="Fonts\VKSansDisplay-Bold.ttf" />
     <None Remove="Fonts\VKSansDisplay-DemiBold.ttf" />
     <None Remove="Fonts\VKSansDisplay-Medium.ttf" />
@@ -48,16 +50,18 @@
   <ItemGroup>
     <PackageReference Include="DryIoc" Version="4.8.7" />
     <PackageReference Include="HandyControl" Version="3.3.0" />
-    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.5.0" />
-    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.5.0" />
+    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.5.1" />
+    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.5.1" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
     <PackageReference Include="taglib-sharp-netstandard2.0" Version="2.1.0" />
-    <PackageReference Include="WPF-UI" Version="1.2.6" />
+    <PackageReference Include="WPF-UI" Version="1.2.7" />
     <PackageReference Include="WpfScreenHelper" Version="2.0.0" />
     <PackageReference Include="xFFmpeg.NET" Version="7.1.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MusicX.Core\MusicX.Core.csproj" />
+    <ProjectReference Include="..\WpfAnimatedGif\WpfAnimatedGif.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -70,6 +74,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\lottie\play.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Content Include="Assets\play.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Resource Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>

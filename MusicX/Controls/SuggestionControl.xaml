@@ -1,38 +1,67 @@
-﻿<UserControl x:Class="MusicX.Controls.SuggestionControl"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:MusicX.Controls"
-             xmlns:controls="clr-namespace:WPFUI.Controls;assembly=WPFUI"
-             mc:Ignorable="d" 
-             Loaded="UserControl_Loaded"
-             d:DesignHeight="450" d:DesignWidth="800">
+﻿<UserControl
+    x:Class="MusicX.Controls.SuggestionControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:WPFUI.Controls;assembly=WPFUI"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:MusicX.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    Loaded="UserControl_Loaded"
+    mc:Ignorable="d">
     <UserControl.Resources>
         <Storyboard x:Key="OpenAnimation">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="border" Storyboard.TargetProperty="(UIElement.Opacity)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.2"/>
-                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0.4"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.2" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0.4" />
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
 
         <Storyboard x:Key="CloseAnimation">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="border" Storyboard.TargetProperty="(UIElement.Opacity)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.4"/>
-                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0.2"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.4" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0.2" />
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
     </UserControl.Resources>
-    <Grid MouseLeftButtonDown="Grid_MouseLeftButtonDown" Height="35" MouseEnter="Grid_MouseEnter" MouseLeave="Grid_MouseLeave">
+    <Grid
+        Height="35"
+        MouseEnter="Grid_MouseEnter"
+        MouseLeave="Grid_MouseLeave"
+        MouseLeftButtonDown="Grid_MouseLeftButtonDown">
 
-        <Border x:Name="border" CornerRadius="19" Height="35" BorderThickness="1" Opacity="0.2" BorderBrush="White">
-            <Rectangle Height="35" Fill="Red" RadiusX="20" RadiusY="20" Opacity="0"/>
+        <Border
+            x:Name="border"
+            Height="35"
+            BorderBrush="White"
+            BorderThickness="1"
+            CornerRadius="19"
+            Opacity="0.2">
+            <Rectangle
+                Height="35"
+                Fill="Red"
+                Opacity="0"
+                RadiusX="20"
+                RadiusY="20" />
         </Border>
 
-        <StackPanel VerticalAlignment="Center"  Margin="15 0 15 0" Orientation="Horizontal">
-            <controls:SymbolIcon Margin="0 0 0 0" Symbol="Search20" />
-            <TextBlock Foreground="White"  Text="Title" Margin="5 0 0 0" x:Name="Title"/>
-            <TextBlock Foreground="White"  Text="Subtitle" Opacity="0.7" Margin="5 0 0 0" x:Name="Subtitle"/>
+        <StackPanel
+            Margin="15,0,15,0"
+            VerticalAlignment="Center"
+            Orientation="Horizontal">
+            <controls:SymbolIcon Margin="0,0,0,0" Symbol="Search20" />
+            <TextBlock
+                x:Name="Title"
+                Margin="5,0,0,0"
+                Foreground="White"
+                Text="Title" />
+            <TextBlock
+                x:Name="Subtitle"
+                Margin="5,0,0,0"
+                Foreground="White"
+                Opacity="0.7"
+                Text="Subtitle" />
         </StackPanel>
 
     </Grid>

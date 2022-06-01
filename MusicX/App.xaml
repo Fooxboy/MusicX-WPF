@@ -1,9 +1,9 @@
 ﻿<Application
     x:Class="MusicX.App"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:MusicX"
-             StartupUri="Views/StartingWindow.xaml">
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:MusicX"
+    StartupUri="Views/StartingWindow.xaml">
     <Application.Resources>
 
         <ResourceDictionary>

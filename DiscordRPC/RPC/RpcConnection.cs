@@ -8,14 +8,13 @@ using System.Collections.Generic;
 using System.Threading;
 using Newtonsoft.Json;
 using DiscordRPC.Logging;
-using DiscordRPC.Events;
 
 namespace DiscordRPC.RPC
 {
-	/// <summary>
-	/// Communicates between the client and discord through RPC
-	/// </summary>
-	internal class RpcConnection : IDisposable
+    /// <summary>
+    /// Communicates between the client and discord through RPC
+    /// </summary>
+    internal class RpcConnection : IDisposable
 	{
 		/// <summary>
 		/// Version of the RPC Protocol

@@ -140,6 +140,20 @@ namespace MusicX.ViewModels
                     Tracks.AddRange(res.Items);
                 }
 
+                if(playlist.Plays > 1000 && playlist.Plays < 1000000)
+                {
+                    this.Plays = Math.Round(playlist.Plays / 1000d, 2) + "К";
+                }else if(playlist.Plays > 1000000 )
+                {
+                    this.Plays = Math.Round(playlist.Plays / 1000000d, 2) + "М";
+
+                }else
+                {
+                    this.Plays = playlist.Plays.ToString();
+                }
+
+                
+
                 VisibleContent = Visibility.Visible;
                 VisibleLoading = Visibility.Collapsed;
 

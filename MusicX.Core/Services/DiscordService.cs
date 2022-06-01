@@ -42,14 +42,6 @@ namespace MusicX.Core.Services
                         End = DateTime.UtcNow + toEnd,
 
                     }
-                    //Buttons = new DiscordRPC.Button[]
-                    //{
-                    //    new DiscordRPC.Button()
-                    //    {
-                    //        Label = "Слушать вместе",
-                    //        Url = "https://vk.com/fooxboy"
-                    //    }
-                    //}
                 });
             }catch (Exception ex)
             {

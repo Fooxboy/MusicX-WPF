@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -60,22 +59,29 @@ namespace MusicX.Services
             player.Play();
 
 
-            player.PlaybackSession.PlaybackStateChanged += MediaPlayerOnCurrentStateChanged;
-            player.MediaEnded += MediaPlayerOnMediaEnded;
-            player.MediaFailed += MediaPlayerOnMediaFailed;
+            try
+            {
+                player.PlaybackSession.PlaybackStateChanged += MediaPlayerOnCurrentStateChanged;
+                player.MediaEnded += MediaPlayerOnMediaEnded;
+                player.MediaFailed += MediaPlayerOnMediaFailed;
 
-            player.CommandManager.NextBehavior.EnablingRule = MediaCommandEnablingRule.Always;
-            player.CommandManager.PreviousBehavior.EnablingRule = MediaCommandEnablingRule.Always;
-            player.CommandManager.ShuffleBehavior.EnablingRule = MediaCommandEnablingRule.Always;
-            player.CommandManager.AutoRepeatModeBehavior.EnablingRule = MediaCommandEnablingRule.Always;
+                player.CommandManager.NextBehavior.EnablingRule = MediaCommandEnablingRule.Always;
+                player.CommandManager.PreviousBehavior.EnablingRule = MediaCommandEnablingRule.Always;
+                //player.CommandManager.ShuffleBehavior.EnablingRule = MediaCommandEnablingRule.Always;
+                //player.CommandManager.AutoRepeatModeBehavior.EnablingRule = MediaCommandEnablingRule.Always;
 
-            player.SystemMediaTransportControls.DisplayUpdater.Type = Windows.Media.MediaPlaybackType.Music;
+                player.SystemMediaTransportControls.DisplayUpdater.Type = Windows.Media.MediaPlaybackType.Music;
 
 
-            player.CommandManager.NextReceived += async (c, e) => await NextTrack();
-            player.CommandManager.PreviousReceived += async (c, e) => await PreviousTrack();
-            player.CommandManager.PlayReceived += (c, e) => Play();
-            player.CommandManager.PauseReceived += (c, e) => Pause();
+                player.CommandManager.NextReceived += async (c, e) => await NextTrack();
+                player.CommandManager.PreviousReceived += async (c, e) => await PreviousTrack();
+                player.CommandManager.PlayReceived += (c, e) => Play();
+                player.CommandManager.PauseReceived += (c, e) => Pause();
+            }catch(Exception ex)
+            {
+                logger.Error(ex, ex.Message);
+            }
+          
 
             _positionTimer = new DispatcherTimer();
             _positionTimer.Interval = TimeSpan.FromMilliseconds(500);
@@ -172,7 +178,20 @@ namespace MusicX.Services
                     await configService.SetConfig(config);
                 }
 
-                if(config.ShowRPC.Value)
+                if(config.BroadcastVK == null)
+                {
+                    config.BroadcastVK = false;
+
+                    await configService.SetConfig(config);
+                }
+
+
+                if(config.BroadcastVK.Value)
+                {
+                    await vkService.SetBroadcastAsync(track);
+                }
+
+                if (config.ShowRPC.Value)
                 {
                     if (CurrentTrack.MainArtists?.Count > 0)
                     {
@@ -360,27 +379,34 @@ namespace MusicX.Services
 
         private void UpdateWindowsData()
         {
-            Thread.Sleep(1000);
-
-            var updater = player.SystemMediaTransportControls.DisplayUpdater;
-
-
-            updater.MusicProperties.Title = CurrentTrack.Title;
-            updater.MusicProperties.Artist = CurrentTrack.Artist;
-            updater.MusicProperties.TrackNumber = 1;
-            updater.MusicProperties.AlbumArtist = CurrentTrack.Artist;
-            updater.MusicProperties.AlbumTitle = CurrentTrack.Title;
-            updater.MusicProperties.AlbumTrackCount = 1;
-
-
-
-            if (CurrentTrack.Album != null)
+            try
             {
-                player.SystemMediaTransportControls.DisplayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri(CurrentTrack.Album.Cover));
+                Thread.Sleep(1000);
 
+                var updater = player.SystemMediaTransportControls.DisplayUpdater;
+
+
+                updater.MusicProperties.Title = CurrentTrack.Title;
+                updater.MusicProperties.Artist = CurrentTrack.Artist;
+                updater.MusicProperties.TrackNumber = 1;
+                updater.MusicProperties.AlbumArtist = CurrentTrack.Artist;
+                updater.MusicProperties.AlbumTitle = CurrentTrack.Title;
+                updater.MusicProperties.AlbumTrackCount = 1;
+
+
+
+                if (CurrentTrack.Album != null)
+                {
+                    player.SystemMediaTransportControls.DisplayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri(CurrentTrack.Album.Cover));
+
+                }
+
+                player.SystemMediaTransportControls.DisplayUpdater.Update();
+            }catch(Exception ex)
+            {
+                logger.Error(ex, ex.Message);
             }
-
-            player.SystemMediaTransportControls.DisplayUpdater.Update();
+           
         }
 
         public async Task Play(int index, List<Audio> tracks = null)
@@ -493,6 +519,9 @@ namespace MusicX.Services
                 player.Play();
 
 
+                await vkService.SetBroadcastAsync(track);
+
+
                 new Thread(UpdateWindowsData).Start();
 
 
@@ -505,8 +534,21 @@ namespace MusicX.Services
                     await configService.SetConfig(config);
                 }
 
+                if (config.BroadcastVK == null)
+                {
+                    config.BroadcastVK = false;
 
-                if(config.ShowRPC.Value)
+                    await configService.SetConfig(config);
+                }
+
+
+                if (config.BroadcastVK.Value)
+                {
+                    await vkService.SetBroadcastAsync(track);
+                }
+
+
+                if (config.ShowRPC.Value)
                 {
                     string artist;
 

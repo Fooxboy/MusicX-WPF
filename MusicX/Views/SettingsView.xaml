@@ -1,38 +1,75 @@
-﻿<Page x:Class="MusicX.Views.SettingsView"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:MusicX.Views"
-     xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
-      Style="{StaticResource UiPageScrollable}"
-      mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
-      Title="SettingsView">
+﻿<Page
+    x:Class="MusicX.Views.SettingsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:MusicX.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
+    Title="SettingsView"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    Style="{StaticResource UiPageScrollable}"
+    mc:Ignorable="d">
 
     <Grid>
         <StackPanel>
-            <TextBlock FontSize="45" Foreground="White" FontFamily="{StaticResource VKSansBold}" Text="Настройки"/>
-            <wpfui:Card Margin="5 10 5 0">
+            <TextBlock
+                FontFamily="{StaticResource VKSansBold}"
+                FontSize="45"
+                Foreground="White"
+                Text="Настройки" />
+            <wpfui:Card Margin="5,10,5,0">
                 <Grid>
                     <StackPanel Orientation="Horizontal">
-                        <Rectangle Height="100" Width="100"  RadiusX="99" RadiusY="99">
+                        <Rectangle
+                            Width="100"
+                            Height="100"
+                            RadiusX="99"
+                            RadiusY="99">
                             <Rectangle.Fill>
-                                <ImageBrush x:Name="UserImage"/>
+                                <ImageBrush x:Name="UserImage" />
                             </Rectangle.Fill>
                         </Rectangle>
 
                         <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-                            <TextBlock Margin="30 0 0 0" Foreground="White" FontFamily="{StaticResource VKSansRegular}" FontSize="26" Text="Привет,"/>
-                            <TextBlock x:Name="UserName" Margin="5 1 0 0" Foreground="White" FontSize="26"  FontFamily="{StaticResource VKSansDemiBold}" Text="User Name"/>
+                            <TextBlock
+                                Margin="30,0,0,0"
+                                FontFamily="{StaticResource VKSansRegular}"
+                                FontSize="26"
+                                Foreground="White"
+                                Text="Привет," />
+                            <TextBlock
+                                x:Name="UserName"
+                                Margin="5,1,0,0"
+                                FontFamily="{StaticResource VKSansDemiBold}"
+                                FontSize="26"
+                                Foreground="White"
+                                Text="User Name" />
                         </StackPanel>
                     </StackPanel>
 
-                    <StackPanel Width="250" Margin="0 14 0 0"  HorizontalAlignment="Right">
-                        <wpfui:Button Icon="PersonDelete16" x:Name="DeleteAccount" Click="DeleteAccount_Click" Width="250"  Appearance="Secondary"  Content="Выйти с аккаунта"/>
-                        <wpfui:Button Icon="ArrowSync12" x:Name="CheckUpdates" Click="CheckUpdates_Click" Width="250" Margin="0 10 0 0"  Content="Проверить обновления" Appearance="Secondary"/>
+                    <StackPanel
+                        Width="250"
+                        Margin="0,14,0,0"
+                        HorizontalAlignment="Right">
+                        <wpfui:Button
+                            x:Name="DeleteAccount"
+                            Width="250"
+                            Appearance="Secondary"
+                            Click="DeleteAccount_Click"
+                            Content="Выйти с аккаунта"
+                            Icon="PersonDelete16" />
+                        <wpfui:Button
+                            x:Name="CheckUpdates"
+                            Width="250"
+                            Margin="0,10,0,0"
+                            Appearance="Secondary"
+                            Click="CheckUpdates_Click"
+                            Content="Проверить обновления"
+                            Icon="ArrowSync12" />
                     </StackPanel>
-                   
+
 
 
                 </Grid>
@@ -40,16 +77,42 @@
             </wpfui:Card>
 
 
-            <TextBlock Margin="5 20 0 0" Text="Discord" FontFamily="{StaticResource VKSansDemiBold}" FontSize="30"/>
+            <TextBlock
+                Margin="5,20,0,0"
+                FontFamily="{StaticResource VKSansDemiBold}"
+                FontSize="30"
+                Text="Трансляция активности" />
 
-            <wpfui:Card Margin="5 5 5 0">
+            <wpfui:Card Margin="5,5,5,0">
                 <Grid>
                     <StackPanel HorizontalAlignment="Left">
 
                         <StackPanel Orientation="Horizontal">
-                            <wpfui:ToggleSwitch  x:Name="ShowRPC" Unchecked="ShowRPC_Unchecked" Checked="ShowRPC_Checked" />
+                            <wpfui:ToggleSwitch
+                                x:Name="ShowRPC"
+                                Checked="ShowRPC_Checked"
+                                Unchecked="ShowRPC_Unchecked" />
 
-                            <TextBlock Margin="5 0 0 0" Foreground="White" FontSize="18" Text="Показывать трек в Вашей активности "/>
+                            <TextBlock
+                                Margin="5,0,0,0"
+                                FontSize="18"
+                                Foreground="White"
+                                Text="Показывать трек в Discord " />
+
+                        </StackPanel>
+
+
+                        <StackPanel Margin="0,20,0,0" Orientation="Horizontal">
+                            <wpfui:ToggleSwitch
+                                x:Name="BroacastVK"
+                                Checked="BroacastVK_Checked"
+                                Unchecked="BroacastVK_Unchecked" />
+
+                            <TextBlock
+                                Margin="5,0,0,0"
+                                FontSize="18"
+                                Foreground="White"
+                                Text="Показывать трек в статусе ВКонтакте" />
 
                         </StackPanel>
 
@@ -57,17 +120,35 @@
                 </Grid>
             </wpfui:Card>
 
-            <TextBlock Visibility="Collapsed" Margin="5 20 0 0" Text="Полноэкранный режим" FontFamily="{StaticResource VKSansDemiBold}" FontSize="30"/>
+            <TextBlock
+                Margin="5,20,0,0"
+                FontFamily="{StaticResource VKSansDemiBold}"
+                FontSize="30"
+                Text="Полноэкранный режим"
+                Visibility="Collapsed" />
 
-            <wpfui:Card Visibility="Collapsed" Margin="5 5 5 0">
+            <wpfui:Card Margin="5,5,5,0" Visibility="Collapsed">
                 <Grid>
                     <StackPanel HorizontalAlignment="Left">
 
                         <StackPanel Orientation="Vertical">
-                            <TextBlock Margin="5 0 0 0" Foreground="White" FontSize="18" Text="Монитор на котором будет показан полноэкранный режим"/>
-                            <RadioButton Margin="0 5 0 0" GroupName="monitor" Content="Монитор 1"/>
-                            <RadioButton Margin="0 5 0 0" GroupName="monitor" Content="Монитор 2"/>
-                            <RadioButton Margin="0 5 0 0" GroupName="monitor" Content="Монитор 3"/>
+                            <TextBlock
+                                Margin="5,0,0,0"
+                                FontSize="18"
+                                Foreground="White"
+                                Text="Монитор на котором будет показан полноэкранный режим" />
+                            <RadioButton
+                                Margin="0,5,0,0"
+                                Content="Монитор 1"
+                                GroupName="monitor" />
+                            <RadioButton
+                                Margin="0,5,0,0"
+                                Content="Монитор 2"
+                                GroupName="monitor" />
+                            <RadioButton
+                                Margin="0,5,0,0"
+                                Content="Монитор 3"
+                                GroupName="monitor" />
 
                         </StackPanel>
 
@@ -76,55 +157,103 @@
             </wpfui:Card>
 
 
-            <TextBlock Margin="5 20 0 0" Text="Логи" FontFamily="{StaticResource VKSansDemiBold}" FontSize="30"/>
+            <TextBlock
+                Margin="5,20,0,0"
+                FontFamily="{StaticResource VKSansDemiBold}"
+                FontSize="30"
+                Text="Логи" />
 
-            <wpfui:Card Margin="5 5 5 0">
+            <wpfui:Card Margin="5,5,5,0">
                 <Grid>
                     <StackPanel HorizontalAlignment="Left">
 
-                        <StackPanel Margin="0 5 0 0" Orientation="Horizontal">
-                            <TextBlock FontSize="18" Text="Занято места: "/>
-                            <TextBlock x:Name="MemoryLogs" FontSize="18" Opacity="0.6" Text="136"/>
-                            <TextBlock x:Name="MemoryType" FontSize="18" Opacity="0.6" Text="КБ"/>
+                        <StackPanel Margin="0,5,0,0" Orientation="Horizontal">
+                            <TextBlock FontSize="18" Text="Занято места: " />
+                            <TextBlock
+                                x:Name="MemoryLogs"
+                                FontSize="18"
+                                Opacity="0.6"
+                                Text="136" />
+                            <TextBlock
+                                x:Name="MemoryType"
+                                FontSize="18"
+                                Opacity="0.6"
+                                Text="КБ" />
 
                         </StackPanel>
 
-                        <StackPanel Margin="0 10 0 0" Orientation="Horizontal">
-                            <wpfui:Button x:Name="OpenLogs" Click="OpenLogs_Click" Width="180" Content="Открыть папку" Appearance="Secondary"/>
-                            <wpfui:Button Click="RemoveLogs_Click" Margin="10 0 0 0" Width="180" x:Name="RemoveLogs" Content="Очистить" Appearance="Secondary"/>
-                            <wpfui:Button Margin="10 0 0 0" IsEnabled="False" Width="180" Content="Отправить" Appearance="Secondary"/>
+                        <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+                            <wpfui:Button
+                                x:Name="OpenLogs"
+                                Width="180"
+                                Appearance="Secondary"
+                                Click="OpenLogs_Click"
+                                Content="Открыть папку" />
+                            <wpfui:Button
+                                x:Name="RemoveLogs"
+                                Width="180"
+                                Margin="10,0,0,0"
+                                Appearance="Secondary"
+                                Click="RemoveLogs_Click"
+                                Content="Очистить" />
+                            <wpfui:Button
+                                Width="180"
+                                Margin="10,0,0,0"
+                                Appearance="Secondary"
+                                Content="Отправить"
+                                IsEnabled="False" />
 
                         </StackPanel>
 
                     </StackPanel>
                 </Grid>
             </wpfui:Card>
-            
-            
-            
 
-            <TextBlock Margin="5 20 0 0" Text="Информация о Music X" FontFamily="{StaticResource VKSansDemiBold}" FontSize="30"/>
 
-            <wpfui:Card Margin="5 5 5 120">
+
+
+            <TextBlock
+                Margin="5,20,0,0"
+                FontFamily="{StaticResource VKSansDemiBold}"
+                FontSize="30"
+                Text="Информация о Music X" />
+
+            <wpfui:Card Margin="5,5,5,120">
                 <Grid>
                     <StackPanel HorizontalAlignment="Left">
 
 
-                        <StackPanel Margin="0 5 0 0" Orientation="Horizontal">
-                            <TextBlock FontSize="18" Text="Версия приложения: "/>
-                            <TextBlock x:Name="VersionApp" FontSize="18" Opacity="0.6" Text="1.0 beta"/>
+                        <StackPanel Margin="0,5,0,0" Orientation="Horizontal">
+                            <TextBlock FontSize="18" Text="Версия приложения: " />
+                            <TextBlock
+                                x:Name="VersionApp"
+                                FontSize="18"
+                                Opacity="0.6"
+                                Text="1.0 beta" />
 
                         </StackPanel>
 
-                        <StackPanel  Margin="0 5 0 0" Orientation="Horizontal">
-                            <TextBlock FontSize="18" Text="Сборка от: "/>
-                            <TextBlock x:Name="BuildDate" FontSize="18" Opacity="0.6" Text="26 марта 2022"/>
+                        <StackPanel Margin="0,5,0,0" Orientation="Horizontal">
+                            <TextBlock FontSize="18" Text="Сборка от: " />
+                            <TextBlock
+                                x:Name="BuildDate"
+                                FontSize="18"
+                                Opacity="0.6"
+                                Text="26 марта 2022" />
                         </StackPanel>
 
-                        <TextBlock  FontSize="18" Margin="0 10 0 0" Text="Полезные ссылки:"/>
+                        <TextBlock
+                            Margin="0,10,0,0"
+                            FontSize="18"
+                            Text="Полезные ссылки:" />
 
-                        <StackPanel Margin="0 5 0 0" Orientation="Horizontal">
-                            <wpfui:Button x:Name="TelegramButton" Click="TelegramButton_Click" Content="Телеграм" Appearance="Secondary"/>
+                        <StackPanel Margin="0,5,0,0" Orientation="Horizontal">
+                            <wpfui:Button
+                                x:Name="TelegramButton"
+                                Width="100"
+                                Appearance="Secondary"
+                                Click="TelegramButton_Click"
+                                Content="Телеграм" />
                         </StackPanel>
 
                     </StackPanel>

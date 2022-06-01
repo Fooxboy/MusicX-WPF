@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace DiscordRPC.Events
+namespace DiscordRPC
 {
     /// <summary>
     /// Called when the Discord Client is ready to send and receive messages.

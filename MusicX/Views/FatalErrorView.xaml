@@ -1,19 +1,40 @@
-﻿<Window x:Class="MusicX.Views.FatalErrorView"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:MusicX.Views" xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
-        mc:Ignorable="d"
-        Title="Ошибка запуска" Height="450" Width="800">
+﻿<Window
+    x:Class="MusicX.Views.FatalErrorView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:MusicX.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
+    Title="Ошибка запуска"
+    Width="800"
+    Height="450"
+    mc:Ignorable="d">
 
-    
+
     <Grid>
-        <StackPanel >
-            <TextBlock FontSize="30" Margin="0 30 0 0" FontFamily="{StaticResource VKSansBold}" HorizontalAlignment="Center" Text="Music X не смог запуститься корректно"/>
-            <TextBlock Margin="20 20 0 0" FontSize="20" Opacity="0.7" Text="Подробная информация:"/>
-            <TextBlock Margin="20 10 20 0" TextWrapping="Wrap" x:Name="dataError" Text="expection"/>
-            <Button Width="300" Margin="0 30 0 0" Click="Button_Click" Content="Попробовать ещё раз"/>
+        <StackPanel>
+            <TextBlock
+                Margin="0,30,0,0"
+                HorizontalAlignment="Center"
+                FontFamily="{StaticResource VKSansBold}"
+                FontSize="30"
+                Text="Music X не смог запуститься корректно" />
+            <TextBlock
+                Margin="20,20,0,0"
+                FontSize="20"
+                Opacity="0.7"
+                Text="Подробная информация:" />
+            <TextBlock
+                x:Name="dataError"
+                Margin="20,10,20,0"
+                Text="expection"
+                TextWrapping="Wrap" />
+            <Button
+                Width="300"
+                Margin="0,30,0,0"
+                Click="Button_Click"
+                Content="Попробовать ещё раз" />
         </StackPanel>
-    </Grid> 
+    </Grid>
 </Window>

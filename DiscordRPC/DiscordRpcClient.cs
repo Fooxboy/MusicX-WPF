@@ -1,5 +1,4 @@
-﻿using DiscordRPC.Events;
-using DiscordRPC.Exceptions;
+﻿using DiscordRPC.Exceptions;
 using DiscordRPC.IO;
 using DiscordRPC.Logging;
 using DiscordRPC.Message;

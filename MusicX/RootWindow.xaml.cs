@@ -38,19 +38,17 @@ namespace MusicX
             //Style = "{StaticResource UiWindow}"
             var os = Environment.OSVersion;
 
-            var style = (Style)FindResource("UiWindow");
-            this.Style = style;
-            //if (os.Version.Build >= 22000)
-            //{
-            //    var style = (Style)FindResource("UiWindow");
-            //    this.Style = style;
-            //}else
-            //{
-            //    this.WindowStyle = WindowStyle.None;
-            //    this.Foreground = Brushes.White;
 
-
-            //}
+            if (os.Version.Build >= 22000)
+            {
+                var style = (Style)FindResource("UiWindow");
+                this.Style = style;
+            }
+            else
+            {
+                this.WindowStyle = WindowStyle.None;
+                this.Foreground = Brushes.White;
+            }
 
             InitializeComponent();     
             this.navigationService = navigationService;
@@ -185,17 +183,17 @@ namespace MusicX
                     if (section.Title.ToLower() == "моя музыка") section.Title = "Музыка";
 
 
-                    var navigationItem = new NavigationItem() { Tag = section.Id, Icon = icon, Content = section.Title, Page = typeof(SectionView), Instance = sectionPage };
+                    var navigationItem = new NavigationItem() { PageTag = section.Id, Icon = icon, Content = section.Title, Page = typeof(SectionView), Instance = sectionPage };
                     navigationBar.Items.Add(navigationItem);
                 }
 
 #if DEBUG
-                var item = new NavigationItem() { Tag = "test", Icon = WPFUI.Common.SymbolRegular.AppFolder24, Content = "TEST", Page = typeof(TestPage), Instance = new TestPage() };
+                var item = new NavigationItem() { PageTag = "test", Icon = WPFUI.Common.SymbolRegular.AppFolder24, Content = "TEST", Page = typeof(TestPage), Instance = new TestPage() };
                 navigationBar.Items.Add(item);
 #endif
 
-                navigationBar.Items.Add(new NavigationItem() { Tag = "downloads", Icon = WPFUI.Common.SymbolRegular.ArrowDownload48, Content = "Загрузки", Page = typeof(DownloadsView), Instance = new DownloadsView() });
-                var item2 = new NavigationItem() { Tag = "settings", Icon = WPFUI.Common.SymbolRegular.Settings24, Content = "Настройки", Page = typeof(SettingsView), Instance = new SettingsView(configService) };
+                navigationBar.Items.Add(new NavigationItem() { PageTag = "downloads", Icon = WPFUI.Common.SymbolRegular.ArrowDownload48, Content = "Загрузки", Page = typeof(DownloadsView), Instance = new DownloadsView() });
+                var item2 = new NavigationItem() { PageTag = "settings", Icon = WPFUI.Common.SymbolRegular.Settings24, Content = "Настройки", Page = typeof(SettingsView), Instance = new SettingsView(configService) };
 
                 navigationBar.Items.Add(item2);
 
@@ -219,8 +217,8 @@ namespace MusicX
         {
             var current = e.CurrentPage;
 
-            if (current.Tag == "test" || current.Tag == "settings" || current.Tag == "downloads") return;
-            await navigationService.SectionView.LoadSection((string)current.Tag);
+            if (current.PageTag == "test" || current.PageTag == "settings" || current.PageTag == "downloads") return;
+            await navigationService.SectionView.LoadSection((string)current.PageTag);
         }
 
       
