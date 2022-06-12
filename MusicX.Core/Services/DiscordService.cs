@@ -51,11 +51,22 @@ namespace MusicX.Core.Services
         }
 
 
-        public void RemoveTrackPlay()
+        public void RemoveTrackPlay(bool pause = false)
         {
             try
             {
-                client.ClearPresence();
+                if(pause)
+                {
+                    client.SetPresence(new RichPresence()
+                    {
+                        Details = "Трек на паузе",
+                        State = ""
+                    });
+                }else
+                {
+                    client.ClearPresence();
+                }
+                
 
             }catch (Exception ex)
             {

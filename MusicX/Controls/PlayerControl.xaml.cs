@@ -364,29 +364,42 @@ namespace MusicX.Controls
         DispatcherTimer timer = new DispatcherTimer();
         private void ScrollTrackName()
         {
-            bool backscroll = false;
-            timer.Tick += (ss, ee) =>
+            try
             {
-                if (TitleScroll.ScrollableWidth == 0) return;
-
-                if (backscroll == false)
+                bool backscroll = false;
+                timer.Tick += (ss, ee) =>
                 {
-                    TitleScroll.ScrollToHorizontalOffset(TitleScroll.HorizontalOffset + 0.6);
-                    if (TitleScroll.HorizontalOffset == TitleScroll.ScrollableWidth)
-                        backscroll = true;
-                }
+                    if (TitleScroll.ScrollableWidth == 0) return;
 
-                if (backscroll == true)
-                {
-                    TitleScroll.ScrollToHorizontalOffset(TitleScroll.HorizontalOffset - 0.8);
-                    if (TitleScroll.HorizontalOffset == 0)
+                    if (backscroll == false)
                     {
-                        backscroll = false;
+                        TitleScroll.ScrollToHorizontalOffset(TitleScroll.HorizontalOffset + 0.6);
+                        if (TitleScroll.HorizontalOffset == TitleScroll.ScrollableWidth)
+                            backscroll = true;
                     }
-                }
-            };
-            timer.Interval = TimeSpan.FromMilliseconds(15);
-            timer.Start();
+
+                    if (backscroll == true)
+                    {
+                        TitleScroll.ScrollToHorizontalOffset(TitleScroll.HorizontalOffset - 0.8);
+                        if (TitleScroll.HorizontalOffset == 0)
+                        {
+                            backscroll = false;
+                        }
+                    }
+                };
+                timer.Interval = TimeSpan.FromMilliseconds(15);
+                timer.Start();
+            }catch (Exception ex)
+            {
+                logger.Error(ex, ex.Message);
+            }
+           
+        }
+
+        private void StopScrollTrackName()
+        {
+            this.timer.Stop();
+            TitleScroll.ScrollToHorizontalOffset(0);
         }
 
         private void ShuffleButton_Click(object sender, RoutedEventArgs e)
@@ -455,7 +468,8 @@ namespace MusicX.Controls
 
         private void TrackTitle_MouseEnter(object sender, MouseEventArgs e)
         {
-            if(playerService.CurrentTrack.Album != null)
+            ScrollTrackName();
+            if (playerService.CurrentTrack.Album != null)
             {
                 TrackTitle.TextDecorations.Add(TextDecorations.Underline);
                 this.Cursor = Cursors.Hand;
@@ -466,7 +480,7 @@ namespace MusicX.Controls
 
         private void TrackTitle_MouseLeave(object sender, MouseEventArgs e)
         {
-
+            StopScrollTrackName();
             foreach (var dec in TextDecorations.Underline)
             {
                 TrackTitle.TextDecorations.Remove(dec);
@@ -497,7 +511,7 @@ namespace MusicX.Controls
 
         private void TitleScroll_Loaded(object sender, RoutedEventArgs e)
         {
-            ScrollTrackName();
+            //ScrollTrackName();
         }
     }
 }

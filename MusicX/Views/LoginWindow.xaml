@@ -7,7 +7,7 @@
     xmlns:local="clr-namespace:MusicX.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
-    Title="LoginWindow"
+    Title="Вход в аккаунт"
     Width="800"
     Height="450"
     Background="#202020"
