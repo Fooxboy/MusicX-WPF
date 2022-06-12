@@ -1,4 +1,5 @@
-﻿using FFmpeg.NET;
+﻿using DryIoc;
+using FFmpeg.NET;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
 using NLog;
@@ -355,7 +356,21 @@ namespace MusicX.Services
             await this.AddToQueueAsync(tracks, "Музыка ВКонтакте");
         }
 
-      
+        public async Task DownloadAllPlaylistsAsync()
+        {
+            var configService = StaticService.Container.Resolve<ConfigService>();
+
+            var config = await configService.GetConfig();
+            
+            var playlists = await vkService.GetPlaylistsAsync(config.UserId);
+
+            foreach (var playlist in playlists)
+            {
+                var tracks = await vkService.AudioGetAsync(playlist.Id, playlist.OwnerId, playlist.AccessKey);
+
+                await this.AddToQueueAsync(tracks.Items, playlist.Title);
+            }
+        }
 
         public bool CheckExistAllDownloadTracks()
         {

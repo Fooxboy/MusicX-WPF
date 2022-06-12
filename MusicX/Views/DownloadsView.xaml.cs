@@ -245,12 +245,15 @@ namespace MusicX.Views
             });
         }
 
-        private void DownloadAllPlaylistsButton_Click(object sender, RoutedEventArgs e)
+        private async void DownloadAllPlaylistsButton_Click(object sender, RoutedEventArgs e)
         {
             var notifications = StaticService.Container.Resolve<Services.NotificationsService>();
 
-            notifications.Show("Временно недоступно", "Загрузка всех плейлистов временно недоступно, но в следующем обновлении обязательно заработает!");
+            notifications.Show("Добавлено", "Мы скоро начнем загрузку плейлистов");
 
+            await downloaderService.DownloadAllPlaylistsAsync();
+
+            DownloadAllPlaylistsButton.IsEnabled = false;
         }
 
         private async void DownloadAllTracksButton_Click(object sender, RoutedEventArgs e)
