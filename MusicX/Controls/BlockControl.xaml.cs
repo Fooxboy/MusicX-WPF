@@ -1,7 +1,6 @@
 ﻿using DryIoc;
 using MusicX.Controls.Blocks;
 using MusicX.Core.Models;
-using MusicX.Core.Services;
 using MusicX.Services;
 using NLog;
 using System;
@@ -9,8 +8,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using MusicX.ViewModels.Controls;
 using WPFUI.Controls;
 
 namespace MusicX.Controls
@@ -246,33 +248,53 @@ namespace MusicX.Controls
 
                 if (Block.DataType == "action")
                 {
-                    var card = new CardAction() { Margin = new Thickness(0, 10, 15,10), Icon = WPFUI.Common.SymbolRegular.AlertOn24 };
-                    card.Click += CardAction_Click;
-                    var text = new TextBlock() { Text = "content" };
-
                     if (Block.Buttons == null) return;
-                    if (Block.Buttons[0].Action.Type == "play_shuffled_audios_from_block")
+
+                    var actionBlocksGrid = new Grid();
+
+                    for (var i = 0; i < Block.Buttons.Count; i++)
                     {
-                        card.Icon = WPFUI.Common.SymbolRegular.MusicNote2Play20;
-                        text.Text = "Перемешать все";
+                        var blockButton = Block.Buttons[i];
+                    
+                        var text = new TextBlock();
+                        var card = new CardAction()
+                        {
+                            Margin = new Thickness(0, 10, 15, 10), 
+                            Content = text,
+                            DataContext = new BlockButtonViewModel(blockButton),
+                        };
+                        
+                        card.SetBinding(ButtonBase.CommandProperty, new Binding("InvokeCommand"));
+
+                        switch (blockButton.Action.Type)
+                        {
+                            case "play_shuffled_audios_from_block":
+                                card.Icon = WPFUI.Common.SymbolRegular.MusicNote2Play20;
+                                text.Text = "Перемешать все";
+                                break;
+                            case "create_playlist":
+                                card.Icon = WPFUI.Common.SymbolRegular.Add24;
+                                text.Text = "Создать плейлист";
+                                break;
+                            case "play_audios_from_block":
+                                card.Icon = WPFUI.Common.SymbolRegular.Play24;
+                                text.Text = "Слушать всё";
+                                break;
+                            case "open_section":
+                                continue;
+                            default:
+                                card.Icon = WPFUI.Common.SymbolRegular.AlertOn24;
+                                text.Text = "content";
+                                break;
+                        }
+
+                        actionBlocksGrid.ColumnDefinitions.Add(new(){ Width = new GridLength(1, GridUnitType.Star) });
+                        card.SetValue(Grid.ColumnProperty, i);
+                        actionBlocksGrid.Children.Add(card);
                     }
 
-                    if (Block.Buttons[0].Action.Type == "create_playlist")
-                    {
-                        card.Icon = WPFUI.Common.SymbolRegular.Add24;
-                        text.Text = "Создать плейлист";
-                    }
-
-                    if (Block.Buttons[0].Action.Type == "open_section")
-                    {
-                        return;
-                        card.Icon = WPFUI.Common.SymbolRegular.Open48;
-                        text.Text = Block.Buttons[0].Title;
-                    }
-
-                    card.Content = text;
-
-                    BlocksPanel.Children.Add(card);
+                    BlocksPanel.Children.Add(actionBlocksGrid);
+                    
                     logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
 
                     return;
@@ -387,54 +409,6 @@ namespace MusicX.Controls
 
                 notificationService.Show("Произошла ошибка", $"Music X не смог показать блок {Block.DataType}");
 
-            }
-        }
-
-        private async void CardAction_Click(object sender, RoutedEventArgs e)
-        {
-
-            try
-            {
-                var action = Block.Buttons[0].Action;
-
-
-                if (Block.Buttons[0].Action.Type == "play_shuffled_audios_from_block")
-                {
-                    var vkService = StaticService.Container.Resolve<VkService>();
-                    var playerService = StaticService.Container.Resolve<PlayerService>();
-
-                    var res = await vkService.GetBlockItemsAsync(Block.Buttons[0].BlockId);
-
-                    await playerService.Play(0, res.Audios);
-
-                }
-
-                if (Block.Buttons[0].Action.Type == "create_playlist")
-                {
-                    var notificationService = StaticService.Container.Resolve<Services.NotificationsService>();
-                    notificationService.Show("Ошибка", "MusicX пока что не умеет создавать плейлисты");
-
-                }
-
-                if (Block.Buttons[0].Action.Type == "open_section")
-                {
-
-                    var navigation = StaticService.Container.Resolve<Services.NavigationService>();
-
-                    await navigation.OpenSection(Block.Buttons[0].SectionId, true);
-
-                }
-
-            }
-            catch(Exception ex)
-            {
-                var logger = StaticService.Container.Resolve<Logger>();
-
-                logger.Error(ex, ex.Message);
-
-                var notificationService = StaticService.Container.Resolve<Services.NotificationsService>();
-
-                notificationService.Show("Произошла ошибка", $"Music X не смог выполнить действие в блоке {Block.DataType}");
             }
         }
     }
