@@ -66,6 +66,7 @@
 
   <ItemGroup>
     <Folder Include="Controls\Lists\" />
+    <Folder Include="Managers\" />
     <Folder Include="Resources\" />
   </ItemGroup>
 
