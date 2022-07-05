@@ -168,7 +168,7 @@ namespace MusicX.Core.Services
 
                 var model = JsonConvert.DeserializeObject<ResponseVk>(json);
 
-                logger.Info("Successful invoke 'catalog.getSection' ");
+                 logger.Info("Successful invoke 'catalog.getSection' ");
 
 
                 return model.Proccess().Response;

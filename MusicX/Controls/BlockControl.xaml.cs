@@ -6,6 +6,7 @@ using MusicX.Services;
 using NLog;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -151,8 +152,36 @@ namespace MusicX.Controls
 
                 if (Block.DataType == "links")
                 {
-                    BlocksPanel.Children.Add(new LinksBlockControl() { Block = Block });
-                    logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
+
+                    if (Block.Layout.Name == "categories_list" && Block.Links.FirstOrDefault().Title == "Недавнee")
+                    {
+                        var downloadsLink = Block.Links.SingleOrDefault(x => x.Title == "Скачанная музыка");
+                        if(downloadsLink != null)
+                        {
+                            Block.Links.Remove(downloadsLink);
+                        }
+
+                        try
+                        {
+                            Block.Links.SingleOrDefault(x => x.Title == "Недавнee").Image[0].Url = "https://fooxboy.blob.core.windows.net/musicx/icons/recent_white.png";
+                            Block.Links.SingleOrDefault(x => x.Title == "Плейлисты").Image[0].Url = "https://fooxboy.blob.core.windows.net/musicx/icons/playlists_white.png";
+                            Block.Links.SingleOrDefault(x => x.Title == "Альбомы").Image[0].Url = "https://fooxboy.blob.core.windows.net/musicx/icons/albums_white.png";
+                            Block.Links.SingleOrDefault(x => x.Title == "Подписки").Image[0].Url = "https://fooxboy.blob.core.windows.net/musicx/icons/follows_white.png";
+                        }catch(Exception ex)
+                        {
+                            logger.Error("Music X не смог заменить картинки в моей музыке:");
+                            logger.Error(ex,ex.Message);
+                        }
+
+
+                        BlocksPanel.Children.Add(new MusicCategoryBlockControl() { Links = Block.Links });
+                        logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
+                    }else
+                    {
+                        BlocksPanel.Children.Add(new LinksBlockControl() { Block = Block });
+                        logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
+                    }
+
 
                     return;
                 }

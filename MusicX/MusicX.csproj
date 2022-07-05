@@ -14,6 +14,10 @@
 
   <ItemGroup>
     <None Remove="Assets\icon.ico" />
+    <None Remove="Assets\icons\albums_white.png" />
+    <None Remove="Assets\icons\follows_white.png" />
+    <None Remove="Assets\icons\playlists_white.png" />
+    <None Remove="Assets\icons\recent_white.png" />
     <None Remove="Assets\lottie\play.json" />
     <None Remove="Assets\play.gif" />
     <None Remove="Fonts\VKSansDisplay-Bold.ttf" />
@@ -74,6 +78,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\icons\albums_white.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\icons\follows_white.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\icons\playlists_white.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\icons\recent_white.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\lottie\play.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
