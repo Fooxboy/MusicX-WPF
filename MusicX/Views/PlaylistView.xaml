@@ -57,7 +57,7 @@
         </ResourceDictionary>
     </Page.Resources>
 
-    <Grid>
+    <Grid >
 
         <!--    -->
         <!--    -->
@@ -83,7 +83,7 @@
                     Text="Стучусь к серверам ВКонтакте..." />
             </StackPanel>
         </Grid>
-        <hc:ScrollViewer HorizontalScrollBarVisibility="Disabled" IsInertiaEnabled="True">
+        <hc:ScrollViewer Padding="0 0 0 80" HorizontalScrollBarVisibility="Disabled" IsInertiaEnabled="True">
             <!--  Visibility="{Binding VisibleContent}"  -->
 
             <StackPanel x:Name="PlaylistStackPanel" Visibility="{Binding VisibleContent}">
