@@ -550,42 +550,7 @@ namespace MusicX.Services
 
                 if (config.ShowRPC.Value)
                 {
-                    string artist;
-
-                    if (CurrentTrack.MainArtists?.Count > 0)
-                    {
-                        string s = string.Empty;
-                        foreach (var trackArtist in CurrentTrack.MainArtists)
-                        {
-                            s += trackArtist.Name + ", ";
-                        }
-
-                        var artists = s.Remove(s.Length - 2);
-
-                        artist = artists;
-
-                    }
-                    else
-                    {
-                        artist = CurrentTrack.Artist;
-                    }
-
-                    TimeSpan t = TimeSpan.FromSeconds(CurrentTrack.Duration);
-
-
-                    string cover = "";
-                    if (track.Album == null)
-                    {
-                        cover = "album";
-                    }
-                    else
-                    {
-                        cover = CurrentTrack.Album.Cover;
-                    }
-
-                    discordService.RemoveTrackPlay();
-
-                    discordService.SetTrackPlay(artist, CurrentTrack.Title, t, cover);
+                    await SetDiscordTrack();
 
                 }
 
@@ -608,6 +573,48 @@ namespace MusicX.Services
 
             }
 
+        }
+
+        private async Task SetDiscordTrack()
+        {
+            string artist;
+
+            if (CurrentTrack.MainArtists?.Count > 0)
+            {
+                string s = string.Empty;
+                foreach (var trackArtist in CurrentTrack.MainArtists)
+                {
+                    s += trackArtist.Name + ", ";
+                }
+
+                var artists = s.Remove(s.Length - 2);
+
+                artist = artists;
+
+            }
+            else
+            {
+                artist = CurrentTrack.Artist;
+            }
+
+            TimeSpan t = TimeSpan.FromSeconds(CurrentTrack.Duration);
+
+            t -= player.Position;
+
+
+            string cover = "";
+            if (CurrentTrack.Album == null)
+            {
+                cover = "album";
+            }
+            else
+            {
+                cover = CurrentTrack.Album.Cover;
+            }
+
+            discordService.RemoveTrackPlay();
+
+            discordService.SetTrackPlay(artist, CurrentTrack.Title, t, cover);
         }
 
         public async Task TryPlay()
@@ -674,12 +681,17 @@ namespace MusicX.Services
             }
         }
 
-        public void Play()
+        public async void Play()
         {
             try
             {
                 if (CurrentTrack is null) return;
                 player.Play();
+
+                if(config.ShowRPC.Value)
+                {
+                   await SetDiscordTrack();
+                }
             }catch(Exception ex)
             {
                 logger.Error("Error in play");
@@ -736,7 +748,7 @@ namespace MusicX.Services
 
             if (config.ShowRPC.Value)
             {
-                discordService.RemoveTrackPlay();
+                discordService.RemoveTrackPlay(true);
             }
 
             try

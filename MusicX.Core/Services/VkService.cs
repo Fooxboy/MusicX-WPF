@@ -168,7 +168,7 @@ namespace MusicX.Core.Services
 
                 var model = JsonConvert.DeserializeObject<ResponseVk>(json);
 
-                logger.Info("Successful invoke 'catalog.getSection' ");
+                 logger.Info("Successful invoke 'catalog.getSection' ");
 
 
                 return model.Proccess().Response;
@@ -364,7 +364,6 @@ namespace MusicX.Core.Services
                 logger.Error(ex, ex.Message);
                 throw;
             }
-            
 
         }
 
@@ -920,11 +919,38 @@ namespace MusicX.Core.Services
                     await vkApi.Audio.SetBroadcastAsync();
                      return;
                 }
-               
-
-
 
                 await vkApi.Audio.SetBroadcastAsync(audio.OwnerId + "_" + audio.Id + "_" + audio.AccessKey);
+            }
+            catch (Exception ex)
+            {
+                logger.Error("VK API ERROR:");
+                logger.Error(ex, ex.Message);
+                throw;
+            }
+        }
+
+        public async Task<List<Playlist>> GetPlaylistsAsync(long ownerId)
+        {
+            try
+            {
+                var parameters = new VkParameters
+                {
+                    {"v", vkApiVersion},
+                    {"lang", "ru"},
+                    {"device_id", deviceId},
+                    {"access_token", vkApi.Token},
+                    {"owner_id", ownerId}
+
+                };
+
+
+                var json = await vkApi.InvokeAsync("audio.getPlaylists", parameters);
+
+
+                var model = JsonConvert.DeserializeObject<OldResponseVk<Playlist>>(json);
+
+                return model.Response.Items;
             }
             catch (Exception ex)
             {

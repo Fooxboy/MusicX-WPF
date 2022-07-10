@@ -41,15 +41,15 @@ namespace MusicX
 
             if (os.Version.Build >= 22000)
             {
-                var style = (Style)FindResource("UiWindow");
-                this.Style = style;
-            }
-            else
+                this.Background = Brushes.Transparent;
+
+                this.Foreground = Brushes.White;
+            }else
             {
                 this.WindowStyle = WindowStyle.None;
-                this.Foreground = Brushes.White;
+                this.AllowsTransparency = true;
             }
-
+            
             InitializeComponent();     
             this.navigationService = navigationService;
             this.vkService = vkService;
@@ -65,7 +65,26 @@ namespace MusicX
 
 
             notificationsService.NewNotificationEvent += NotificationsService_NewNotificationEvent;
+
+            
+
         }
+
+
+
+        //private bool isFullScreen = false;
+        //private void WpfTitleBar_MaximizeClicked(object sender, RoutedEventArgs e)
+        //{
+        //    isFullScreen = !isFullScreen;
+        //    if(isFullScreen)
+        //    {
+        //        rootGrid.Margin = new Thickness(8,8,8,0);
+
+        //    }else
+        //    {
+        //        rootGrid.Margin = new Thickness(0, 0, 0, 0);
+        //    }
+        //}
 
         private async void NotificationsService_NewNotificationEvent(string title, string message)
         {
@@ -105,6 +124,8 @@ namespace MusicX
 
                 if (os.Version.Build >= 22000)
                 {
+                    this.Background = Brushes.Transparent;
+
                     IntPtr windowHandle = new WindowInteropHelper(this).Handle;
 
                     WPFUI.Appearance.Background.Remove(windowHandle);
@@ -128,10 +149,11 @@ namespace MusicX
                 logger.Info($"OS Version: {os.VersionString}");
                 logger.Info($"OS Build: {os.Version.Build}");
 
-
+                
                 if (os.Version.Build < 22000)
                 {
                     this.Background = (Brush)new BrushConverter().ConvertFrom("#FF202020");
+                    
                 }
 
                 navigationService.CurrentFrame = RootFrame;

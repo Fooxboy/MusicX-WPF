@@ -27,14 +27,13 @@ namespace MusicX.Views
 
             if (os.Version.Build >= 22000)
             {
-                var style = (Style)FindResource("UiWindow");
-                this.Style = style;
-            }
-            else
+                this.Background = Brushes.Transparent;
+
+                this.Foreground = Brushes.White;
+            }else
             {
                 this.WindowStyle = WindowStyle.None;
-                this.Foreground = Brushes.White;
-
+                this.AllowsTransparency = true;
             }
 
             InitializeComponent();
@@ -44,6 +43,23 @@ namespace MusicX.Views
             this.navigationService = navigationService;
             this.notificationsService = notificationsService;
             this.tokenRefresh = tokenRefresh;
+            this.WpfTitleBar.MaximizeClicked += WpfTitleBar_MaximizeClicked;
+        }
+
+        private bool isFullScreen = false;
+
+        private void WpfTitleBar_MaximizeClicked(object sender, RoutedEventArgs e)
+        {
+            isFullScreen = !isFullScreen;
+            if (isFullScreen)
+            {
+                rootGrid.Margin = new Thickness(8, 8, 8, 0);
+
+            }
+            else
+            {
+                rootGrid.Margin = new Thickness(0, 0, 0, 0);
+            }
         }
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
@@ -53,27 +69,34 @@ namespace MusicX.Views
 
             if (os.Version.Build >= 22000)
             {
+                this.Background = Brushes.Transparent;
+
                 IntPtr windowHandle = new WindowInteropHelper(this).Handle;
 
                 WPFUI.Appearance.Background.Remove(windowHandle);
 
-                var appTheme = WPFUI.Appearance.Theme.GetAppTheme();
-                var systemTheme = WPFUI.Appearance.Theme.GetSystemTheme();
                 WPFUI.Appearance.Theme.Set(
                 WPFUI.Appearance.ThemeType.Dark,     // Theme type
                 WPFUI.Appearance.BackgroundType.Mica, // Background type
-                true                                  // Whether to change accents automatically
+                true,                                // Whether to change accents automatically
+                forceBackground: true
                 );
 
-                if (WPFUI.Appearance.Theme.IsAppMatchesSystem())
-                {
-                    this.Background = Brushes.Transparent;
-                    WPFUI.Appearance.Background.Apply(windowHandle, WPFUI.Appearance.BackgroundType.Mica);
+                WPFUI.Appearance.Theme.Apply(WPFUI.Appearance.ThemeType.Dark, WPFUI.Appearance.BackgroundType.Mica, true, true);
 
-                }
 
-                var res = WPFUI.Appearance.Theme.IsAppMatchesSystem();
+                WPFUI.Appearance.Background.ApplyDarkMode(windowHandle);
+                this.Background = Brushes.Transparent;
+                WPFUI.Appearance.Background.Apply(windowHandle, WPFUI.Appearance.BackgroundType.Mica, true);
             }
+
+
+            if (os.Version.Build < 22000)
+            {
+                this.Background = (Brush)new BrushConverter().ConvertFrom("#FF202020");
+
+            }
+
 
 
             logger.Info($"OS Version: {os.VersionString}");

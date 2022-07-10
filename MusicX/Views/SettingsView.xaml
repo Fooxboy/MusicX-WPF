@@ -218,7 +218,7 @@
                 FontSize="30"
                 Text="Информация о Music X" />
 
-            <wpfui:Card Margin="5,5,5,120">
+            <wpfui:Card Margin="5,5,5,0">
                 <Grid>
                     <StackPanel HorizontalAlignment="Left">
 
@@ -243,21 +243,90 @@
                         </StackPanel>
 
                         <TextBlock
-                            Margin="0,10,0,0"
+                            Margin="0,20,0,0"
                             FontSize="18"
                             Text="Полезные ссылки:" />
 
                         <StackPanel Margin="0,5,0,0" Orientation="Horizontal">
                             <wpfui:Button
                                 x:Name="TelegramButton"
-                                Width="100"
+                                Width="200"
+                                Height="30"
                                 Appearance="Secondary"
                                 Click="TelegramButton_Click"
-                                Content="Телеграм" />
+                                Content="Телеграм канал" />
+
+                            <wpfui:Button
+                                x:Name="ChatButton"
+                                Width="200"
+                                Height="30"
+                                Margin="10 0 0 0"
+                                Appearance="Secondary"
+                                Click="TelegramButton_Click"
+                                Content="Телеграм чат" />
                         </StackPanel>
 
                     </StackPanel>
                 </Grid>
+            </wpfui:Card>
+
+            <TextBlock
+                Margin="5,20,0,0"
+                FontFamily="{StaticResource VKSansDemiBold}"
+                FontSize="30"
+                Text="Благодарности открытому ПО " />
+
+            <wpfui:Card Margin="0 10 5 0">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
+                        <TextBlock FontWeight="Bold" Text="WPF-UI"/>
+                        <TextBlock Text=" - UI библиотека для создания интерфейса в стиле Windows 11"/>
+                        <wpfui:Hyperlink Margin="5 0 0 0" Content="Github" NavigateUri="https://github.com/lepoco/wpfui"/>
+                        <wpfui:Hyperlink Margin="5 0 0 0" Content="Лицензия" NavigateUri="https://github.com/lepoco/wpfui/blob/main/LICENSE"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
+                        <TextBlock FontWeight="Bold" Text="VK NET"/>
+                        <TextBlock Text=" - библиотека для запросов к API ВКонтакте"/>
+                        <wpfui:Hyperlink Margin="5 0 0 0" Content="Github" NavigateUri="https://github.com/vknet/vk"/>
+                        <wpfui:Hyperlink Margin="5 0 0 0" Content="Лицензия" NavigateUri="https://github.com/vknet/vk/blob/develop/LICENCE"/>
+                        <wpfui:Hyperlink Margin="5 0 0 0" Content="Телеграм" NavigateUri="https://t.me/VkDotNet"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
+                        <TextBlock FontWeight="Bold" Text="VkNet.AudioBypass"/>
+                        <TextBlock Text=" - библиотека для симуляции входа как андроид приложение"/>
+                        <wpfui:Hyperlink Margin="5 0 0 0" Content="Github" NavigateUri="https://github.com/flowersne/VkNet.AudioBypass"/>
+                        <wpfui:Hyperlink Margin="5 0 0 0" Content="Лицензия" NavigateUri="https://github.com/flowersne/VkNet.AudioBypass/blob/master/LICENSE"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
+                        <TextBlock FontWeight="Bold" Text="FFmpeg"/>
+                        <TextBlock Text=" - набор библиотек для конвертации/сохранения медиа"/>
+                        <wpfui:Hyperlink Margin="5 0 0 0" Content="Сайт" NavigateUri="https://ffmpeg.org/"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
+                        <TextBlock FontWeight="Bold" Text="FFmpeg.NET"/>
+                        <TextBlock Text=" - библиотека враппер FFmpeg для .NET"/>
+                        <wpfui:Hyperlink Margin="5 0 0 0" Content="Github" NavigateUri="https://github.com/cmxl/FFmpeg.NET"/>
+                        <wpfui:Hyperlink Margin="5 0 0 0" Content="Лицензия" NavigateUri="https://github.com/cmxl/FFmpeg.NET/blob/master/LICENSE.md"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
+                        <TextBlock FontWeight="Bold" Text="DiscordRPC"/>
+                        <TextBlock Text=" - библиотека для управления Discrod RPC  на .NET"/>
+                        <wpfui:Hyperlink Margin="5 0 0 0" Content="Github" NavigateUri="https://github.com/Lachee/discord-rpc-csharp"/>
+                        <wpfui:Hyperlink Margin="5 0 0 0" Content="Лицензия" NavigateUri="https://github.com/Lachee/discord-rpc-csharp/blob/master/LICENSE"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
+                        <TextBlock FontWeight="Bold" Text="WpfAnimatedGif"/>
+                        <TextBlock Text=" - библиотека для воспроизведения .gif файлов "/>
+                        <wpfui:Hyperlink Margin="5 0 0 0" Content="Github" NavigateUri="https://github.com/XamlAnimatedGif/WpfAnimatedGif"/>
+                    </StackPanel>
+
+                </StackPanel>
             </wpfui:Card>
 
         </StackPanel>

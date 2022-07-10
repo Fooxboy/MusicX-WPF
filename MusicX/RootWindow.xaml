@@ -13,7 +13,16 @@
     Background="#202020"
     KeyDown="Window_KeyDown"
     Loaded="Window_Loaded"
+    Title="MusicX"
     mc:Ignorable="d">
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome
+            CaptionHeight="0"
+            GlassFrameThickness="-1"
+            ResizeBorderThickness="8"
+            UseAeroCaptionButtons="False" />
+    </WindowChrome.WindowChrome>
 
     <Window.Resources>
         <FontFamily x:Key="SegoeFluentIcons">pack://application:,,,/;component/Fonts/#Segoe Fluent Icons</FontFamily>
@@ -67,7 +76,7 @@
         </Storyboard>
     </Window.Resources>
 
-    <Grid>
+    <Grid x:Name="rootGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -125,6 +134,7 @@
         </Grid>
 
         <wpfui:TitleBar
+            x:Name="WpfTitleBar"
             Grid.Row="0"
             Height="40"
             MinimizeToTray="False"
