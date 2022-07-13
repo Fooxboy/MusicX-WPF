@@ -13,6 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using MusicX.ViewModels;
 
 namespace MusicX.Controls
 {
@@ -446,9 +447,10 @@ namespace MusicX.Controls
             try
             {
                 DownloadButton.IsEnabled = false;
-                var downloader = StaticService.Container.Resolve<DownloaderService>();
+                var downloader = StaticService.Container.Resolve<DownloaderViewModel>();
 
-                await downloader.AddToQueueAsync(playerService.CurrentTrack);
+                downloader.DownloadQueue.Add(playerService.CurrentTrack);
+                downloader.StartDownloadingCommand.Execute(null);
             }catch(FileNotFoundException ex)
             {
 

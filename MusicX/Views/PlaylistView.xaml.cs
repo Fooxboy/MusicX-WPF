@@ -194,14 +194,15 @@ namespace MusicX.Views
             }
         }
 
-        private async void DownloadPlaylist_Click(object sender, RoutedEventArgs e)
+        private void DownloadPlaylist_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 this.DownloadPlaylist.IsEnabled = false;
-                var downloader = StaticService.Container.Resolve<DownloaderService>();
+                var downloader = StaticService.Container.Resolve<DownloaderViewModel>();
 
-                await downloader.AddToQueueAsync(ViewModel.Tracks, ViewModel.Title);
+                downloader.AddPlaylistToQueue(ViewModel.Tracks, ViewModel.Title);
+                downloader.StartDownloadingCommand.Execute(null);
             }
             catch (FileNotFoundException ex)
             {
