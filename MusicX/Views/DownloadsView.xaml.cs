@@ -39,7 +39,7 @@ namespace MusicX.Views
 
         private DownloaderService downloaderService;
 
-        private void DownloadsView_Loaded(object sender, RoutedEventArgs e)
+        private async void DownloadsView_Loaded(object sender, RoutedEventArgs e)
         {
             if(StaticService.WebClient != null)
             {
@@ -50,20 +50,9 @@ namespace MusicX.Views
                 return;
             }
 
-
-            if(!File.Exists(ffmpegPath + "\\ffmpeg.exe"))
-            {
-                NoAvalible.Visibility = Visibility.Visible;
-
-                return;
-            }
-
-
-            ContentGrid.Visibility = Visibility.Visible;
-
             this.downloaderService = StaticService.Container.Resolve<DownloaderService>();
 
-            if(downloaderService.CheckExistAllDownloadTracks())
+            if(await downloaderService.CheckExistAllDownloadTracksAsync())
             {
                 DownloadAllTracksButton.IsEnabled = false;
             }
@@ -87,7 +76,15 @@ namespace MusicX.Views
 
                 }
             }
+            
+            if(!File.Exists(ffmpegPath + "\\ffmpeg.exe"))
+            {
+                NoAvalible.Visibility = Visibility.Visible;
 
+                return;
+            }
+            
+            ContentGrid.Visibility = Visibility.Visible;
         }
 
         private void DownloaderService_RemoveQueueItem(Core.Models.Audio audio)
@@ -236,11 +233,11 @@ namespace MusicX.Views
             StaticService.WebClient = null;
         }
 
-        private void ShowAudiosButton_Click(object sender, RoutedEventArgs e)
+        private async void ShowAudiosButton_Click(object sender, RoutedEventArgs e)
         {
             Process.Start(new ProcessStartInfo
             {
-                FileName = downloaderService.musicFolder,
+                FileName = await downloaderService.GetDownloadDirectoryAsync(),
                 UseShellExecute = true
             });
         }
