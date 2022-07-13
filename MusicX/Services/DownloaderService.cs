@@ -34,19 +34,28 @@ namespace MusicX.Services
         public List<Audio> QueueDownloads = new List<Audio>();
 
         private string ffmpegPath = $"{AppDomain.CurrentDomain.BaseDirectory}ffmpeg\\ffmpeg.exe";
-        public string musicFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic) + "\\MusicX";
 
         private readonly Logger logger;
         private readonly NotificationsService notificationsService;
         private readonly VkService vkService;
+        private readonly ConfigService configService;
 
         private Engine ffmpeg;
 
-        public DownloaderService(Logger logger, NotificationsService notificationsService, VkService vkService)
+        public DownloaderService(Logger logger, NotificationsService notificationsService, VkService vkService, ConfigService configService)
         {
             this.logger = logger;
             this.notificationsService = notificationsService;
             this.vkService = vkService;
+            this.configService = configService;
+        }
+
+        public async Task<string> GetDownloadDirectoryAsync()
+        {
+            var directory = (await configService.GetConfig()).DownloadDirectory ?? 
+                            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyMusic), "MusicX");
+
+            return Directory.CreateDirectory(directory).FullName;
         }
 
         public async Task AddToQueueAsync(List<Audio> audios, string name)
@@ -68,11 +77,6 @@ namespace MusicX.Services
 
             try
             {
-                if (!Directory.Exists(musicFolder))
-                {
-                    Directory.CreateDirectory(musicFolder);
-                }
-
                 foreach (var audio in audios)
                 {
                     audio.DownloadPlaylistName = name;
@@ -117,11 +121,6 @@ namespace MusicX.Services
 
             try
             {
-                if(!Directory.Exists(musicFolder))
-                {
-                    Directory.CreateDirectory(musicFolder);
-                }
-
                 QueueDownloads.Add(audio);
 
                 await Application.Current.Dispatcher.BeginInvoke(() =>
@@ -181,7 +180,8 @@ namespace MusicX.Services
                 var fileName = $"{audio.Artist} - {audio.Title}.mp3";
 
 
-                var folderDownload = string.Empty;
+                var fileDownloadPath = string.Empty;
+                var musicFolder = await GetDownloadDirectoryAsync();
 
                 if(audio.DownloadPlaylistName != null)
                 {
@@ -190,12 +190,14 @@ namespace MusicX.Services
 
                     fileName= ReplaceSymbols(fileName);
 
-                    if (!Directory.Exists($"{musicFolder}\\{audio.DownloadPlaylistName}"))
+                    var playlistDirPath = Path.Combine(musicFolder, audio.DownloadPlaylistName);
+                    
+                    if (!Directory.Exists(playlistDirPath))
                     {
-                        Directory.CreateDirectory($"{musicFolder}\\{audio.DownloadPlaylistName}");
+                        Directory.CreateDirectory(playlistDirPath);
                     }
 
-                    folderDownload = $"{musicFolder}\\{audio.DownloadPlaylistName}\\{fileName}";
+                    fileDownloadPath = Path.Combine(playlistDirPath, fileName);
                 }else
                 {
 
@@ -203,11 +205,11 @@ namespace MusicX.Services
 
 
 
-                    folderDownload = $"{musicFolder}\\{fileName}";
+                    fileDownloadPath = Path.Combine(musicFolder, fileName);
                 }
 
 
-                await ffmpeg.ExecuteAsync($"-http_persistent false -i \"{audio.Url}\" -c copy \"{folderDownload}\"", CancellationToken.None);
+                await ffmpeg.ExecuteAsync($"-http_persistent false -i \"{audio.Url}\" -c copy \"{fileDownloadPath}\"", CancellationToken.None);
 
             }catch(Exception ex)
             {
@@ -248,6 +250,7 @@ namespace MusicX.Services
             fileName = ReplaceSymbols(fileName);
 
             var pathFile = string.Empty;
+            var musicFolder = await GetDownloadDirectoryAsync();
 
             if(CurrentDownload.DownloadPlaylistName != null)
             {
@@ -341,7 +344,7 @@ namespace MusicX.Services
         public async Task DownloadAllTracks()
         {
 
-            if (CheckExistAllDownloadTracks()) return;
+            if (await CheckExistAllDownloadTracksAsync()) return;
             var tracks = new List<Audio>();
 
             while (true)
@@ -372,11 +375,9 @@ namespace MusicX.Services
             }
         }
 
-        public bool CheckExistAllDownloadTracks()
+        public async Task<bool> CheckExistAllDownloadTracksAsync()
         {
-            var path = musicFolder + "\\Музыка Вконтакте";
-
-            return (Directory.Exists(path));
+            return Directory.Exists(Path.Combine(await GetDownloadDirectoryAsync(), "Музыка Вконтакте"));
         }
     }
 }

@@ -29,5 +29,8 @@ namespace MusicX.Models
 
         [JsonProperty("broadcast_vk")]
         public bool? BroadcastVK { get; set; }
+        
+        [JsonProperty("download_directory")]
+        public string? DownloadDirectory { get; set; }
     }
 }

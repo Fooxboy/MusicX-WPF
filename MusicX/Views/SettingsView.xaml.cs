@@ -21,6 +21,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Windows.Storage;
+using Ookii.Dialogs.Wpf;
 
 namespace MusicX.Views
 {
@@ -95,6 +96,32 @@ namespace MusicX.Views
 
                 memory = Math.Round(memory, 2);
                 MemoryLogs.Text = memory.ToString();
+                
+                di = new DirectoryInfo(config.DownloadDirectory ?? string.Empty);
+
+                if (di.Exists)
+                {
+                    memory = 0;
+
+                    foreach (FileInfo file in di.GetFiles())
+                    {
+                        memory += file.Length / 1024;
+                    }
+
+                    if (memory > 1024)
+                    {
+                        memory /= 1024;
+                        MemoryTypeTracks.Text = "МБ";
+                    }
+                    else
+                    {
+                        MemoryTypeTracks.Text = "КБ";
+
+                    }
+
+                    memory = Math.Round(memory, 2);
+                    MemoryTracks.Text = memory.ToString();
+                }
 
                 this.VersionApp.Text = StaticService.Version + " " + StaticService.VersionKind;
                 this.BuildDate.Text = StaticService.BuildDate;
@@ -234,6 +261,34 @@ namespace MusicX.Views
                 
             }
            
+        }
+        private async void DownloadPath_OnClick(object sender, RoutedEventArgs e)
+        {
+            var dialog = new VistaFolderBrowserDialog
+            {
+                Multiselect = false,
+                RootFolder = Environment.SpecialFolder.MyMusic
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                config.DownloadDirectory = dialog.SelectedPath;
+                await configService.SetConfig(config);
+            }
+        }
+        private void DownloadPathOpen_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(config.DownloadDirectory) || !Directory.Exists(config.DownloadDirectory))
+            {
+                StaticService.Container.Resolve<NotificationsService>().Show("Ошибка", "Сначала выберите папку");
+                return;
+            }
+            
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = config.DownloadDirectory,
+                UseShellExecute = true
+            });
         }
     }
 }
