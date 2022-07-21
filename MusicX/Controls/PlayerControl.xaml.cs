@@ -6,6 +6,7 @@ using MusicX.Views;
 using NLog;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -416,6 +417,11 @@ namespace MusicX.Controls
         private async void OpenFullScreen_Click(object sender, RoutedEventArgs e)
         {
             var notificationService = StaticService.Container.Resolve<Services.NotificationsService>();
+
+            foreach (var fullScreenWindow in Application.Current.Windows.OfType<FullScreenWindow>())
+            {
+                fullScreenWindow.Close();
+            }
 
             var win = new FullScreenWindow(logger, playerService, notificationService);
 
