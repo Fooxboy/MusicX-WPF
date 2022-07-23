@@ -416,17 +416,16 @@ namespace MusicX.Controls
         private async void OpenFullScreen_Click(object sender, RoutedEventArgs e)
         {
             var notificationService = StaticService.Container.Resolve<Services.NotificationsService>();
+            var mainWindow = Window.GetWindow(this);
 
             var win = new FullScreenWindow(logger, playerService, notificationService);
 
-            ShowOnMonitor(win);
+            ShowOnMonitor(win, mainWindow!);
         }
 
-        private void ShowOnMonitor(Window window)
+        private void ShowOnMonitor(Window window, Window mainWindow)
         {
-
-            var screen = WpfScreenHelper.Screen.FromWindow(Application.Current.MainWindow);
-
+            var screen = WpfScreenHelper.Screen.FromWindow(mainWindow);
 
             window.WindowStyle = WindowStyle.None;
             window.WindowStartupLocation = WindowStartupLocation.Manual;
