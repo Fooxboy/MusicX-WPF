@@ -361,7 +361,7 @@
                                     <ToolTip Content="Очередь" />
                                 </ToggleButton.ToolTip>
                                 <ToggleButton.Content>
-                                    <wpfui:SymbolIcon Symbol="DocumentQueue24" />
+                                    <wpfui:SymbolIcon Symbol="List24" />
                                 </ToggleButton.Content>
                                 <ToggleButton.Triggers>
                                     <EventTrigger RoutedEvent="ToggleButton.Unchecked">
