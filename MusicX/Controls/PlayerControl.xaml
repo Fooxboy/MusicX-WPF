@@ -7,385 +7,424 @@
     xmlns:local="clr-namespace:MusicX.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
-    KeyDown="UserControl_KeyDown"
+    xmlns:models="clr-namespace:MusicX.Core.Models;assembly=MusicX.Core"
     Loaded="UserControl_Loaded"
-    SizeChanged="UserControl_SizeChanged"
     mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary>
             <Storyboard x:Key="BackgroundAmimate">
-                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="rectangle" Storyboard.TargetProperty="(UIElement.Opacity)">
-                    <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="1" />
-                    <EasingDoubleKeyFrame KeyTime="00:00:00.4000000" Value="0.8" />
-                </DoubleAnimationUsingKeyFrames>
+                <!-- <DoubleAnimationUsingKeyFrames Storyboard.TargetName="BackgroundRectangle" -->
+                <!--                                Storyboard.TargetProperty="(UIElement.Opacity)"> -->
+                <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="1" /> -->
+                <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.4000000" Value="0.8" /> -->
+                <!-- </DoubleAnimationUsingKeyFrames> -->
             </Storyboard>
         </ResourceDictionary>
 
     </UserControl.Resources>
     <Grid>
-
-        <Border CornerRadius="6">
-            <Border.Clip>
-                <RectangleGeometry
-                    x:Name="rec"
-                    RadiusX="6"
-                    RadiusY="6"
-                    Rect="0,0, 0, 100" />
-            </Border.Clip>
-            <Image
-                x:Name="BackgroundCard"
-                Margin="0.7"
-                VerticalAlignment="Center"
-                Stretch="UniformToFill">
-                <Image.Effect>
-                    <BlurEffect
-                        KernelType="Gaussian"
-                        Radius="20"
-                        RenderOptions.BitmapScalingMode="LowQuality"
-                        RenderOptions.CachingHint="Unspecified"
-                        RenderOptions.ClearTypeHint="Enabled"
-                        RenderOptions.EdgeMode="Aliased"
-                        RenderingBias="Performance" />
-                </Image.Effect>
-            </Image>
+        <Rectangle x:Name="ShadowShape" Fill="Black" RadiusX="5" RadiusY="5">
+            <Rectangle.Effect>
+                <DropShadowEffect BlurRadius="8" ShadowDepth="0" Opacity="0.2" />
+            </Rectangle.Effect>
+        </Rectangle>
+        <Border x:Name="BackgroundBorder" CornerRadius="5" ClipToBounds="True">
+            <Rectangle x:Name="BlurringShape" RadiusX="5" RadiusY="5">
+                <Rectangle.Fill>
+                    <ImageBrush x:Name="BackgroundCard" Stretch="UniformToFill" Opacity="0.4" />
+                </Rectangle.Fill>
+                <Rectangle.Effect>
+                    <BlurEffect KernelType="Gaussian" Radius="32" />
+                </Rectangle.Effect>
+            </Rectangle>
         </Border>
 
-        <Rectangle
-            x:Name="rectangle"
-            Fill="Black"
-            Opacity="0.8"
-            RadiusX="5"
-            RadiusY="5" />
-        <wpfui:Card>
-            <Grid>
+        <Grid Margin="18">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="80" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="25" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="25" />
 
-                <StackPanel>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="25" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="25" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary
+                                    Source="pack://application:,,,/HandyControl;component/Themes/SkinDark.xaml" />
+                                <ResourceDictionary
+                                    Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                    </Grid.Resources>
 
-                        </Grid.ColumnDefinitions>
+                    <TextBlock
+                        x:Name="CurrentPosition"
+                        Grid.Column="0"
+                        Text="1:03" />
+                    <hc:PreviewSlider
+                        x:Name="PositionSlider"
+                        Grid.Column="1"
+                        Margin="5,0,5,0"
+                        ValueChanged="PositionSlider_ValueChanged">
+                        <hc:PreviewSlider.Background>
+                            <SolidColorBrush Opacity="0.3" Color="White" />
+                        </hc:PreviewSlider.Background>
+                    </hc:PreviewSlider>
+                    <!--<Slider x:Name="PositionSlider" Grid.Column="1" ValueChanged="PositionSlider_ValueChanged"  Margin="5 0 5 0"/>-->
+                    <TextBlock
+                        x:Name="MaxPosition"
+                        Grid.Column="2"
+                        Text="3:03" />
+                </Grid>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+
+                    <StackPanel
+                        Grid.Column="0"
+                        Margin="0,5,0,0"
+                        Orientation="Horizontal">
+                        <Grid>
+                            <Rectangle
+                                Width="50"
+                                Height="50"
+                                Fill="Black"
+                                Opacity="0.1"
+                                RadiusX="5"
+                                RadiusY="5" />
+
+                            <wpfui:SymbolIcon
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                FontSize="20"
+                                Foreground="White"
+                                Symbol="MusicNote124" />
+
+                            <Rectangle
+                                Width="50"
+                                Height="50"
+                                RadiusX="5"
+                                RadiusY="5">
+                                <Rectangle.Fill>
+                                    <ImageBrush x:Name="TrackCover" />
+                                </Rectangle.Fill>
+
+                            </Rectangle>
+
+
+                        </Grid>
+                        <StackPanel Margin="15,-10,0,0" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal">
+
+                                <ScrollViewer
+                                    x:Name="TitleScroll"
+                                    MaxWidth="230"
+                                    HorizontalScrollBarVisibility="Hidden"
+                                    Loaded="TitleScroll_Loaded"
+                                    VerticalScrollBarVisibility="Hidden">
+                                    <TextBlock
+                                        x:Name="TrackTitle"
+                                        Margin="0,0,0,5"
+                                        FontFamily="{StaticResource VKSansDemiBold}"
+                                        FontSize="16"
+                                        MouseEnter="TrackTitle_MouseEnter"
+                                        MouseLeave="TrackTitle_MouseLeave"
+                                        MouseLeftButtonDown="TrackTitle_MouseLeftButtonDown"
+                                        Text="Track name">
+                                        <TextBlock.ToolTip>
+                                            <ToolTip Content="Перейти к альбому" />
+                                        </TextBlock.ToolTip>
+                                    </TextBlock>
+
+                                </ScrollViewer>
+
+                                <Border
+                                    x:Name="explicitBadge"
+                                    Width="16"
+                                    Height="16"
+                                    Margin="5,0,0,0"
+                                    BorderBrush="White"
+                                    BorderThickness="1"
+                                    CornerRadius="2"
+                                    Opacity="0.4"
+                                    Visibility="Collapsed">
+                                    <TextBlock
+                                        Margin="0,0,0,1"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        FontFamily="{StaticResource VKSansBold}"
+                                        FontSize="12"
+                                        Foreground="White"
+                                        Text="E" />
+                                </Border>
+
+                            </StackPanel>
+                            <TextBlock
+                                x:Name="ArtistName"
+                                FontFamily="{StaticResource VKSansRegular}"
+                                MouseEnter="ArtistName_MouseEnter"
+                                MouseLeave="ArtistName_MouseLeave"
+                                MouseLeftButtonDown="ArtistName_MouseLeftButtonDown"
+                                Opacity="0.7"
+                                Text="Artist name">
+                                <TextBlock.ToolTip>
+                                    <ToolTip Content="Перейти к исполнителю" />
+                                </TextBlock.ToolTip>
+                            </TextBlock>
+
+                        </StackPanel>
+
+                        <wpfui:Button
+                            x:Name="LikeTrack"
+                            Width="40"
+                            Height="40"
+                            Margin="10,0,0,0"
+                            Padding="0"
+                            HorizontalContentAlignment="Center"
+                            Appearance="Transparent"
+                            Click="LikeTrack_Click">
+
+                            <wpfui:SymbolIcon x:Name="LikeIcon" Symbol="Heart20" />
+
+                            <wpfui:Button.ToolTip>
+                                <ToolTip Content="Добавить/убрать в библиотеку" />
+                            </wpfui:Button.ToolTip>
+                        </wpfui:Button>
+                    </StackPanel>
+
+
+                    <StackPanel
+                        Grid.Column="1"
+                        HorizontalAlignment="Center"
+                        Orientation="Horizontal">
+
+                        <ToggleButton
+                            x:Name="ShuffleButton"
+                            Width="40"
+                            Height="40"
+                            Margin="0,0,10,0"
+                            Padding="0"
+                            HorizontalContentAlignment="Center"
+                            Click="ShuffleButton_Click">
+
+                            <wpfui:SymbolIcon Symbol="ArrowWrap20" />
+
+                            <ToggleButton.ToolTip>
+                                <ToolTip Content="В рандомном порядке" />
+                            </ToggleButton.ToolTip>
+
+                        </ToggleButton>
+
+                        <wpfui:Button
+                            x:Name="PrevButton"
+                            Width="40"
+                            Height="40"
+                            Margin="0,0,10,0"
+                            Padding="0"
+                            HorizontalContentAlignment="Center"
+                            Appearance="Transparent"
+                            Click="PrevButton_Click">
+
+                            <wpfui:SymbolIcon Symbol="Previous48" />
+
+                            <wpfui:Button.ToolTip>
+                                <ToolTip Content="Предыдущий трек" />
+                            </wpfui:Button.ToolTip>
+
+                        </wpfui:Button>
+
+                        <wpfui:Button
+                            x:Name="PlayPauseButton"
+                            Width="50"
+                            Height="50"
+                            Margin="0,0,10,0"
+                            Padding="0"
+                            HorizontalContentAlignment="Center"
+                            Appearance="Transparent"
+                            Click="PlayPauseButton_Click">
+
+                            <wpfui:SymbolIcon
+                                x:Name="PlayIcon"
+                                FontSize="20"
+                                Symbol="Play32" />
+
+                            <wpfui:Button.ToolTip>
+                                <ToolTip Content="Пауза/Воспроизвести" />
+                            </wpfui:Button.ToolTip>
+
+                        </wpfui:Button>
+
+                        <wpfui:Button
+                            x:Name="NextButton"
+                            Width="40"
+                            Height="40"
+                            Margin="0,0,10,0"
+                            Padding="0"
+                            HorizontalContentAlignment="Center"
+                            Appearance="Transparent"
+                            Click="NextButton_Click">
+                            <wpfui:SymbolIcon Symbol="Next48" />
+
+                            <wpfui:Button.ToolTip>
+                                <ToolTip Content="Следующий трек" />
+                            </wpfui:Button.ToolTip>
+
+
+                        </wpfui:Button>
+
+                        <ToggleButton
+                            x:Name="RepeatButton"
+                            Width="40"
+                            Height="40"
+                            Margin="0,0,10,0"
+                            Padding="0"
+                            HorizontalContentAlignment="Center"
+                            Click="RepeatButton_Click">
+                            <wpfui:SymbolIcon Symbol="ArrowRepeatAll16" />
+
+                            <ToggleButton.ToolTip>
+                                <ToolTip Content="Повтор трека" />
+                            </ToggleButton.ToolTip>
+                        </ToggleButton>
+
+                    </StackPanel>
+
+                    <Grid Grid.Column="2">
                         <Grid.Resources>
                             <ResourceDictionary>
                                 <ResourceDictionary.MergedDictionaries>
-                                    <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDark.xaml" />
-                                    <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
+                                    <ResourceDictionary
+                                        Source="pack://application:,,,/HandyControl;component/Themes/SkinDark.xaml" />
+                                    <ResourceDictionary
+                                        Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
                                 </ResourceDictionary.MergedDictionaries>
                             </ResourceDictionary>
                         </Grid.Resources>
-
-                        <TextBlock
-                            x:Name="CurrentPosition"
-                            Grid.Column="0"
-                            Text="1:03" />
-                        <hc:PreviewSlider
-                            x:Name="PositionSlider"
-                            Grid.Column="1"
-                            Margin="5,0,5,0"
-                            ValueChanged="PositionSlider_ValueChanged">
-                            <hc:PreviewSlider.Background>
-                                <SolidColorBrush Opacity="0.3" Color="White" />
-                            </hc:PreviewSlider.Background>
-                        </hc:PreviewSlider>
-                        <!--<Slider x:Name="PositionSlider" Grid.Column="1" ValueChanged="PositionSlider_ValueChanged"  Margin="5 0 5 0"/>-->
-                        <TextBlock
-                            x:Name="MaxPosition"
-                            Grid.Column="2"
-                            Text="3:03" />
-                    </Grid>
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-
-
                         <StackPanel
-                            Grid.Column="0"
-                            Margin="0,5,0,0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <Grid>
-                                <Rectangle
-                                    Width="50"
-                                    Height="50"
-                                    Fill="Black"
-                                    Opacity="0.1"
-                                    RadiusX="5"
-                                    RadiusY="5" />
-
-                                <wpfui:SymbolIcon
-                                    HorizontalContentAlignment="Center"
-                                    VerticalContentAlignment="Center"
-                                    FontSize="20"
-                                    Foreground="White"
-                                    Symbol="MusicNote124" />
-
-                                <Rectangle
-                                    Width="50"
-                                    Height="50"
-                                    RadiusX="5"
-                                    RadiusY="5">
-                                    <Rectangle.Fill>
-                                        <ImageBrush x:Name="TrackCover" />
-                                    </Rectangle.Fill>
-
-                                </Rectangle>
-
-
-                            </Grid>
-                            <StackPanel Margin="15,-10,0,0" VerticalAlignment="Center">
-                                <StackPanel Orientation="Horizontal">
-
-                                    <ScrollViewer
-                                        x:Name="TitleScroll"
-                                        MaxWidth="230"
-                                        HorizontalScrollBarVisibility="Hidden"
-                                        Loaded="TitleScroll_Loaded"
-                                        VerticalScrollBarVisibility="Hidden">
-                                        <TextBlock
-                                            x:Name="TrackTitle"
-                                            Margin="0,0,0,5"
-                                            FontFamily="{StaticResource VKSansDemiBold}"
-                                            FontSize="16"
-                                            MouseEnter="TrackTitle_MouseEnter"
-                                            MouseLeave="TrackTitle_MouseLeave"
-                                            MouseLeftButtonDown="TrackTitle_MouseLeftButtonDown"
-                                            Text="Track name">
-                                            <TextBlock.ToolTip>
-                                                <ToolTip Content="Перейти к альбому" />
-                                            </TextBlock.ToolTip>
-                                        </TextBlock>
-
-                                    </ScrollViewer>
-
-                                    <Border
-                                        x:Name="explicitBadge"
-                                        Width="16"
-                                        Height="16"
-                                        Margin="5,0,0,0"
-                                        BorderBrush="White"
-                                        BorderThickness="1"
-                                        CornerRadius="2"
-                                        Opacity="0.4"
-                                        Visibility="Collapsed">
-                                        <TextBlock
-                                            Margin="0,0,0,1"
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
-                                            FontFamily="{StaticResource VKSansBold}"
-                                            FontSize="12"
-                                            Foreground="White"
-                                            Text="E" />
-                                    </Border>
-
-                                </StackPanel>
-                                <TextBlock
-                                    x:Name="ArtistName"
-                                    FontFamily="{StaticResource VKSansRegular}"
-                                    MouseEnter="ArtistName_MouseEnter"
-                                    MouseLeave="ArtistName_MouseLeave"
-                                    MouseLeftButtonDown="ArtistName_MouseLeftButtonDown"
-                                    Opacity="0.7"
-                                    Text="Artist name">
-                                    <TextBlock.ToolTip>
-                                        <ToolTip Content="Перейти к исполнителю" />
-                                    </TextBlock.ToolTip>
-                                </TextBlock>
-
-                            </StackPanel>
 
                             <wpfui:Button
-                                x:Name="LikeTrack"
+                                x:Name="DownloadButton"
                                 Width="40"
                                 Height="40"
-                                Margin="10,0,0,0"
+                                Margin="0,0,20,0"
                                 Padding="0"
                                 HorizontalContentAlignment="Center"
                                 Appearance="Transparent"
-                                Click="LikeTrack_Click">
-
-                                <wpfui:SymbolIcon x:Name="LikeIcon" Symbol="Heart20" />
+                                Click="DownloadButton_Click">
+                                <wpfui:SymbolIcon Symbol="ArrowDownload24" />
 
                                 <wpfui:Button.ToolTip>
-                                    <ToolTip Content="Добавить/убрать в библиотеку" />
+                                    <ToolTip Content="Скачать трек" />
+                                </wpfui:Button.ToolTip>
+                            </wpfui:Button>
+
+                            <ToggleButton Width="40"
+                                          Height="40"
+                                          Margin="0,0,20,0"
+                                          Padding="0"
+                                          HorizontalContentAlignment="Center"
+                                          Background="Transparent">
+                                <ToggleButton.ToolTip>
+                                    <ToolTip Content="Очередь" />
+                                </ToggleButton.ToolTip>
+                                <ToggleButton.Content>
+                                    <wpfui:SymbolIcon Symbol="DocumentQueue24" />
+                                </ToggleButton.Content>
+                                <ToggleButton.Triggers>
+                                    <EventTrigger RoutedEvent="ToggleButton.Unchecked">
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation Storyboard.TargetName="Queue"
+                                                                 Storyboard.TargetProperty="Height" From="530"
+                                                                 To="0" Duration="0:0:0.3">
+                                                    <DoubleAnimation.EasingFunction>
+                                                        <PowerEase EasingMode="EaseIn" />
+                                                    </DoubleAnimation.EasingFunction>
+                                                </DoubleAnimation>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
+                                    <EventTrigger RoutedEvent="ToggleButton.Checked">
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation Storyboard.TargetName="Queue"
+                                                                 Storyboard.TargetProperty="Height" From="0"
+                                                                 To="530" Duration="0:0:0.3">
+                                                    <DoubleAnimation.EasingFunction>
+                                                        <PowerEase EasingMode="EaseIn" />
+                                                    </DoubleAnimation.EasingFunction>
+                                                </DoubleAnimation>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
+                                </ToggleButton.Triggers>
+                            </ToggleButton>
+
+                            <wpfui:SymbolIcon
+                                x:Name="SpeakerIcon"
+                                FontSize="20"
+                                Symbol="Speaker248" />
+                            <hc:PreviewSlider
+                                x:Name="Volume"
+                                Width="150"
+                                Margin="5,0,0,0"
+                                Maximum="1"
+                                MouseEnter="Volume_MouseEnter"
+                                MouseLeave="Volume_MouseLeave"
+                                ValueChanged="Slider_ValueChanged">
+                                <hc:PreviewSlider.Background>
+                                    <SolidColorBrush Opacity="0.3" Color="White" />
+                                </hc:PreviewSlider.Background>
+                            </hc:PreviewSlider>
+
+                            <wpfui:Button
+                                x:Name="OpenFullScreen"
+                                Width="40"
+                                Height="40"
+                                Padding="0"
+                                Appearance="Transparent"
+                                BorderThickness="0"
+                                Click="OpenFullScreen_Click"
+                                FontSize="17"
+                                Icon="ArrowMaximize16">
+                                <wpfui:Button.ToolTip>
+                                    <ToolTip Content="Открыть полноэкранный режим" />
                                 </wpfui:Button.ToolTip>
                             </wpfui:Button>
                         </StackPanel>
 
-
-                        <StackPanel
-                            Grid.Column="1"
-                            HorizontalAlignment="Center"
-                            Orientation="Horizontal">
-
-                            <ToggleButton
-                                x:Name="ShuffleButton"
-                                Width="40"
-                                Height="40"
-                                Margin="0,0,10,0"
-                                Padding="0"
-                                HorizontalContentAlignment="Center"
-                                Click="ShuffleButton_Click">
-
-                                <wpfui:SymbolIcon Symbol="ArrowWrap20" />
-
-                                <ToggleButton.ToolTip>
-                                    <ToolTip Content="В рандомном порядке" />
-                                </ToggleButton.ToolTip>
-
-                            </ToggleButton>
-
-                            <wpfui:Button
-                                x:Name="PrevButton"
-                                Width="40"
-                                Height="40"
-                                Margin="0,0,10,0"
-                                Padding="0"
-                                HorizontalContentAlignment="Center"
-                                Appearance="Transparent"
-                                Click="PrevButton_Click">
-
-                                <wpfui:SymbolIcon Symbol="Previous48" />
-
-                                <wpfui:Button.ToolTip>
-                                    <ToolTip Content="Предыдущий трек" />
-                                </wpfui:Button.ToolTip>
-
-                            </wpfui:Button>
-
-                            <wpfui:Button
-                                x:Name="PlayPauseButton"
-                                Width="50"
-                                Height="50"
-                                Margin="0,0,10,0"
-                                Padding="0"
-                                HorizontalContentAlignment="Center"
-                                Appearance="Transparent"
-                                Click="PlayPauseButton_Click">
-
-                                <wpfui:SymbolIcon
-                                    x:Name="PlayIcon"
-                                    FontSize="20"
-                                    Symbol="Play32" />
-
-                                <wpfui:Button.ToolTip>
-                                    <ToolTip Content="Пауза/Воспроизвести" />
-                                </wpfui:Button.ToolTip>
-
-                            </wpfui:Button>
-
-                            <wpfui:Button
-                                x:Name="NextButton"
-                                Width="40"
-                                Height="40"
-                                Margin="0,0,10,0"
-                                Padding="0"
-                                HorizontalContentAlignment="Center"
-                                Appearance="Transparent"
-                                Click="NextButton_Click">
-                                <wpfui:SymbolIcon Symbol="Next48" />
-
-                                <wpfui:Button.ToolTip>
-                                    <ToolTip Content="Следующий трек" />
-                                </wpfui:Button.ToolTip>
-
-
-                            </wpfui:Button>
-
-                            <ToggleButton
-                                x:Name="RepeatButton"
-                                Width="40"
-                                Height="40"
-                                Margin="0,0,10,0"
-                                Padding="0"
-                                HorizontalContentAlignment="Center"
-                                Click="RepeatButton_Click">
-                                <wpfui:SymbolIcon Symbol="ArrowRepeatAll16" />
-
-                                <ToggleButton.ToolTip>
-                                    <ToolTip Content="Повтор трека" />
-                                </ToggleButton.ToolTip>
-                            </ToggleButton>
-
-                        </StackPanel>
-
-                        <Grid Grid.Column="2">
-                            <Grid.Resources>
-                                <ResourceDictionary>
-                                    <ResourceDictionary.MergedDictionaries>
-                                        <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDark.xaml" />
-                                        <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
-                                    </ResourceDictionary.MergedDictionaries>
-                                </ResourceDictionary>
-                            </Grid.Resources>
-                            <StackPanel
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Center"
-                                Orientation="Horizontal">
-
-                                <wpfui:Button
-                                    x:Name="DownloadButton"
-                                    Width="40"
-                                    Height="40"
-                                    Margin="0,0,20,0"
-                                    Padding="0"
-                                    HorizontalContentAlignment="Center"
-                                    Appearance="Transparent"
-                                    Click="DownloadButton_Click">
-                                    <wpfui:SymbolIcon Symbol="ArrowDownload24" />
-
-                                    <wpfui:Button.ToolTip>
-                                        <ToolTip Content="Скачать трек" />
-                                    </wpfui:Button.ToolTip>
-                                </wpfui:Button>
-
-                                <wpfui:SymbolIcon
-                                    x:Name="SpeakerIcon"
-                                    FontSize="20"
-                                    Symbol="Speaker248" />
-                                <hc:PreviewSlider
-                                    x:Name="Volume"
-                                    Width="150"
-                                    Margin="5,0,0,0"
-                                    Maximum="1"
-                                    MouseEnter="Volume_MouseEnter"
-                                    MouseLeave="Volume_MouseLeave"
-                                    ValueChanged="Slider_ValueChanged">
-                                    <hc:PreviewSlider.Background>
-                                        <SolidColorBrush Opacity="0.3" Color="White" />
-                                    </hc:PreviewSlider.Background>
-                                </hc:PreviewSlider>
-
-                                <wpfui:Button
-                                    x:Name="OpenFullScreen"
-                                    Width="40"
-                                    Height="40"
-                                    Padding="0"
-                                    Appearance="Transparent"
-                                    BorderThickness="0"
-                                    Click="OpenFullScreen_Click"
-                                    FontSize="17"
-                                    Icon="ArrowMaximize16">
-                                    <wpfui:Button.ToolTip>
-                                        <ToolTip Content="Открыть полноэкранный режим" />
-                                    </wpfui:Button.ToolTip>
-                                </wpfui:Button>
-                            </StackPanel>
-
-                            <!--<Slider Width="150" ValueChanged="Slider_ValueChanged" HorizontalAlignment="Right" Value="1" VerticalAlignment="Center" Maximum="1"/>-->
-                        </Grid>
-
+                        <!--<Slider Width="150" ValueChanged="Slider_ValueChanged" HorizontalAlignment="Right" Value="1" VerticalAlignment="Center" Maximum="1"/>-->
                     </Grid>
 
-                </StackPanel>
-            </Grid>
-        </wpfui:Card>
+                </Grid>
 
+            </StackPanel>
+            <ListBox Grid.Row="1" x:Name="Queue" Height="0">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Vertical" />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="{x:Type models:Audio}">
+                        <local:TrackControl Audio="{Binding}" ShowCard="False" KeyDown="QueuedTrack_OnKeyDown" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
     </Grid>
 </UserControl>

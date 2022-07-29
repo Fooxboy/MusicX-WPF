@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -23,7 +24,7 @@ namespace MusicX.Services
         private int currentIndex;
         private string blockId;
         private long loadedPlaylistIdTracks;
-        public List<Audio> Tracks;
+        public ObservableCollection<Audio> Tracks;
         public Audio CurrentTrack;
         public Audio NextPlayTrack;
         private DispatcherTimer _positionTimer;
@@ -53,7 +54,7 @@ namespace MusicX.Services
             this.discordService = discordService;
             this.configService = configService;
             player = new MediaPlayer();
-            Tracks = new List<Audio>();
+            Tracks = new ObservableCollection<Audio>();
 
             player.AudioCategory = MediaPlayerAudioCategory.Media;
             player.Play();
@@ -290,7 +291,7 @@ namespace MusicX.Services
 
                     logger.Info($"Load tracks with playlist id {plViewModel.Playlist.Id}");
 
-                    Tracks = plViewModel.Tracks;
+                    Tracks = new(plViewModel.Tracks);
 
                     Debug.WriteLine("Now play queue:");
 
@@ -329,7 +330,7 @@ namespace MusicX.Services
                         this.blockId = track.ParentBlockId;
                         var items = await vkService.GetBlockItemsAsync(blockId);
 
-                        Tracks = items.Audios;
+                        Tracks = new(items.Audios);
 
                         int c = 0;
                         foreach (var trackDebug in Tracks)
@@ -471,7 +472,7 @@ namespace MusicX.Services
                 player.Pause();
                 if (tracks != null)
                 {
-                    Tracks = tracks;
+                    Tracks = new(tracks);
 
                     int c = 0;
                     foreach (var trackDebug in Tracks)
@@ -728,7 +729,7 @@ namespace MusicX.Services
 
         public void SetTracks(List<Audio> tracks)
         {
-            this.Tracks = tracks;
+            this.Tracks = new(tracks);
         }
 
         public async void Pause()

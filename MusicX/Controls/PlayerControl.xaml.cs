@@ -105,11 +105,11 @@ namespace MusicX.Controls
                         amim.Begin();
                         var bitmapImage = new BitmapImage(new Uri(playerService.CurrentTrack.Album.Cover));
                         TrackCover.ImageSource = bitmapImage;
-                        BackgroundCard.Source = bitmapImage;
+                        BackgroundCard.ImageSource = bitmapImage;
                     }else
                     {
                         TrackCover.ImageSource = null;
-                        BackgroundCard.Source = null;
+                        BackgroundCard.ImageSource = null;
                     }
 
                     if (playerService.CurrentTrack.OwnerId == config.UserId)
@@ -122,6 +122,7 @@ namespace MusicX.Controls
                         LikeIcon.Filled = false;
 
                     }
+                    Queue.ItemsSource = playerService.Tracks;
                 });
 
 
@@ -191,7 +192,6 @@ namespace MusicX.Controls
         private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             rect.Width = this.ActualWidth;
-            rec.Rect = rect;
         }
 
         private void PositionSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -511,6 +511,11 @@ namespace MusicX.Controls
         private void TitleScroll_Loaded(object sender, RoutedEventArgs e)
         {
             //ScrollTrackName();
+        }
+        private void QueuedTrack_OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key is Key.Delete && sender is TrackControl control)
+                playerService.Tracks.Remove(control.Audio);
         }
     }
 }
