@@ -19,6 +19,25 @@
                 <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.4000000" Value="0.8" /> -->
                 <!-- </DoubleAnimationUsingKeyFrames> -->
             </Storyboard>
+            
+            <Storyboard x:Key="QueueHideAnimation">
+                <DoubleAnimation Storyboard.TargetName="Queue"
+                                 Storyboard.TargetProperty="Height" From="530"
+                                 To="0" Duration="0:0:0.3">
+                    <DoubleAnimation.EasingFunction>
+                        <PowerEase EasingMode="EaseIn" />
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+            </Storyboard>
+            <Storyboard x:Key="QueueShowAnimation">
+                <DoubleAnimation Storyboard.TargetName="Queue"
+                                 Storyboard.TargetProperty="Height" From="0"
+                                 To="530" Duration="0:0:0.3">
+                    <DoubleAnimation.EasingFunction>
+                        <PowerEase EasingMode="EaseIn" />
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+            </Storyboard>
         </ResourceDictionary>
 
     </UserControl.Resources>
@@ -346,30 +365,10 @@
                                 </ToggleButton.Content>
                                 <ToggleButton.Triggers>
                                     <EventTrigger RoutedEvent="ToggleButton.Unchecked">
-                                        <BeginStoryboard>
-                                            <Storyboard>
-                                                <DoubleAnimation Storyboard.TargetName="Queue"
-                                                                 Storyboard.TargetProperty="Height" From="530"
-                                                                 To="0" Duration="0:0:0.3">
-                                                    <DoubleAnimation.EasingFunction>
-                                                        <PowerEase EasingMode="EaseIn" />
-                                                    </DoubleAnimation.EasingFunction>
-                                                </DoubleAnimation>
-                                            </Storyboard>
-                                        </BeginStoryboard>
+                                        <BeginStoryboard Storyboard="{StaticResource QueueHideAnimation}"/>
                                     </EventTrigger>
                                     <EventTrigger RoutedEvent="ToggleButton.Checked">
-                                        <BeginStoryboard>
-                                            <Storyboard>
-                                                <DoubleAnimation Storyboard.TargetName="Queue"
-                                                                 Storyboard.TargetProperty="Height" From="0"
-                                                                 To="530" Duration="0:0:0.3">
-                                                    <DoubleAnimation.EasingFunction>
-                                                        <PowerEase EasingMode="EaseIn" />
-                                                    </DoubleAnimation.EasingFunction>
-                                                </DoubleAnimation>
-                                            </Storyboard>
-                                        </BeginStoryboard>
+                                        <BeginStoryboard Storyboard="{StaticResource QueueShowAnimation}"/>
                                     </EventTrigger>
                                 </ToggleButton.Triggers>
                             </ToggleButton>
