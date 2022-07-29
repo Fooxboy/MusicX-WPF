@@ -123,6 +123,8 @@ namespace MusicX.Controls
                         LikeIcon.Filled = false;
 
                     }
+                    
+                    Queue.ScrollIntoView(playerService.CurrentTrack);
                 });
 
 
