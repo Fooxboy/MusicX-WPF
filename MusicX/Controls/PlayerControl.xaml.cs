@@ -419,11 +419,11 @@ namespace MusicX.Controls
             var notificationService = StaticService.Container.Resolve<Services.NotificationsService>();
             var mainWindow = Window.GetWindow(this);
 
-            if (fullScreenWindow is not null)
+            if (fullScreenWindow is not null || mainWindow is null)
                 return;
             fullScreenWindow = new FullScreenWindow(logger, playerService, notificationService);
 
-            ShowOnMonitor(fullScreenWindow);
+            ShowOnMonitor(fullScreenWindow, mainWindow);
             fullScreenWindow.Closed += FullScreenWindowOnClosed;
         }
         private void FullScreenWindowOnClosed(object? sender, EventArgs e)
@@ -506,6 +506,7 @@ namespace MusicX.Controls
 
 
         private bool mouseEnteredInVolume = false;
+        private FullScreenWindow? fullScreenWindow;
         private void Volume_MouseEnter(object sender, MouseEventArgs e)
         {
             this.mouseEnteredInVolume = true;
