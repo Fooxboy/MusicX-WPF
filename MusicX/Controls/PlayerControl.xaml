@@ -423,6 +423,11 @@
                         <local:TrackControl Audio="{Binding}" ShowCard="False" KeyDown="QueuedTrack_OnKeyDown" />
                     </DataTemplate>
                 </ListBox.ItemTemplate>
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                        <Setter Property="Focusable" Value="False" />
+                    </Style>
+                </ListBox.ItemContainerStyle>
             </ListBox>
         </Grid>
     </Grid>
