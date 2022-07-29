@@ -418,14 +418,16 @@ namespace MusicX.Controls
         {
             var notificationService = StaticService.Container.Resolve<Services.NotificationsService>();
 
-            foreach (var fullScreenWindow in Application.Current.Windows.OfType<FullScreenWindow>())
-            {
-                fullScreenWindow.Close();
-            }
+            if (fullScreenWindow is not null)
+                return;
+            fullScreenWindow = new FullScreenWindow(logger, playerService, notificationService);
 
-            var win = new FullScreenWindow(logger, playerService, notificationService);
-
-            ShowOnMonitor(win);
+            ShowOnMonitor(fullScreenWindow);
+            fullScreenWindow.Closed += FullScreenWindowOnClosed;
+        }
+        private void FullScreenWindowOnClosed(object? sender, EventArgs e)
+        {
+            fullScreenWindow = null;
         }
 
         private void ShowOnMonitor(Window window)
