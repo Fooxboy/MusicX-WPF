@@ -16,6 +16,7 @@ using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.Media.Streaming.Adaptive;
 using Windows.Storage.Streams;
+using MusicX.Helpers;
 
 namespace MusicX.Services
 {
@@ -24,7 +25,7 @@ namespace MusicX.Services
         private int currentIndex;
         private string blockId;
         private long loadedPlaylistIdTracks;
-        public ObservableCollection<Audio> Tracks;
+        public readonly ObservableRangeCollection<Audio> Tracks = new();
         public Audio CurrentTrack;
         public Audio NextPlayTrack;
         private DispatcherTimer _positionTimer;
@@ -54,7 +55,6 @@ namespace MusicX.Services
             this.discordService = discordService;
             this.configService = configService;
             player = new MediaPlayer();
-            Tracks = new ObservableCollection<Audio>();
 
             player.AudioCategory = MediaPlayerAudioCategory.Media;
             player.Play();
@@ -291,7 +291,7 @@ namespace MusicX.Services
 
                     logger.Info($"Load tracks with playlist id {plViewModel.Playlist.Id}");
 
-                    Tracks = new(plViewModel.Tracks);
+                    await Application.Current.Dispatcher.InvokeAsync(() => Tracks.ReplaceRange(plViewModel.Tracks));
 
                     Debug.WriteLine("Now play queue:");
 
@@ -330,7 +330,7 @@ namespace MusicX.Services
                         this.blockId = track.ParentBlockId;
                         var items = await vkService.GetBlockItemsAsync(blockId);
 
-                        Tracks = new(items.Audios);
+                        await Application.Current.Dispatcher.InvokeAsync(() => Tracks.ReplaceRange(items.Audios));
 
                         int c = 0;
                         foreach (var trackDebug in Tracks)
@@ -472,7 +472,10 @@ namespace MusicX.Services
                 player.Pause();
                 if (tracks != null)
                 {
-                    Tracks = new(tracks);
+                    if (!Application.Current.Dispatcher.CheckAccess())
+                        await Application.Current.Dispatcher.InvokeAsync(() => Tracks.ReplaceRange(tracks));
+                    else
+                        Tracks.ReplaceRange(tracks);
 
                     int c = 0;
                     foreach (var trackDebug in Tracks)
@@ -729,7 +732,10 @@ namespace MusicX.Services
 
         public void SetTracks(List<Audio> tracks)
         {
-            this.Tracks = new(tracks);
+            if (!Application.Current.Dispatcher.CheckAccess())
+                Application.Current.Dispatcher.Invoke(() => Tracks.ReplaceRange(tracks));
+            else
+                Tracks.ReplaceRange(tracks);
         }
 
         public async void Pause()

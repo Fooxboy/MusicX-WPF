@@ -37,6 +37,7 @@ namespace MusicX.Controls
 
             this.MouseWheel += PlayerControl_MouseWheel;
             
+            Queue.ItemsSource = playerService.Tracks;
         }
 
         private void PlayerControl_MouseWheel(object sender, MouseWheelEventArgs e)
@@ -122,7 +123,6 @@ namespace MusicX.Controls
                         LikeIcon.Filled = false;
 
                     }
-                    Queue.ItemsSource = playerService.Tracks;
                 });
 
 
