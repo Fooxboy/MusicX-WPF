@@ -48,6 +48,7 @@ namespace MusicX.Views
 
                 container.Register<SectionViewModel>(Reuse.Singleton);
                 container.Register<PlaylistViewModel>(Reuse.Singleton);
+                container.Register<DownloaderViewModel>(Reuse.Singleton);
 
                 container.Register<NavigationService>(Reuse.Singleton);
                 container.Register<ConfigService>(Reuse.Singleton);

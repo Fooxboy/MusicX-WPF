@@ -6,6 +6,7 @@ using MusicX.Views;
 using NLog;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,6 +15,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using MusicX.Core.Models;
+using MusicX.ViewModels;
 
 namespace MusicX.Controls
 {
@@ -421,9 +423,16 @@ namespace MusicX.Controls
             var notificationService = StaticService.Container.Resolve<Services.NotificationsService>();
             var mainWindow = Window.GetWindow(this);
 
-            var win = new FullScreenWindow(logger, playerService, notificationService);
+            if (fullScreenWindow is not null || mainWindow is null)
+                return;
+            fullScreenWindow = new FullScreenWindow(logger, playerService, notificationService);
 
-            ShowOnMonitor(win, mainWindow!);
+            ShowOnMonitor(fullScreenWindow, mainWindow);
+            fullScreenWindow.Closed += FullScreenWindowOnClosed;
+        }
+        private void FullScreenWindowOnClosed(object? sender, EventArgs e)
+        {
+            fullScreenWindow = null;
         }
 
         private void ShowOnMonitor(Window window, Window mainWindow)
@@ -448,9 +457,10 @@ namespace MusicX.Controls
             try
             {
                 DownloadButton.IsEnabled = false;
-                var downloader = StaticService.Container.Resolve<DownloaderService>();
+                var downloader = StaticService.Container.Resolve<DownloaderViewModel>();
 
-                await downloader.AddToQueueAsync(playerService.CurrentTrack);
+                downloader.DownloadQueue.Add(playerService.CurrentTrack);
+                downloader.StartDownloadingCommand.Execute(null);
             }catch(FileNotFoundException ex)
             {
 
@@ -501,6 +511,7 @@ namespace MusicX.Controls
 
 
         private bool mouseEnteredInVolume = false;
+        private FullScreenWindow? fullScreenWindow;
         private void Volume_MouseEnter(object sender, MouseEventArgs e)
         {
             this.mouseEnteredInVolume = true;

@@ -12,15 +12,15 @@
     <Grid>
         <wpfui:Card>
             <StackPanel x:Name="MainStackPanel">
-                <Grid Margin="0,0,0,5">
+                <Grid Margin="0,0,0,5"
+                      PreviewMouseDown="TitleCard_MouseLeftButtonDown"
+                      Cursor="Hand"
+                      ForceCursor="True">
 
                     <Rectangle
                         x:Name="BackgroundRectangle"
                         Height="120"
                         VerticalAlignment="Top"
-                        MouseEnter="BackgroundRectangle_MouseEnter"
-                        MouseLeave="BackgroundRectangle_MouseLeave"
-                        MouseLeftButtonDown="BackgroundRectangle_MouseLeftButtonDown"
                         Opacity="1"
                         RadiusX="8"
                         RadiusY="8">

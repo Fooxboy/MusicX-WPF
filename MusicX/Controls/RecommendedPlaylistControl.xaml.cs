@@ -85,17 +85,7 @@ namespace MusicX.Controls
 
         }
 
-        private void BackgroundRectangle_MouseEnter(object sender, MouseEventArgs e)
-        {
-            this.Cursor = Cursors.Hand;
-        }
-
-        private void BackgroundRectangle_MouseLeave(object sender, MouseEventArgs e)
-        {
-            this.Cursor = Cursors.Arrow;
-        }
-
-        private void BackgroundRectangle_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void TitleCard_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
 
