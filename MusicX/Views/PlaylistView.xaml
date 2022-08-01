@@ -83,14 +83,18 @@
                     Text="Стучусь к серверам ВКонтакте..." />
             </StackPanel>
         </Grid>
-        <hc:ScrollViewer Padding="0 0 0 80" HorizontalScrollBarVisibility="Disabled" IsInertiaEnabled="True">
+        <hc:ScrollViewer x:Name="PlaylistScrollViewer" 
+                         Padding="0 0 0 80" 
+                         HorizontalScrollBarVisibility="Disabled" 
+                         IsInertiaEnabled="True"
+                         ScrollChanged="PlaylistScrollViewer_ScrollChanged">
             <!--  Visibility="{Binding VisibleContent}"  -->
 
             <StackPanel x:Name="PlaylistStackPanel" Visibility="{Binding VisibleContent}">
                 <controls:Card
                     x:Name="CardPlaylist"
                     Height="300"
-                    Margin="0,10,15,-40"
+                    Margin="0,10,15,10"
                     RenderTransformOrigin="0.5,0.5"
                     Visibility="Collapsed">
                     <controls:Card.RenderTransform>
@@ -260,6 +264,7 @@
                         </StackPanel>
                     </StackPanel>
                 </controls:Card>
+                <blocks:AudiosListControl Margin="0,0,0,45" Audios="{Binding Tracks}"/>
             </StackPanel>
         </hc:ScrollViewer>
 

@@ -38,6 +38,7 @@ namespace MusicX.Views
         private readonly Logger logger;
 
         private long currentUserId;
+        private bool loading;
 
         public PlaylistView(Playlist playlist)
         {
@@ -66,23 +67,21 @@ namespace MusicX.Views
 
         private void ViewModel_PlaylistLoaded(object? sender, Playlist e)
         {
-            BitmapImage image = null;
-
-            if (playlist?.Type == 1 && playlist?.AlbumType != "playlist")
-            {
-                image = (BitmapImage)CoverPlaylist.ImageSource;
-            }
-
-
-
-            PlaylistStackPanel.Children.Add(new AudiosListControl { BitImage = image, Audios = ViewModel.Tracks, Margin = new Thickness(0, 0, 0, 45) });
-
             this.playlist = e;
             if (e.OwnerId == currentUserId)
             {
                 this.AddPlaylist.Content = "Удалить плейлист";
                 this.AddPlaylist.Icon = WPFUI.Common.SymbolRegular.Delete24;
             }
+        }
+        private async void PlaylistScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            if (loading || Math.Abs(e.VerticalOffset - PlaylistScrollViewer.ScrollableHeight) is > 200 or < 1)
+                return;
+
+            loading = true;
+            await ViewModel.LoadMore();
+            loading = false;
         }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
@@ -186,7 +185,8 @@ namespace MusicX.Views
                     PlayPlaylist.Content = "Остановить воспроизведение";
                     PlayPlaylist.Icon = WPFUI.Common.SymbolRegular.Pause20;
 
-                    await player.Play(0, ViewModel.Tracks);
+                    await ViewModel.LoadFull();
+                    await player.Play(0, ViewModel.Tracks.ToList());
                 }
             }catch (Exception ex)
             {
@@ -202,8 +202,9 @@ namespace MusicX.Views
                 this.DownloadPlaylist.IsEnabled = false;
                 var downloader = StaticService.Container.Resolve<DownloaderViewModel>();
 
-                downloader.AddPlaylistToQueueAsync(ViewModel.Tracks, ViewModel.Title).SafeFireAndForget();
-                downloader.StartDownloadingCommand.Execute(null);
+                downloader.AddPlaylistToQueueAsync(ViewModel.Playlist.Id, ViewModel.Playlist.OwnerId, ViewModel.Playlist.AccessKey)
+                    .ContinueWith(_ => downloader.StartDownloadingCommand.Execute(null))
+                    .SafeFireAndForget();
             }
             catch (FileNotFoundException ex)
             {

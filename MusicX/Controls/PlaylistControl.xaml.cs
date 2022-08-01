@@ -20,6 +20,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MusicX.Helpers;
 
 namespace MusicX.Controls
 {
@@ -261,7 +262,7 @@ namespace MusicX.Controls
                     iconPlay.Symbol = WPFUI.Common.SymbolRegular.Timer20;
                     var vkService = StaticService.Container.Resolve<VkService>();
 
-                    var audios = await vkService.AudioGetAsync(Playlist.Id, Playlist.OwnerId, Playlist.AccessKey);
+                    var audios = await vkService.LoadFullPlaylistAsync(Playlist.Id, Playlist.OwnerId, Playlist.AccessKey);
 
                     await playerService.Play(0, audios.Items);
 
