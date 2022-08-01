@@ -47,8 +47,8 @@
                 <DropShadowEffect BlurRadius="8" ShadowDepth="0" Opacity="0.2" />
             </Rectangle.Effect>
         </Rectangle>
-        <Border x:Name="BackgroundBorder" CornerRadius="5" ClipToBounds="True">
-            <Rectangle x:Name="BlurringShape" RadiusX="5" RadiusY="5">
+        <Border x:Name="BackgroundBorder" ClipToBounds="True">
+            <Rectangle x:Name="BlurringShape" RadiusX="5" RadiusY="5" Margin="7">
                 <Rectangle.Fill>
                     <ImageBrush x:Name="BackgroundCard" Stretch="UniformToFill" Opacity="0.4" />
                 </Rectangle.Fill>
