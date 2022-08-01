@@ -18,7 +18,7 @@ namespace MusicX.Views;
 public partial class DownloadsView : Page
 {
 
-    private string ffmpegPath = $"{AppDomain.CurrentDomain.BaseDirectory}ffmpeg";
+    private string ffmpegPath = Path.Combine(AppContext.BaseDirectory, "ffmpeg");
 
     public DownloadsView()
     {
@@ -29,7 +29,7 @@ public partial class DownloadsView : Page
 
     private void DownloadsView_Loaded(object sender, RoutedEventArgs e)
     {
-        if(!File.Exists(ffmpegPath + "\\ffmpeg.exe"))
+        if(!File.Exists(Path.Combine(ffmpegPath, "version.json")))
         {
             NoAvalible.Visibility = Visibility.Visible;
 
@@ -51,6 +51,13 @@ public partial class DownloadsView : Page
         if(!Directory.Exists(ffmpegPath))
         {
             Directory.CreateDirectory(ffmpegPath);
+        }
+        else
+        {
+            foreach (var file in Directory.GetFiles(ffmpegPath))
+            {
+                File.Delete(file);
+            }
         }
 
         await FFmpegDownloader.GetLatestVersion(FFmpegVersion.Official, ffmpegPath, new Progress<ProgressInfo>(Client_DownloadProgressChanged));
