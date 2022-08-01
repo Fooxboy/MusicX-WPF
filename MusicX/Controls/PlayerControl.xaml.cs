@@ -14,6 +14,7 @@ using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using MusicX.Core.Models;
 using MusicX.ViewModels;
 
 namespace MusicX.Controls
@@ -39,6 +40,7 @@ namespace MusicX.Controls
 
             this.MouseWheel += PlayerControl_MouseWheel;
             
+            Queue.ItemsSource = playerService.Tracks;
         }
 
         private void PlayerControl_MouseWheel(object sender, MouseWheelEventArgs e)
@@ -107,11 +109,11 @@ namespace MusicX.Controls
                         amim.Begin();
                         var bitmapImage = new BitmapImage(new Uri(playerService.CurrentTrack.Album.Cover));
                         TrackCover.ImageSource = bitmapImage;
-                        BackgroundCard.Source = bitmapImage;
+                        BackgroundCard.ImageSource = bitmapImage;
                     }else
                     {
                         TrackCover.ImageSource = null;
-                        BackgroundCard.Source = null;
+                        BackgroundCard.ImageSource = null;
                     }
 
                     if (playerService.CurrentTrack.OwnerId == config.UserId)
@@ -125,6 +127,7 @@ namespace MusicX.Controls
 
                     }
                     DownloadButton.IsEnabled = true;
+                    Queue.ScrollIntoView(playerService.CurrentTrack);
                 });
 
 
@@ -194,7 +197,6 @@ namespace MusicX.Controls
         private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             rect.Width = this.ActualWidth;
-            rec.Rect = rect;
         }
 
         private void PositionSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -407,7 +409,7 @@ namespace MusicX.Controls
 
         private void ShuffleButton_Click(object sender, RoutedEventArgs e)
         {
-            this.playerService.SetShuffle(ShuffleButton.IsChecked.Value);
+            this.playerService.SetShuffle(true);
         }
 
         private void RepeatButton_Click(object sender, RoutedEventArgs e)
@@ -523,6 +525,11 @@ namespace MusicX.Controls
         private void TitleScroll_Loaded(object sender, RoutedEventArgs e)
         {
             //ScrollTrackName();
+        }
+        private void DeleteFromQueue_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (sender is FrameworkElement {DataContext: Audio audio})
+                playerService.RemoveFromQueue(audio);
         }
     }
 }

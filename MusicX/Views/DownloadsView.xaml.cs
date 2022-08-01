@@ -17,8 +17,8 @@ namespace MusicX.Views;
 /// </summary>
 public partial class DownloadsView : Page
 {
-
-    private string ffmpegPath = $"{AppDomain.CurrentDomain.BaseDirectory}ffmpeg";
+    private long maxTotal;
+    private string ffmpegPath = Path.Combine(AppContext.BaseDirectory, "ffmpeg");
 
     public DownloadsView()
     {
@@ -29,7 +29,7 @@ public partial class DownloadsView : Page
 
     private void DownloadsView_Loaded(object sender, RoutedEventArgs e)
     {
-        if(!File.Exists(ffmpegPath + "\\ffmpeg.exe"))
+        if(!File.Exists(Path.Combine(ffmpegPath, "version.json")))
         {
             NoAvalible.Visibility = Visibility.Visible;
 
@@ -52,6 +52,13 @@ public partial class DownloadsView : Page
         {
             Directory.CreateDirectory(ffmpegPath);
         }
+        else
+        {
+            foreach (var file in Directory.GetFiles(ffmpegPath))
+            {
+                File.Delete(file);
+            }
+        }
 
         await FFmpegDownloader.GetLatestVersion(FFmpegVersion.Official, ffmpegPath, new Progress<ProgressInfo>(Client_DownloadProgressChanged));
             
@@ -66,6 +73,11 @@ public partial class DownloadsView : Page
     {
         try
         {
+            if (progressInfo.TotalBytes >= maxTotal)
+                maxTotal = progressInfo.TotalBytes;
+            else
+                return;
+            
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 this.DonloadProgress.Maximum = progressInfo.TotalBytes;

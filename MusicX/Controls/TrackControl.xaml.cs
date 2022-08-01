@@ -122,6 +122,15 @@ namespace MusicX.Controls
             this.Cover.ImageSource = null;
         }
 
+        public static readonly DependencyProperty LoadOtherTracksProperty = DependencyProperty.Register(
+            "LoadOtherTracks", typeof(bool), typeof(TrackControl), new PropertyMetadata(true));
+
+        public bool LoadOtherTracks
+        {
+            get => (bool)GetValue(LoadOtherTracksProperty);
+            set => SetValue(LoadOtherTracksProperty, value);
+        }
+
         public static readonly DependencyProperty ShowCardProperty =
             DependencyProperty.Register("ShowCard", typeof(bool), typeof(TrackControl), new PropertyMetadata(true));
 
@@ -454,7 +463,7 @@ namespace MusicX.Controls
                     return;
                 }
 
-                await player.PlayTrack(Audio);
+                await player.PlayTrack(Audio, LoadOtherTracks);
             }catch(Exception ex)
             {
                 logger.Error(ex, ex.Message);
@@ -664,6 +673,28 @@ namespace MusicX.Controls
             }
 
 
+        }
+        private void PlayNext_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                player.InsertToQueue(Audio, true);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex);
+            }
+        }
+        private void AddToQueue_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                player.InsertToQueue(Audio, false);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex);
+            }
         }
     }
 }
