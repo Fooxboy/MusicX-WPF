@@ -420,7 +420,21 @@
                 </ListBox.ItemsPanel>
                 <ListBox.ItemTemplate>
                     <DataTemplate DataType="{x:Type models:Audio}">
-                        <local:TrackControl Audio="{Binding}" ShowCard="False" KeyDown="QueuedTrack_OnKeyDown" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <local:TrackControl Audio="{Binding}" ShowCard="False" LoadOtherTracks="False" />
+                            <wpfui:Button Grid.Column="1" 
+                                          Icon="Dismiss24"
+                                          Appearance="Transparent"
+                                          Click="DeleteFromQueue_OnClick">
+                                <wpfui:Button.ToolTip>
+                                    <ToolTip Content="Удалить из очереди"/>
+                                </wpfui:Button.ToolTip>
+                            </wpfui:Button>
+                        </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
                 <ListBox.ItemContainerStyle>

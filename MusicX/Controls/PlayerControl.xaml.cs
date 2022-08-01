@@ -13,6 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using MusicX.Core.Models;
 
 namespace MusicX.Controls
 {
@@ -514,10 +515,10 @@ namespace MusicX.Controls
         {
             //ScrollTrackName();
         }
-        private void QueuedTrack_OnKeyDown(object sender, KeyEventArgs e)
+        private void DeleteFromQueue_OnClick(object sender, RoutedEventArgs e)
         {
-            if (e.Key is Key.Delete && sender is TrackControl control)
-                playerService.Tracks.Remove(control.Audio);
+            if (sender is FrameworkElement {DataContext: Audio audio})
+                playerService.RemoveFromQueue(audio);
         }
     }
 }
