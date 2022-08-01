@@ -531,5 +531,34 @@ namespace MusicX.Controls
             if (sender is FrameworkElement {DataContext: Audio audio})
                 playerService.RemoveFromQueue(audio);
         }
+        private void ReorderButton_OnMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is FrameworkElement {TemplatedParent: FrameworkElement {TemplatedParent: ListBoxItem item}})
+                DragDrop.DoDragDrop(item, item.DataContext, DragDropEffects.Move);
+        }
+        private void ListBoxItem_OnDrop(object sender, DragEventArgs e)
+        {
+            var source = (Audio)e.Data.GetData(typeof(Audio))!;
+            var target = (Audio)((ListBoxItem)sender).DataContext;
+
+            var list = playerService.Tracks;
+            
+            var removedIdx = list.IndexOf(source);
+            var targetIdx = list.IndexOf(target);
+
+            if (removedIdx < targetIdx)
+            {
+                list.Insert(targetIdx + 1, source);
+                list.RemoveAt(removedIdx);
+            }
+            else
+            {
+                var remIdx = removedIdx+1;
+                if (list.Count + 1 <= remIdx)
+                    return;
+                list.Insert(targetIdx, source);
+                list.RemoveAt(remIdx);
+            }
+        }
     }
 }
