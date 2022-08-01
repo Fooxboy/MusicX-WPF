@@ -407,7 +407,7 @@ namespace MusicX.Controls
 
         private void ShuffleButton_Click(object sender, RoutedEventArgs e)
         {
-            this.playerService.SetShuffle(ShuffleButton.IsChecked.Value);
+            this.playerService.SetShuffle(true);
         }
 
         private void RepeatButton_Click(object sender, RoutedEventArgs e)

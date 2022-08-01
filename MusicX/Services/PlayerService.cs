@@ -657,26 +657,15 @@ namespace MusicX.Services
             try
             {
                 logger.Info("Next track");
-               
-
-                if(IsShuffle)
+                
+                if (currentIndex + 1 > Tracks.Count - 1)
                 {
-                    var index = new Random().Next(0, Tracks.Count);
-                    currentIndex = index;
-                    CurrentTrack = Tracks[index];
-                }else
-                {
-                    if (currentIndex + 1 > Tracks.Count - 1)
-                    {
-                        return;
-                    }
-
-                    CurrentTrack = Tracks[currentIndex + 1];
-                    currentIndex += 1;
+                    return;
                 }
 
-
-               
+                CurrentTrack = Tracks[currentIndex + 1];
+                currentIndex += 1;
+                
                 await Play(currentIndex, null);
             }catch(Exception ex)
             {
@@ -868,10 +857,23 @@ namespace MusicX.Services
         }
 
 
-        public void SetShuffle(bool shuffle)
+        public async void SetShuffle(bool shuffle)
         {
             logger.Info($"SET SHUFFLE: {shuffle}");
             this.IsShuffle = shuffle;
+            if (!shuffle)
+                return;
+
+            var list = Tracks.ToList();
+            for (var i = list.Count - 1; i >= 0; i--)
+            {
+                var k = Random.Shared.Next(i + 1);
+                (list[k], list[i]) = (list[i], list[k]);
+            }
+            Tracks.ReplaceRange(list);
+
+            if (CurrentTrack != Tracks[0])
+                await PlayTrack(Tracks[0], false).ConfigureAwait(false);
         }
 
         public void SetRepeat(bool repeat)

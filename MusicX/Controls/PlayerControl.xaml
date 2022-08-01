@@ -228,22 +228,18 @@
                         HorizontalAlignment="Center"
                         Orientation="Horizontal">
 
-                        <ToggleButton
+                        <wpfui:Button
                             x:Name="ShuffleButton"
                             Width="40"
                             Height="40"
                             Margin="0,0,10,0"
-                            Padding="0"
-                            HorizontalContentAlignment="Center"
-                            Click="ShuffleButton_Click">
-
-                            <wpfui:SymbolIcon Symbol="ArrowWrap20" />
-
-                            <ToggleButton.ToolTip>
+                            Click="ShuffleButton_Click"
+                            Icon="ArrowWrap20"
+                            Appearance="Transparent">
+                            <wpfui:Button.ToolTip>
                                 <ToolTip Content="В рандомном порядке" />
-                            </ToggleButton.ToolTip>
-
-                        </ToggleButton>
+                            </wpfui:Button.ToolTip>
+                        </wpfui:Button>
 
                         <wpfui:Button
                             x:Name="PrevButton"
