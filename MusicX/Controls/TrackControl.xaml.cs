@@ -21,6 +21,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MusicX.ViewModels;
 using WpfAnimatedGif;
 
 namespace MusicX.Controls
@@ -539,14 +540,14 @@ namespace MusicX.Controls
             }
         }
 
-        private async void Download_MouseDown(object sender, MouseButtonEventArgs e)
+        private void Download_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            var downloader = StaticService.Container.Resolve<Services.DownloaderService>();
+            var downloader = StaticService.Container.Resolve<DownloaderViewModel>();
 
             try
             {
-                await downloader.AddToQueueAsync(Audio);
-
+                downloader.DownloadQueue.Add(Audio);
+                downloader.StartDownloadingCommand.Execute(null);
             }catch(FileNotFoundException)
             {
                 var navigation = StaticService.Container.Resolve<Services.NavigationService>();

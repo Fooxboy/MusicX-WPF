@@ -20,6 +20,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using AsyncAwaitBestPractices;
 
 namespace MusicX.Views
 {
@@ -194,14 +195,15 @@ namespace MusicX.Views
             }
         }
 
-        private async void DownloadPlaylist_Click(object sender, RoutedEventArgs e)
+        private void DownloadPlaylist_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 this.DownloadPlaylist.IsEnabled = false;
-                var downloader = StaticService.Container.Resolve<DownloaderService>();
+                var downloader = StaticService.Container.Resolve<DownloaderViewModel>();
 
-                await downloader.AddToQueueAsync(ViewModel.Tracks, ViewModel.Title);
+                downloader.AddPlaylistToQueueAsync(ViewModel.Tracks, ViewModel.Title).SafeFireAndForget();
+                downloader.StartDownloadingCommand.Execute(null);
             }
             catch (FileNotFoundException ex)
             {

@@ -8,18 +8,16 @@
     xmlns:local="clr-namespace:MusicX.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
+    xmlns:viewModels="clr-namespace:MusicX.ViewModels"
     Title="DownloadsView"
     d:DesignHeight="450"
     d:DesignWidth="800"
+    d:DataContext="{d:DesignInstance Type=viewModels:DownloaderViewModel, IsDesignTimeCreatable=True}"
     mc:Ignorable="d">
 
     <Page.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDark.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
+        <BitmapImage x:Key="TrackIcon" UriSource="../Assets/icons/albums_white.png" />
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </Page.Resources>
 
     <Grid>
@@ -113,23 +111,19 @@
             <hc:ScrollViewer
                 Margin="0"
                 hc:ScrollViewerAttach.AutoHide="True"
-                Focusable="False"
                 HorizontalScrollBarVisibility="Disabled"
                 IsInertiaEnabled="True"
                 VerticalScrollBarVisibility="Auto">
                 <StackPanel Margin="0,0,0,0">
-                    <StackPanel
-                        x:Name="NowDownload"
-                        Margin="0,10,0,0"
-                        Visibility="Collapsed">
+                    <StackPanel Margin="0,10,0,0" Visibility="{Binding IsDownloading, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <TextBlock
                             FontFamily="{StaticResource VKSansDemiBold}"
                             FontSize="29"
                             Foreground="White"
                             Text="Сейчас загружается" />
 
-                        <Grid>
-                            <wpfui:Card Margin="0,10,0,0">
+                        <StackPanel Margin="8,10,8,0">
+                            <wpfui:Card>
                                 <StackPanel Orientation="Horizontal">
                                     <Rectangle
                                         Width="100"
@@ -137,46 +131,23 @@
                                         RadiusX="10"
                                         RadiusY="10">
                                         <Rectangle.Fill>
-                                            <ImageBrush x:Name="NowDownloadCover" />
+                                            <ImageBrush ImageSource="{Binding CurrentDownloadingAudio.Album.Cover, FallbackValue={StaticResource TrackIcon}}" />
                                         </Rectangle.Fill>
                                     </Rectangle>
 
                                     <StackPanel Margin="15,0,0,0" VerticalAlignment="Center">
                                         <TextBlock
-                                            x:Name="NowDownloadTitle"
                                             FontFamily="{StaticResource VKSansDemiBold}"
                                             FontSize="18"
                                             Foreground="White"
-                                            Text="Название аудио" />
+                                            Text="{Binding CurrentDownloadingAudio.Title, FallbackValue=Название аудио}" />
                                         <TextBlock
                                             x:Name="NowDownloadArtist"
                                             FontFamily="{StaticResource VKSansMedium}"
                                             FontSize="16"
                                             Foreground="White"
                                             Opacity="0.7"
-                                            Text="Имя исполнителя " />
-
-
-                                        <StackPanel Margin="0,20,0,0" Orientation="Horizontal">
-                                            <TextBlock
-                                                FontSize="16"
-                                                Foreground="White"
-                                                Opacity="0.7"
-                                                Text="Загружено: " />
-
-                                            <TextBlock
-                                                x:Name="NowDownloadValue"
-                                                FontSize="16"
-                                                Foreground="White"
-                                                Opacity="0.7"
-                                                Text="0" />
-                                            <TextBlock
-                                                x:Name="NowDownloadValueKind"
-                                                FontSize="16"
-                                                Foreground="White"
-                                                Opacity="0.7"
-                                                Text="КБ" />
-                                        </StackPanel>
+                                            Text="{Binding CurrentDownloadingAudio.Artist, FallbackValue=Имя исполнителя}" />
 
                                     </StackPanel>
 
@@ -185,21 +156,19 @@
 
                             <ProgressBar
                                 x:Name="NowDownloadProgress"
-                                Height="126"
-                                Margin="0,8,0,0"
+                                Margin="0,3,0,0"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
-                                Opacity="0.2"
-                                Value="20" />
-                        </Grid>
+                                Value="{Binding DownloadProgress}"
+                                Maximum="100"/>
+                        </StackPanel>
 
 
                     </StackPanel>
 
 
-                    <StackPanel x:Name="Actions">
+                    <StackPanel x:Name="Actions" Margin="8,10,8,0">
                         <TextBlock
-                            Margin="0,10,0,0"
                             FontFamily="{StaticResource VKSansDemiBold}"
                             FontSize="29"
                             Foreground="White"
@@ -210,40 +179,46 @@
                             CanMouseWheel="False"
                             HorizontalScrollBarVisibility="Auto"
                             IsInertiaEnabled="True"
-                            VerticalScrollBarVisibility="Hidden">
-                            <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+                            VerticalScrollBarVisibility="Hidden"
+                            Margin="0,10,0,0">
+                            <StackPanel Orientation="Horizontal">
                                 <wpfui:Button
-                                    x:Name="DownloadAllTracksButton"
                                     Width="300"
                                     Height="50"
                                     Appearance="Secondary"
-                                    Click="DownloadAllTracksButton_Click"
+                                    Command="{Binding QueueAllMyTracksCommand}"
                                     Content="Скачать все мои аудиозаписи"
                                     Icon="MusicNote220" />
                                 <wpfui:Button
-                                    x:Name="DownloadAllPlaylistsButton"
                                     Width="300"
                                     Height="50"
                                     Margin="5,0,0,0"
                                     Appearance="Secondary"
-                                    Click="DownloadAllPlaylistsButton_Click"
+                                    Command="{Binding QueueAllMyPlaylistsCommand}"
                                     Content="Скачать все мои плейлисты"
                                     Icon="Stream24" />
                                 <wpfui:Button
-                                    x:Name="ShowAudiosButton"
                                     Width="300"
                                     Height="50"
                                     Margin="5,0,0,0"
                                     Appearance="Secondary"
-                                    Click="ShowAudiosButton_Click"
+                                    Command="{Binding OpenMusicFolderCommand}"
                                     Content="Открыть папку с музыкой"
                                     Icon="Folder32" />
+                                <wpfui:Button
+                                    Width="300"
+                                    Height="50"
+                                    Margin="5,0,0,0"
+                                    Appearance="Secondary"
+                                    Command="{Binding ClearQueueCommand}"
+                                    Content="Очистить очередь"
+                                    Icon="ArrowRedo32"/>
                             </StackPanel>
                         </hc:ScrollViewer>
 
                     </StackPanel>
 
-                    <StackPanel x:Name="QueueDownloads" Visibility="Collapsed">
+                    <StackPanel Visibility="{Binding IsDownloading, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <TextBlock
                             Margin="0,20,0,0"
                             FontFamily="{StaticResource VKSansDemiBold}"
@@ -251,7 +226,18 @@
                             Foreground="White"
                             Text="Очередь загрузки" />
 
-                        <StackPanel x:Name="QueueTracks" Margin="0,10,0,0" />
+                        <ItemsControl ItemsSource="{Binding DownloadQueue}" Margin="5,10">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <controls:TrackControl Audio="{Binding}" ShowCard="False" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
                     </StackPanel>
 
                     <StackPanel x:Name="DownloadedMusic" Visibility="Collapsed">

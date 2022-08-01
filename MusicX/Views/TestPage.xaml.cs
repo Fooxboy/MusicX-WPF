@@ -17,6 +17,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MusicX.ViewModels;
 
 namespace MusicX.Views
 {
@@ -79,9 +80,9 @@ namespace MusicX.Views
 
         }
 
-        private async void download_Click(object sender, RoutedEventArgs e)
+        private void download_Click(object sender, RoutedEventArgs e)
         {
-            var downloader = StaticService.Container.Resolve<Services.DownloaderService>();
+            var downloader = StaticService.Container.Resolve<DownloaderViewModel>();
 
             var audio = new Audio()
             {
@@ -89,9 +90,8 @@ namespace MusicX.Views
                 Title = "track name",
                 Url = url.Text
             };
-
-            await downloader.AddToQueueAsync(audio);
-
+            
+            downloader.DownloadQueue.Add(audio);
         }
     }
 }
