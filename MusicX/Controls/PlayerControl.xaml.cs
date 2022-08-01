@@ -124,6 +124,7 @@ namespace MusicX.Controls
                         LikeIcon.Filled = false;
 
                     }
+                    DownloadButton.IsEnabled = true;
                 });
 
 
