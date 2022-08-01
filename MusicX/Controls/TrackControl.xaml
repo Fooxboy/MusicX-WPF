@@ -231,6 +231,7 @@
                             x:Name="explicitBadge"
                             Width="16"
                             Height="16"
+                            Margin="5,0,0,0"
                             BorderBrush="White"
                             BorderThickness="1"
                             CornerRadius="2"

@@ -177,6 +177,8 @@ namespace MusicX.Controls
                 if (ShowCard) this.Card.Visibility = Visibility.Visible;
                 else this.Card.Visibility = Visibility.Collapsed;
 
+                Subtitle.Visibility = string.IsNullOrEmpty(Audio.Subtitle) ? Visibility.Collapsed : Visibility.Visible;
+
                 Title.Text = Audio.Title;
                 Subtitle.Text = Audio.Subtitle;
                 if (ChartPosition != 0)
