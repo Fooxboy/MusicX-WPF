@@ -52,6 +52,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="6.0.5" />
     <PackageReference Include="DryIoc" Version="4.8.7" />
     <PackageReference Include="HandyControl" Version="3.3.0" />
     <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.5.1" />

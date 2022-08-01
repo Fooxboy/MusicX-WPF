@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using AsyncAwaitBestPractices;
+using AsyncAwaitBestPractices.MVVM;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
+using MusicX.Helpers;
 using MusicX.Services;
 using NLog;
 using WPFUI.Common;
@@ -17,7 +21,7 @@ namespace MusicX.ViewModels;
 
 public class DownloaderViewModel : BaseViewModel
 {
-    public ObservableCollection<Audio> DownloadQueue { get; } = new();
+    public ObservableRangeCollection<Audio> DownloadQueue { get; } = new();
     public Audio? CurrentDownloadingAudio { get; set; }
     public int DownloadProgress { get; set; }
     public bool IsDownloading { get; set; }
@@ -45,25 +49,29 @@ public class DownloaderViewModel : BaseViewModel
         this.vkService = vkService;
         this.configService = configService;
         progress = new Progress<ConversionProgressEventArgs>(args => DownloadProgress = args.Percent);
-
+        
         StartDownloadingCommand = new RelayCommand(StartDownloading);
         StopDownloadingCommand = new RelayCommand(StopDownloading);
         ClearQueueCommand = new RelayCommand(ClearQueue);
-        QueueAllMyTracksCommand = new RelayCommand(QueueAllMyTracks);
-        QueueAllMyPlaylistsCommand = new RelayCommand(QueueAllMyPlaylists);
-        OpenMusicFolderCommand = new RelayCommand(OpenMusicFolder);
+        QueueAllMyTracksCommand = new AsyncCommand(QueueAllMyTracks);
+        QueueAllMyPlaylistsCommand = new AsyncCommand(QueueAllMyPlaylists);
+        OpenMusicFolderCommand = new AsyncCommand(OpenMusicFolder);
     }
 
-    public void AddPlaylistToQueue(IEnumerable<Audio> tracks, string title)
+    public async ValueTask AddPlaylistToQueueAsync(IEnumerable<Audio> tracks, string title)
     {
         foreach (var track in tracks)
         {
             track.DownloadPlaylistName = title;
-            DownloadQueue.Add(track);
         }
+        if (Application.Current.Dispatcher.CheckAccess())
+            DownloadQueue.AddRange(tracks, NotifyCollectionChangedAction.Reset);
+        else
+            await Application.Current.Dispatcher.InvokeAsync(() => DownloadQueue.AddRange(tracks));
+        notificationsService.Show("Скачивание начато", $"{title} добавлен в очередь");
     }
 
-    private async void OpenMusicFolder()
+    private async Task OpenMusicFolder()
     {
         var config = await configService.GetConfig();
         
@@ -77,7 +85,7 @@ public class DownloaderViewModel : BaseViewModel
         });
     }
 
-    private async void QueueAllMyTracks()
+    private async Task QueueAllMyTracks()
     {
         if (await downloaderService.CheckExistAllDownloadTracksAsync()) return;
         var tracks = new List<Audio>();
@@ -91,11 +99,11 @@ public class DownloaderViewModel : BaseViewModel
             if (tr.Items.Count < 100) break;
         }
 
-        AddPlaylistToQueue(tracks, "Музыка ВКонтакте");
+        await AddPlaylistToQueueAsync(tracks, "Музыка ВКонтакте");
         StartDownloading();
     }
 
-    private async void QueueAllMyPlaylists()
+    private async Task QueueAllMyPlaylists()
     {
         var config = await configService.GetConfig();
             
@@ -105,7 +113,7 @@ public class DownloaderViewModel : BaseViewModel
         {
             var tracks = await vkService.AudioGetAsync(playlist.Id, playlist.OwnerId, playlist.AccessKey);
 
-            AddPlaylistToQueue(tracks.Items, playlist.Title!);
+            await AddPlaylistToQueueAsync(tracks.Items, playlist.Title!);
         }
         
         StartDownloading();
@@ -113,11 +121,10 @@ public class DownloaderViewModel : BaseViewModel
 
     private void StartDownloading()
     {
-        if (!IsDownloading)
-        {
-            tokenSource = new();
-            Task.Run(() => DownloaderTask(tokenSource.Token), tokenSource.Token);
-        }
+        if (IsDownloading)
+            return;
+        tokenSource = new();
+        DownloaderTask(tokenSource.Token).SafeFireAndForget();
     }
 
     private void StopDownloading()
