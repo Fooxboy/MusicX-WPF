@@ -17,7 +17,7 @@ namespace MusicX.Views;
 /// </summary>
 public partial class DownloadsView : Page
 {
-
+    private long maxTotal;
     private string ffmpegPath = Path.Combine(AppContext.BaseDirectory, "ffmpeg");
 
     public DownloadsView()
@@ -73,6 +73,11 @@ public partial class DownloadsView : Page
     {
         try
         {
+            if (progressInfo.TotalBytes >= maxTotal)
+                maxTotal = progressInfo.TotalBytes;
+            else
+                return;
+            
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 this.DonloadProgress.Maximum = progressInfo.TotalBytes;
