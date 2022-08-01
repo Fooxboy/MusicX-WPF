@@ -38,46 +38,47 @@
 
     <Grid x:Name="ContentGrid">
 
-        <StackPanel>
+        <ScrollViewer>
+            <StackPanel>
 
-            <Button Content="Test" />
-            <!--<music:BigBannerControl HorizontalAlignment="Stretch" Margin="-00 0 -20 0" Height="600" />-->
+                <Button Content="Test" />
+                <!--<music:BigBannerControl HorizontalAlignment="Stretch" Margin="-00 0 -20 0" Height="600" />-->
 
-            <StackPanel
+                <StackPanel
                 x:Name="stackPanel"
                 Margin="0,20,-800,10"
                 RenderTransformOrigin="0.5,0.5">
-                <StackPanel.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform />
-                        <SkewTransform />
-                        <RotateTransform />
-                        <TranslateTransform />
-                    </TransformGroup>
-                </StackPanel.RenderTransform>
+                    <StackPanel.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform />
+                            <SkewTransform />
+                            <RotateTransform />
+                            <TranslateTransform />
+                        </TransformGroup>
+                    </StackPanel.RenderTransform>
 
 
 
 
-                <Button
+                    <Button
                     x:Name="OpenModal"
                     Width="300"
                     HorizontalAlignment="Left"
                     Click="OpenModal_Click"
                     Content="Открыть модалку" />
 
-                <TextBlock
+                    <TextBlock
                     Margin="0,30,0,0"
                     FontFamily="{StaticResource VKSansBold}"
                     FontSize="20"
                     Foreground="White"
                     Text="Открыть секцию по id" />
-                <TextBox
+                    <TextBox
                     x:Name="section"
                     Width="400"
                     Margin="0,10,0,0"
                     HorizontalAlignment="Left" />
-                <wpfui:Button
+                    <wpfui:Button
                     x:Name="OpenSectionButton"
                     Width="300"
                     Margin="0,10,0,0"
@@ -87,18 +88,18 @@
                     Content="Открыть" />
 
 
-                <TextBlock
+                    <TextBlock
                     Margin="0,30,0,0"
                     FontFamily="{StaticResource VKSansBold}"
                     FontSize="20"
                     Foreground="White"
                     Text="Открыть страницу исполнителя по id" />
-                <TextBox
+                    <TextBox
                     x:Name="artist"
                     Width="400"
                     Margin="0,10,0,0"
                     HorizontalAlignment="Left" />
-                <wpfui:Button
+                    <wpfui:Button
                     x:Name="openArtist"
                     Width="300"
                     Margin="0,10,0,0"
@@ -106,7 +107,7 @@
                     Appearance="Transparent"
                     Click="openArtist_Click"
                     Content="Открыть" />
-                <wpfui:Button
+                    <wpfui:Button
                     x:Name="showNotification"
                     Width="300"
                     Margin="0,50,0,0"
@@ -115,18 +116,18 @@
                     Click="showNotification_Click"
                     Content="Показать уведомление" />
 
-                <TextBlock
+                    <TextBlock
                     Margin="0,30,0,0"
                     FontFamily="{StaticResource VKSansBold}"
                     FontSize="20"
                     Foreground="White"
                     Text="Скачать трек по ссылке" />
-                <TextBox
+                    <TextBox
                     x:Name="url"
                     Width="400"
                     Margin="0,10,0,0"
                     HorizontalAlignment="Left" />
-                <wpfui:Button
+                    <wpfui:Button
                     x:Name="download"
                     Width="300"
                     Margin="0,10,0,0"
@@ -135,8 +136,26 @@
                     Click="download_Click"
                     Content="Скачать" />
 
+                </StackPanel>
+
+
+
+                <StackPanel >   
+                    <TextBlock  Margin="0,30,0,0"
+                    FontFamily="{StaticResource VKSansBold}"
+                    FontSize="20"
+                    Foreground="White" Text="LastFM Test auth"/>
+
+                    <Button Height="40" Content="Открыть" x:Name="OpenLastFMAuth" Click="OpenLastFMAuth_Click"/>
+
+                   
+                    <Button Height="40" Content="Готово" x:Name="ready" Click="ready_Click"/>
+
+                </StackPanel>
             </StackPanel>
-        </StackPanel>
+
+        </ScrollViewer>
+
 
 
     </Grid>

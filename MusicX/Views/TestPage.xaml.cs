@@ -1,7 +1,10 @@
 ﻿using DryIoc;
 using MusicX.Core.Models;
+using MusicX.Core.Services;
 using MusicX.Services;
 using MusicX.Views.Modals;
+using System.Diagnostics;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -92,6 +95,27 @@ namespace MusicX.Views
 
             await downloader.AddToQueueAsync(audio);
 
+        }
+
+        private async void OpenLastFMAuth_Click(object sender, RoutedEventArgs e)
+        {
+            var lastFmService = StaticService.Container.Resolve<LastFMService>();
+
+            var url = lastFmService.GetUrlAuth();
+
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = url,
+                UseShellExecute = true
+            });
+
+        }
+
+        private async void ready_Click(object sender, RoutedEventArgs e)
+        {
+            var lastFmService = StaticService.Container.Resolve<LastFMService>();
+
+            await lastFmService.ScrobbleAsync(new Audio() { Title = "Мы смогли", Artist = "Johnyboy", Duration = 140 });
         }
     }
 }

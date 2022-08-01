@@ -44,6 +44,7 @@ namespace MusicX.Views
                 container.Register<ServerService>(Reuse.Singleton);
                 container.Register<GithubService>(Reuse.Singleton);
                 container.Register<DiscordService>(Reuse.Singleton);
+                container.Register<LastFMService>(Reuse.Singleton);
                 container.RegisterInstance<Logger>(LogManager.Setup().GetLogger("Common"));
 
                 container.Register<SectionViewModel>(Reuse.Singleton);
