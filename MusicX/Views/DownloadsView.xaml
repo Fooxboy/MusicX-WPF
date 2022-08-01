@@ -16,14 +16,8 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDark.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-            <BitmapImage x:Key="TrackIcon" UriSource="../Assets/icons/albums_white.png" />
-            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-        </ResourceDictionary>
+        <BitmapImage x:Key="TrackIcon" UriSource="../Assets/icons/albums_white.png" />
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </Page.Resources>
 
     <Grid>
@@ -117,7 +111,6 @@
             <hc:ScrollViewer
                 Margin="0"
                 hc:ScrollViewerAttach.AutoHide="True"
-                Focusable="False"
                 HorizontalScrollBarVisibility="Disabled"
                 IsInertiaEnabled="True"
                 VerticalScrollBarVisibility="Auto">
@@ -129,8 +122,8 @@
                             Foreground="White"
                             Text="Сейчас загружается" />
 
-                        <Grid>
-                            <wpfui:Card Margin="0,10,0,0">
+                        <StackPanel Margin="8,10,8,0">
+                            <wpfui:Card>
                                 <StackPanel Orientation="Horizontal">
                                     <Rectangle
                                         Width="100"
@@ -163,22 +156,19 @@
 
                             <ProgressBar
                                 x:Name="NowDownloadProgress"
-                                Height="126"
-                                Margin="0,8,0,0"
+                                Margin="0,3,0,0"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
-                                Opacity="0.2"
                                 Value="{Binding DownloadProgress}"
                                 Maximum="100"/>
-                        </Grid>
+                        </StackPanel>
 
 
                     </StackPanel>
 
 
-                    <StackPanel x:Name="Actions">
+                    <StackPanel x:Name="Actions" Margin="8,10,8,0">
                         <TextBlock
-                            Margin="0,10,0,0"
                             FontFamily="{StaticResource VKSansDemiBold}"
                             FontSize="29"
                             Foreground="White"
@@ -189,8 +179,9 @@
                             CanMouseWheel="False"
                             HorizontalScrollBarVisibility="Auto"
                             IsInertiaEnabled="True"
-                            VerticalScrollBarVisibility="Hidden">
-                            <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+                            VerticalScrollBarVisibility="Hidden"
+                            Margin="0,10,0,0">
+                            <StackPanel Orientation="Horizontal">
                                 <wpfui:Button
                                     Width="300"
                                     Height="50"
@@ -221,8 +212,7 @@
                                     Appearance="Secondary"
                                     Command="{Binding ClearQueueCommand}"
                                     Content="Очистить очередь"
-                                    Icon="ArrowRedo32"
-                                    Visibility="{Binding DownloadQueue, Converter={StaticResource EmptyListVisibilityConverter}}"/>
+                                    Icon="ArrowRedo32"/>
                             </StackPanel>
                         </hc:ScrollViewer>
 
@@ -236,16 +226,18 @@
                             Foreground="White"
                             Text="Очередь загрузки" />
 
-                        <ListBox ItemsSource="{Binding DownloadQueue}" Margin="0,10,0,0">
-                            <ListBox.ItemTemplate>
+                        <ItemsControl ItemsSource="{Binding DownloadQueue}" Margin="5,10">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <StackPanel>
-                                        <controls:TrackControl Audio="{Binding}" ShowCard="False" />
-                                        <Rectangle Height="1" Fill="White" Margin="5,0,5,5" Opacity="0.2" />
-                                    </StackPanel>
+                                    <controls:TrackControl Audio="{Binding}" ShowCard="False" />
                                 </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
                     </StackPanel>
 
                     <StackPanel x:Name="DownloadedMusic" Visibility="Collapsed">
