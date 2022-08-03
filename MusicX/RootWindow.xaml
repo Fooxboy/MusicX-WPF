@@ -23,6 +23,22 @@
             ResizeBorderThickness="8"
             UseAeroCaptionButtons="False" />
     </WindowChrome.WindowChrome>
+    
+    <Window.TaskbarItemInfo>
+        <TaskbarItemInfo>
+            <TaskbarItemInfo.ThumbButtonInfos>
+                <ThumbButtonInfo Description="Назад"
+                                 ImageSource="Assets/icons/ic_fluent_previous_24_regular.png"
+                                 Click="Previous_OnClick"/>
+                <ThumbButtonInfo Description="Воспроизвести/Пауза"
+                                 ImageSource="Assets/icons/ic_fluent_video_play_pause_24_regular.png"
+                                 Click="PlayPause_OnClick"/>
+                <ThumbButtonInfo Description="Вперед"
+                                 ImageSource="Assets/icons/ic_fluent_next_24_regular.png"
+                                 Click="Next_OnClick"/>
+            </TaskbarItemInfo.ThumbButtonInfos>
+        </TaskbarItemInfo>
+    </Window.TaskbarItemInfo>
 
     <Window.Resources>
         <FontFamily x:Key="SegoeFluentIcons">pack://application:,,,/;component/Fonts/#Segoe Fluent Icons</FontFamily>
