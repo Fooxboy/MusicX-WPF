@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Cache;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -47,22 +48,34 @@ namespace MusicX.Controls
             player.TrackChangedEvent += Player_TrackChangedEvent;
             player.PlayStateChangedEvent += Player_PlayStateChangedEvent;
 
-            this.Unloaded += TrackControl_Unloaded;
+        }
 
+        private void UpdatePlayingAnimation(bool autoStart)
+        {
+            if (ImageBehavior.GetAnimationController(PanelAnim) is { } controller)
+            {
+                if (autoStart)
+                {
+                    controller.Play();
+                }
+                else
+                {
+                    controller.Pause();
+                    controller.GotoFrame(0);
+                }
+                return;
+            }
+            
+            ImageBehavior.SetAutoStart(PanelAnim, autoStart);
+            ImageBehavior.SetAnimatedSource(PanelAnim, new BitmapImage(new("../Assets/play.gif", UriKind.Relative)));
         }
 
         private void Player_PlayStateChangedEvent(object? sender, EventArgs e)
         {
             if(player.CurrentTrack != null && player.CurrentTrack.Id == this.Audio.Id)
             {
-                if(player.IsPlaying)
-                {
-                    this.IconPlay.Symbol = WPFUI.Common.SymbolRegular.Pause24;
-
-                }else
-                {
-                    this.IconPlay.Symbol = WPFUI.Common.SymbolRegular.Play24;
-                }
+                this.IconPlay.Symbol = player.IsPlaying ? WPFUI.Common.SymbolRegular.Pause24 : WPFUI.Common.SymbolRegular.Play24;
+                UpdatePlayingAnimation(player.IsPlaying);
             }
         }
 
@@ -77,31 +90,22 @@ namespace MusicX.Controls
                     Card.Opacity = 100;
                 }
 
-                var img = new System.Windows.Controls.Image();
-
-                var image = new BitmapImage();
-                image.BeginInit();
-                var local = AppDomain.CurrentDomain.BaseDirectory;
-                image.UriSource = new Uri($"{local}/Assets/play.gif");
-                image.EndInit();
-                ImageBehavior.SetAnimatedSource(img, image);
-
 
                 PlayButtons.Visibility = Visibility.Visible;
-                Rect.Fill = Brushes.White;
                 IconPlay.Visibility = Visibility.Collapsed;
 
                 this.IconPlay.Visibility = Visibility.Collapsed;
 
-                PanelAnim.Children.Add(img);
+                UpdatePlayingAnimation(player.IsPlaying);
+                PanelAnim.Visibility = Visibility.Visible;
             }
             else
             {
                 PlayButtons.Visibility = Visibility.Collapsed;
-                Rect.Fill = Brushes.Black;
 
                 IconPlay.Visibility = Visibility.Visible;
-                PanelAnim.Children.Clear();
+                ImageBehavior.GetAnimationController(PanelAnim)?.Pause();
+                PanelAnim.Visibility = Visibility.Collapsed;
 
                 if (!ShowCard)
                 {
@@ -115,11 +119,6 @@ namespace MusicX.Controls
                 this.IconPlay.Visibility = Visibility.Visible;
                 this.IconPlay.Symbol = WPFUI.Common.SymbolRegular.Play24;
             }
-        }
-
-        private void TrackControl_Unloaded(object sender, RoutedEventArgs e)
-        {
-            this.Cover.ImageSource = null;
         }
 
         public static readonly DependencyProperty LoadOtherTracksProperty = DependencyProperty.Register(
@@ -204,7 +203,13 @@ namespace MusicX.Controls
                 {
                     if (Audio.Album != null)
                     {
-                        if (Audio.Album.Cover != null) Cover.ImageSource = new BitmapImage(new Uri(Audio.Album.Cover)) { DecodePixelHeight = 45, DecodePixelWidth = 45, CacheOption = BitmapCacheOption.None };
+                        if (Audio.Album.Cover != null)
+                            Cover.ImageSource = new BitmapImage(new Uri(Audio.Album.Cover))
+                            {
+                                DecodePixelHeight = 45, 
+                                DecodePixelWidth = 45, 
+                                UriCachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.Default)
+                            };
 
                     }
                 }
@@ -287,23 +292,12 @@ namespace MusicX.Controls
 
                 if (player.CurrentTrack != null && player.CurrentTrack.Id == this.Audio.Id)
                 {
-                    var img = new System.Windows.Controls.Image();
-
-                    var image = new BitmapImage();
-                    image.BeginInit();
-                    var local = AppDomain.CurrentDomain.BaseDirectory;
-                    image.UriSource = new Uri($"{local}/Assets/play.gif");
-                    image.EndInit();
-                    ImageBehavior.SetAnimatedSource(img, image);
-
-
                     PlayButtons.Visibility = Visibility.Visible;
-                    Rect.Fill = Brushes.White;
                     IconPlay.Visibility = Visibility.Collapsed;
 
                     this.IconPlay.Visibility = Visibility.Collapsed;
-
-                    PanelAnim.Children.Add(img);
+                    UpdatePlayingAnimation(player.IsPlaying);
+                    PanelAnim.Visibility = Visibility.Visible;
 
                     if (!ShowCard)
                     {
@@ -608,25 +602,6 @@ namespace MusicX.Controls
                 logger.Error(ex, ex.Message);
             }
             
-        }
-
-        private void RecommendedAudio_MouseEnter(object sender, MouseEventArgs e)
-        {
-            this.Cursor = Cursors.Hand;
-
-          
-            var amim = (Storyboard)(this.Resources["OpenAnimation"]);
-            amim.Begin();
-        }
-
-        private void RecommendedAudio_MouseLeave(object sender, MouseEventArgs e)
-        {
-            this.Cursor = Cursors.Arrow;
-
-          
-
-            var amim = (Storyboard)(this.Resources["CloseAnimation"]);
-            amim.Begin();
         }
 
         private async void RecommendedAudio_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

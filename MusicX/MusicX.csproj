@@ -97,9 +97,9 @@
     <Resource Include="Assets\lottie\play.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Content Include="Assets\play.gif">
+    <Resource Include="Assets\play.gif">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    </Resource>
     <Resource Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
