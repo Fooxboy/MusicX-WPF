@@ -222,26 +222,27 @@ namespace MusicX.Controls
 
                 Time.Text = time;
 
-                if (Audio.MainArtists?.Count > 0)
+                if (Audio.MainArtists is null or {Count: 0})
                 {
-                    string s = string.Empty;
-                    foreach (var trackArtist in Audio.MainArtists)
-                    {
-                        s += trackArtist.Name + ", ";
-                        var text = new TextBlock() { Text = trackArtist.Name, Tag = trackArtist.Id, Foreground = Brushes.White };
-                        text.MouseLeftButtonDown += Text_MouseLeftButtonDown;
-                        GoToArtistMenu.Items.Add(text);
-                    }
-
-                    var artists = s.Remove(s.Length - 2);
-
-                    Artists.Text = artists;
-
+                    Artists.Text = Audio.Artist;
+                    Artists.MouseEnter += Artists_MouseEnter;
+                    Artists.MouseLeave += Artists_MouseLeave;
+                    Artists.MouseLeftButtonDown += Artists_MouseLeftButtonDown;
+                    
+                    AddArtistContextMenu(Audio.Artist, Audio.Artist);
                 }
                 else
                 {
-                    Artists.Text = Audio.Artist;
+                    Artists.Inlines.Clear();
+                    AddArtists(Audio.MainArtists);
                 }
+                
+                if (Audio.FeaturedArtists?.Count > 0)
+                    Artists.Inlines.Add(" feat. ");
+                if (Audio.FeaturedArtists is not null)
+                    AddArtists(Audio.FeaturedArtists);
+                
+                
 
 
                 var configService = StaticService.Container.Resolve<Services.ConfigService>();
@@ -321,11 +322,40 @@ namespace MusicX.Controls
             }
             
         }
+        private void AddArtists(IEnumerable<MainArtist> artists)
+        {
+            var first = true;
+            foreach (var artist in artists)
+            {
+                if (first)
+                    first = false;
+                else
+                    Artists.Inlines.Add(", ");
+                        
+                var textBlock = new TextBlock
+                {
+                    Text = artist.Name,
+                    DataContext = artist
+                };
+                    
+                textBlock.MouseEnter += Artists_MouseEnter;
+                textBlock.MouseLeave += Artists_MouseLeave;
+                textBlock.MouseLeftButtonDown += Artists_MouseLeftButtonDown;
+                    
+                Artists.Inlines.Add(textBlock);
+
+                AddArtistContextMenu(artist.Name, artist.Id);
+            }
+        }
+        private void AddArtistContextMenu(string artistName, string id)
+        {
+            var text = new TextBlock { Text = artistName, Tag = id, Foreground = Brushes.White };
+            text.MouseLeftButtonDown += Text_MouseLeftButtonDown;
+            GoToArtistMenu.Items.Add(text);
+        }
 
         private async void Text_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-           var textBlock = (TextBlock)sender;
-            
             try
             {
                 var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
@@ -336,11 +366,12 @@ namespace MusicX.Controls
                 }
                 else
                 {
-                    await navigationService.OpenArtistSection(Audio.MainArtists[0].Id);
+                    await navigationService.OpenArtistSection((string)((TextBlock)sender).Tag);
                 }
             }catch(Exception ex)
             {
                 logger.Error(ex, ex.Message);
+                StaticService.Container.Resolve<NotificationsService>().Show("Ошибка", "Нам не удалось перейти на эту секцию");
             }
 
         }
@@ -471,9 +502,9 @@ namespace MusicX.Controls
         {
             try
             {
-                if (Artists == null) return;
-
-                Artists.TextDecorations.Add(TextDecorations.Underline);
+                if (sender is not TextBlock block)
+                    return;
+                block.TextDecorations.Add(TextDecorations.Underline);
                 this.Cursor = Cursors.Hand;
             }catch (Exception ex)
             {
@@ -487,10 +518,11 @@ namespace MusicX.Controls
         {
             try
             {
-                if (Artists == null) return;
+                if (sender is not TextBlock block)
+                    return;
                 foreach (var dec in TextDecorations.Underline)
                 {
-                    Artists.TextDecorations.Remove(dec);
+                    block.TextDecorations.Remove(dec);
                 }
                 this.Cursor = Cursors.Arrow;
             }catch (Exception ex)
@@ -512,9 +544,9 @@ namespace MusicX.Controls
                 {
                     await navigationService.OpenSearchSection(Audio.Artist);
                 }
-                else
+                else if (sender is FrameworkElement {DataContext: MainArtist artist})
                 {
-                    await navigationService.OpenArtistSection(Audio.MainArtists[0].Id);
+                    await navigationService.OpenArtistSection(artist.Id);
                 }
 
                 clickToArtist = false;
@@ -524,6 +556,7 @@ namespace MusicX.Controls
                 clickToArtist = false;
 
                 logger.Error(ex, ex.Message);
+                StaticService.Container.Resolve<NotificationsService>().Show("Ошибка", "Нам не удалось перейти на эту секцию");
             }
         }
 
