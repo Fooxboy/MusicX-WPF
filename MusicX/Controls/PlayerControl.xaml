@@ -408,7 +408,7 @@
                 </Grid>
 
             </StackPanel>
-            <ListBox Grid.Row="1" x:Name="Queue" Height="0">
+            <ListBox Grid.Row="1" x:Name="Queue" Height="0" AllowDrop="True">
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Vertical" />
@@ -418,11 +418,13 @@
                     <DataTemplate DataType="{x:Type models:Audio}">
                         <Grid>
                             <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <local:TrackControl Audio="{Binding}" ShowCard="False" LoadOtherTracks="False" />
-                            <wpfui:Button Grid.Column="1" 
+                            <wpfui:SymbolIcon Symbol="ReOrderDotsVertical24" MouseDown="ReorderButton_OnMouseDown" />
+                            <local:TrackControl Grid.Column="1" Audio="{Binding}" ShowCard="False" LoadOtherTracks="False" />
+                            <wpfui:Button Grid.Column="2" 
                                           Icon="Dismiss24"
                                           Appearance="Transparent"
                                           Click="DeleteFromQueue_OnClick">
@@ -436,6 +438,7 @@
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
                         <Setter Property="Focusable" Value="False" />
+                        <EventSetter Event="Drop" Handler="ListBoxItem_OnDrop"/>
                     </Style>
                 </ListBox.ItemContainerStyle>
             </ListBox>
