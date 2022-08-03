@@ -33,13 +33,22 @@ namespace MusicX.Services
         private long loadedPlaylistIdTracks;
         public readonly ObservableRangeCollection<Audio> Tracks = new();
         public Audio CurrentTrack;
-        public Audio NextPlayTrack;
+        public Audio NextPlayTrack
+        {
+            get => _nextPlayTrack;
+            set
+            {
+                _nextPlayTrack = value;
+                Application.Current.Dispatcher.BeginInvoke(() => NextTrackChanged?.Invoke(this, EventArgs.Empty));
+            }
+        }
         private DispatcherTimer _positionTimer;
         private readonly MediaPlayer player;
 
         public bool IsShuffle { get; set; }
         public bool IsRepeat { get; set; }
 
+        public event EventHandler? NextTrackChanged;
         public event EventHandler PlayStateChangedEvent;
         public event EventHandler<TimeSpan> PositionTrackChangedEvent;
         public event EventHandler TrackChangedEvent;
@@ -995,6 +1004,8 @@ namespace MusicX.Services
                 
                 Tracks.Add(audio);
             }
+            
+            await Application.Current.Dispatcher.InvokeAsync(() => NextTrackChanged?.Invoke(this, EventArgs.Empty));
         }
     }
 }
