@@ -25,5 +25,5 @@ jobs:
       uses: actions/upload-artifact@v3.1.0
       with:
         name: release-${{ matrix.node-version}}
-        path: ${{ github.workspace }}
+        path: ${{ github.workspace }}/MusicX/bin/Debug/
 
