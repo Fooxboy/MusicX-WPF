@@ -73,6 +73,15 @@ namespace MusicX.Controls
             
             try
             {
+                var player = StaticService.Container.Resolve<PlayerService>();
+                player.CurrentPlaylistChanged += PlayerOnCurrentPlaylistChanged;
+
+                if (player.CurrentPlaylistId == Playlist.Id)
+                {
+                    nowPlay = true;
+                    iconPlay.Symbol = WPFUI.Common.SymbolRegular.Pause24;
+                }
+                
                 if (ShowFull)
                 {
                     Card.Opacity = 0;
@@ -200,6 +209,21 @@ namespace MusicX.Controls
                 this.Visibility = Visibility.Collapsed;
             }
         }
+        private void PlayerOnCurrentPlaylistChanged(object? sender, EventArgs e)
+        {
+            if (sender is not PlayerService service)
+                return;
+
+            if (service.CurrentPlaylistId == Playlist?.Id)
+            {
+                nowPlay = true;
+                iconPlay.Symbol = WPFUI.Common.SymbolRegular.Pause24;
+            }
+            else
+            {
+                iconPlay.Symbol = WPFUI.Common.SymbolRegular.Play24;
+            }
+        }
 
         private void UserControl_MouseEnter(object sender, MouseEventArgs e)
         {
@@ -265,6 +289,7 @@ namespace MusicX.Controls
                     var audios = await vkService.LoadFullPlaylistAsync(Playlist.Id, Playlist.OwnerId, Playlist.AccessKey);
 
                     await playerService.Play(0, audios.Items);
+                    playerService.CurrentPlaylistId = Playlist.Id;
 
                     iconPlay.Symbol = WPFUI.Common.SymbolRegular.Pause24;
 

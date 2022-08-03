@@ -33,7 +33,7 @@ public class BlockButtonViewModel : BaseViewModel
 
                     var res = await vkService.GetBlockItemsAsync(Action.BlockId);
 
-                    await playerService.Play(0, res.Audios);
+                    await playerService.PlayTrack(res.Audios[0]);
                     break;
                 }
                 case "create_playlist":
