@@ -16,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using MusicX.Core.Models;
 using MusicX.ViewModels;
+using WPFUI.Common;
 
 namespace MusicX.Controls
 {
@@ -209,26 +210,22 @@ namespace MusicX.Controls
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (playerService == null) return;
-
-            if (e.NewValue == 0.0)
-            {
-                SpeakerIcon.Symbol = WPFUI.Common.SymbolRegular.SpeakerOff28;
-            }
-            else if (e.NewValue > 0.0 && e.NewValue < 0.30)
-            {
-                SpeakerIcon.Symbol = WPFUI.Common.SymbolRegular.Speaker032;
-            }
-            else if (e.NewValue > 0.30 && e.NewValue < 0.60)
-            {
-                SpeakerIcon.Symbol = WPFUI.Common.SymbolRegular.Speaker132;
-            }
-            else if (e.NewValue > 0.80)
-            {
-                SpeakerIcon.Symbol = WPFUI.Common.SymbolRegular.Speaker232;
-            }
-
-
             playerService.SetVolume(e.NewValue);
+            playerService.IsMuted = false;
+            UpdateSpeakerIcon();
+        }
+
+        private void UpdateSpeakerIcon()
+        {
+            SpeakerIcon.Icon = playerService.Volume switch
+            {
+                _ when playerService.IsMuted => SymbolRegular.SpeakerOff28,
+                0.0 => SymbolRegular.SpeakerOff28,
+                > 0.0 and < 0.30 => SymbolRegular.Speaker032,
+                > 0.30 and < 0.60 => SymbolRegular.Speaker132,
+                > 0.80 => SymbolRegular.Speaker232,
+                _ => SpeakerIcon.Icon
+            };
         }
 
         private async void PlayPauseButton_Click(object sender, RoutedEventArgs e)
@@ -284,6 +281,7 @@ namespace MusicX.Controls
 
             var conf = await configService.GetConfig();
             conf.Volume = (int)value;
+            conf.IsMuted = playerService.IsMuted;
 
 
             await configService.SetConfig(conf);
@@ -362,8 +360,10 @@ namespace MusicX.Controls
             var value = (config.Volume.Value / 100D);
 
             playerService.SetVolume(value);
-
+            
             Volume.Value = value;
+            playerService.IsMuted = config.IsMuted;
+            UpdateSpeakerIcon();
         }
 
         DispatcherTimer timer = new DispatcherTimer();
@@ -559,6 +559,11 @@ namespace MusicX.Controls
                 list.Insert(targetIdx, source);
                 list.RemoveAt(remIdx);
             }
+        }
+        private void SpeakerIcon_OnClick(object sender, RoutedEventArgs e)
+        {
+            playerService.IsMuted = !playerService.IsMuted;
+            UpdateSpeakerIcon();
         }
     }
 }
