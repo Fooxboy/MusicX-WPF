@@ -293,8 +293,8 @@ namespace MusicX.Services
 
                         logger.Info($"Load tracks with playlist id {plViewModel.Playlist.Id}");
 
-                        await plViewModel.LoadFull();
-                        await Application.Current.Dispatcher.InvokeAsync(() => Tracks.ReplaceRange(plViewModel.Tracks));
+                        var fullPlaylist = await vkService.LoadFullPlaylistAsync(plViewModel.Playlist.Id, plViewModel.Playlist.OwnerId, plViewModel.Playlist.AccessKey);
+                        await Application.Current.Dispatcher.InvokeAsync(() => Tracks.ReplaceRange(fullPlaylist.Audios));
 
                         Debug.WriteLine("Now play queue:");
 

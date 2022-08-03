@@ -12,6 +12,7 @@
     d:DesignHeight="720"
     d:DesignWidth="1280"
     Loaded="Page_Loaded"
+    Unloaded="Page_OnUnloaded"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -265,6 +266,9 @@
                     </StackPanel>
                 </controls:Card>
                 <blocks:AudiosListControl Margin="0,0,0,45" Audios="{Binding Tracks}"/>
+                <controls:ProgressRing Margin="0,25" 
+                                       Visibility="{Binding VisibleLoadingMore}"
+                                       IsIndeterminate="True"/>
             </StackPanel>
         </hc:ScrollViewer>
 

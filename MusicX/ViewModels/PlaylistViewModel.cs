@@ -27,12 +27,14 @@ namespace MusicX.ViewModels
         public string Description { get; set; }
         public Visibility VisibleLoading { get; set; } = Visibility.Visible;
         public Visibility VisibleContent { get; set; } = Visibility.Collapsed;
-        public BitmapImage Cover { get; set; }
+        public string Cover { get; set; }
         public ObservableRangeCollection<Audio> Tracks { get; } = new();
 
         public Visibility VisibileAddInfo { get; set; } = Visibility.Visible;
 
         public Playlist Playlist { get; set; }
+        
+        public Visibility VisibleLoadingMore { get; set; } = Visibility.Collapsed;
 
         private readonly VkService vkService;
         private readonly Logger logger;
@@ -52,24 +54,22 @@ namespace MusicX.ViewModels
         {
             if (Tracks.Count >= Playlist.Count)
                 return;
+            VisibleLoadingMore = Visibility.Visible;
             var response = await vkService.AudioGetAsync(Playlist.Id, Playlist.OwnerId, Playlist.AccessKey, Tracks.Count, 40);
-            if (Application.Current.Dispatcher.CheckAccess())
-                Tracks.AddRange(response.Items, NotifyCollectionChangedAction.Reset);
-            else
-                await Application.Current.Dispatcher.InvokeAsync(() => Tracks.AddRange(response.Items, NotifyCollectionChangedAction.Reset));
-        }
 
-        public async ValueTask LoadFull()
-        {
-            if (Tracks.Count >= Playlist.Count)
-                return;
-
-            var full = await vkService.LoadFullPlaylistAsync(Playlist.Id, Playlist.OwnerId, Playlist.AccessKey);
+            void Add()
+            {
+                foreach (var item in response.Items)
+                {
+                    Tracks.Add(item);
+                }
+            }
 
             if (Application.Current.Dispatcher.CheckAccess())
-                Tracks.ReplaceRange(full.Audios);
+                Add();
             else
-                await Application.Current.Dispatcher.InvokeAsync(() => Tracks.ReplaceRange(full.Audios));
+                await Application.Current.Dispatcher.InvokeAsync(Add);
+            VisibleLoadingMore = Visibility.Collapsed;
         }
 
         public async Task LoadPlaylist(Playlist playlist, bool delete = true)
@@ -85,10 +85,7 @@ namespace MusicX.ViewModels
                 VisibleContent = Visibility.Collapsed;
                 VisibleLoading = Visibility.Visible;
 
-                Changed("VisibleContent");
-                Changed("VisibleLoading");
-
-                var p = await vkService.GetPlaylistAsync(100, playlist.Id, playlist.AccessKey, playlist.OwnerId);
+                var p = await vkService.GetPlaylistAsync(40, playlist.Id, playlist.AccessKey, playlist.OwnerId);
                 this.PlaylistLoaded.Invoke(this, p.Playlist);
 
 
@@ -126,7 +123,7 @@ namespace MusicX.ViewModels
                
                 if (playlist.Cover != null)
                 {
-                    Cover = new BitmapImage(new Uri(playlist.Cover));
+                    Cover = playlist.Cover;
 
                 }
 
@@ -181,18 +178,6 @@ namespace MusicX.ViewModels
 
                 VisibleContent = Visibility.Visible;
                 VisibleLoading = Visibility.Collapsed;
-
-                Changed("Title");
-                Changed("Description");
-                Changed("ArtistText");
-                Changed("VisibileAddInfo");
-                Changed("Genres");
-                Changed("Year");
-                Changed("Plays");
-                Changed("Cover");
-                Changed("Tracks");
-                Changed("VisibleContent");
-                Changed("VisibleLoading");
 
                 this.PlaylistLoaded?.Invoke(this, playlist);
 
@@ -261,6 +246,22 @@ namespace MusicX.ViewModels
 
                 return false;
             }
+        }
+        public void Unload()
+        {
+            VisibleLoading = Visibility.Collapsed;
+            VisibleContent = Visibility.Collapsed;
+            VisibileAddInfo = Visibility.Collapsed;
+            
+            Tracks.Clear();
+            Title = string.Empty;
+            Cover = string.Empty;
+            Description = string.Empty;
+            Genres = string.Empty;
+            Plays = string.Empty;
+            Year = string.Empty;
+            ArtistText = string.Empty;
+            Playlist = null!;
         }
     }
 }

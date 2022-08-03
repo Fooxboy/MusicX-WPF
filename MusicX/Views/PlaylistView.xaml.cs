@@ -185,8 +185,7 @@ namespace MusicX.Views
                     PlayPlaylist.Content = "Остановить воспроизведение";
                     PlayPlaylist.Icon = WPFUI.Common.SymbolRegular.Pause20;
 
-                    await ViewModel.LoadFull();
-                    await player.Play(0, ViewModel.Tracks.ToList());
+                    await player.PlayTrack(ViewModel.Tracks[0]);
                 }
             }catch (Exception ex)
             {
@@ -215,6 +214,10 @@ namespace MusicX.Views
 
                 navigation.NavigateToPage(new DownloadsView());
             }
+        }
+        private void Page_OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            ViewModel.Unload();
         }
     }
 }
