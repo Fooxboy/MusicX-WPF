@@ -411,7 +411,7 @@
             <ListBox Grid.Row="1" x:Name="Queue" Height="0" AllowDrop="True">
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <StackPanel Orientation="Vertical" />
+                        <VirtualizingStackPanel CacheLength="10" CacheLengthUnit="Item" Orientation="Vertical" />
                     </ItemsPanelTemplate>
                 </ListBox.ItemsPanel>
                 <ListBox.ItemTemplate>
