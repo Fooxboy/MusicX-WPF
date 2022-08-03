@@ -69,39 +69,27 @@ namespace MusicX.Controls
         {
             try
             {
-                int currentTrack = 0;
-                StackPanel currentStackPanel = null;
-
-                int indexTrack = 0;
-
-                foreach (var track in Tracks)
+                foreach (var audios in Tracks.Take(15).Chunk(3))
                 {
-                    var chart = 0;
-                    if (ShowChart) chart = Tracks.IndexOf(track) + 1;
+                    var panel = new StackPanel() {Margin = new Thickness(0, 0, 10, 0)};
 
-                    indexTrack++;
-
-                    if (currentTrack == 0)
+                    foreach (var audio in audios)
                     {
-                        currentStackPanel = new StackPanel() { Margin = new Thickness(0, 0, 10, 0) };
+                        var chart = 0;
+                        if (ShowChart) chart = Tracks.IndexOf(audio) + 1;
+                        
+                        panel.Children.Add(new TrackControl()
+                        {
+                            ShowCard = true, 
+                            ChartPosition = chart, 
+                            Margin = new Thickness(0, 0, 0, 10), 
+                            Width = 300, 
+                            Height = 60, 
+                            Audio = audio
+                        });
                     }
 
-                    var audio = new TrackControl() { ShowCard = true, ChartPosition = chart, Margin = new Thickness(0, 0, 0, 10), Width = 300, Height = 60, Audio = track };
-
-                    currentStackPanel.Children.Add(audio);
-                    currentTrack++;
-
-
-                    if (currentTrack == 3)
-                    {
-                        StackPanelTracks.Children.Add(currentStackPanel);
-
-                        currentStackPanel = new StackPanel();
-                        currentTrack = 0;
-
-                    }
-
-                    if (indexTrack == 15) break;
+                    StackPanelTracks.Children.Add(panel);
                 }
             }catch (Exception ex)
             {
