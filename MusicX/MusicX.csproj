@@ -31,18 +31,18 @@
     <Resource Include="Assets\icon.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Content Include="Fonts\VKSansDisplay-Bold.ttf">
+    <Resource Include="Fonts\VKSansDisplay-Bold.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-	  <Content Include="Fonts\VKSansDisplay-DemiBold.ttf">
+    </Resource>
+	  <Resource Include="Fonts\VKSansDisplay-DemiBold.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-	  <Content Include="Fonts\VKSansDisplay-Medium.ttf">
+    </Resource>
+	  <Resource Include="Fonts\VKSansDisplay-Medium.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-	  <Content Include="Fonts\VKSansDisplay-Regular.ttf">
+    </Resource>
+	  <Resource Include="Fonts\VKSansDisplay-Regular.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    </Resource>
 
 	  <Content Include="NLog.config">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
