@@ -222,39 +222,6 @@ namespace MusicX.Controls
 
                 Time.Text = time;
 
-                void AddArtistContextMenu(string artistName, string id)
-                {
-                    var text = new TextBlock { Text = artistName, Tag = id, Foreground = Brushes.White };
-                    text.MouseLeftButtonDown += Text_MouseLeftButtonDown;
-                    GoToArtistMenu.Items.Add(text);
-                }
-
-                void AddArtists(IEnumerable<MainArtist> artists)
-                {
-                    var first = true;
-                    foreach (var artist in artists)
-                    {
-                        if (first)
-                            first = false;
-                        else
-                            Artists.Inlines.Add(", ");
-                        
-                        var textBlock = new TextBlock
-                        {
-                            Text = artist.Name,
-                            DataContext = artist
-                        };
-                    
-                        textBlock.MouseEnter += Artists_MouseEnter;
-                        textBlock.MouseLeave += Artists_MouseLeave;
-                        textBlock.MouseLeftButtonDown += Artists_MouseLeftButtonDown;
-                    
-                        Artists.Inlines.Add(textBlock);
-
-                        AddArtistContextMenu(artist.Name, artist.Id);
-                    }
-                }
-
                 if (Audio.MainArtists is null or {Count: 0})
                 {
                     Artists.Text = Audio.Artist;
@@ -354,6 +321,37 @@ namespace MusicX.Controls
                 Artists.Text = "Попробуйте позже";
             }
             
+        }
+        private void AddArtists(IEnumerable<MainArtist> artists)
+        {
+            var first = true;
+            foreach (var artist in artists)
+            {
+                if (first)
+                    first = false;
+                else
+                    Artists.Inlines.Add(", ");
+                        
+                var textBlock = new TextBlock
+                {
+                    Text = artist.Name,
+                    DataContext = artist
+                };
+                    
+                textBlock.MouseEnter += Artists_MouseEnter;
+                textBlock.MouseLeave += Artists_MouseLeave;
+                textBlock.MouseLeftButtonDown += Artists_MouseLeftButtonDown;
+                    
+                Artists.Inlines.Add(textBlock);
+
+                AddArtistContextMenu(artist.Name, artist.Id);
+            }
+        }
+        private void AddArtistContextMenu(string artistName, string id)
+        {
+            var text = new TextBlock { Text = artistName, Tag = id, Foreground = Brushes.White };
+            text.MouseLeftButtonDown += Text_MouseLeftButtonDown;
+            GoToArtistMenu.Items.Add(text);
         }
 
         private async void Text_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
