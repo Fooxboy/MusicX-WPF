@@ -12,7 +12,7 @@
     MouseEnter="Grid_MouseEnter"
     MouseLeave="Grid_MouseLeave"
     mc:Ignorable="d">
-    <UserControl.Resources>
+    <!--<UserControl.Resources>
         <Storyboard x:Key="OpenAnimation">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="border" Storyboard.TargetProperty="(UIElement.Opacity)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
@@ -57,7 +57,7 @@
         <EventTrigger RoutedEvent="Loaded">
             <BeginStoryboard Storyboard="{StaticResource LoadedAnimation}" />
         </EventTrigger>
-    </UserControl.Triggers>
+    </UserControl.Triggers>-->
 
     <UserControl.ContextMenu>
         <ContextMenu
@@ -161,7 +161,6 @@
 
                     <Grid x:Name="PlayButtons" Visibility="Collapsed">
                         <Rectangle
-                            x:Name="Rect"
                             Width="45"
                             Height="45"
                             Fill="Black"
@@ -176,11 +175,11 @@
                             Symbol="Play24" />
 
                     </Grid>
-
-                    <StackPanel
-                        x:Name="PanelAnim"
-                        Width="45"
-                        Height="45" />
+                    
+                    <Image x:Name="PanelAnim"
+                           Visibility="Collapsed"
+                           Width="45"
+                           Height="45"/>
 
                 </Grid>
                 <Grid x:Name="ChartGrid" Visibility="Collapsed">
@@ -273,8 +272,8 @@
                 x:Name="RecommendedAudio"
                 Margin="0,0,10,0"
                 HorizontalAlignment="Right"
-                MouseEnter="RecommendedAudio_MouseEnter"
-                MouseLeave="RecommendedAudio_MouseLeave"
+                Cursor="Hand"
+                ForceCursor="True"
                 MouseLeftButtonDown="RecommendedAudio_MouseLeftButtonDown"
                 Visibility="Collapsed">
                 <Border

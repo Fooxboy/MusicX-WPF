@@ -293,7 +293,8 @@ namespace MusicX.Services
 
                         logger.Info($"Load tracks with playlist id {plViewModel.Playlist.Id}");
 
-                        await Application.Current.Dispatcher.InvokeAsync(() => Tracks.ReplaceRange(plViewModel.Tracks));
+                        var fullPlaylist = await vkService.LoadFullPlaylistAsync(plViewModel.Playlist.Id, plViewModel.Playlist.OwnerId, plViewModel.Playlist.AccessKey);
+                        await Application.Current.Dispatcher.InvokeAsync(() => Tracks.ReplaceRange(fullPlaylist.Audios));
 
                         Debug.WriteLine("Now play queue:");
 
@@ -330,9 +331,9 @@ namespace MusicX.Services
 
                             logger.Info("Get current track block info");
                             this.blockId = track.ParentBlockId;
-                            var items = await vkService.GetBlockItemsAsync(blockId);
+                            var items = await vkService.LoadFullAudiosAsync(blockId).ToListAsync();
 
-                            await Application.Current.Dispatcher.InvokeAsync(() => Tracks.ReplaceRange(items.Audios));
+                            await Application.Current.Dispatcher.InvokeAsync(() => Tracks.ReplaceRange(items));
 
                             int c = 0;
                             foreach (var trackDebug in Tracks)

@@ -68,6 +68,11 @@ public class DownloaderViewModel : BaseViewModel
             await Application.Current.Dispatcher.InvokeAsync(() => DownloadQueue.AddRange(tracks));
         notificationsService.Show("Скачивание начато", $"{title} добавлен в очередь");
     }
+    public async Task AddPlaylistToQueueAsync(long playlistId, long ownerId, string accessKey)
+    {
+        var playlist = await vkService.LoadFullPlaylistAsync(playlistId, ownerId, accessKey);
+        await AddPlaylistToQueueAsync(playlist.Audios, playlist.Playlist.Title!);
+    }
 
     private async Task OpenMusicFolder()
     {
@@ -109,7 +114,7 @@ public class DownloaderViewModel : BaseViewModel
 
         foreach (var playlist in playlists)
         {
-            var tracks = await vkService.AudioGetAsync(playlist.Id, playlist.OwnerId, playlist.AccessKey);
+            var tracks = await vkService.LoadFullPlaylistAsync(playlist.Id, playlist.OwnerId, playlist.AccessKey);
 
             await AddPlaylistToQueueAsync(tracks.Items, playlist.Title!);
         }

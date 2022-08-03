@@ -5,11 +5,13 @@ using NLog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using MusicX.Helpers;
 
 namespace MusicX.ViewModels
 {
@@ -25,12 +27,14 @@ namespace MusicX.ViewModels
         public string Description { get; set; }
         public Visibility VisibleLoading { get; set; } = Visibility.Visible;
         public Visibility VisibleContent { get; set; } = Visibility.Collapsed;
-        public BitmapImage Cover { get; set; }
-        public List<Audio> Tracks { get; set; } = new List<Audio>();
+        public string Cover { get; set; }
+        public ObservableRangeCollection<Audio> Tracks { get; } = new();
 
         public Visibility VisibileAddInfo { get; set; } = Visibility.Visible;
 
         public Playlist Playlist { get; set; }
+        
+        public Visibility VisibleLoadingMore { get; set; } = Visibility.Collapsed;
 
         private readonly VkService vkService;
         private readonly Logger logger;
@@ -46,6 +50,27 @@ namespace MusicX.ViewModels
 
             this.notificationsService = notificationsService;
         }
+        public async ValueTask LoadMore()
+        {
+            if (Tracks.Count >= Playlist.Count)
+                return;
+            VisibleLoadingMore = Visibility.Visible;
+            var response = await vkService.AudioGetAsync(Playlist.Id, Playlist.OwnerId, Playlist.AccessKey, Tracks.Count, 40);
+
+            void Add()
+            {
+                foreach (var item in response.Items)
+                {
+                    Tracks.Add(item);
+                }
+            }
+
+            if (Application.Current.Dispatcher.CheckAccess())
+                Add();
+            else
+                await Application.Current.Dispatcher.InvokeAsync(Add);
+            VisibleLoadingMore = Visibility.Collapsed;
+        }
 
         public async Task LoadPlaylist(Playlist playlist, bool delete = true)
         {
@@ -54,16 +79,13 @@ namespace MusicX.ViewModels
                 logger.Info("Load playlist");
                 if (delete)
                 {
-                    if (Tracks.Count > 0) Tracks.RemoveRange(0, Tracks.Count);
+                    if (Tracks.Count > 0) Tracks.Clear();
 
                 }
                 VisibleContent = Visibility.Collapsed;
                 VisibleLoading = Visibility.Visible;
 
-                Changed("VisibleContent");
-                Changed("VisibleLoading");
-
-                var p = await vkService.GetPlaylistAsync(100, playlist.Id, playlist.AccessKey, playlist.OwnerId);
+                var p = await vkService.GetPlaylistAsync(40, playlist.Id, playlist.AccessKey, playlist.OwnerId);
                 this.PlaylistLoaded.Invoke(this, p.Playlist);
 
 
@@ -80,7 +102,7 @@ namespace MusicX.ViewModels
                 }
                 playlist = p.Playlist;
                 playlist.Audios = p.Audios;
-                Tracks = p.Audios; 
+                Tracks.ReplaceRange(p.Audios); 
 
                 this.Playlist = playlist;
                 Title = playlist.Title;
@@ -101,7 +123,7 @@ namespace MusicX.ViewModels
                
                 if (playlist.Cover != null)
                 {
-                    Cover = new BitmapImage(new Uri(playlist.Cover));
+                    Cover = playlist.Cover;
 
                 }
 
@@ -157,18 +179,6 @@ namespace MusicX.ViewModels
                 VisibleContent = Visibility.Visible;
                 VisibleLoading = Visibility.Collapsed;
 
-                Changed("Title");
-                Changed("Description");
-                Changed("ArtistText");
-                Changed("VisibileAddInfo");
-                Changed("Genres");
-                Changed("Year");
-                Changed("Plays");
-                Changed("Cover");
-                Changed("Tracks");
-                Changed("VisibleContent");
-                Changed("VisibleLoading");
-
                 this.PlaylistLoaded?.Invoke(this, playlist);
 
             }
@@ -189,8 +199,6 @@ namespace MusicX.ViewModels
                 logger.Info($"Load playlist from data: playlistId = {playlistId}, ownerId = {ownerId}, accessKey = {accessKey}");
 
                 await this.LoadPlaylist(new Playlist() { Id = playlistId, AccessKey = accessKey, OwnerId = ownerId }, true);
-
-                if (Tracks.Count > 0) Tracks.RemoveRange(0, Tracks.Count);
                 //VisibleContent = Visibility.Collapsed;
                 //VisibleLoading = Visibility.Visible;
                 //Changed("VisibleContent");
@@ -238,6 +246,22 @@ namespace MusicX.ViewModels
 
                 return false;
             }
+        }
+        public void Unload()
+        {
+            VisibleLoading = Visibility.Collapsed;
+            VisibleContent = Visibility.Collapsed;
+            VisibileAddInfo = Visibility.Collapsed;
+            
+            Tracks.Clear();
+            Title = string.Empty;
+            Cover = string.Empty;
+            Description = string.Empty;
+            Genres = string.Empty;
+            Plays = string.Empty;
+            Year = string.Empty;
+            ArtistText = string.Empty;
+            Playlist = null!;
         }
     }
 }
