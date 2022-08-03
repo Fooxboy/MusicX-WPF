@@ -14,6 +14,7 @@ using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using MusicX.Behaviors;
 using MusicX.Core.Models;
 using MusicX.ViewModels;
 using WPFUI.Common;
@@ -371,44 +372,9 @@ namespace MusicX.Controls
             UpdateSpeakerIcon();
         }
 
-        DispatcherTimer timer = new DispatcherTimer();
-        private void ScrollTrackName()
-        {
-            try
-            {
-                bool backscroll = false;
-                timer.Tick += (ss, ee) =>
-                {
-                    if (TitleScroll.ScrollableWidth == 0) return;
-
-                    if (backscroll == false)
-                    {
-                        TitleScroll.ScrollToHorizontalOffset(TitleScroll.HorizontalOffset + 0.6);
-                        if (TitleScroll.HorizontalOffset == TitleScroll.ScrollableWidth)
-                            backscroll = true;
-                    }
-
-                    if (backscroll == true)
-                    {
-                        TitleScroll.ScrollToHorizontalOffset(TitleScroll.HorizontalOffset - 0.8);
-                        if (TitleScroll.HorizontalOffset == 0)
-                        {
-                            backscroll = false;
-                        }
-                    }
-                };
-                timer.Interval = TimeSpan.FromMilliseconds(15);
-                timer.Start();
-            }catch (Exception ex)
-            {
-                logger.Error(ex, ex.Message);
-            }
-           
-        }
-
         private void StopScrollTrackName()
         {
-            this.timer.Stop();
+            AutoScrollBehavior.GetController(TitleScroll)?.Pause();
             TitleScroll.ScrollToHorizontalOffset(0);
         }
 
@@ -485,7 +451,11 @@ namespace MusicX.Controls
 
         private void TrackTitle_MouseEnter(object sender, MouseEventArgs e)
         {
-            ScrollTrackName();
+            if (AutoScrollBehavior.GetController(TitleScroll) is { } controller)
+                controller.Play();
+            else
+                AutoScrollBehavior.SetAutoScroll(TitleScroll, true);
+            
             if (playerService.CurrentTrack.Album != null)
             {
                 TrackTitle.TextDecorations.Add(TextDecorations.Underline);
