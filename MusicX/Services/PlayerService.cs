@@ -20,6 +20,12 @@ using MusicX.Helpers;
 
 namespace MusicX.Services
 {
+    public enum QueueLoadingState
+    {
+        Started,
+        Finished
+    }
+    public record QueueLoadingEventArgs(QueueLoadingState State);
     public class PlayerService
     {
         private int currentIndex;
@@ -37,6 +43,8 @@ namespace MusicX.Services
         public event EventHandler PlayStateChangedEvent;
         public event EventHandler<TimeSpan> PositionTrackChangedEvent;
         public event EventHandler TrackChangedEvent;
+
+        public event EventHandler<QueueLoadingEventArgs> QueueLoadingStateChanged; 
 
         private readonly VkService vkService;
         private readonly Logger logger;
@@ -241,6 +249,7 @@ namespace MusicX.Services
                 if (loadParentToQueue)
                 {
                     Debug.WriteLine("LOAD TRACKS...");
+                    await Application.Current.Dispatcher.InvokeAsync(() => QueueLoadingStateChanged.Invoke(this, new(QueueLoadingState.Started)));
 
                     if (track.ParentBlockId != null)
                     {
@@ -378,6 +387,10 @@ namespace MusicX.Services
 
                 notificationsService.Show("Ошибка", "Произошла ошибка при воспроизведении");
 
+            }
+            finally
+            {
+                await Application.Current.Dispatcher.InvokeAsync(() => QueueLoadingStateChanged.Invoke(this, new(QueueLoadingState.Finished)));
             }
         }
 

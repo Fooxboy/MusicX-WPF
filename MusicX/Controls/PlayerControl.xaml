@@ -21,7 +21,7 @@
             </Storyboard>
             
             <Storyboard x:Key="QueueHideAnimation">
-                <DoubleAnimation Storyboard.TargetName="Queue"
+                <DoubleAnimation Storyboard.TargetName="QueueGrid"
                                  Storyboard.TargetProperty="Height" From="530"
                                  To="0" Duration="0:0:0.3">
                     <DoubleAnimation.EasingFunction>
@@ -30,7 +30,7 @@
                 </DoubleAnimation>
             </Storyboard>
             <Storyboard x:Key="QueueShowAnimation">
-                <DoubleAnimation Storyboard.TargetName="Queue"
+                <DoubleAnimation Storyboard.TargetName="QueueGrid"
                                  Storyboard.TargetProperty="Height" From="0"
                                  To="530" Duration="0:0:0.3">
                     <DoubleAnimation.EasingFunction>
@@ -410,40 +410,49 @@
                 </Grid>
 
             </StackPanel>
-            <ListBox Grid.Row="1" x:Name="Queue" Height="0" AllowDrop="True">
-                <ListBox.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <VirtualizingStackPanel CacheLength="10" CacheLengthUnit="Item" Orientation="Vertical" />
-                    </ItemsPanelTemplate>
-                </ListBox.ItemsPanel>
-                <ListBox.ItemTemplate>
-                    <DataTemplate DataType="{x:Type models:Audio}">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <wpfui:SymbolIcon Symbol="ReOrderDotsVertical24" MouseDown="ReorderButton_OnMouseDown" />
-                            <local:TrackControl Grid.Column="1" Audio="{Binding}" ShowCard="False" LoadOtherTracks="False" />
-                            <wpfui:Button Grid.Column="2" 
-                                          Icon="Dismiss24"
-                                          Appearance="Transparent"
-                                          Click="DeleteFromQueue_OnClick">
-                                <wpfui:Button.ToolTip>
-                                    <ToolTip Content="Удалить из очереди"/>
-                                </wpfui:Button.ToolTip>
-                            </wpfui:Button>
-                        </Grid>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
-                        <Setter Property="Focusable" Value="False" />
-                        <EventSetter Event="Drop" Handler="ListBoxItem_OnDrop"/>
-                    </Style>
-                </ListBox.ItemContainerStyle>
-            </ListBox>
+            <Grid Grid.Row="1" x:Name="QueueGrid" Height="0">
+                <ListBox x:Name="Queue" AllowDrop="True">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel CacheLength="10" CacheLengthUnit="Item" Orientation="Vertical" />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate DataType="{x:Type models:Audio}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <wpfui:SymbolIcon Symbol="ReOrderDotsVertical24" MouseDown="ReorderButton_OnMouseDown" />
+                                <local:TrackControl Grid.Column="1" Audio="{Binding}" ShowCard="False"
+                                                    LoadOtherTracks="False" />
+                                <wpfui:Button Grid.Column="2"
+                                              Icon="Dismiss24"
+                                              Appearance="Transparent"
+                                              Click="DeleteFromQueue_OnClick">
+                                    <wpfui:Button.ToolTip>
+                                        <ToolTip Content="Удалить из очереди" />
+                                    </wpfui:Button.ToolTip>
+                                </wpfui:Button>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                            <Setter Property="Focusable" Value="False" />
+                            <EventSetter Event="Drop" Handler="ListBoxItem_OnDrop" />
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
+                <wpfui:ProgressRing x:Name="QueueLoadingRing"
+                                    IsIndeterminate="True"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Visibility="Collapsed"
+                                    IsHitTestVisible="False"/>
+            </Grid>
         </Grid>
     </Grid>
 </UserControl>

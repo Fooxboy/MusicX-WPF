@@ -38,10 +38,15 @@ namespace MusicX.Controls
             playerService.PlayStateChangedEvent += PlayerService_PlayStateChangedEvent;
             playerService.PositionTrackChangedEvent += PlayerService_PositionTrackChangedEvent;
             playerService.TrackChangedEvent += PlayerService_TrackChangedEvent;
+            playerService.QueueLoadingStateChanged += PlayerService_QueueLoadingStateChanged;
 
             this.MouseWheel += PlayerControl_MouseWheel;
             
             Queue.ItemsSource = playerService.Tracks;
+        }
+        private void PlayerService_QueueLoadingStateChanged(object? sender, QueueLoadingEventArgs e)
+        {
+            QueueLoadingRing.Visibility = e.State == QueueLoadingState.Started ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void PlayerControl_MouseWheel(object sender, MouseWheelEventArgs e)
