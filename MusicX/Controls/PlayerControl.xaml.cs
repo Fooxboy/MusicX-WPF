@@ -558,12 +558,21 @@ namespace MusicX.Controls
             }
             else
             {
-                var remIdx = removedIdx+1;
-                if (list.Count + 1 <= remIdx)
+                if (list.Count + 1 <= ++removedIdx)
                     return;
                 list.Insert(targetIdx, source);
-                list.RemoveAt(remIdx);
+                list.RemoveAt(removedIdx);
             }
+
+            var currentIndex = list.IndexOf(playerService.CurrentTrack);
+            
+            // insert index is next track
+            if (currentIndex + 1 == targetIdx)
+                playerService.NextPlayTrack = source;
+            else if (currentIndex + 1 < list.Count)
+                playerService.NextPlayTrack = list[currentIndex + 1];
+
+            playerService.CurrentIndex = currentIndex;
         }
         private void SpeakerIcon_OnClick(object sender, RoutedEventArgs e)
         {
