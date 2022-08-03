@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
 jobs:
   build:
 
@@ -17,8 +21,14 @@ jobs:
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: 6.0.x
+    - uses: actions/cache@v1
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
     - name: Restore dependencies
-      run: dotnet restore MusicX/MusicX.csproj
+      run: dotnet restore MusicX/MusicX.csproj --use-lock-file
     - name: Build
       run: dotnet build MusicX/MusicX.csproj --no-restore
     - name: Upload a Build Artifact
