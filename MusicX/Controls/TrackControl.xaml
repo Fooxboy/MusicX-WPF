@@ -253,9 +253,6 @@
                         HorizontalAlignment="Left"
                         FontSize="11"
                         Foreground="White"
-                        MouseEnter="Artists_MouseEnter"
-                        MouseLeave="Artists_MouseLeave"
-                        MouseLeftButtonDown="Artists_MouseLeftButtonDown"
                         Opacity="0.6"
                         Text="Artist"
                         TextTrimming="CharacterEllipsis">
