@@ -49,6 +49,18 @@
 	  </Content>
 
 	  <Content Include="StoreLogo.scale-400.ico" />
+
+	  <None Remove="Assets\icons\ic_fluent_next_24_regular.png" />
+
+	  <Resource Include="Assets\icons\ic_fluent_next_24_regular.png" />
+
+	  <None Remove="Assets\icons\ic_fluent_previous_24_regular.png" />
+
+	  <Resource Include="Assets\icons\ic_fluent_previous_24_regular.png" />
+
+	  <None Remove="Assets\icons\ic_fluent_video_play_pause_24_regular.png" />
+
+	  <Resource Include="Assets\icons\ic_fluent_video_play_pause_24_regular.png" />
   </ItemGroup>
 
   <ItemGroup>
