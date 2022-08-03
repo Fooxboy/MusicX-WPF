@@ -29,8 +29,16 @@ namespace MusicX.Services
     public class PlayerService
     {
         public int CurrentIndex;
-        private string blockId;
-        private long loadedPlaylistIdTracks;
+        public string CurrentBlockId { get; set; }
+        public long CurrentPlaylistId
+        {
+            get => _currentPlaylistId;
+            set
+            {
+                _currentPlaylistId = value;
+                Application.Current.Dispatcher.BeginInvoke(() => CurrentPlaylistChanged?.Invoke(this, EventArgs.Empty));
+            }
+        }
         public readonly ObservableRangeCollection<Audio> Tracks = new();
         public Audio CurrentTrack;
         public Audio NextPlayTrack
@@ -52,6 +60,7 @@ namespace MusicX.Services
         public event EventHandler PlayStateChangedEvent;
         public event EventHandler<TimeSpan> PositionTrackChangedEvent;
         public event EventHandler TrackChangedEvent;
+        public event EventHandler? CurrentPlaylistChanged;
 
         public event EventHandler<QueueLoadingEventArgs> QueueLoadingStateChanged; 
 
@@ -64,6 +73,7 @@ namespace MusicX.Services
 
         private ConfigModel config;
         private Audio _nextPlayTrack;
+        private long _currentPlaylistId;
 
         public PlayerService(VkService vkService, Logger logger, PlaylistViewModel plViewModel, DiscordService discordService, ConfigService configService, NotificationsService notificationsService)
         {
@@ -265,7 +275,7 @@ namespace MusicX.Services
                     {
                         Debug.WriteLine("track.ParentBlockId != null");
 
-                        if (track.ParentBlockId == this.blockId)
+                        if (track.ParentBlockId == this.CurrentBlockId)
                         {
                             CurrentIndex = Tracks.IndexOf(Tracks.Single(a => a.Id == CurrentTrack.Id));
 
@@ -282,7 +292,7 @@ namespace MusicX.Services
                             return;
                         }
 
-                        Debug.WriteLine($"track.ParentBlockId = {track.ParentBlockId} | this.blockId = {this.blockId} ");
+                        Debug.WriteLine($"track.ParentBlockId = {track.ParentBlockId} | this.blockId = {this.CurrentBlockId} ");
 
                         Debug.WriteLine("track.ParentBlockId != this.blockId");
 
@@ -292,7 +302,7 @@ namespace MusicX.Services
                     {
                         Debug.WriteLine("LOAD FROM PLAYLIST");
 
-                        if (loadedPlaylistIdTracks == plViewModel.Playlist.Id)
+                        if (CurrentPlaylistId == plViewModel.Playlist.Id)
                         {
                             CurrentIndex = Tracks.IndexOf(Tracks.Single(a => a.Id == track.Id));
 
@@ -308,7 +318,7 @@ namespace MusicX.Services
                             return;
                         }
 
-                        Debug.WriteLine($"loadedPlaylistIdTracks = {loadedPlaylistIdTracks} |  plViewModel.Playlist.Id = {plViewModel.Playlist.Id}");
+                        Debug.WriteLine($"loadedPlaylistIdTracks = {CurrentPlaylistId} |  plViewModel.Playlist.Id = {plViewModel.Playlist.Id}");
 
                         logger.Info($"Load tracks with playlist id {plViewModel.Playlist.Id}");
 
@@ -324,7 +334,7 @@ namespace MusicX.Services
                             c++;
                         }
 
-                        loadedPlaylistIdTracks = plViewModel.Playlist.Id;
+                        CurrentPlaylistId = plViewModel.Playlist.Id;
                         CurrentIndex = Tracks.IndexOf(Tracks.Single(a => a.Id == track.Id));
 
                         Debug.WriteLine($"Played track with index: {CurrentIndex}");
@@ -349,8 +359,9 @@ namespace MusicX.Services
                             Debug.WriteLine($"LOAD TRACKS BY BLOCK");
 
                             logger.Info("Get current track block info");
-                            this.blockId = track.ParentBlockId;
-                            var items = await vkService.LoadFullAudiosAsync(blockId).ToListAsync();
+                            this.CurrentBlockId = track.ParentBlockId;
+                            CurrentPlaylistId = -1;
+                            var items = await vkService.LoadFullAudiosAsync(CurrentBlockId).ToListAsync();
 
                             await Application.Current.Dispatcher.InvokeAsync(() => Tracks.ReplaceRange(items));
 
