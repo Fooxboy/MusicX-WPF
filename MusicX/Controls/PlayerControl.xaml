@@ -369,10 +369,12 @@
                                 </ToggleButton.Triggers>
                             </ToggleButton>
 
-                            <wpfui:SymbolIcon
-                                x:Name="SpeakerIcon"
-                                FontSize="20"
-                                Symbol="Speaker248" />
+                            <wpfui:Button x:Name="SpeakerIcon"
+                                          Appearance="Transparent"
+                                          BorderBrush="Transparent"
+                                          FontSize="20"
+                                          Icon="Speaker248"
+                                          Click="SpeakerIcon_OnClick"/>
                             <hc:PreviewSlider
                                 x:Name="Volume"
                                 Width="150"

@@ -711,6 +711,12 @@ namespace MusicX.Services
             }
         }
 
+        public bool IsMuted
+        {
+            get => player.IsMuted; 
+            set => player.IsMuted = value;
+        }
+
       
         public TimeSpan Position => player.PlaybackSession.Position;
         public TimeSpan Duration => player?.NaturalDuration ?? TimeSpan.Zero;
