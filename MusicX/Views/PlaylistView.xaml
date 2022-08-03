@@ -8,6 +8,7 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:local="clr-namespace:MusicX.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:behaviors="clr-namespace:MusicX.Behaviors"
     Title="PlaylistView"
     d:DesignHeight="720"
     d:DesignWidth="1280"
@@ -255,13 +256,12 @@
                                     Icon="ArrowDownload48" />
 
                             </StackPanel>
-
-                            <TextBlock
-                                x:Name="__"
-                                Margin="0,10,0,0"
-                                Foreground="White"
-                                Opacity="0.6"
-                                Text="{Binding Path=Description}" />
+                            
+                            <TextBlock x:Name="__"
+                                       Margin="0,10,0,0" 
+                                       Foreground="White"
+                                       Opacity="0.6"
+                                       behaviors:VkMarkdownBehavior.Markdown="{Binding Path=Description}" />
                         </StackPanel>
                     </StackPanel>
                 </controls:Card>
