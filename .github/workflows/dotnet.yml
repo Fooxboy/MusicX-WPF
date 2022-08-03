@@ -2,7 +2,7 @@ name: .NET
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, develop ]
   pull_request:
     branches: [ master ]
 
@@ -21,3 +21,6 @@ jobs:
       run: dotnet restore MusicX/MusicX.csproj
     - name: Build
       run: dotnet build MusicX/MusicX.csproj --no-restore
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v3.1.0
+
