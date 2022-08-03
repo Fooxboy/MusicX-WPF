@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using MusicX.Core.Models;
 using MusicX.Core.Models.General;
 using MusicX.Core.Services;
 namespace MusicX.Helpers;
@@ -20,5 +22,21 @@ public static class VkServiceExtensions
 
         data.Items = data.Audios;
         return data;
+    }
+
+    public static async IAsyncEnumerable<Audio> LoadFullAudiosAsync(this VkService service, string blockId)
+    {
+        string? next = null;
+        do
+        {
+            var data = await service.GetSectionAsync(blockId, next);
+
+            foreach (var item in data.Audios)
+            {
+                yield return item;
+            }
+            
+            next = data.Section.NextFrom;
+        } while (!string.IsNullOrEmpty(next));
     }
 }

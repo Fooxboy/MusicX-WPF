@@ -331,9 +331,9 @@ namespace MusicX.Services
 
                             logger.Info("Get current track block info");
                             this.blockId = track.ParentBlockId;
-                            var items = await vkService.GetBlockItemsAsync(blockId);
+                            var items = await vkService.LoadFullAudiosAsync(blockId).ToListAsync();
 
-                            await Application.Current.Dispatcher.InvokeAsync(() => Tracks.ReplaceRange(items.Audios));
+                            await Application.Current.Dispatcher.InvokeAsync(() => Tracks.ReplaceRange(items));
 
                             int c = 0;
                             foreach (var trackDebug in Tracks)
