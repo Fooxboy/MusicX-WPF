@@ -71,6 +71,7 @@
                     Width="200"
                     Margin="0,20,0,0"
                     Appearance="Secondary"
+                    HorizontalAlignment="Left"
                     Click="ActionCuratorButton_Click"
                     Content="Подписаться" />
 
