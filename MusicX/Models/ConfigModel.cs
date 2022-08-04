@@ -26,8 +26,14 @@ namespace MusicX.Models
 
         [JsonProperty("volume")]
         public int? Volume { get; set; }
+        
+        [JsonProperty("is_muted")]
+        public bool IsMuted { get; set; }
 
         [JsonProperty("broadcast_vk")]
         public bool? BroadcastVK { get; set; }
+        
+        [JsonProperty("download_directory")]
+        public string? DownloadDirectory { get; set; }
     }
 }

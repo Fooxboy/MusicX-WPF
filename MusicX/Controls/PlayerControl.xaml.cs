@@ -6,6 +6,7 @@ using MusicX.Views;
 using NLog;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,6 +14,10 @@ using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using MusicX.Behaviors;
+using MusicX.Core.Models;
+using MusicX.ViewModels;
+using WPFUI.Common;
 
 namespace MusicX.Controls
 {
@@ -34,9 +39,15 @@ namespace MusicX.Controls
             playerService.PlayStateChangedEvent += PlayerService_PlayStateChangedEvent;
             playerService.PositionTrackChangedEvent += PlayerService_PositionTrackChangedEvent;
             playerService.TrackChangedEvent += PlayerService_TrackChangedEvent;
+            playerService.QueueLoadingStateChanged += PlayerService_QueueLoadingStateChanged;
 
             this.MouseWheel += PlayerControl_MouseWheel;
             
+            Queue.ItemsSource = playerService.Tracks;
+        }
+        private void PlayerService_QueueLoadingStateChanged(object? sender, QueueLoadingEventArgs e)
+        {
+            QueueLoadingRing.Visibility = e.State == QueueLoadingState.Started ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void PlayerControl_MouseWheel(object sender, MouseWheelEventArgs e)
@@ -105,11 +116,11 @@ namespace MusicX.Controls
                         amim.Begin();
                         var bitmapImage = new BitmapImage(new Uri(playerService.CurrentTrack.Album.Cover));
                         TrackCover.ImageSource = bitmapImage;
-                        BackgroundCard.Source = bitmapImage;
+                        BackgroundCard.ImageSource = bitmapImage;
                     }else
                     {
                         TrackCover.ImageSource = null;
-                        BackgroundCard.Source = null;
+                        BackgroundCard.ImageSource = null;
                     }
 
                     if (playerService.CurrentTrack.OwnerId == config.UserId)
@@ -122,6 +133,8 @@ namespace MusicX.Controls
                         LikeIcon.Filled = false;
 
                     }
+                    DownloadButton.IsEnabled = true;
+                    Queue.ScrollIntoView(playerService.CurrentTrack);
                 });
 
 
@@ -191,7 +204,6 @@ namespace MusicX.Controls
         private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             rect.Width = this.ActualWidth;
-            rec.Rect = rect;
         }
 
         private void PositionSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -204,26 +216,22 @@ namespace MusicX.Controls
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (playerService == null) return;
-
-            if (e.NewValue == 0.0)
-            {
-                SpeakerIcon.Symbol = WPFUI.Common.SymbolRegular.SpeakerOff28;
-            }
-            else if (e.NewValue > 0.0 && e.NewValue < 0.30)
-            {
-                SpeakerIcon.Symbol = WPFUI.Common.SymbolRegular.Speaker032;
-            }
-            else if (e.NewValue > 0.30 && e.NewValue < 0.60)
-            {
-                SpeakerIcon.Symbol = WPFUI.Common.SymbolRegular.Speaker132;
-            }
-            else if (e.NewValue > 0.80)
-            {
-                SpeakerIcon.Symbol = WPFUI.Common.SymbolRegular.Speaker232;
-            }
-
-
             playerService.SetVolume(e.NewValue);
+            playerService.IsMuted = false;
+            UpdateSpeakerIcon();
+        }
+
+        private void UpdateSpeakerIcon()
+        {
+            SpeakerIcon.Icon = playerService.Volume switch
+            {
+                _ when playerService.IsMuted => SymbolRegular.SpeakerOff28,
+                0.0 => SymbolRegular.SpeakerOff28,
+                > 0.0 and < 0.30 => SymbolRegular.Speaker032,
+                > 0.30 and < 0.60 => SymbolRegular.Speaker132,
+                > 0.80 => SymbolRegular.Speaker232,
+                _ => SpeakerIcon.Icon
+            };
         }
 
         private async void PlayPauseButton_Click(object sender, RoutedEventArgs e)
@@ -279,6 +287,7 @@ namespace MusicX.Controls
 
             var conf = await configService.GetConfig();
             conf.Volume = (int)value;
+            conf.IsMuted = playerService.IsMuted;
 
 
             await configService.SetConfig(conf);
@@ -357,54 +366,21 @@ namespace MusicX.Controls
             var value = (config.Volume.Value / 100D);
 
             playerService.SetVolume(value);
-
+            
             Volume.Value = value;
-        }
-
-        DispatcherTimer timer = new DispatcherTimer();
-        private void ScrollTrackName()
-        {
-            try
-            {
-                bool backscroll = false;
-                timer.Tick += (ss, ee) =>
-                {
-                    if (TitleScroll.ScrollableWidth == 0) return;
-
-                    if (backscroll == false)
-                    {
-                        TitleScroll.ScrollToHorizontalOffset(TitleScroll.HorizontalOffset + 0.6);
-                        if (TitleScroll.HorizontalOffset == TitleScroll.ScrollableWidth)
-                            backscroll = true;
-                    }
-
-                    if (backscroll == true)
-                    {
-                        TitleScroll.ScrollToHorizontalOffset(TitleScroll.HorizontalOffset - 0.8);
-                        if (TitleScroll.HorizontalOffset == 0)
-                        {
-                            backscroll = false;
-                        }
-                    }
-                };
-                timer.Interval = TimeSpan.FromMilliseconds(15);
-                timer.Start();
-            }catch (Exception ex)
-            {
-                logger.Error(ex, ex.Message);
-            }
-           
+            playerService.IsMuted = config.IsMuted;
+            UpdateSpeakerIcon();
         }
 
         private void StopScrollTrackName()
         {
-            this.timer.Stop();
+            AutoScrollBehavior.GetController(TitleScroll)?.Pause();
             TitleScroll.ScrollToHorizontalOffset(0);
         }
 
         private void ShuffleButton_Click(object sender, RoutedEventArgs e)
         {
-            this.playerService.SetShuffle(ShuffleButton.IsChecked.Value);
+            this.playerService.SetShuffle(true);
         }
 
         private void RepeatButton_Click(object sender, RoutedEventArgs e)
@@ -416,17 +392,23 @@ namespace MusicX.Controls
         private async void OpenFullScreen_Click(object sender, RoutedEventArgs e)
         {
             var notificationService = StaticService.Container.Resolve<Services.NotificationsService>();
+            var mainWindow = Window.GetWindow(this);
 
-            var win = new FullScreenWindow(logger, playerService, notificationService);
+            if (fullScreenWindow is not null || mainWindow is null)
+                return;
+            fullScreenWindow = new FullScreenWindow(logger, playerService, notificationService);
 
-            ShowOnMonitor(win);
+            ShowOnMonitor(fullScreenWindow, mainWindow);
+            fullScreenWindow.Closed += FullScreenWindowOnClosed;
+        }
+        private void FullScreenWindowOnClosed(object? sender, EventArgs e)
+        {
+            fullScreenWindow = null;
         }
 
-        private void ShowOnMonitor(Window window)
+        private void ShowOnMonitor(Window window, Window mainWindow)
         {
-
-            var screen = WpfScreenHelper.Screen.FromWindow(Application.Current.MainWindow);
-
+            var screen = WpfScreenHelper.Screen.FromWindow(mainWindow);
 
             window.WindowStyle = WindowStyle.None;
             window.WindowStartupLocation = WindowStartupLocation.Manual;
@@ -446,9 +428,10 @@ namespace MusicX.Controls
             try
             {
                 DownloadButton.IsEnabled = false;
-                var downloader = StaticService.Container.Resolve<DownloaderService>();
+                var downloader = StaticService.Container.Resolve<DownloaderViewModel>();
 
-                await downloader.AddToQueueAsync(playerService.CurrentTrack);
+                downloader.DownloadQueue.Add(playerService.CurrentTrack);
+                downloader.StartDownloadingCommand.Execute(null);
             }catch(FileNotFoundException ex)
             {
 
@@ -468,7 +451,11 @@ namespace MusicX.Controls
 
         private void TrackTitle_MouseEnter(object sender, MouseEventArgs e)
         {
-            ScrollTrackName();
+            if (AutoScrollBehavior.GetController(TitleScroll) is { } controller)
+                controller.Play();
+            else
+                AutoScrollBehavior.SetAutoScroll(TitleScroll, true);
+            
             if (playerService.CurrentTrack.Album != null)
             {
                 TrackTitle.TextDecorations.Add(TextDecorations.Underline);
@@ -499,6 +486,7 @@ namespace MusicX.Controls
 
 
         private bool mouseEnteredInVolume = false;
+        private FullScreenWindow? fullScreenWindow;
         private void Volume_MouseEnter(object sender, MouseEventArgs e)
         {
             this.mouseEnteredInVolume = true;
@@ -512,6 +500,54 @@ namespace MusicX.Controls
         private void TitleScroll_Loaded(object sender, RoutedEventArgs e)
         {
             //ScrollTrackName();
+        }
+        private void DeleteFromQueue_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (sender is FrameworkElement {DataContext: Audio audio})
+                playerService.RemoveFromQueue(audio);
+        }
+        private void ReorderButton_OnMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is FrameworkElement {TemplatedParent: FrameworkElement {TemplatedParent: ListBoxItem item}})
+                DragDrop.DoDragDrop(item, item.DataContext, DragDropEffects.Move);
+        }
+        private void ListBoxItem_OnDrop(object sender, DragEventArgs e)
+        {
+            var source = (Audio)e.Data.GetData(typeof(Audio))!;
+            var target = (Audio)((ListBoxItem)sender).DataContext;
+
+            var list = playerService.Tracks;
+            
+            var removedIdx = list.IndexOf(source);
+            var targetIdx = list.IndexOf(target);
+
+            if (removedIdx < targetIdx)
+            {
+                list.Insert(targetIdx + 1, source);
+                list.RemoveAt(removedIdx);
+            }
+            else
+            {
+                if (list.Count + 1 <= ++removedIdx)
+                    return;
+                list.Insert(targetIdx, source);
+                list.RemoveAt(removedIdx);
+            }
+
+            var currentIndex = list.IndexOf(playerService.CurrentTrack);
+            
+            // insert index is next track
+            if (currentIndex + 1 == targetIdx)
+                playerService.NextPlayTrack = source;
+            else if (currentIndex + 1 < list.Count)
+                playerService.NextPlayTrack = list[currentIndex + 1];
+
+            playerService.CurrentIndex = currentIndex;
+        }
+        private void SpeakerIcon_OnClick(object sender, RoutedEventArgs e)
+        {
+            playerService.IsMuted = !playerService.IsMuted;
+            UpdateSpeakerIcon();
         }
     }
 }

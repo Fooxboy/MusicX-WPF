@@ -36,7 +36,11 @@ namespace MusicX.Views
 
             this.playerService.TrackChangedEvent += PlayerService_TrackChangedEvent;
             playerService.PositionTrackChangedEvent += PlayerService_PositionTrackChangedEvent;
-
+            playerService.NextTrackChanged += PlayerService_NextTrackChanged;
+        }
+        private void PlayerService_NextTrackChanged(object? sender, EventArgs e)
+        {
+            SetData();
         }
 
         private void PlayerService_TrackChangedEvent(object? sender, EventArgs e)
@@ -68,6 +72,13 @@ namespace MusicX.Views
                     var bitmapImage = new BitmapImage(new Uri(playerService.CurrentTrack.Album.Thumb.Photo600));
                     BackgroundImage.Source = bitmapImage;
                     CoverImage.ImageSource = bitmapImage;
+                    CoverNote.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    BackgroundImage.Source = null;
+                    CoverImage.ImageSource = null;
+                    CoverNote.Visibility = Visibility.Visible;
                 }
 
                 if (playerService.NextPlayTrack != null)
@@ -75,7 +86,12 @@ namespace MusicX.Views
                     if (playerService.NextPlayTrack.Album != null)
                     {
                         NextTrackCover.ImageSource = new BitmapImage(new Uri(playerService.NextPlayTrack.Album.Cover));
-
+                        NextTrackNote.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        NextTrackCover.ImageSource = null;
+                        NextTrackNote.Visibility = Visibility.Visible;
                     }
 
                     NextTrackName.Text = playerService.NextPlayTrack.Title;
