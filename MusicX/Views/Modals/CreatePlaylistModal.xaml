@@ -1,0 +1,91 @@
+﻿<Page x:Class="MusicX.Views.Modals.CreatePlaylistModal"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:MusicX.Views.Modals"
+      xmlns:models="clr-namespace:MusicX.Core.Models;assembly=MusicX.Core"
+      mc:Ignorable="d" 
+      xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI" xmlns:controls="clr-namespace:MusicX.Controls"
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="CreatePlaylistModal">
+
+    <Grid >
+        <Rectangle Fill="#414141" RadiusX="10" RadiusY="10"></Rectangle>
+        <StackPanel>
+
+            <TextBlock HorizontalAlignment="Center" Margin="0 20 0 0" Text="Создание нового плейлиста" Foreground="White" FontSize="20" FontFamily="{StaticResource VKSansDemiBold}"/>
+            <wpfui:Card Margin="20, 20,20, 0">
+
+                <StackPanel Orientation="Horizontal">
+                    
+                    <Grid Cursor="Hand" HorizontalAlignment="Left" Height="160" Width="160">
+                        <Rectangle RadiusX="10" RadiusY="10" HorizontalAlignment="Left" Height="160" Width="160">
+                            <Rectangle.Fill>
+                                <ImageBrush>
+                                    <ImageBrush.ImageSource>
+                                        <BitmapImage UriSource="D:\Pictures\pic.jpg"/>
+                                    </ImageBrush.ImageSource>
+                                </ImageBrush>
+                            </Rectangle.Fill>
+                        </Rectangle>
+
+
+                        <Rectangle Fill="Black" RadiusX="10" RadiusY="10" HorizontalAlignment="Left" Height="160" Width="160" Opacity="0.4"/>
+
+                        <wpfui:SymbolIcon FontSize="30" Symbol="Pen32" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Grid>
+
+                    <StackPanel Margin="40 15 0 0"  Width="320">
+                        <wpfui:TextBox Text="{Binding Title, Mode=TwoWay}" Placeholder="Название плейлиста"/>
+                        <wpfui:TextBox Text="{Binding Description, Mode=TwoWay}" Margin="0 25 0  0" Placeholder="Описание плейлиста"/>
+
+                        <StackPanel Margin="0 15 0 0" Orientation="Horizontal">
+                            <wpfui:ToggleSwitch IsChecked="{Binding HideFromSearch, Mode=TwoWay}"/>
+                            <TextBlock Margin="5 2 0 0" Foreground="White" Text="Скрыть из поиска и рекомендаций"/>
+                        </StackPanel>
+                        
+                    </StackPanel>
+                   
+
+                </StackPanel>
+              
+            </wpfui:Card>
+
+            <TextBlock Margin="20 15 0 0" Foreground="White" FontSize="18" FontFamily="{StaticResource VKSansMedium}" Text="Список треков"/>
+
+            <wpfui:Button Margin="20 10 20 0" Appearance="Secondary" Command="{Binding AddTracksCommand}" Content="Добавить" Icon="Add24"/>
+            
+        </StackPanel>
+
+        <Grid Height="300" Margin="15 0 0 60" VerticalAlignment="Bottom">
+            <ListView ItemsSource="{Binding Tracks}">
+                <ListView.ItemTemplate>
+                    <DataTemplate DataType="models:Audio">
+                        <controls:TrackControl Audio="{Binding}"/>
+                    </DataTemplate>
+
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+
+        <Grid VerticalAlignment="Bottom" Margin="20,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="50"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <wpfui:Button Command="{Binding CancelCommand}" Grid.Column="0" Foreground="White" Appearance="Secondary"  Content="Отменить"/>
+            <wpfui:Button Command="{Binding CreateCommand}" Grid.Column="2" Appearance="Primary"  Foreground="White"  Content="Создать"/>
+        </Grid>
+
+        <Grid  HorizontalAlignment="Center" Margin="0 280 0 0" Visibility="{Binding Tracks, Converter={StaticResource ListToVisibilityConverter}, ConverterParameter=True}" VerticalAlignment="Center">
+            <StackPanel>
+                <wpfui:SymbolIcon FontSize="40" Symbol="Attach12"/>
+                <TextBlock Foreground="White" FontSize="15" Margin="0 30 0 0" Text="Нужно добавить хотя бы один трек"/>
+            </StackPanel>
+        </Grid>
+
+     </Grid>
+</Page>
