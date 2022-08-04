@@ -120,7 +120,7 @@
         <Grid HorizontalAlignment="Stretch">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="50" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Orientation="Horizontal">
                 <Grid Margin="8,6.5,6,6">
@@ -272,7 +272,8 @@
                 Cursor="Hand"
                 ForceCursor="True"
                 MouseLeftButtonDown="RecommendedAudio_MouseLeftButtonDown"
-                Visibility="Collapsed">
+                Visibility="Collapsed"
+                Background="{DynamicResource PalettePrimaryBrush}">
                 <Border
                     x:Name="border"
                     Width="40"
