@@ -71,7 +71,7 @@ namespace MusicX.Views
             if (e.OwnerId == currentUserId)
             {
                 this.AddPlaylist.Content = "Удалить плейлист";
-                this.AddPlaylist.Icon = WPFUI.Common.SymbolRegular.Delete24;
+                this.AddPlaylist.Icon = Wpf.Ui.Common.SymbolRegular.Delete24;
             }
         }
         private async void PlaylistScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
@@ -96,7 +96,7 @@ namespace MusicX.Views
                     if (playlist.OwnerId == currentUserId)
                     {
                         this.AddPlaylist.Content = "Удалить плейлист";
-                        this.AddPlaylist.Icon = WPFUI.Common.SymbolRegular.Delete24;
+                        this.AddPlaylist.Icon = Wpf.Ui.Common.SymbolRegular.Delete24;
                     }
                 }
                
@@ -128,36 +128,36 @@ namespace MusicX.Views
             if(playlist.OwnerId != currentUserId)
             {
                 this.AddPlaylist.Content = "Добавление...";
-                this.AddPlaylist.Icon = WPFUI.Common.SymbolRegular.Timer12;
+                this.AddPlaylist.Icon = Wpf.Ui.Common.SymbolRegular.Timer12;
 
                 var res = await ViewModel.AddPlaylist();
 
                 if (res)
                 {
                     this.AddPlaylist.Content = "Удалить плейлист";
-                    this.AddPlaylist.Icon = WPFUI.Common.SymbolRegular.Delete24;
+                    this.AddPlaylist.Icon = Wpf.Ui.Common.SymbolRegular.Delete24;
                 }
                 else
                 {
                     this.AddPlaylist.Content = "Ошибка";
-                    this.AddPlaylist.Icon = WPFUI.Common.SymbolRegular.ErrorCircle20;
+                    this.AddPlaylist.Icon = Wpf.Ui.Common.SymbolRegular.ErrorCircle20;
                 }
             }else
             {
                 this.AddPlaylist.Content = "Удаление...";
-                this.AddPlaylist.Icon = WPFUI.Common.SymbolRegular.Timer12;
+                this.AddPlaylist.Icon = Wpf.Ui.Common.SymbolRegular.Timer12;
 
                 var res = await ViewModel.RemovePlaylist();
 
                 if (res)
                 {
                     this.AddPlaylist.Content = "Добавить к себе";
-                    this.AddPlaylist.Icon = WPFUI.Common.SymbolRegular.Add28;
+                    this.AddPlaylist.Icon = Wpf.Ui.Common.SymbolRegular.Add28;
                 }
                 else
                 {
                     this.AddPlaylist.Content = "Ошибка";
-                    this.AddPlaylist.Icon = WPFUI.Common.SymbolRegular.ErrorCircle20;
+                    this.AddPlaylist.Icon = Wpf.Ui.Common.SymbolRegular.ErrorCircle20;
                 }
             }
         }
@@ -173,7 +173,7 @@ namespace MusicX.Views
                     _nowPlay = false;
 
                     PlayPlaylist.Content = "Возпроизвести";
-                    PlayPlaylist.Icon = WPFUI.Common.SymbolRegular.Play20;
+                    PlayPlaylist.Icon = Wpf.Ui.Common.SymbolRegular.Play20;
 
 
                     player.Pause();
@@ -183,7 +183,7 @@ namespace MusicX.Views
                     _nowPlay = true;
 
                     PlayPlaylist.Content = "Остановить воспроизведение";
-                    PlayPlaylist.Icon = WPFUI.Common.SymbolRegular.Pause20;
+                    PlayPlaylist.Icon = Wpf.Ui.Common.SymbolRegular.Pause20;
 
                     await player.PlayTrack(ViewModel.Tracks[0]);
                 }

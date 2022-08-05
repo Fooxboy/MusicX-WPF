@@ -96,7 +96,7 @@ namespace MusicX.Controls
 
                     if (Link.Meta.ContentType == "group" || Link.Meta.ContentType == "user")
                     {
-                        Card.Icon = WPFUI.Common.SymbolRegular.Link48;
+                        Card.Icon = Wpf.Ui.Common.SymbolRegular.Link48;
                     }
                 }
             }catch (Exception ex)

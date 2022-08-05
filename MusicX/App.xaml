@@ -8,10 +8,12 @@
 
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/WPFUI;component/Styles/Theme/Dark.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/WPFUI;component/Styles/WPFUI.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Wpf.Ui;component/Styles/Theme/Dark.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Wpf.Ui;component/Styles/Wpf.Ui.xaml" />
                 <ResourceDictionary x:Name="ListViewStyles" Source="Styles/ListViewStyles.xaml" />
                 <ResourceDictionary x:Name="ListViewStyles" Source="Styles/SliderStyles.xaml" />
+                <ResourceDictionary x:Name="SearchBoxStyles" Source="Styles/SearchBoxStyles.xaml" />
+                <ResourceDictionary x:Name="CardActionStyles" Source="Styles/CardActionStyles.xaml" />
 
             </ResourceDictionary.MergedDictionaries>
 

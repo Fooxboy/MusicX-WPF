@@ -17,14 +17,15 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using AsyncAwaitBestPractices;
-using WPFUI.Controls;
+using Wpf.Ui.Appearance;
+using Wpf.Ui.Controls;
 
 namespace MusicX
 {
     /// <summary>
     /// Логика взаимодействия для RootWindow.xaml
     /// </summary>
-    public partial class RootWindow : Window
+    public partial class RootWindow : UiWindow
     {
         private readonly NavigationService navigationService;
         private readonly VkService vkService;
@@ -37,20 +38,7 @@ namespace MusicX
         public RootWindow(NavigationService navigationService, VkService vkService, Logger logger, ConfigService configService, NotificationsService notificationsService)
         {
             //Style = "{StaticResource UiWindow}"
-            var os = Environment.OSVersion;
 
-
-            if (os.Version.Build >= 22000)
-            {
-                this.Background = Brushes.Transparent;
-
-                this.Foreground = Brushes.White;
-            }else
-            {
-                this.WindowStyle = WindowStyle.None;
-                this.AllowsTransparency = true;
-            }
-            
             InitializeComponent();     
             this.navigationService = navigationService;
             this.vkService = vkService;
@@ -67,8 +55,7 @@ namespace MusicX
 
             notificationsService.NewNotificationEvent += NotificationsService_NewNotificationEvent;
 
-            
-
+            Accent.Apply(Accent.GetColorizationColor(), ThemeType.Dark);
         }
 
 
@@ -123,39 +110,8 @@ namespace MusicX
             {
                 var os = Environment.OSVersion;
 
-                if (os.Version.Build >= 22000)
-                {
-                    this.Background = Brushes.Transparent;
-
-                    IntPtr windowHandle = new WindowInteropHelper(this).Handle;
-
-                    WPFUI.Appearance.Background.Remove(windowHandle);
-
-                    WPFUI.Appearance.Theme.Set(
-                    WPFUI.Appearance.ThemeType.Dark,     // Theme type
-                    WPFUI.Appearance.BackgroundType.Mica, // Background type
-                    true  ,                                // Whether to change accents automatically
-                    forceBackground: true
-                    );
-
-                    WPFUI.Appearance.Theme.Apply(WPFUI.Appearance.ThemeType.Dark, WPFUI.Appearance.BackgroundType.Mica, true, true);
-
-
-                    WPFUI.Appearance.Background.ApplyDarkMode(windowHandle);
-                    this.Background = Brushes.Transparent;
-                    WPFUI.Appearance.Background.Apply(windowHandle, WPFUI.Appearance.BackgroundType.Mica, true);
-
-                }
-
                 logger.Info($"OS Version: {os.VersionString}");
                 logger.Info($"OS Build: {os.Version.Build}");
-
-                
-                if (os.Version.Build < 22000)
-                {
-                    this.Background = (Brush)new BrushConverter().ConvertFrom("#FF202020");
-                    
-                }
 
                 navigationService.CurrentFrame = RootFrame;
                 navigationService.SectionView = new SectionView();
@@ -166,17 +122,17 @@ namespace MusicX
 
                 catalogs.Catalog.Sections.Add(podcast.Catalog.Sections[0]);
 
-                var icons = new List<WPFUI.Common.SymbolRegular>()
+                var icons = new List<Wpf.Ui.Common.SymbolRegular>()
                 {
-                    WPFUI.Common.SymbolRegular.MusicNote120,
-                    WPFUI.Common.SymbolRegular.Headphones20,
-                    WPFUI.Common.SymbolRegular.MusicNote2Play20,
-                    WPFUI.Common.SymbolRegular.FoodPizza20,
-                    WPFUI.Common.SymbolRegular.Play12,
-                    WPFUI.Common.SymbolRegular.Star16,
-                    WPFUI.Common.SymbolRegular.PlayCircle48,
-                    WPFUI.Common.SymbolRegular.HeadphonesSoundWave20,
-                    WPFUI.Common.SymbolRegular.Speaker228,
+                    Wpf.Ui.Common.SymbolRegular.MusicNote120,
+                    Wpf.Ui.Common.SymbolRegular.Headphones20,
+                    Wpf.Ui.Common.SymbolRegular.MusicNote2Play20,
+                    Wpf.Ui.Common.SymbolRegular.FoodPizza20,
+                    Wpf.Ui.Common.SymbolRegular.Play12,
+                    Wpf.Ui.Common.SymbolRegular.Star16,
+                    Wpf.Ui.Common.SymbolRegular.PlayCircle48,
+                    Wpf.Ui.Common.SymbolRegular.HeadphonesSoundWave20,
+                    Wpf.Ui.Common.SymbolRegular.Speaker228,
 
 
                 };
@@ -188,12 +144,12 @@ namespace MusicX
                 {
                     var sectionPage = navigationService.SectionView;
 
-                    WPFUI.Common.SymbolRegular icon;
+                    Wpf.Ui.Common.SymbolRegular icon;
 
-                    if (section.Title.ToLower() == "главная") icon = WPFUI.Common.SymbolRegular.Home24;
-                    else if (section.Title.ToLower() == "моя музыка") icon = WPFUI.Common.SymbolRegular.MusicNote120;
-                    else if (section.Title.ToLower() == "обзор") icon = WPFUI.Common.SymbolRegular.CompassNorthwest28;
-                    else if (section.Title.ToLower() == "подкасты") icon = WPFUI.Common.SymbolRegular.HeadphonesSoundWave20;
+                    if (section.Title.ToLower() == "главная") icon = Wpf.Ui.Common.SymbolRegular.Home24;
+                    else if (section.Title.ToLower() == "моя музыка") icon = Wpf.Ui.Common.SymbolRegular.MusicNote120;
+                    else if (section.Title.ToLower() == "обзор") icon = Wpf.Ui.Common.SymbolRegular.CompassNorthwest28;
+                    else if (section.Title.ToLower() == "подкасты") icon = Wpf.Ui.Common.SymbolRegular.HeadphonesSoundWave20;
                     else
                     {
                         var number = rand.Next(0, icons.Count);
@@ -206,21 +162,21 @@ namespace MusicX
                     if (section.Title.ToLower() == "моя музыка") section.Title = "Музыка";
 
 
-                    var navigationItem = new NavigationItem() { PageTag = section.Id, Icon = icon, Content = section.Title, Page = typeof(SectionView), Instance = sectionPage };
+                    var navigationItem = new NavigationItem() { PageTag = section.Id, Icon = icon, Content = section.Title, PageType = typeof(SectionView) };
                     navigationBar.Items.Add(navigationItem);
                 }
 
 #if DEBUG
-                var item = new NavigationItem() { PageTag = "test", Icon = WPFUI.Common.SymbolRegular.AppFolder24, Content = "TEST", Page = typeof(TestPage), Instance = new TestPage() };
+                var item = new NavigationItem() { PageTag = "test", Icon = Wpf.Ui.Common.SymbolRegular.AppFolder24, Content = "TEST", PageType = typeof(TestPage) };
                 navigationBar.Items.Add(item);
 #endif
 
-                navigationBar.Items.Add(new NavigationItem() { PageTag = "downloads", Icon = WPFUI.Common.SymbolRegular.ArrowDownload48, Content = "Загрузки", Page = typeof(DownloadsView), Instance = new DownloadsView() });
-                var item2 = new NavigationItem() { PageTag = "settings", Icon = WPFUI.Common.SymbolRegular.Settings24, Content = "Настройки", Page = typeof(SettingsView), Instance = new SettingsView(configService) };
+                navigationBar.Items.Add(new NavigationItem() { PageTag = "downloads", Icon = Wpf.Ui.Common.SymbolRegular.ArrowDownload48, Content = "Загрузки", PageType = typeof(DownloadsView) });
+                var item2 = new NavigationItem() { PageTag = "settings", Icon = Wpf.Ui.Common.SymbolRegular.Settings24, Content = "Настройки", PageType = typeof(SettingsView) };
 
                 navigationBar.Items.Add(item2);
 
-                navigationBar.Navigated += NavigationBar_Navigated; ;
+                navigationBar.Navigated += NavigationBar_Navigated;
 
                 navigationBar.Navigate(catalogs.Catalog.Sections[0].Id);
 
@@ -236,7 +192,7 @@ namespace MusicX
             
         }
 
-        private async void NavigationBar_Navigated([System.Diagnostics.CodeAnalysis.NotNull] WPFUI.Controls.Interfaces.INavigation sender, WPFUI.Common.RoutedNavigationEventArgs e)
+        private async void NavigationBar_Navigated([System.Diagnostics.CodeAnalysis.NotNull] Wpf.Ui.Controls.Interfaces.INavigation sender, Wpf.Ui.Common.RoutedNavigationEventArgs e)
         {
             var current = e.CurrentPage;
 

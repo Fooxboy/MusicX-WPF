@@ -36,19 +36,19 @@ namespace MusicX.Views
             //РАБОТАЕТ!!!!
             IntPtr windowHandle = new WindowInteropHelper(this).Handle;
             this.Background = Brushes.Transparent;
-            WPFUI.Appearance.Background.Remove(windowHandle);
+            Wpf.Ui.Appearance.Background.Remove(windowHandle);
 
-            var appTheme = WPFUI.Appearance.Theme.GetAppTheme();
-            var systemTheme = WPFUI.Appearance.Theme.GetSystemTheme();
-            WPFUI.Appearance.Theme.Set(
-            WPFUI.Appearance.ThemeType.Light,     // Theme type
-            WPFUI.Appearance.BackgroundType.Mica, // Background type
+            var appTheme = Wpf.Ui.Appearance.Theme.GetAppTheme();
+            var systemTheme = Wpf.Ui.Appearance.Theme.GetSystemTheme();
+            Wpf.Ui.Appearance.Theme.Apply(
+            Wpf.Ui.Appearance.ThemeType.Light,     // Theme type
+            Wpf.Ui.Appearance.BackgroundType.Mica, // Background type
             true                                  // Whether to change accents automatically
             );
 
-            WPFUI.Appearance.Background.Apply(windowHandle, WPFUI.Appearance.BackgroundType.Mica);
+            Wpf.Ui.Appearance.Background.Apply(windowHandle, Wpf.Ui.Appearance.BackgroundType.Mica);
 
-           var res = WPFUI.Appearance.Theme.IsAppMatchesSystem();
+           var res = Wpf.Ui.Appearance.Theme.IsAppMatchesSystem();
         }
     }
 }

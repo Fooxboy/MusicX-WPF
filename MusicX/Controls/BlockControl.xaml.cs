@@ -13,7 +13,7 @@ using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using MusicX.ViewModels.Controls;
-using WPFUI.Controls;
+using Wpf.Ui.Controls;
 
 namespace MusicX.Controls
 {
@@ -269,21 +269,21 @@ namespace MusicX.Controls
                         switch (blockButton.Action.Type)
                         {
                             case "play_shuffled_audios_from_block":
-                                card.Icon = WPFUI.Common.SymbolRegular.MusicNote2Play20;
+                                card.Icon = Wpf.Ui.Common.SymbolRegular.MusicNote2Play20;
                                 text.Text = "Перемешать все";
                                 break;
                             case "create_playlist":
-                                card.Icon = WPFUI.Common.SymbolRegular.Add24;
+                                card.Icon = Wpf.Ui.Common.SymbolRegular.Add24;
                                 text.Text = "Создать плейлист";
                                 break;
                             case "play_audios_from_block":
-                                card.Icon = WPFUI.Common.SymbolRegular.Play24;
+                                card.Icon = Wpf.Ui.Common.SymbolRegular.Play24;
                                 text.Text = "Слушать всё";
                                 break;
                             case "open_section":
                                 continue;
                             default:
-                                card.Icon = WPFUI.Common.SymbolRegular.AlertOn24;
+                                card.Icon = Wpf.Ui.Common.SymbolRegular.AlertOn24;
                                 text.Text = "content";
                                 break;
                         }

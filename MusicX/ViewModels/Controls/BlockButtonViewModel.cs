@@ -5,7 +5,7 @@ using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Services;
 using NLog;
-using WPFUI.Common;
+using Wpf.Ui.Common;
 namespace MusicX.ViewModels.Controls;
 
 public class BlockButtonViewModel : BaseViewModel
