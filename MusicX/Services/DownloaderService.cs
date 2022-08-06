@@ -71,7 +71,9 @@ public class DownloaderService
         if (progress is not null)
             conversion.OnProgress += (_, args) => progress.Report(args);
 
-        await conversion.SetOutputFormat(Format.mp3).AddParameter("-http_persistent false").Start(cancellationToken);
+        await conversion.SetOutputFormat(Format.mp3)
+            .AddParameter("-http_persistent false", ParameterPosition.PreInput)
+            .Start(cancellationToken);
         await AddMetadataAsync(audio, fileDownloadPath, cancellationToken);
     }
 
