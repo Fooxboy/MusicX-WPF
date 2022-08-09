@@ -222,12 +222,6 @@
             HorizontalAlignment="Stretch"
             MouseLeftButtonDown="FullGrid_MouseLeftButtonDown"
             Visibility="Collapsed">
-
-            <controls:Card
-                x:Name="Card"
-                Width="500"
-                HorizontalAlignment="Stretch"
-                Visibility="Collapsed" />
             <StackPanel Orientation="Horizontal">
                 <Grid>
                     <Rectangle

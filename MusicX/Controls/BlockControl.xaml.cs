@@ -104,7 +104,7 @@ namespace MusicX.Controls
 
                     if (Block.Layout.Name == "music_chart_large_slider")
                     {
-                        BlocksPanel.Children.Add(new ListPlaylists() { Playlists = Block.Playlists, ShowChart = true, ShowFull = false });
+                        BlocksPanel.Children.Add(new ListPlaylists() { Playlists = Block.Playlists, /*TODO ShowChart = true,*/ ShowFull = false });
                         logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
 
                         return;

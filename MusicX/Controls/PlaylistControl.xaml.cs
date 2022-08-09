@@ -64,7 +64,14 @@ namespace MusicX.Controls
             }
         }
 
-        public bool ShowFull { get; set; } = false;
+        public static readonly DependencyProperty ShowFullProperty = DependencyProperty.Register(
+            nameof(ShowFull), typeof(bool), typeof(PlaylistControl));
+
+        public bool ShowFull
+        {
+            get => (bool)GetValue(ShowFullProperty);
+            set => SetValue(ShowFullProperty, value);
+        }
 
         public string ChartPosition { get; set; } = null;
 
@@ -84,7 +91,6 @@ namespace MusicX.Controls
                 
                 if (ShowFull)
                 {
-                    Card.Opacity = 0;
                     CompactGrid.Visibility = Visibility.Collapsed;
                     FullGrid.Visibility = Visibility.Visible;
                     Title.Text = Playlist.Title;
@@ -228,16 +234,11 @@ namespace MusicX.Controls
         private void UserControl_MouseEnter(object sender, MouseEventArgs e)
         {
             PlayPlaylistGrid.Visibility = Visibility.Visible;
-            Card.Visibility = Visibility.Visible;
-            Card.Opacity = 0.5;
         }
 
         private void UserControl_MouseLeave(object sender, MouseEventArgs e)
         {
             PlayPlaylistGrid.Visibility = Visibility.Collapsed;
-
-            Card.Visibility = Visibility.Collapsed;
-            Card.Opacity = 0;
         }
 
         private async void CardAction_Click(object sender, RoutedEventArgs e)
