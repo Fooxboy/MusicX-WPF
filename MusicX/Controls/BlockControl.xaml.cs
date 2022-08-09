@@ -48,6 +48,15 @@ namespace MusicX.Controls
             }
         }
 
+        public static readonly DependencyProperty ArtistProperty = DependencyProperty.Register(
+            nameof(Artist), typeof(Artist), typeof(BlockControl));
+
+        public Artist? Artist
+        {
+            get => (Artist)GetValue(ArtistProperty);
+            set => SetValue(ArtistProperty, value);
+        }
+
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             var logger = StaticService.Container.Resolve<Logger>();
@@ -261,32 +270,12 @@ namespace MusicX.Controls
                         {
                             Margin = new Thickness(0, 10, 15, 10), 
                             Content = text,
-                            DataContext = new BlockButtonViewModel(blockButton),
+                            DataContext = new BlockButtonViewModel(blockButton, Artist, Block),
                         };
                         
-                        card.SetBinding(ButtonBase.CommandProperty, new Binding("InvokeCommand"));
-
-                        switch (blockButton.Action.Type)
-                        {
-                            case "play_shuffled_audios_from_block":
-                                card.Icon = Wpf.Ui.Common.SymbolRegular.MusicNote2Play20;
-                                text.Text = "Перемешать все";
-                                break;
-                            case "create_playlist":
-                                card.Icon = Wpf.Ui.Common.SymbolRegular.Add24;
-                                text.Text = "Создать плейлист";
-                                break;
-                            case "play_audios_from_block":
-                                card.Icon = Wpf.Ui.Common.SymbolRegular.Play24;
-                                text.Text = "Слушать всё";
-                                break;
-                            case "open_section":
-                                continue;
-                            default:
-                                card.Icon = Wpf.Ui.Common.SymbolRegular.AlertOn24;
-                                text.Text = "content";
-                                break;
-                        }
+                        card.SetBinding(ButtonBase.CommandProperty, new Binding(nameof(BlockButtonViewModel.InvokeCommand)));
+                        card.SetBinding(CardAction.IconProperty, new Binding(nameof(BlockButtonViewModel.Icon)));
+                        text.SetBinding(TextBlock.TextProperty, new Binding(nameof(BlockButtonViewModel.Text)));
 
                         actionBlocksGrid.ColumnDefinitions.Add(new(){ Width = new GridLength(1, GridUnitType.Star) });
                         card.SetValue(Grid.ColumnProperty, i);

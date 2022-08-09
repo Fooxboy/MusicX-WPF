@@ -142,7 +142,7 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid>
-                            <music:BlockControl Block="{Binding}" />
+                            <music:BlockControl Block="{Binding}" Artist="{Binding DataContext.Artist, ElementName=BlocksScrollView}" />
                         </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>

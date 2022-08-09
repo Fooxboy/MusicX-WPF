@@ -728,7 +728,7 @@ namespace MusicX.Core.Services
 
         }
 
-        public async Task FollowArtist(string artistId)
+        public async Task FollowArtist(string artistId, string referenceId)
         {
             try
             {
@@ -741,6 +741,7 @@ namespace MusicX.Core.Services
                     {"device_id", deviceId},
                     {"access_token", vkApi.Token},
                     {"artist_id", artistId},
+                    {"ref", referenceId},
                 };
 
 
@@ -756,7 +757,7 @@ namespace MusicX.Core.Services
             }
         }
 
-        public async Task UnfollowArtist(string artistId)
+        public async Task UnfollowArtist(string artistId, string referenceId)
         {
             try
             {
@@ -769,6 +770,7 @@ namespace MusicX.Core.Services
                     {"device_id", deviceId},
                     {"access_token", vkApi.Token},
                     {"artist_id", artistId},
+                    {"ref", referenceId},
                 };
 
 

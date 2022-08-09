@@ -10,11 +10,51 @@ namespace MusicX.ViewModels.Controls;
 
 public class BlockButtonViewModel : BaseViewModel
 {
-    public BlockButtonViewModel(Button action)
+    private readonly Artist? _artist;
+    private readonly Block? _parentBlock;
+    public BlockButtonViewModel(Button action, Artist? artist = null, Block? parentBlock = null)
     {
+        _artist = artist;
+        _parentBlock = parentBlock;
         Action = action;
         InvokeCommand = new RelayCommand(Invoke);
+        Refresh();
     }
+
+    private void Refresh()
+    {
+        switch (Action.Action.Type)
+        {
+            case "toggle_artist_subscription" when _artist is not null && _parentBlock is not null:
+                Icon = _artist.IsFollowed ? SymbolRegular.Dismiss24 : SymbolRegular.Checkmark24;
+                Text = _artist.IsFollowed ? "Отписаться" : "Подписаться";
+                break;
+            case "play_shuffled_audios_from_block":
+                Icon = SymbolRegular.MusicNote2Play20;
+                Text = "Перемешать все";
+                break;
+            case "create_playlist":
+                Icon = SymbolRegular.Add24;
+                Text = "Создать плейлист";
+                break;
+            case "play_audios_from_block":
+                Icon = SymbolRegular.Play24;
+                Text = "Слушать всё";
+                break;
+            case "open_section":
+                Icon = SymbolRegular.Open24;
+                Text = "Открыть";
+                break;
+            default:
+                Icon = SymbolRegular.AlertOn24;
+                Text = "content";
+                break;
+        }
+    }
+    
+    public SymbolRegular Icon { get; set; }
+
+    public string Text { get; set; } = string.Empty;
 
     public Button Action { get; }
 
@@ -26,6 +66,19 @@ public class BlockButtonViewModel : BaseViewModel
         {
             switch (Action.Action.Type)
             {
+                case "toggle_artist_subscription" when _artist is not null && _parentBlock is not null:
+                {
+                    var vkService = StaticService.Container.Resolve<VkService>();
+
+                    if (_artist.IsFollowed)
+                        await vkService.UnfollowArtist(Action.ArtistId, _parentBlock.Id);
+                    else
+                        await vkService.FollowArtist(Action.ArtistId, _parentBlock.Id);
+
+                    _artist.IsFollowed = !_artist.IsFollowed;
+                    Refresh();
+                    break;
+                }
                 case "play_shuffled_audios_from_block" or "play_audios_from_block":
                 {
                     var vkService = StaticService.Container.Resolve<VkService>();
