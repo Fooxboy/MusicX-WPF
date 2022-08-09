@@ -304,6 +304,7 @@
                             Height="40"
                             Margin="0,0,10,0"
                             Padding="0"
+                            Background="Transparent"
                             HorizontalContentAlignment="Center"
                             Click="RepeatButton_Click">
                             <wpfui:SymbolIcon Symbol="ArrowRepeatAll16" />
