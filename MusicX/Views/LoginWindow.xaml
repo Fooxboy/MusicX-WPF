@@ -1,4 +1,4 @@
-﻿<Window
+﻿<wpfui:UiWindow
     x:Class="MusicX.Views.LoginWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -6,26 +6,23 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:local="clr-namespace:MusicX.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
+    xmlns:wpfui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
     Title="Вход в аккаунт"
     Width="800"
     Height="450"
     Background="#202020"
+    WindowStyle="None"
+    ExtendsContentIntoTitleBar="True"
+    WindowBackdropType="Mica"
+    WindowCornerPreference="Round"
+    WindowStartupLocation="CenterScreen"
     Loaded="Window_Loaded"
     mc:Ignorable="d">
-
-    <WindowChrome.WindowChrome>
-        <WindowChrome
-            CaptionHeight="0"
-            GlassFrameThickness="-1"
-            ResizeBorderThickness="8"
-            UseAeroCaptionButtons="False" />
-    </WindowChrome.WindowChrome>
     <Grid x:Name="rootGrid">
 
 
 
-        <wpfui:TitleBar x:Name="WpfTitleBar" Height="40" />
+        <wpfui:TitleBar x:Name="WpfTitleBar" />
 
         <wpfui:Card
             Width="400"
@@ -104,10 +101,9 @@
             Grid.Row="0"
             MaxWidth="600"
             Icon="Info24"
-            IsShown="False"
             Message="Remember that the Heat Death of Universe is coming someday, no time to explain - let's go!"
-            ShowCloseButton="True"
+            CloseButtonEnabled="True"
             Timeout="5000" />
 
     </Grid>
-</Window>
+</wpfui:UiWindow>

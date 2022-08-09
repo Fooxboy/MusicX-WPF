@@ -33,13 +33,13 @@ namespace MusicX.Views
         private readonly ConfigService configService;
         private ConfigModel config;
         private readonly VkService vkService;
-        public SettingsView(ConfigService configService)
+        public SettingsView()
         {
             InitializeComponent();
 
             this.vkService = StaticService.Container.Resolve<VkService>();
 
-            this.configService = configService;
+            this.configService = StaticService.Container.Resolve<ConfigService>();
 
             this.Loaded += SettingsView_Loaded;
             
