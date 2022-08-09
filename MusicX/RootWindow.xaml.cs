@@ -137,6 +137,14 @@ namespace MusicX
 
                 };
 
+                var updatesSection = await vkService.GetAudioCatalogAsync("https://vk.com/audio?section=updates");
+                
+                if (updatesSection.Catalog?.Sections?.Count > 0)
+                {
+                    var section = updatesSection.Catalog.Sections[0];
+                    section.Title = "Подписки";
+                    catalogs.Catalog.Sections.Insert(catalogs.Catalog.Sections.Count - 1, section);
+                }
 
                 var rand = new Random();
 
@@ -150,6 +158,7 @@ namespace MusicX
                     else if (section.Title.ToLower() == "моя музыка") icon = Wpf.Ui.Common.SymbolRegular.MusicNote120;
                     else if (section.Title.ToLower() == "обзор") icon = Wpf.Ui.Common.SymbolRegular.CompassNorthwest28;
                     else if (section.Title.ToLower() == "подкасты") icon = Wpf.Ui.Common.SymbolRegular.HeadphonesSoundWave20;
+                    else if (section.Title.ToLower() == "подписки") icon = Wpf.Ui.Common.SymbolRegular.Feed24;
                     else
                     {
                         var number = rand.Next(0, icons.Count);

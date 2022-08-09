@@ -150,6 +150,14 @@ namespace MusicX.Controls
 
                         return;
                     }
+
+                    if (Block.Layout.Name == "compact_list")
+                    {
+                        BlocksPanel.Children.Add(new ListPlaylists() { Playlists = Block.Playlists, ShowFull = false });
+                        logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
+
+                        return;
+                    }
                 }
 
                 if (Block.DataType == "search_suggestions")
@@ -187,7 +195,13 @@ namespace MusicX.Controls
 
                         BlocksPanel.Children.Add(new MusicCategoryBlockControl() { Links = Block.Links });
                         logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
-                    }else
+                    }
+                    else if (Block.Layout.Name == "music_newsfeed_title")
+                    {
+                        BlocksPanel.Children.Add(new LinksNewsfeedBlockControl() { Links = Block.Links });
+                        logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
+                    }
+                    else
                     {
                         BlocksPanel.Children.Add(new LinksBlockControl() { Block = Block });
                         logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
