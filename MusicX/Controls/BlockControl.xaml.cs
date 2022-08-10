@@ -284,7 +284,7 @@ namespace MusicX.Controls
                                 continue;
                             default:
                                 card.Icon = WPFUI.Common.SymbolRegular.AlertOn24;
-                                text.Text = "content";
+                                text.Text = "Действие :)";
                                 break;
                         }
 

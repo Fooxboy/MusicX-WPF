@@ -1,4 +1,5 @@
-﻿using MusicX.ViewModels.Modals;
+﻿using MusicX.Core.Models;
+using MusicX.ViewModels.Modals;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,10 +22,27 @@ namespace MusicX.Views.Modals
     /// </summary>
     public partial class CreatePlaylistModal : Page
     {
+        private readonly CreatePlaylistModalViewModel vm;
         public CreatePlaylistModal(CreatePlaylistModalViewModel viewModel)
         {
+            this.vm = viewModel;
             this.DataContext = viewModel;
             InitializeComponent();
+        }
+
+        private void ListViewItem_Drop(object sender, DragEventArgs e)
+        {
+            var source = (Audio)e.Data.GetData(typeof(Audio))!;
+            var target = (Audio)((ListViewItem)sender).DataContext;
+
+            this.vm.MoveTracks(source, target);
+            
+        }
+
+        private void SymbolIcon_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is FrameworkElement { TemplatedParent: FrameworkElement { TemplatedParent: ListViewItem item } })
+                DragDrop.DoDragDrop(item, item.DataContext, DragDropEffects.Move);
         }
     }
 }

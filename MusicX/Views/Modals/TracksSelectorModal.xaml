@@ -22,19 +22,25 @@
             </StackPanel>
         </StackPanel>
 
+        <wpfui:ProgressRing IsIndeterminate="True" Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
         <Grid Height="560" Margin="15 0 0 60" VerticalAlignment="Bottom">
-            <ListView SelectedItems="{Binding SelectedTracks, Mode=OneWayToSource}" SelectionMode="Multiple" ItemsSource="{Binding Tracks}">
-                <ListView.ItemTemplate>
+            <controls:MultiSelectListView BorderBrush="Transparent"  ScrollViewer.ScrollChanged="MultiSelectListView_ScrollChanged"  Background="Transparent" SelectedItemsList="{Binding SelectedTracks, Mode=TwoWay}" SelectionMode="Multiple" ItemsSource="{Binding Tracks}">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource {x:Type ListViewItem}}">
+                        <Setter Property="Margin" Value="0,1,0,1"/>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+                <controls:MultiSelectListView.ItemTemplate>
                     <DataTemplate DataType="{x:Type models:Audio}">
                         <Grid>
-                            <controls:TrackControl Focusable="False" Audio="{Binding}"/>
+                            <controls:TrackControl Audio="{Binding}"/>
                             <Rectangle Fill="Transparent"/>
                         </Grid>
                     </DataTemplate>
 
-                </ListView.ItemTemplate>
-            </ListView>
+                </controls:MultiSelectListView.ItemTemplate>
+            </controls:MultiSelectListView>
         </Grid>
 
         <Grid VerticalAlignment="Bottom" Margin="20,20">
@@ -45,7 +51,7 @@
             </Grid.ColumnDefinitions>
 
             <wpfui:Button Command="{Binding CancelCommand}" Grid.Column="0" Foreground="White" Appearance="Secondary"  Content="Отменить"/>
-            <wpfui:Button Command="{Binding ConfirmCommand}" Grid.Column="2" Appearance="Primary"  Foreground="White"  Content="Создать"/>
+            <wpfui:Button Command="{Binding ConfirmCommand}" Grid.Column="2" Appearance="Primary"  Foreground="White"  Content="Добавить"/>
         </Grid>
     </Grid>
 </Page>

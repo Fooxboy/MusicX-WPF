@@ -15,18 +15,15 @@
         <StackPanel>
 
             <TextBlock HorizontalAlignment="Center" Margin="0 20 0 0" Text="Создание нового плейлиста" Foreground="White" FontSize="20" FontFamily="{StaticResource VKSansDemiBold}"/>
-            <wpfui:Card Margin="20, 20,20, 0">
+            <wpfui:Card Margin="20, 20,20, 0" >
 
                 <StackPanel Orientation="Horizontal">
                     
                     <Grid Cursor="Hand" HorizontalAlignment="Left" Height="160" Width="160">
                         <Rectangle RadiusX="10" RadiusY="10" HorizontalAlignment="Left" Height="160" Width="160">
                             <Rectangle.Fill>
-                                <ImageBrush>
-                                    <ImageBrush.ImageSource>
-                                        <BitmapImage UriSource="D:\Pictures\pic.jpg"/>
-                                    </ImageBrush.ImageSource>
-                                </ImageBrush>
+                                <ImageBrush ImageSource="{Binding CoverPath}"/>
+
                             </Rectangle.Fill>
                         </Rectangle>
 
@@ -34,6 +31,12 @@
                         <Rectangle Fill="Black" RadiusX="10" RadiusY="10" HorizontalAlignment="Left" Height="160" Width="160" Opacity="0.4"/>
 
                         <wpfui:SymbolIcon FontSize="30" Symbol="Pen32" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+
+                        <Grid.InputBindings>
+                            <MouseBinding MouseAction="LeftClick"  Command="{Binding OpenCoverPathCommand}"/>
+                        </Grid.InputBindings>
+                        
                     </Grid>
 
                     <StackPanel Margin="40 15 0 0"  Width="320">
@@ -58,13 +61,27 @@
             
         </StackPanel>
 
-        <Grid Height="300" Margin="15 0 0 60" VerticalAlignment="Bottom">
-            <ListView ItemsSource="{Binding Tracks}">
-                <ListView.ItemTemplate>
-                    <DataTemplate DataType="models:Audio">
-                        <controls:TrackControl Audio="{Binding}"/>
-                    </DataTemplate>
+        <Grid Height="300" Margin="0 0 0 60" VerticalAlignment="Bottom">
+            <ListView AllowDrop="True" ItemsSource="{Binding Tracks, Mode=TwoWay}">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel CacheLength="10" CacheLengthUnit="Item" Orientation="Vertical" />
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
 
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource {x:Type ListViewItem}}">
+                        <EventSetter Event="Drop" Handler="ListViewItem_Drop" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+
+                <ListView.ItemTemplate>
+                    <DataTemplate DataType="{x:Type models:Audio}">
+                        <Grid>
+                            <wpfui:SymbolIcon HorizontalAlignment="Left" Symbol="ReOrderDotsVertical24" MouseDown="SymbolIcon_MouseDown" />
+                            <controls:TrackControl Margin="20 0 0 0" Audio="{Binding}"/>
+                        </Grid>
+                    </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
         </Grid>
@@ -77,10 +94,10 @@
             </Grid.ColumnDefinitions>
 
             <wpfui:Button Command="{Binding CancelCommand}" Grid.Column="0" Foreground="White" Appearance="Secondary"  Content="Отменить"/>
-            <wpfui:Button Command="{Binding CreateCommand}" Grid.Column="2" Appearance="Primary"  Foreground="White"  Content="Создать"/>
+            <wpfui:Button Command="{Binding CreateCommand}" IsEnabled="{Binding CreateIsEnable}" Grid.Column="2" Appearance="Primary"  Foreground="White"  Content="Создать"/>
         </Grid>
 
-        <Grid  HorizontalAlignment="Center" Margin="0 280 0 0" Visibility="{Binding Tracks, Converter={StaticResource ListToVisibilityConverter}, ConverterParameter=True}" VerticalAlignment="Center">
+        <Grid  HorizontalAlignment="Center" Margin="0 280 0 0" Visibility="{Binding Tracks, Converter={StaticResource ListToVisibilityConverter}, ConverterParameter=True, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center">
             <StackPanel>
                 <wpfui:SymbolIcon FontSize="40" Symbol="Attach12"/>
                 <TextBlock Foreground="White" FontSize="15" Margin="0 30 0 0" Text="Нужно добавить хотя бы один трек"/>

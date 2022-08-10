@@ -5,6 +5,7 @@ using MusicX.Core.Models.General;
 using Newtonsoft.Json;
 using NLog;
 using System.Diagnostics;
+using System.Net.Http.Headers;
 using VkNet;
 using VkNet.AudioBypassService.Extensions;
 using VkNet.Enums.Filters;
@@ -959,5 +960,102 @@ namespace MusicX.Core.Services
                 throw;
             }
         }
+
+        public async Task<long> CreatePlaylistAsync(long ownerId, string title, string description, List<Audio> tracks)
+        {
+            try
+            {
+                var audios = tracks.Select(t => t.OwnerId + "_" + t.Id);
+
+                var result = await vkApi.Audio.CreatePlaylistAsync(ownerId, title, description, audios);
+
+                return result.Id.Value;
+            }catch (Exception ex)
+            {
+                logger.Error("VK API ERROR:");
+                logger.Error(ex, ex.Message);
+                throw;
+            }
+        }
+
+        public async Task SetPlaylistCoverAsync(long ownerId, long playlistId, string hash, string photo)
+        {
+            try
+            {
+                var parameters = new VkParameters
+                {
+                    {"v", vkApiVersion},
+                    {"lang", "ru"},
+                    {"device_id", deviceId},
+                    {"access_token", vkApi.Token},
+                    {"owner_id", ownerId},
+                    {"playlist_id", playlistId},
+                    {"hash", hash},
+                    {"photo", photo}
+                };
+
+
+                var json = await vkApi.InvokeAsync("audio.setPlaylistCoverPhoto", parameters);
+
+            }
+            catch (Exception ex)
+            {
+                logger.Error("VK API ERROR:");
+                logger.Error(ex, ex.Message);
+                throw;
+            }
+        }
+
+        public async Task<UploadPlaylistCoverServerResult> GetPlaylistCoverUploadServerAsync(long ownerId, long playlistId)
+        {
+            try
+            {
+                var parameters = new VkParameters
+                {
+                    {"v", vkApiVersion},
+                    {"lang", "ru"},
+                    {"device_id", deviceId},
+                    {"access_token", vkApi.Token},
+                    {"owner_id", ownerId},
+                    {"playlist_id", playlistId},
+                };
+
+                var json = await vkApi.InvokeAsync("photos.getAudioPlaylistCoverUploadServer", parameters);
+
+                var model = JsonConvert.DeserializeObject<UploadPlaylistCoverServerResult>(json);
+
+                return model;
+            }
+            catch(Exception ex)
+            {
+                logger.Error("VK API ERROR:");
+                logger.Error(ex, ex.Message);
+                throw;
+            }
+           
+
+        }
+
+        public async Task<UploadPlaylistCoverResult> UploadPlaylistCoverAsync(string uploadUrl, string path)
+        {
+            using var httpClient = new HttpClient();
+            using (var stream = File.OpenRead(path))
+            {
+                var content = new MultipartFormDataContent();
+                var streamContent = new StreamContent(stream);
+                streamContent.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
+                content.Add(streamContent, "photo", Path.GetFileName(path));
+
+                var response = await httpClient.PostAsync(uploadUrl, content).ConfigureAwait(false);
+
+                var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                var data = JsonConvert.DeserializeObject<UploadPlaylistCoverResult>(result);
+
+                return data;
+
+            }
+        }
+
     }
 }

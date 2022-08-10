@@ -1,5 +1,6 @@
 ﻿using MusicX.Core.Models;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace MusicX.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if(value is IList<Audio> list)
+            if(value is IList list)
             {
                 var val = list.Count > 0;
 
