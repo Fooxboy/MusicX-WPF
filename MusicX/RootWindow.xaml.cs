@@ -16,6 +16,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using AsyncAwaitBestPractices;
 using WPFUI.Controls;
 
 namespace MusicX
@@ -344,6 +345,29 @@ namespace MusicX
                 if (playerService.IsPlaying) playerService.Pause();
                 else playerService.Play();
             }
+        }
+        private void Previous_OnClick(object? sender, EventArgs e)
+        {
+            var playerService = StaticService.Container.Resolve<PlayerService>();
+            if (playerService.Tracks.Count > 0 && playerService.Tracks.IndexOf(playerService.CurrentTrack) > 0)
+                playerService.PreviousTrack().SafeFireAndForget();
+        }
+        private void PlayPause_OnClick(object? sender, EventArgs e)
+        {
+            var playerService = StaticService.Container.Resolve<PlayerService>();
+            if (playerService.CurrentTrack is null)
+                return;
+            
+            if (playerService.IsPlaying)
+                playerService.Pause();
+            else
+                playerService.Play();
+        }
+        private void Next_OnClick(object? sender, EventArgs e)
+        {
+            var playerService = StaticService.Container.Resolve<PlayerService>();
+            if (playerService.Tracks.Count > 0 && playerService.Tracks.IndexOf(playerService.CurrentTrack) < playerService.Tracks.Count)
+                playerService.NextTrack().SafeFireAndForget();
         }
     }
 }

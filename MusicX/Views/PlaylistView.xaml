@@ -8,10 +8,12 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:local="clr-namespace:MusicX.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:behaviors="clr-namespace:MusicX.Behaviors"
     Title="PlaylistView"
     d:DesignHeight="720"
     d:DesignWidth="1280"
     Loaded="Page_Loaded"
+    Unloaded="Page_OnUnloaded"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -83,14 +85,18 @@
                     Text="Стучусь к серверам ВКонтакте..." />
             </StackPanel>
         </Grid>
-        <hc:ScrollViewer Padding="0 0 0 80" HorizontalScrollBarVisibility="Disabled" IsInertiaEnabled="True">
+        <hc:ScrollViewer x:Name="PlaylistScrollViewer" 
+                         Padding="0 0 0 80" 
+                         HorizontalScrollBarVisibility="Disabled" 
+                         IsInertiaEnabled="True"
+                         ScrollChanged="PlaylistScrollViewer_ScrollChanged">
             <!--  Visibility="{Binding VisibleContent}"  -->
 
             <StackPanel x:Name="PlaylistStackPanel" Visibility="{Binding VisibleContent}">
                 <controls:Card
                     x:Name="CardPlaylist"
-                    Height="300"
-                    Margin="0,10,15,-40"
+                    MinHeight="300"
+                    Margin="0,10,15,10"
                     RenderTransformOrigin="0.5,0.5"
                     Visibility="Collapsed">
                     <controls:Card.RenderTransform>
@@ -149,18 +155,21 @@
 
 
                         <StackPanel Margin="20,0,0,0">
-                            <TextBlock
-                                x:Name="textBlock"
-                                MaxWidth="{Binding ElementName=CardPlaylist, Path=ActualWidth}"
-                                Margin="0,30,20,0"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                FontFamily="{StaticResource VKSansBold}"
-                                FontSize="40"
-                                FontWeight="ExtraBlack"
-                                Foreground="White"
-                                Text="{Binding Title}"
-                                TextTrimming="CharacterEllipsis" />
+                            <ScrollViewer Margin="0,30,20,0"
+                                          HorizontalAlignment="Left"
+                                          VerticalAlignment="Center" 
+                                          behaviors:AutoScrollBehavior.AutoScroll="True"
+                                          HorizontalScrollBarVisibility="Hidden"
+                                          VerticalScrollBarVisibility="Hidden"
+                                          MaxWidth="550">
+                                <TextBlock x:Name="textBlock"
+                                           MaxWidth="{Binding ElementName=CardPlaylist, Path=ActualWidth}"
+                                           FontFamily="{StaticResource VKSansBold}"
+                                           FontSize="40"
+                                           FontWeight="ExtraBlack"
+                                           Foreground="White"
+                                           Text="{Binding Title}" />
+                            </ScrollViewer>
 
                             <TextBlock
                                 x:Name="textBlock1"
@@ -250,16 +259,19 @@
                                     Icon="ArrowDownload48" />
 
                             </StackPanel>
-
-                            <TextBlock
-                                x:Name="__"
-                                Margin="0,10,0,0"
-                                Foreground="White"
-                                Opacity="0.6"
-                                Text="{Binding Path=Description}" />
+                            
+                            <TextBlock x:Name="__"
+                                       Margin="0,10,0,0" 
+                                       Foreground="White"
+                                       Opacity="0.6"
+                                       behaviors:VkMarkdownBehavior.Markdown="{Binding Path=Description}" />
                         </StackPanel>
                     </StackPanel>
                 </controls:Card>
+                <blocks:AudiosListControl Margin="0,0,0,45" Audios="{Binding Tracks}"/>
+                <controls:ProgressRing Margin="0,25" 
+                                       Visibility="{Binding VisibleLoadingMore}"
+                                       IsIndeterminate="True"/>
             </StackPanel>
         </hc:ScrollViewer>
 

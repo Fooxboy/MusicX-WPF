@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Cache;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -47,22 +48,34 @@ namespace MusicX.Controls
             player.TrackChangedEvent += Player_TrackChangedEvent;
             player.PlayStateChangedEvent += Player_PlayStateChangedEvent;
 
-            this.Unloaded += TrackControl_Unloaded;
+        }
 
+        private void UpdatePlayingAnimation(bool autoStart)
+        {
+            if (ImageBehavior.GetAnimationController(PanelAnim) is { } controller)
+            {
+                if (autoStart)
+                {
+                    controller.Play();
+                }
+                else
+                {
+                    controller.Pause();
+                    controller.GotoFrame(0);
+                }
+                return;
+            }
+            
+            ImageBehavior.SetAutoStart(PanelAnim, autoStart);
+            ImageBehavior.SetAnimatedSource(PanelAnim, new BitmapImage(new("../Assets/play.gif", UriKind.Relative)));
         }
 
         private void Player_PlayStateChangedEvent(object? sender, EventArgs e)
         {
             if(player.CurrentTrack != null && player.CurrentTrack.Id == this.Audio.Id)
             {
-                if(player.IsPlaying)
-                {
-                    this.IconPlay.Symbol = WPFUI.Common.SymbolRegular.Pause24;
-
-                }else
-                {
-                    this.IconPlay.Symbol = WPFUI.Common.SymbolRegular.Play24;
-                }
+                this.IconPlay.Symbol = player.IsPlaying ? WPFUI.Common.SymbolRegular.Pause24 : WPFUI.Common.SymbolRegular.Play24;
+                UpdatePlayingAnimation(player.IsPlaying);
             }
         }
 
@@ -77,31 +90,22 @@ namespace MusicX.Controls
                     Card.Opacity = 100;
                 }
 
-                var img = new System.Windows.Controls.Image();
-
-                var image = new BitmapImage();
-                image.BeginInit();
-                var local = AppDomain.CurrentDomain.BaseDirectory;
-                image.UriSource = new Uri($"{local}/Assets/play.gif");
-                image.EndInit();
-                ImageBehavior.SetAnimatedSource(img, image);
-
 
                 PlayButtons.Visibility = Visibility.Visible;
-                Rect.Fill = Brushes.White;
                 IconPlay.Visibility = Visibility.Collapsed;
 
                 this.IconPlay.Visibility = Visibility.Collapsed;
 
-                PanelAnim.Children.Add(img);
+                UpdatePlayingAnimation(player.IsPlaying);
+                PanelAnim.Visibility = Visibility.Visible;
             }
             else
             {
                 PlayButtons.Visibility = Visibility.Collapsed;
-                Rect.Fill = Brushes.Black;
 
                 IconPlay.Visibility = Visibility.Visible;
-                PanelAnim.Children.Clear();
+                ImageBehavior.GetAnimationController(PanelAnim)?.Pause();
+                PanelAnim.Visibility = Visibility.Collapsed;
 
                 if (!ShowCard)
                 {
@@ -117,9 +121,13 @@ namespace MusicX.Controls
             }
         }
 
-        private void TrackControl_Unloaded(object sender, RoutedEventArgs e)
+        public static readonly DependencyProperty LoadOtherTracksProperty = DependencyProperty.Register(
+            "LoadOtherTracks", typeof(bool), typeof(TrackControl), new PropertyMetadata(true));
+
+        public bool LoadOtherTracks
         {
-            this.Cover.ImageSource = null;
+            get => (bool)GetValue(LoadOtherTracksProperty);
+            set => SetValue(LoadOtherTracksProperty, value);
         }
 
         public static readonly DependencyProperty ShowCardProperty =
@@ -168,6 +176,8 @@ namespace MusicX.Controls
                 if (ShowCard) this.Card.Visibility = Visibility.Visible;
                 else this.Card.Visibility = Visibility.Collapsed;
 
+                Subtitle.Visibility = string.IsNullOrEmpty(Audio.Subtitle) ? Visibility.Collapsed : Visibility.Visible;
+
                 Title.Text = Audio.Title;
                 Subtitle.Text = Audio.Subtitle;
                 if (ChartPosition != 0)
@@ -193,7 +203,13 @@ namespace MusicX.Controls
                 {
                     if (Audio.Album != null)
                     {
-                        if (Audio.Album.Cover != null) Cover.ImageSource = new BitmapImage(new Uri(Audio.Album.Cover)) { DecodePixelHeight = 45, DecodePixelWidth = 45, CacheOption = BitmapCacheOption.None };
+                        if (Audio.Album.Cover != null)
+                            Cover.ImageSource = new BitmapImage(new Uri(Audio.Album.Cover))
+                            {
+                                DecodePixelHeight = 45, 
+                                DecodePixelWidth = 45, 
+                                UriCachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.Default)
+                            };
 
                     }
                 }
@@ -206,26 +222,27 @@ namespace MusicX.Controls
 
                 Time.Text = time;
 
-                if (Audio.MainArtists?.Count > 0)
+                if (Audio.MainArtists is null or {Count: 0})
                 {
-                    string s = string.Empty;
-                    foreach (var trackArtist in Audio.MainArtists)
-                    {
-                        s += trackArtist.Name + ", ";
-                        var text = new TextBlock() { Text = trackArtist.Name, Tag = trackArtist.Id, Foreground = Brushes.White };
-                        text.MouseLeftButtonDown += Text_MouseLeftButtonDown;
-                        GoToArtistMenu.Items.Add(text);
-                    }
-
-                    var artists = s.Remove(s.Length - 2);
-
-                    Artists.Text = artists;
-
+                    Artists.Text = Audio.Artist;
+                    Artists.MouseEnter += Artists_MouseEnter;
+                    Artists.MouseLeave += Artists_MouseLeave;
+                    Artists.MouseLeftButtonDown += Artists_MouseLeftButtonDown;
+                    
+                    AddArtistContextMenu(Audio.Artist, Audio.Artist);
                 }
                 else
                 {
-                    Artists.Text = Audio.Artist;
+                    Artists.Inlines.Clear();
+                    AddArtists(Audio.MainArtists);
                 }
+                
+                if (Audio.FeaturedArtists?.Count > 0)
+                    Artists.Inlines.Add(" feat. ");
+                if (Audio.FeaturedArtists is not null)
+                    AddArtists(Audio.FeaturedArtists);
+                
+                
 
 
                 var configService = StaticService.Container.Resolve<Services.ConfigService>();
@@ -276,23 +293,12 @@ namespace MusicX.Controls
 
                 if (player.CurrentTrack != null && player.CurrentTrack.Id == this.Audio.Id)
                 {
-                    var img = new System.Windows.Controls.Image();
-
-                    var image = new BitmapImage();
-                    image.BeginInit();
-                    var local = AppDomain.CurrentDomain.BaseDirectory;
-                    image.UriSource = new Uri($"{local}/Assets/play.gif");
-                    image.EndInit();
-                    ImageBehavior.SetAnimatedSource(img, image);
-
-
                     PlayButtons.Visibility = Visibility.Visible;
-                    Rect.Fill = Brushes.White;
                     IconPlay.Visibility = Visibility.Collapsed;
 
                     this.IconPlay.Visibility = Visibility.Collapsed;
-
-                    PanelAnim.Children.Add(img);
+                    UpdatePlayingAnimation(player.IsPlaying);
+                    PanelAnim.Visibility = Visibility.Visible;
 
                     if (!ShowCard)
                     {
@@ -316,11 +322,40 @@ namespace MusicX.Controls
             }
             
         }
+        private void AddArtists(IEnumerable<MainArtist> artists)
+        {
+            var first = true;
+            foreach (var artist in artists)
+            {
+                if (first)
+                    first = false;
+                else
+                    Artists.Inlines.Add(", ");
+                        
+                var textBlock = new TextBlock
+                {
+                    Text = artist.Name,
+                    DataContext = artist
+                };
+                    
+                textBlock.MouseEnter += Artists_MouseEnter;
+                textBlock.MouseLeave += Artists_MouseLeave;
+                textBlock.MouseLeftButtonDown += Artists_MouseLeftButtonDown;
+                    
+                Artists.Inlines.Add(textBlock);
+
+                AddArtistContextMenu(artist.Name, artist.Id);
+            }
+        }
+        private void AddArtistContextMenu(string artistName, string id)
+        {
+            var text = new TextBlock { Text = artistName, Tag = id, Foreground = Brushes.White };
+            text.MouseLeftButtonDown += Text_MouseLeftButtonDown;
+            GoToArtistMenu.Items.Add(text);
+        }
 
         private async void Text_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-           var textBlock = (TextBlock)sender;
-            
             try
             {
                 var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
@@ -331,11 +366,12 @@ namespace MusicX.Controls
                 }
                 else
                 {
-                    await navigationService.OpenArtistSection(Audio.MainArtists[0].Id);
+                    await navigationService.OpenArtistSection((string)((TextBlock)sender).Tag);
                 }
             }catch(Exception ex)
             {
                 logger.Error(ex, ex.Message);
+                StaticService.Container.Resolve<NotificationsService>().Show("Ошибка", "Нам не удалось перейти на эту секцию");
             }
 
         }
@@ -454,7 +490,7 @@ namespace MusicX.Controls
                     return;
                 }
 
-                await player.PlayTrack(Audio);
+                await player.PlayTrack(Audio, LoadOtherTracks);
             }catch(Exception ex)
             {
                 logger.Error(ex, ex.Message);
@@ -466,9 +502,9 @@ namespace MusicX.Controls
         {
             try
             {
-                if (Artists == null) return;
-
-                Artists.TextDecorations.Add(TextDecorations.Underline);
+                if (sender is not TextBlock block)
+                    return;
+                block.TextDecorations.Add(TextDecorations.Underline);
                 this.Cursor = Cursors.Hand;
             }catch (Exception ex)
             {
@@ -482,10 +518,11 @@ namespace MusicX.Controls
         {
             try
             {
-                if (Artists == null) return;
+                if (sender is not TextBlock block)
+                    return;
                 foreach (var dec in TextDecorations.Underline)
                 {
-                    Artists.TextDecorations.Remove(dec);
+                    block.TextDecorations.Remove(dec);
                 }
                 this.Cursor = Cursors.Arrow;
             }catch (Exception ex)
@@ -507,9 +544,9 @@ namespace MusicX.Controls
                 {
                     await navigationService.OpenSearchSection(Audio.Artist);
                 }
-                else
+                else if (sender is FrameworkElement {DataContext: MainArtist artist})
                 {
-                    await navigationService.OpenArtistSection(Audio.MainArtists[0].Id);
+                    await navigationService.OpenArtistSection(artist.Id);
                 }
 
                 clickToArtist = false;
@@ -519,6 +556,7 @@ namespace MusicX.Controls
                 clickToArtist = false;
 
                 logger.Error(ex, ex.Message);
+                StaticService.Container.Resolve<NotificationsService>().Show("Ошибка", "Нам не удалось перейти на эту секцию");
             }
         }
 
@@ -599,25 +637,6 @@ namespace MusicX.Controls
             
         }
 
-        private void RecommendedAudio_MouseEnter(object sender, MouseEventArgs e)
-        {
-            this.Cursor = Cursors.Hand;
-
-          
-            var amim = (Storyboard)(this.Resources["OpenAnimation"]);
-            amim.Begin();
-        }
-
-        private void RecommendedAudio_MouseLeave(object sender, MouseEventArgs e)
-        {
-            this.Cursor = Cursors.Arrow;
-
-          
-
-            var amim = (Storyboard)(this.Resources["CloseAnimation"]);
-            amim.Begin();
-        }
-
         private async void RecommendedAudio_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             try
@@ -664,6 +683,28 @@ namespace MusicX.Controls
             }
 
 
+        }
+        private void PlayNext_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                player.InsertToQueue(Audio, true);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex);
+            }
+        }
+        private void AddToQueue_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                player.InsertToQueue(Audio, false);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex);
+            }
         }
     }
 }

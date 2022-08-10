@@ -19,6 +19,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MusicX.Helpers;
 
 namespace MusicX.Controls
 {
@@ -75,6 +76,15 @@ namespace MusicX.Controls
                 {
                     MainStackPanel.Children.Add(new TrackControl() { Audio = audio, Width = 284, Margin = new Thickness(0, 5, 0, 0) });
                 }
+                
+                var player = StaticService.Container.Resolve<PlayerService>();
+                player.CurrentPlaylistChanged += PlayerOnCurrentPlaylistChanged;
+
+                if (player.CurrentPlaylistId == Playlist.Id)
+                {
+                    nowPlay = true;
+                    Icons.Symbol = WPFUI.Common.SymbolRegular.Pause24;
+                }
             }catch (Exception ex)
             {
                 var logger = StaticService.Container.Resolve<Logger>();
@@ -83,6 +93,21 @@ namespace MusicX.Controls
             }
             
 
+        }
+        private void PlayerOnCurrentPlaylistChanged(object? sender, EventArgs e)
+        {
+            if (sender is not PlayerService service)
+                return;
+
+            if (service.CurrentPlaylistId == Playlist?.Id)
+            {
+                nowPlay = true;
+                Icons.Symbol = WPFUI.Common.SymbolRegular.Pause24;
+            }
+            else
+            {
+                Icons.Symbol = WPFUI.Common.SymbolRegular.Play24;
+            }
         }
 
         private void TitleCard_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -121,9 +146,10 @@ namespace MusicX.Controls
                     Icons.Symbol = WPFUI.Common.SymbolRegular.Timer20;
                     var vkService = StaticService.Container.Resolve<VkService>();
 
-                    var audios = await vkService.AudioGetAsync(Playlist.Playlist.Id, Playlist.Playlist.OwnerId, Playlist.Playlist.AccessKey);
+                    var audios = await vkService.LoadFullPlaylistAsync(Playlist.Playlist.Id, Playlist.Playlist.OwnerId, Playlist.Playlist.AccessKey);
 
                     await playerService.Play(0, audios.Items);
+                    playerService.CurrentPlaylistId = Playlist.Id;
 
                     Icons.Symbol = WPFUI.Common.SymbolRegular.Pause24;
 

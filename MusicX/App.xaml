@@ -17,10 +17,10 @@
             </ResourceDictionary.MergedDictionaries>
 
             <FontFamily x:Key="SegoeFluentIcons">pack://application:,,,/;component/Fonts/#Segoe Fluent Icons</FontFamily>
-            <FontFamily x:Key="VKSansDemiBold">./Fonts/VKSansDisplay-DemiBold.ttf#VK Sans Display DemiBold</FontFamily>
-            <FontFamily x:Key="VKSansMedium">./Fonts/VKSansDisplay-Medium.ttf#VK Sans Display Medium</FontFamily>
-            <FontFamily x:Key="VKSansBold">./Fonts/VKSansDisplay-Bold.ttf#VK Sans Display Bold</FontFamily>
-            <FontFamily x:Key="VKSansRegular">./Fonts/VKSansDisplay-Regular.ttf#VK Sans Display Regular</FontFamily>
+            <FontFamily x:Key="VKSansDemiBold" >pack://application:,,,/;component/Fonts/VKSansDisplay-DemiBold.ttf#VK Sans Display DemiBold</FontFamily>
+            <FontFamily x:Key="VKSansMedium">pack://application:,,,/;component/Fonts/VKSansDisplay-Medium.ttf#VK Sans Display Medium</FontFamily>
+            <FontFamily x:Key="VKSansBold">pack://application:,,,/;component/Fonts/VKSansDisplay-Bold.ttf#VK Sans Display Bold</FontFamily>
+            <FontFamily x:Key="VKSansRegular">pack://application:,,,/;component/Fonts/VKSansDisplay-Regular.ttf#VK Sans Display Regular</FontFamily>
 
             <convertes:ListToVisibilityConverter x:Key="ListToVisibilityConverter" />
 

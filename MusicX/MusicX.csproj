@@ -7,7 +7,7 @@
     <UseWPF>true</UseWPF>
     <SupportedOSPlatformVersion>10.0.18362.0</SupportedOSPlatformVersion>
     <ApplicationIcon>StoreLogo.scale-400.ico</ApplicationIcon>
-	  	  <Version>0.29</Version>
+	  	  <Version>0.30</Version>
 
     <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
@@ -31,24 +31,36 @@
     <Resource Include="Assets\icon.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Content Include="Fonts\VKSansDisplay-Bold.ttf">
+    <Resource Include="Fonts\VKSansDisplay-Bold.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-	  <Content Include="Fonts\VKSansDisplay-DemiBold.ttf">
+    </Resource>
+	  <Resource Include="Fonts\VKSansDisplay-DemiBold.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-	  <Content Include="Fonts\VKSansDisplay-Medium.ttf">
+    </Resource>
+	  <Resource Include="Fonts\VKSansDisplay-Medium.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-	  <Content Include="Fonts\VKSansDisplay-Regular.ttf">
+    </Resource>
+	  <Resource Include="Fonts\VKSansDisplay-Regular.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    </Resource>
 
 	  <Content Include="NLog.config">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
 
 	  <Content Include="StoreLogo.scale-400.ico" />
+
+	  <None Remove="Assets\icons\ic_fluent_next_24_regular.png" />
+
+	  <Resource Include="Assets\icons\ic_fluent_next_24_regular.png" />
+
+	  <None Remove="Assets\icons\ic_fluent_previous_24_regular.png" />
+
+	  <Resource Include="Assets\icons\ic_fluent_previous_24_regular.png" />
+
+	  <None Remove="Assets\icons\ic_fluent_video_play_pause_24_regular.png" />
+
+	  <Resource Include="Assets\icons\ic_fluent_video_play_pause_24_regular.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -59,6 +71,7 @@
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.5.1" />
     <PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.1" />
     <PackageReference Include="PropertyChanged.Fody" Version="4.0.0" PrivateAssets="All" />
+    <PackageReference Include="System.Linq.Async" Version="6.0.1" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
     <PackageReference Include="taglib-sharp-netstandard2.0" Version="2.1.0" />
     <PackageReference Include="WPF-UI" Version="1.2.7" />
@@ -97,9 +110,9 @@
     <Resource Include="Assets\lottie\play.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Content Include="Assets\play.gif">
+    <Resource Include="Assets\play.gif">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    </Resource>
     <Resource Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>

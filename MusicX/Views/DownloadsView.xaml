@@ -45,7 +45,7 @@
                     FontSize="18"
                     Foreground="White"
                     Opacity="0.7"
-                    Text="Размер: 114МБ"
+                    Text="Размер: 222МБ"
                     TextWrapping="Wrap" />
                 <wpfui:Button
                     x:Name="DownloadButton"

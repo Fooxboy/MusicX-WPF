@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MusicX.Core.Models
 {
-    public class Audio
+    public class Audio : IEquatable<Audio>
     {
         [JsonProperty("artist")]
         public string Artist { get; set; }
@@ -89,5 +89,27 @@ namespace MusicX.Core.Models
         public string ParentBlockId { get; set; }
 
         public string? DownloadPlaylistName { get; set; }
+        public bool Equals(Audio? other)
+        {
+            if (ReferenceEquals(null, other))
+                return false;
+            if (ReferenceEquals(this, other))
+                return true;
+            return Id == other.Id;
+        }
+        public override bool Equals(object? obj)
+        {
+            if (ReferenceEquals(null, obj))
+                return false;
+            if (ReferenceEquals(this, obj))
+                return true;
+            if (obj.GetType() != typeof(Audio))
+                return false;
+            return Equals((Audio)obj);
+        }
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
+        }
     }
 }

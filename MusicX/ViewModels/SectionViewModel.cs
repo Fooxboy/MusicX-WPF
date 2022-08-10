@@ -86,7 +86,6 @@ namespace MusicX.ViewModels
 
                     Changed("Blocks");
                     nowLoading = false;
-                    GC.Collect();
 
                 }
                 catch (Exception ex)

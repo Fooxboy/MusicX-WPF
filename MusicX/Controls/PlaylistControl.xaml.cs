@@ -20,6 +20,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MusicX.Helpers;
 
 namespace MusicX.Controls
 {
@@ -72,6 +73,15 @@ namespace MusicX.Controls
             
             try
             {
+                var player = StaticService.Container.Resolve<PlayerService>();
+                player.CurrentPlaylistChanged += PlayerOnCurrentPlaylistChanged;
+
+                if (player.CurrentPlaylistId == Playlist.Id)
+                {
+                    nowPlay = true;
+                    iconPlay.Symbol = WPFUI.Common.SymbolRegular.Pause24;
+                }
+                
                 if (ShowFull)
                 {
                     Card.Opacity = 0;
@@ -199,6 +209,21 @@ namespace MusicX.Controls
                 this.Visibility = Visibility.Collapsed;
             }
         }
+        private void PlayerOnCurrentPlaylistChanged(object? sender, EventArgs e)
+        {
+            if (sender is not PlayerService service)
+                return;
+
+            if (service.CurrentPlaylistId == Playlist?.Id)
+            {
+                nowPlay = true;
+                iconPlay.Symbol = WPFUI.Common.SymbolRegular.Pause24;
+            }
+            else
+            {
+                iconPlay.Symbol = WPFUI.Common.SymbolRegular.Play24;
+            }
+        }
 
         private void UserControl_MouseEnter(object sender, MouseEventArgs e)
         {
@@ -261,9 +286,10 @@ namespace MusicX.Controls
                     iconPlay.Symbol = WPFUI.Common.SymbolRegular.Timer20;
                     var vkService = StaticService.Container.Resolve<VkService>();
 
-                    var audios = await vkService.AudioGetAsync(Playlist.Id, Playlist.OwnerId, Playlist.AccessKey);
+                    var audios = await vkService.LoadFullPlaylistAsync(Playlist.Id, Playlist.OwnerId, Playlist.AccessKey);
 
                     await playerService.Play(0, audios.Items);
+                    playerService.CurrentPlaylistId = Playlist.Id;
 
                     iconPlay.Symbol = WPFUI.Common.SymbolRegular.Pause24;
 
