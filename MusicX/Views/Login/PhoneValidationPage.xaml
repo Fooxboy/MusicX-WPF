@@ -1,0 +1,55 @@
+﻿<Page x:Class="MusicX.Views.Login.PhoneValidationPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:MusicX.Views.Login"
+      xmlns:viewModels="clr-namespace:MusicX.ViewModels"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      mc:Ignorable="d"
+      Title="PhoneValidationPage"
+      d:DataContext="{d:DesignInstance viewModels:PhoneValidationViewModel, IsDesignTimeCreatable=True}">
+    <Page.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolConverter" />
+    </Page.Resources>
+    <StackPanel VerticalAlignment="Center">
+        <TextBlock FontFamily="{StaticResource VKSansBold}"
+                   FontSize="20"
+                   Text="Подтверждение Входа"
+                   HorizontalAlignment="Center"
+                   Margin="0,0,0,20"/>
+        <TextBlock FontFamily="{StaticResource VKSansRegular}"
+                   Opacity="0.6"
+                   TextAlignment="Center"
+                   Text="{Binding Subtitle, FallbackValue=Meh}"
+                   HorizontalAlignment="Center"
+                   Margin="0,0,0,35"/>
+        <ui:TextBox
+            HorizontalContentAlignment="Center"
+            HorizontalAlignment="Center"
+            MinWidth="80"
+            x:Name="CodeBox"
+            Text="{Binding Code}"/>
+        
+        <ui:Button HorizontalAlignment="Center" 
+                   Appearance="Secondary"
+                   Content="Войти"
+                   Margin="0,35"
+                   Command="{Binding SubmitCommand}"
+                   MinWidth="{Binding ActualWidth, ElementName=CodeBox}"/>
+        
+        <StackPanel Opacity="0.6"
+                    Visibility="{Binding ResendAvailable, Converter={StaticResource BoolConverter}}">
+            <TextBlock HorizontalAlignment="Center" 
+                       FontFamily="{StaticResource VKSansRegular}"
+                       Text="Ничего не пришло?"/>
+            <ui:Button Content="{Binding TimeLeft, TargetNullValue=Запросить ещё раз!, FallbackValue=Запросить ещё раз!, StringFormat='{}{0:hh\\:mm}'}"
+                       HorizontalAlignment="Center"
+                       FontSize="12"
+                       Appearance="Transparent"
+                       IsEnabled="{Binding CanResend}"
+                       Command="{Binding ResendCommand}"
+                       Margin="0,10,0,30"/>
+        </StackPanel>
+    </StackPanel>
+</Page>

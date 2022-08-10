@@ -7,92 +7,32 @@
     xmlns:local="clr-namespace:MusicX.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wpfui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
+    xmlns:viewModels="clr-namespace:MusicX.ViewModels"
     Title="Вход в аккаунт"
     Width="800"
     Height="450"
-    Background="#202020"
     WindowStyle="None"
     ExtendsContentIntoTitleBar="True"
     WindowBackdropType="Mica"
     WindowCornerPreference="Round"
     WindowStartupLocation="CenterScreen"
-    Loaded="Window_Loaded"
+    Unloaded="LoginWindow_OnUnloaded"
     mc:Ignorable="d">
-    <Grid x:Name="rootGrid">
-
-
-
-        <wpfui:TitleBar x:Name="WpfTitleBar" />
+    <wpfui:UiWindow.DataContext>
+        <viewModels:LoginViewModel />
+    </wpfui:UiWindow.DataContext>
+    <Grid>
+        <wpfui:TitleBar />
 
         <wpfui:Card
-            Width="400"
-            Height="300"
-            Margin="0,40,0,0">
-            <Grid>
-                <StackPanel
-                    x:Name="loading"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Visibility="Collapsed">
-                    <wpfui:ProgressRing
-                        Width="60"
-                        Height="60"
-                        EngAngle="1"
-                        IsEnabled="True"
-                        IsIndeterminate="True" />
-                    <TextBlock
-                        Margin="0,5,0,0"
-                        FontFamily="{StaticResource VKSansRegular}"
-                        Text="Стучусь к серверам ВКонтакте" />
-                </StackPanel>
-
-                <StackPanel x:Name="TwoFactorAuth" Visibility="Collapsed">
-                    <TextBlock
-                        Margin="5,0,5,0"
-                        FontFamily="{StaticResource VKSansDemiBold}"
-                        FontSize="20"
-                        Foreground="White"
-                        Text="Введите код двухфакторной авторизации"
-                        TextWrapping="Wrap" />
-                    <TextBox x:Name="Code" Margin="5,20,0,5" />
-                    <wpfui:Button
-                        x:Name="TwoFactorAccept"
-                        Margin="5,40,0,5"
-                        Appearance="Secondary"
-                        Click="TwoFactorAccept_Click"
-                        Content="Подтвердить"
-                        Foreground="White" />
-                </StackPanel>
-                <StackPanel x:Name="content" Visibility="Visible">
-                    <TextBlock
-                        HorizontalAlignment="Center"
-                        FontFamily="{StaticResource VKSansDemiBold}"
-                        FontSize="25"
-                        Foreground="White"
-                        Text="Вход в аккаунт ВКонтакте"
-                        TextWrapping="Wrap" />
-                    <TextBlock
-                        Margin="5,20,5,2"
-                        FontFamily="{StaticResource VKSansRegular}"
-                        Foreground="White"
-                        Opacity="0.4"
-                        Text="Логин" />
-                    <TextBox x:Name="Login" />
-                    <TextBlock
-                        Margin="5,20,5,2"
-                        FontFamily="{StaticResource VKSansRegular}"
-                        Foreground="White"
-                        Opacity="0.4"
-                        Text="Пароль" />
-                    <PasswordBox x:Name="Password" />
-                    <wpfui:Button
-                        Margin="5,20,5,0"
-                        Appearance="Secondary"
-                        Click="Button_Click"
-                        Content="Войти" />
-                </StackPanel>
-            </Grid>
-
+            MinWidth="400"
+            MinHeight="300"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center">
+            <Frame x:Name="RootFrame" 
+                   Margin="12"
+                   LoadCompleted="RootFrame_LoadCompleted"
+                   DataContextChanged="RootFrame_DataContextChanged"/>
         </wpfui:Card>
 
         <wpfui:Snackbar

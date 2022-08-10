@@ -96,45 +96,53 @@ namespace MusicX.Views
                     File.Move(AppDomain.CurrentDomain.BaseDirectory + "\\MusicX.UpdaterNew.exe", AppDomain.CurrentDomain.BaseDirectory + "\\MusicX.Updater.exe");
                 }
 
-                
+                async Task<bool> TryStartAsync()
+                {
+                    if (config.AccessToken is null)
+                    {
+                        var login = new LoginWindow();
+                        
+                        Hide();
+                        login.ShowDialog();
+                        Show();
+
+                        if (!vkService.IsAuth)
+                            return false;
+                        
+                        config.AccessToken = vkService.vkApi.Token;
+                        config.UserId = vkService.vkApi.UserId.Value;
+                        await configService.SetConfig(config);
+                    }
+                    else
+                    {
+                        try
+                        {
+                            await vkService.SetTokenAsync(config.AccessToken, null);
+                            var rootWindow = new RootWindow(navigationService, vkService, logger, configService, notificationsService);
+                            rootWindow.Show();
+                            return true;
+                        }
+                        catch (VkNet.Exception.UserAuthorizationFailException)
+                        {
+                            config.AccessToken = null;
+                            config.UserName = null;
+                            config.UserId = 0;
+
+                            await configService.SetConfig(config);
+                        }
+                    }
+                    return false;
+                }
+
                 await Application.Current.Dispatcher.BeginInvoke(async () =>
                 {
                     try
                     {
-                        if (config.AccessToken is null)
+                        bool result;
+                        do
                         {
-                            var login = new LoginWindow(vkService, configService, logger, navigationService, notificationsService);
-                            login.Show();
-                            this.Close();
-                        }
-                        else
-                        {
-                            try
-                            {
-
-                                await vkService.SetTokenAsync(config.AccessToken, null);
-                                var rootWindow = new RootWindow(navigationService, vkService, logger, configService, notificationsService);
-                                rootWindow.Show();
-                                this.Close();
-                            }
-                            catch (VkNet.Exception.UserAuthorizationFailException e)
-                            {
-                                config.AccessToken = null;
-                                config.UserName = null;
-                                config.UserId = 0;
-
-                                await configService.SetConfig(config);
-
-                                var logger = StaticService.Container.Resolve<Logger>();
-                                var navigation = StaticService.Container.Resolve<Services.NavigationService>();
-                                var notifications = StaticService.Container.Resolve<Services.NotificationsService>();
-
-                                new LoginWindow(vkService, configService, logger, navigation, notifications, true).Show();
-
-                                this.Close();
-                            }
-
-                        }
+                            result = await TryStartAsync();
+                        } while (!result);
                     }catch(Exception ex)
                     {
                         logger.Error(ex, ex.Message);
@@ -142,9 +150,8 @@ namespace MusicX.Views
                         var error = new FatalErrorView(ex);
 
                         error.Show();
-                        this.Close();
                     }
-                    
+                    this.Close();
                 });
 
                 

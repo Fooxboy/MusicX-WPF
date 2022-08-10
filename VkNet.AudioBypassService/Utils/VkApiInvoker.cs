@@ -10,6 +10,8 @@ using Newtonsoft.Json.Serialization;
 using VkNet.Abstractions.Core;
 using VkNet.Abstractions.Utils;
 using VkNet.AudioBypassService.Abstractions;
+using VkNet.Exception;
+using VkNet.Model;
 using VkNet.Utils;
 
 namespace VkNet.AudioBypassService.Utils
@@ -63,7 +65,7 @@ namespace VkNet.AudioBypassService.Utils
 			var url = $"https://api.vk.com/method/{methodName}";
 
 			var jObject = await CallAsync(new Uri(url), parameters, cancellationToken).ConfigureAwait(false);
-
+			
 			var response = jObject["response"];
 
 			return response != null ? response.ToObject<T>(DefaultJsonSerializer) : default;

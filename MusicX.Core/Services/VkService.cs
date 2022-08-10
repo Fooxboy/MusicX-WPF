@@ -27,7 +27,7 @@ namespace MusicX.Core.Services
         public VkService(Logger logger)
         {
             var services = new ServiceCollection();
-            services.AddAudioBypass();
+            services.AddAudioBypass(builder => builder.UseBoomAuthorization());
 
             services.ToList();
 

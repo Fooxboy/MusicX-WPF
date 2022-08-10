@@ -1,11 +1,17 @@
 ﻿using MusicX.Core.Services;
 using MusicX.Services;
-using NLog;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Interop;
-using System.Windows.Media;
+using System.Windows.Controls;
+using System.Windows.Navigation;
+using AsyncAwaitBestPractices;
+using DryIoc;
+using MusicX.ViewModels;
+using MusicX.Views.Login;
+using VkNet.AudioBypassService;
+using VkNet.AudioBypassService.Models.Vk;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
 
@@ -16,145 +22,120 @@ namespace MusicX.Views
     /// </summary>
     public partial class LoginWindow : UiWindow
     {
-        private readonly VkService vkService;
-        private readonly ConfigService configService;
-        private readonly Logger logger;
-        private readonly NavigationService navigationService;
-        private readonly NotificationsService notificationsService;
-
-        private readonly bool tokenRefresh;
-        public LoginWindow(VkService vkService, ConfigService configService, Logger logger, NavigationService navigationService, NotificationsService notificationsService, bool tokenRefresh = false)
+        private readonly CancellationTokenSource _tokenSource = new();
+        private readonly IBoomAuthorizationFlow _authFlow;
+        private readonly LoginViewModel _viewModel;
+        public LoginWindow()
         {
             InitializeComponent();
-            this.vkService = vkService;
-            this.configService = configService;
-            this.logger = logger;
-            this.navigationService = navigationService;
-            this.notificationsService = notificationsService;
-            this.tokenRefresh = tokenRefresh;
-            this.WpfTitleBar.MaximizeClicked += WpfTitleBar_MaximizeClicked;
-            Accent.Apply(Accent.GetColorizationColor(), ThemeType.Dark);
+
+            _authFlow = (IBoomAuthorizationFlow)StaticService.Container.Resolve<VkService>().vkApi.AuthorizationFlow;
+            
+            _authFlow.StateChanged += AuthFlowOnStateChanged;
+            _authFlow.PhoneConfirmationRequested += AuthFlowOnPhoneConfirmationRequested;
+            _authFlow.PasswordRequested += AuthFlowOnPasswordRequested;
+            _authFlow.TwoFactorRequested += AuthFlowOnTwoFactorRequested;
+            
+            RootFrame.Navigate(new EnterPhonePage());
+            
+            _viewModel = ((LoginViewModel)DataContext);
+            NotificationsLoop().SafeFireAndForget();
         }
-
-        private bool isFullScreen = false;
-
-        private void WpfTitleBar_MaximizeClicked(object sender, RoutedEventArgs e)
+        private Task<string> AuthFlowOnTwoFactorRequested()
         {
-            isFullScreen = !isFullScreen;
-            if (isFullScreen)
+            RootFrame.Navigate(new TwoFactorPage
             {
-                rootGrid.Margin = new Thickness(8, 8, 8, 0);
+                DataContext = new TwoFactorViewModel(_viewModel)
+            });
 
-            }
-            else
-            {
-                rootGrid.Margin = new Thickness(0, 0, 0, 0);
-            }
+            _viewModel.TwoFactorSource = new();
+            return _viewModel.TwoFactorSource.Task;
         }
-
-        private async void Window_Loaded(object sender, RoutedEventArgs e)
+        private Task<string> AuthFlowOnPasswordRequested(ValidatePhoneProfile profile)
         {
-
-            var os = Environment.OSVersion;
-
-            logger.Info($"OS Version: {os.VersionString}");
-            logger.Info($"OS Build: {os.Version.Build}");
-           
-
-            logger.Info("Loaded Login window");
-
-            if(tokenRefresh)
+            RootFrame.Navigate(new PasswordPage
             {
-                await RootSnackbar.ShowAsync("Токен устарел", "Войдите в аккаунт снова, чтобы продолжить пользоваться MusicX");
-            }
+                DataContext = new PasswordViewModel(profile, _viewModel)
+            });
+            return _viewModel.PasswordSource.Task;
+        }
+        private Task<string> AuthFlowOnPhoneConfirmationRequested(PhoneConfirmationEventArgs args, Func<Task<PhoneConfirmationEventArgs>> resend)
+        {
+            RootFrame.Navigate(new PhoneValidationPage
+            {
+                DataContext = new PhoneValidationViewModel(args, resend, _viewModel)
+            });
+            return _viewModel.CodeSource.Task;
         }
 
-        public bool CodeAccepted = false;
-
-        private async void Button_Click(object sender, RoutedEventArgs e)
+        private async Task NotificationsLoop()
         {
             try
             {
-                loading.Visibility = Visibility.Visible;
-                content.Visibility = Visibility.Collapsed;
-
-                var login = Login.Text;
-                var password = Password.Password;
-
-                var token = await vkService.AuthAsync(login, password, TwoAuthDelegate, null);
-                var currentUser = await vkService.GetCurrentUserAsync();
-
-                var config = await configService.GetConfig();
-
-                config.UserId = currentUser.Id;
-                config.AccessToken = token;
-                config.UserName = currentUser.FirstName + " " + currentUser.LastName;
-
-                await configService.SetConfig(config);
-
-                var rootWindow = new RootWindow(navigationService, vkService, logger, configService, notificationsService);
-
-                rootWindow.Show();
-                this.Close();
-
-
+                await foreach (var (header, content) in _viewModel.Notifications.ReadAllAsync(_tokenSource.Token))
+                {
+                    await Dispatcher.InvokeAsync(() => RootSnackbar.Show(header, content));
+                }
             }
-            catch (VkNet.AudioBypassService.Exceptions.VkAuthException ex)
+            catch (OperationCanceledException)
             {
-                logger.Error("ERROR IN LOGIN VIEW");
-                logger.Error(ex, ex.Message);
-
-                loading.Visibility = Visibility.Collapsed;
-                content.Visibility = Visibility.Visible;
-
-                await RootSnackbar.ShowAsync("Неверные данные", "Вы ввели неверно логин или пароль");
-            }
-            catch (Exception ex)
-            {
-                logger.Error("FATAL ERROR IN LOGIN VIEW");
-                logger.Error(ex, ex.Message);
-
-                loading.Visibility = Visibility.Collapsed;
-                content.Visibility = Visibility.Visible;
-
-                await RootSnackbar.ShowAsync("Ошибка", $"Произошла неизвестная ошибка при входе: {ex.Message}");
+                // i dont care
             }
         }
-
-        public string TwoAuthDelegate()
+        
+        private void AuthFlowOnStateChanged(object? sender, BoomAuthState e)
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                loading.Visibility = Visibility.Collapsed;
-                content.Visibility = Visibility.Collapsed;
-                TwoFactorAuth.Visibility = Visibility.Visible;
+                switch (e)
+                {
+                    case BoomAuthState.None:
+                        RootFrame.Navigate(new EnterPhonePage());
+                        break;
+                    case BoomAuthState.GetSilentToken:
+                    case BoomAuthState.CheckSilentToken:
+                    case BoomAuthState.GetBearerToken:
+                    case BoomAuthState.GetVkToken:
+                    case BoomAuthState.GetPrivateKey:
+                    case BoomAuthState.GetAnonymousToken:
+                        RootFrame.Navigate(new LoadingPage());
+                        break;
+                    case BoomAuthState.PhoneValidation:
+                        break;
+                    case BoomAuthState.PhoneConfirmation:
+                        break;
+                    case BoomAuthState.Authorized:
+                        RootFrame.Navigate(new TextBlock
+                        {
+                            Text = "Это окно можно закрыть",
+                            HorizontalAlignment = HorizontalAlignment.Center,
+                            VerticalAlignment = VerticalAlignment.Center
+                        });
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(e), e, null);
+                }
             });
-           
-            while (!CodeAccepted)
-            {
-                Task.Delay(1000);
-            }
-
-            var text = string.Empty;
-
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                text = Code.Text;
-            });
-
-            return text;
         }
-
-        private void TwoFactorAccept_Click(object sender, RoutedEventArgs e)
+        private void LoginWindow_OnUnloaded(object sender, RoutedEventArgs e)
         {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                loading.Visibility = Visibility.Visible;
-                TwoFactorAuth.Visibility = Visibility.Collapsed;
-                CodeAccepted = true;
-            });
-
-            
+            _tokenSource.Cancel();
+            _tokenSource.Dispose();
+        }
+        
+        private void RootFrame_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            UpdateFrameDataContext();
+        }
+        private void RootFrame_LoadCompleted(object sender, NavigationEventArgs e)
+        {
+            UpdateFrameDataContext();
+        }
+        private void UpdateFrameDataContext()
+        {
+            if (RootFrame.Content is not FrameworkElement {DataContext: null} content)
+                return;
+            content.DataContext = RootFrame.DataContext;
         }
     }
 }
