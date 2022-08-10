@@ -20,7 +20,7 @@ namespace MusicX.Core.Services
 
         public readonly VkApi vkApi;
         private readonly Logger logger;
-        private readonly string vkApiVersion = "5.135";
+        private readonly string vkApiVersion = "5.188";
         private readonly string deviceId = "c3427adfd2595c73:A092cf601fef615c8b594f6ad2c63d159";
 
         public bool IsAuth = false;
@@ -729,7 +729,7 @@ namespace MusicX.Core.Services
 
         }
 
-        public async Task FollowArtist(string artistId)
+        public async Task FollowArtist(string artistId, string referenceId)
         {
             try
             {
@@ -742,6 +742,7 @@ namespace MusicX.Core.Services
                     {"device_id", deviceId},
                     {"access_token", vkApi.Token},
                     {"artist_id", artistId},
+                    {"ref", referenceId},
                 };
 
 
@@ -757,7 +758,7 @@ namespace MusicX.Core.Services
             }
         }
 
-        public async Task UnfollowArtist(string artistId)
+        public async Task UnfollowArtist(string artistId, string referenceId)
         {
             try
             {
@@ -770,6 +771,7 @@ namespace MusicX.Core.Services
                     {"device_id", deviceId},
                     {"access_token", vkApi.Token},
                     {"artist_id", artistId},
+                    {"ref", referenceId},
                 };
 
 

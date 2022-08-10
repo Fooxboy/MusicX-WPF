@@ -1,4 +1,4 @@
-﻿<Window
+﻿<wpfui:UiWindow
     x:Class="MusicX.RootWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -7,22 +7,19 @@
     xmlns:local="clr-namespace:MusicX"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:views="clr-namespace:MusicX.Views"
-    xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
+    xmlns:wpfui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
     d:DesignHeight="720"
     d:DesignWidth="1280"
-    Background="#202020"
+    Height="750"
+    Width="1440"
     KeyDown="Window_KeyDown"
     Loaded="Window_Loaded"
     Title="MusicX"
+    Background="#202020"
+    ExtendsContentIntoTitleBar="True"
+    WindowBackdropType="Mica"
+    WindowCornerPreference="Round"
     mc:Ignorable="d">
-
-    <WindowChrome.WindowChrome>
-        <WindowChrome
-            CaptionHeight="0"
-            GlassFrameThickness="-1"
-            ResizeBorderThickness="8"
-            UseAeroCaptionButtons="False" />
-    </WindowChrome.WindowChrome>
     
     <Window.TaskbarItemInfo>
         <TaskbarItemInfo>
@@ -196,7 +193,7 @@
             </Rectangle.ContextMenu>
         </Rectangle>-->
 
-        <wpfui:SearchBox
+        <controls:SearchBox
             x:Name="SearchBox"
             Grid.RowSpan="2"
             Width="500"
@@ -207,7 +204,7 @@
             MouseEnter="SearchBox_MouseEnter"
             MouseLeave="SearchBox_MouseLeave"
             MouseLeftButtonUp="SearchBox_MouseLeftButtonUp"
-            Placeholder="Поиск музыки, плейлистов, исполнителей" />
+            PlaceholderText="Поиск музыки, плейлистов, исполнителей" />
 
         <!--<Rectangle Fill="#414141" Grid.ColumnSpan="3" Height="300" Grid.RowSpan="5"  RadiusY="10" RadiusX="10" Width="500" VerticalAlignment="Top" Margin="0 45 0 0">
             <Rectangle.Effect>
@@ -241,8 +238,7 @@
             MaxWidth="600"
             Margin="0,0,0,40"
             Icon="Info20"
-            IsShown="False"
-            ShowCloseButton="True"
+            CloseButtonEnabled="True"
             Timeout="5000" />
 
         <wpfui:Button
@@ -259,4 +255,4 @@
         </wpfui:Button>
 
     </Grid>
-</Window>
+</wpfui:UiWindow>

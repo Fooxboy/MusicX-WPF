@@ -30,5 +30,8 @@ namespace MusicX.Core.Models
 
         [JsonProperty("options")]
         public List<OptionButton> Options { get; set; } = new List<OptionButton>();
+        
+        [JsonProperty("artist_id")]
+        public string ArtistId { get; set; }
     }
 }

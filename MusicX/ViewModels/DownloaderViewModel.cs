@@ -13,7 +13,7 @@ using MusicX.Core.Services;
 using MusicX.Helpers;
 using MusicX.Services;
 using NLog;
-using WPFUI.Common;
+using Wpf.Ui.Common;
 using Xabe.FFmpeg.Events;
 namespace MusicX.ViewModels;
 

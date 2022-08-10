@@ -83,7 +83,7 @@ namespace MusicX.Controls
                 if (player.CurrentPlaylistId == Playlist.Id)
                 {
                     nowPlay = true;
-                    Icons.Symbol = WPFUI.Common.SymbolRegular.Pause24;
+                    Icons.Symbol = Wpf.Ui.Common.SymbolRegular.Pause24;
                 }
             }catch (Exception ex)
             {
@@ -102,11 +102,11 @@ namespace MusicX.Controls
             if (service.CurrentPlaylistId == Playlist?.Id)
             {
                 nowPlay = true;
-                Icons.Symbol = WPFUI.Common.SymbolRegular.Pause24;
+                Icons.Symbol = Wpf.Ui.Common.SymbolRegular.Pause24;
             }
             else
             {
-                Icons.Symbol = WPFUI.Common.SymbolRegular.Play24;
+                Icons.Symbol = Wpf.Ui.Common.SymbolRegular.Play24;
             }
         }
 
@@ -143,7 +143,7 @@ namespace MusicX.Controls
                 {
                     nowPlay = true;
 
-                    Icons.Symbol = WPFUI.Common.SymbolRegular.Timer20;
+                    Icons.Symbol = Wpf.Ui.Common.SymbolRegular.Timer20;
                     var vkService = StaticService.Container.Resolve<VkService>();
 
                     var audios = await vkService.LoadFullPlaylistAsync(Playlist.Playlist.Id, Playlist.Playlist.OwnerId, Playlist.Playlist.AccessKey);
@@ -151,7 +151,7 @@ namespace MusicX.Controls
                     await playerService.Play(0, audios.Items);
                     playerService.CurrentPlaylistId = Playlist.Id;
 
-                    Icons.Symbol = WPFUI.Common.SymbolRegular.Pause24;
+                    Icons.Symbol = Wpf.Ui.Common.SymbolRegular.Pause24;
 
                     nowLoad = false;
 
@@ -159,7 +159,7 @@ namespace MusicX.Controls
                 else
                 {
                     playerService.Pause();
-                    Icons.Symbol = WPFUI.Common.SymbolRegular.Play24;
+                    Icons.Symbol = Wpf.Ui.Common.SymbolRegular.Play24;
 
                     await Task.Delay(400);
                     nowLoad = false;

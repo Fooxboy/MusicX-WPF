@@ -7,7 +7,7 @@
     xmlns:local="clr-namespace:MusicX.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:music="clr-namespace:MusicX.Controls"
-    xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
+    xmlns:wpfui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
     Title="SectionView"
     d:DesignHeight="450"
     d:DesignWidth="800"
@@ -142,7 +142,7 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid>
-                            <music:BlockControl Block="{Binding}" />
+                            <music:BlockControl Block="{Binding}" Artist="{Binding DataContext.Artist, ElementName=BlocksScrollView}" />
                         </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>

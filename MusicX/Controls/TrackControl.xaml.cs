@@ -74,7 +74,7 @@ namespace MusicX.Controls
         {
             if(player.CurrentTrack != null && player.CurrentTrack.Id == this.Audio.Id)
             {
-                this.IconPlay.Symbol = player.IsPlaying ? WPFUI.Common.SymbolRegular.Pause24 : WPFUI.Common.SymbolRegular.Play24;
+                this.IconPlay.Symbol = player.IsPlaying ? Wpf.Ui.Common.SymbolRegular.Pause24 : Wpf.Ui.Common.SymbolRegular.Play24;
                 UpdatePlayingAnimation(player.IsPlaying);
             }
         }
@@ -117,7 +117,7 @@ namespace MusicX.Controls
 
 
                 this.IconPlay.Visibility = Visibility.Visible;
-                this.IconPlay.Symbol = WPFUI.Common.SymbolRegular.Play24;
+                this.IconPlay.Symbol = Wpf.Ui.Common.SymbolRegular.Play24;
             }
         }
 
@@ -171,7 +171,7 @@ namespace MusicX.Controls
             try
             {
 
-                this.IconPlay.Symbol = WPFUI.Common.SymbolRegular.Play24;
+                this.IconPlay.Symbol = Wpf.Ui.Common.SymbolRegular.Play24;
 
                 if (ShowCard) this.Card.Visibility = Visibility.Visible;
                 else this.Card.Visibility = Visibility.Collapsed;
@@ -252,12 +252,12 @@ namespace MusicX.Controls
 
                 if (Audio.OwnerId == config.UserId)
                 {
-                    AddRemoveIcon.Symbol = WPFUI.Common.SymbolRegular.Delete20;
+                    AddRemoveIcon.Symbol = Wpf.Ui.Common.SymbolRegular.Delete20;
                     AddRemoveText.Text = "Удалить";
                 }
                 else
                 {
-                    AddRemoveIcon.Symbol = WPFUI.Common.SymbolRegular.Add24;
+                    AddRemoveIcon.Symbol = Wpf.Ui.Common.SymbolRegular.Add24;
                     AddRemoveText.Text = "Добавить к себе";
 
                 }

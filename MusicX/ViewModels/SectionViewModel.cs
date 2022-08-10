@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using VkNet.Exception;
 
 namespace MusicX.ViewModels
 {
@@ -28,6 +29,8 @@ namespace MusicX.ViewModels
 
         public Section Section { get; set; }
         public string Next { get; set; }
+        
+        public Artist? Artist { get; set; }
 
         public ObservableCollection<Block> Blocks { get; set; } = new ObservableCollection<Block>();
 
@@ -232,6 +235,7 @@ namespace MusicX.ViewModels
                 navigationService.AddHistory(Models.Enums.NavigationSource.Section, (section.Section.Blocks, section.Section.NextFrom));
 
                 this.Section = section.Section;
+                Artist = section.Artists?.FirstOrDefault();
                 logger.Info($"Loaded {section.Section.Blocks.Count} blocks");
 
 
@@ -239,7 +243,7 @@ namespace MusicX.ViewModels
 
                 if (showTitle)
                 {
-                    obsCollection.Add(new Block() { DataType = "none", Layout = new Layout() { Name = "header", Title = Section.Title } });
+                    obsCollection.Add(new Block() {DataType = "none", Layout = new Layout() {Name = "header", Title = Section.Title}});
                 }
                 foreach (var block in section.Section.Blocks)
                 {
@@ -283,6 +287,13 @@ namespace MusicX.ViewModels
                 });
 
 
+            }
+            catch (VkApiMethodInvokeException ex) when (ex.ErrorCode == 104)
+            {
+                await Application.Current.Dispatcher.BeginInvoke(() =>
+                {
+                    Blocks.Clear();
+                });
             }
             catch (Exception ex)
             {
