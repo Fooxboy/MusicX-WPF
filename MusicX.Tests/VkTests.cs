@@ -132,7 +132,7 @@ namespace MusicX.Tests
         public async Task SetCoverImage()
         {
             var vkSevice = new VkService(null);
-            await vkSevice.SetTokenAsync("vk1.a.t3_NRmjWV25r6ShtX6Qvqmwcl6-FOhwW8VmZXq04UA_4m310ZuA56xJEh_mo6GCQDheHnXG0IbOercG14dzqFZfTtsdXGMaTBMmEuls4TSujiMwv930K_a_pfPMzSDWUCRXyC79jF1yABtm6UIHj1RybhS6YlOCS4A0I2-luVb4ox8PGzC5V70GAElPBWbwJ", null);
+            await vkSevice.SetTokenAsync("", null);
 
             await vkSevice.SetPlaylistCoverAsync(308764786, 13);
         }
