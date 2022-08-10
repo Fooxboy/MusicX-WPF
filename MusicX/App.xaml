@@ -14,6 +14,7 @@
                 <ResourceDictionary x:Name="ListViewStyles" Source="Styles/SliderStyles.xaml" />
                 <ResourceDictionary x:Name="SearchBoxStyles" Source="Styles/SearchBoxStyles.xaml" />
                 <ResourceDictionary x:Name="CardActionStyles" Source="Styles/CardActionStyles.xaml" />
+                <ResourceDictionary x:Name="TextBlockStyles" Source="Styles/TextBlockStyles.xaml" />
 
             </ResourceDictionary.MergedDictionaries>
 
