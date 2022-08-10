@@ -17,7 +17,7 @@ using System.Windows.Threading;
 using MusicX.Behaviors;
 using MusicX.Core.Models;
 using MusicX.ViewModels;
-using WPFUI.Common;
+using Wpf.Ui.Common;
 
 namespace MusicX.Controls
 {
@@ -183,11 +183,11 @@ namespace MusicX.Controls
 
                     if (playerService.IsPlaying)
                     {
-                        PlayIcon.Symbol = WPFUI.Common.SymbolRegular.Pause24;
+                        PlayIcon.Symbol = Wpf.Ui.Common.SymbolRegular.Pause24;
                     }
                     else
                     {
-                        PlayIcon.Symbol = WPFUI.Common.SymbolRegular.Play32;
+                        PlayIcon.Symbol = Wpf.Ui.Common.SymbolRegular.Play32;
 
                     }
                 });

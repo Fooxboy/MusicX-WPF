@@ -1,0 +1,84 @@
+﻿<UserControl x:Class="MusicX.Controls.Blocks.LinksNewsfeedBlockControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:MusicX.Controls.Blocks"
+             xmlns:models="clr-namespace:MusicX.Core.Models;assembly=MusicX.Core"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <ItemsControl ItemsSource="{Binding Links, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:LinksNewsfeedBlockControl}}">
+        <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+                <StackPanel Orientation="Horizontal" IsItemsHost="True" />
+            </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+            <DataTemplate DataType="{x:Type models:Link}">
+                <ui:CardAction Margin="0,0,15,15" Click="Link_OnClick">
+                    <ui:CardAction.Style>
+                        <Style TargetType="{x:Type ui:CardAction}" BasedOn="{StaticResource {x:Type ui:CardAction}}">
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="BorderBrush" Value="Transparent" />
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="{DynamicResource ControlFillColorSecondaryBrush}" />
+                                    <Setter Property="BorderBrush" Value="{DynamicResource ControlElevationBorderBrush}" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ui:CardAction.Style>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Grid>
+                            <Rectangle
+                                x:Name="RectanglePlaceholder"
+                                Width="45"
+                                Height="45"
+                                Fill="Black"
+                                Opacity="0.2"
+                                RadiusX="100"
+                                RadiusY="100" />
+
+                            <ui:SymbolIcon
+                                x:Name="IconPlaceholder"
+                                FontSize="24"
+                                Symbol="Link32" />
+
+                            <Rectangle
+                                x:Name="RectangleLink"
+                                Width="45"
+                                Height="45"
+                                RadiusX="100"
+                                RadiusY="100">
+                                <Rectangle.Fill>
+                                    <ImageBrush ImageSource="{Binding Image[0].Url}"/>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                        </Grid>
+                        
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,0">
+                            <TextBlock Margin="10,0"
+                                       Text="{Binding Title}"
+                                       FontFamily="{StaticResource VKSansRegular}"/>
+                            <TextBlock Margin="0,0,10,0"
+                                       Text="{Binding Subtitle}"
+                                       FontFamily="{StaticResource VKSansRegular}"
+                                       Opacity="0.4">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Title}" Value="{x:Null}">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </StackPanel>
+                    </StackPanel>
+                </ui:CardAction>
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+    </ItemsControl>
+</UserControl>

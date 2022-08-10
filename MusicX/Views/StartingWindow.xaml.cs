@@ -18,19 +18,21 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Wpf.Ui.Appearance;
+using Wpf.Ui.Controls;
 
 namespace MusicX.Views
 {
     /// <summary>
     /// Логика взаимодействия для StartingWindow.xaml
     /// </summary>
-    public partial class StartingWindow : Window
+    public partial class StartingWindow : UiWindow
     {
         public StartingWindow()
         {
             InitializeComponent();
            // this.Background = Brushes.Black;
-
+           Accent.Apply(Accent.GetColorizationColor(), ThemeType.Dark);
         }
 
         private Container container;

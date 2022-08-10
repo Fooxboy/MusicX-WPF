@@ -6,13 +6,15 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
+using Wpf.Ui.Appearance;
+using Wpf.Ui.Controls;
 
 namespace MusicX.Views
 {
     /// <summary>
     /// Логика взаимодействия для LoginWindow.xaml
     /// </summary>
-    public partial class LoginWindow : Window
+    public partial class LoginWindow : UiWindow
     {
         private readonly VkService vkService;
         private readonly ConfigService configService;
@@ -23,19 +25,6 @@ namespace MusicX.Views
         private readonly bool tokenRefresh;
         public LoginWindow(VkService vkService, ConfigService configService, Logger logger, NavigationService navigationService, NotificationsService notificationsService, bool tokenRefresh = false)
         {
-            var os = Environment.OSVersion;
-
-            if (os.Version.Build >= 22000)
-            {
-                this.Background = Brushes.Transparent;
-
-                this.Foreground = Brushes.White;
-            }else
-            {
-                this.WindowStyle = WindowStyle.None;
-                this.AllowsTransparency = true;
-            }
-
             InitializeComponent();
             this.vkService = vkService;
             this.configService = configService;
@@ -44,6 +33,7 @@ namespace MusicX.Views
             this.notificationsService = notificationsService;
             this.tokenRefresh = tokenRefresh;
             this.WpfTitleBar.MaximizeClicked += WpfTitleBar_MaximizeClicked;
+            Accent.Apply(Accent.GetColorizationColor(), ThemeType.Dark);
         }
 
         private bool isFullScreen = false;
@@ -66,38 +56,6 @@ namespace MusicX.Views
         {
 
             var os = Environment.OSVersion;
-
-            if (os.Version.Build >= 22000)
-            {
-                this.Background = Brushes.Transparent;
-
-                IntPtr windowHandle = new WindowInteropHelper(this).Handle;
-
-                WPFUI.Appearance.Background.Remove(windowHandle);
-
-                WPFUI.Appearance.Theme.Set(
-                WPFUI.Appearance.ThemeType.Dark,     // Theme type
-                WPFUI.Appearance.BackgroundType.Mica, // Background type
-                true,                                // Whether to change accents automatically
-                forceBackground: true
-                );
-
-                WPFUI.Appearance.Theme.Apply(WPFUI.Appearance.ThemeType.Dark, WPFUI.Appearance.BackgroundType.Mica, true, true);
-
-
-                WPFUI.Appearance.Background.ApplyDarkMode(windowHandle);
-                this.Background = Brushes.Transparent;
-                WPFUI.Appearance.Background.Apply(windowHandle, WPFUI.Appearance.BackgroundType.Mica, true);
-            }
-
-
-            if (os.Version.Build < 22000)
-            {
-                this.Background = (Brush)new BrushConverter().ConvertFrom("#FF202020");
-
-            }
-
-
 
             logger.Info($"OS Version: {os.VersionString}");
             logger.Info($"OS Build: {os.Version.Build}");
