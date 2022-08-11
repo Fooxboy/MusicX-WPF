@@ -34,7 +34,7 @@ namespace MusicX.Controls
             try
             {
                 VideoImage.ImageSource = new BitmapImage(new Uri(Video.Image[3].Url));
-                Time.Text = TimeSpan.FromSeconds(Video.Duration).Minutes + ":" + TimeSpan.FromSeconds(Video.Duration).Seconds;
+                Time.Text = TimeSpan.FromSeconds(Video.Duration).ToString("m\\:ss");
                 NameVideo.Text = Video.Title;
                 AuthorVideo.Text = Video.MainArtists[0].Name;
             }catch (Exception ex)
