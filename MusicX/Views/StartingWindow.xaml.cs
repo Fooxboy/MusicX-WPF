@@ -117,7 +117,7 @@ namespace MusicX.Views
                                 rootWindow.Show();
                                 this.Close();
                             }
-                            catch (VkNet.Exception.UserAuthorizationFailException e)
+                            catch (VkNet.Exception.VkApiMethodInvokeException e) when (e.ErrorCode is 5 or 1117)
                             {
                                 config.AccessToken = null;
                                 config.UserName = null;
