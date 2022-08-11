@@ -97,31 +97,35 @@ namespace MusicX.Views
                 memory = Math.Round(memory, 2);
                 MemoryLogs.Text = memory.ToString();
                 
-                di = new DirectoryInfo(config.DownloadDirectory ?? string.Empty);
-
-                if (di.Exists)
+                if(config.DownloadDirectory != null)
                 {
-                    memory = 0;
+                    di = new DirectoryInfo(config.DownloadDirectory);
 
-                    foreach (FileInfo file in di.GetFiles())
+                    if (di.Exists)
                     {
-                        memory += file.Length / 1024;
-                    }
+                        memory = 0;
 
-                    if (memory > 1024)
-                    {
-                        memory /= 1024;
-                        MemoryTypeTracks.Text = "МБ";
-                    }
-                    else
-                    {
-                        MemoryTypeTracks.Text = "КБ";
+                        foreach (FileInfo file in di.GetFiles())
+                        {
+                            memory += file.Length / 1024;
+                        }
 
-                    }
+                        if (memory > 1024)
+                        {
+                            memory /= 1024;
+                            MemoryTypeTracks.Text = "МБ";
+                        }
+                        else
+                        {
+                            MemoryTypeTracks.Text = "КБ";
 
-                    memory = Math.Round(memory, 2);
-                    MemoryTracks.Text = memory.ToString();
+                        }
+
+                        memory = Math.Round(memory, 2);
+                        MemoryTracks.Text = memory.ToString();
+                    }
                 }
+                
 
                 this.VersionApp.Text = StaticService.Version + " " + StaticService.VersionKind;
                 this.BuildDate.Text = StaticService.BuildDate;

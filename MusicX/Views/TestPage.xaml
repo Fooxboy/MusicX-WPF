@@ -56,15 +56,19 @@
                     </TransformGroup>
                 </StackPanel.RenderTransform>
 
-
-
-
                 <Button
                     x:Name="OpenModal"
                     Width="300"
                     HorizontalAlignment="Left"
                     Click="OpenModal_Click"
                     Content="Открыть модалку" />
+
+                <Button
+                    x:Name="OpenPlaylistModal"
+                    Width="390"
+                    HorizontalAlignment="Left"
+                    Click="OpenPlaylistModal_Click"
+                    Content="Открыть модалку создания плейлиста" />
 
                 <TextBlock
                     Margin="0,30,0,0"

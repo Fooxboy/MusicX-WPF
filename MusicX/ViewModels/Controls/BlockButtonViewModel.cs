@@ -4,6 +4,8 @@ using DryIoc;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Services;
+using MusicX.ViewModels.Modals;
+using MusicX.Views.Modals;
 using NLog;
 using Wpf.Ui.Common;
 namespace MusicX.ViewModels.Controls;
@@ -92,7 +94,10 @@ public class BlockButtonViewModel : BaseViewModel
                 case "create_playlist":
                 {
                     var notificationService = StaticService.Container.Resolve<NotificationsService>();
-                    notificationService.Show("Ошибка", "MusicX пока что не умеет создавать плейлисты");
+                    var navigationService = StaticService.Container.Resolve<NavigationService>();
+                    var viewModel = StaticService.Container.Resolve<CreatePlaylistModalViewModel>();
+                    viewModel.IsEdit = false;
+                    navigationService.OpenModal(new CreatePlaylistModal(viewModel), 700, 600);
                     break;
                 }
                 case "open_section":

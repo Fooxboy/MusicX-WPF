@@ -290,7 +290,7 @@ namespace MusicX.Controls
                         card.SetBinding(ButtonBase.CommandProperty, new Binding(nameof(BlockButtonViewModel.InvokeCommand)));
                         card.SetBinding(CardAction.IconProperty, new Binding(nameof(BlockButtonViewModel.Icon)));
                         text.SetBinding(TextBlock.TextProperty, new Binding(nameof(BlockButtonViewModel.Text)));
-
+                        
                         actionBlocksGrid.ColumnDefinitions.Add(new(){ Width = new GridLength(1, GridUnitType.Star) });
                         card.SetValue(Grid.ColumnProperty, i);
                         actionBlocksGrid.Children.Add(card);

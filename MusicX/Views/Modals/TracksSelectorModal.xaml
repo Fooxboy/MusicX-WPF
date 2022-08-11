@@ -1,0 +1,57 @@
+﻿<Page x:Class="MusicX.Views.Modals.TracksSelectorModal"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:MusicX.Views.Modals"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      xmlns:models="clr-namespace:MusicX.Core.Models;assembly=MusicX.Core"
+      xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
+      xmlns:controls="clr-namespace:MusicX.Controls"
+      Title="TracksSelectorModal">
+
+    <Grid>
+        <Rectangle Fill="#414141" RadiusX="10" RadiusY="10"></Rectangle>
+
+        <StackPanel>
+            <TextBlock HorizontalAlignment="Center" Margin="0 20 0 0" Text="Выбор треков" Foreground="White" FontSize="20" FontFamily="{StaticResource VKSansDemiBold}"/>
+            <StackPanel Margin="20 10 0 0" Orientation="Horizontal">
+                <TextBlock Text="Выбрано треков: " Foreground="White"  />
+                <TextBlock  Foreground="White" Text="{Binding SelectedTracks.Count}"/>
+            </StackPanel>
+        </StackPanel>
+
+        <wpfui:ProgressRing IsIndeterminate="True" Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+        <Grid Height="560" Margin="15 0 0 60" VerticalAlignment="Bottom">
+            <controls:MultiSelectListView BorderBrush="Transparent"  ScrollViewer.ScrollChanged="MultiSelectListView_ScrollChanged"  Background="Transparent" SelectedItemsList="{Binding SelectedTracks, Mode=TwoWay}" SelectionMode="Multiple" ItemsSource="{Binding Tracks}">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource {x:Type ListViewItem}}">
+                        <Setter Property="Margin" Value="0,1,0,1"/>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+                <controls:MultiSelectListView.ItemTemplate>
+                    <DataTemplate DataType="{x:Type models:Audio}">
+                        <Grid>
+                            <controls:TrackControl Audio="{Binding}"/>
+                            <Rectangle Fill="Transparent"/>
+                        </Grid>
+                    </DataTemplate>
+
+                </controls:MultiSelectListView.ItemTemplate>
+            </controls:MultiSelectListView>
+        </Grid>
+
+        <Grid VerticalAlignment="Bottom" Margin="20,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="50"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <wpfui:Button Command="{Binding CancelCommand}" Grid.Column="0" Foreground="White" Appearance="Secondary"  Content="Отменить"/>
+            <wpfui:Button Command="{Binding ConfirmCommand}" Grid.Column="2" Appearance="Primary"  Foreground="White"  Content="Добавить"/>
+        </Grid>
+    </Grid>
+</Page>
