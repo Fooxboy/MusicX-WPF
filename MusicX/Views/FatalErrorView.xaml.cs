@@ -11,13 +11,14 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Wpf.Ui.Controls;
 
 namespace MusicX.Views
 {
     /// <summary>
     /// Логика взаимодействия для FatalErrorView.xaml
     /// </summary>
-    public partial class FatalErrorView : Window
+    public partial class FatalErrorView : UiWindow
     {
         private readonly Exception exInfo;
         public FatalErrorView(Exception ex)
