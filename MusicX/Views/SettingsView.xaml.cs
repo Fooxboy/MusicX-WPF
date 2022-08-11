@@ -138,7 +138,7 @@ namespace MusicX.Views
             config.UserId = 0;
 
             await configService.SetConfig(config);
-            await vkService.ClearToken();
+            await vkService.ClearTokenAsync();
 
             var logger = StaticService.Container.Resolve<Logger>();
             var navigation = StaticService.Container.Resolve<Services.NavigationService>();

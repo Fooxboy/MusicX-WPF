@@ -2,16 +2,19 @@
 using JetBrains.Annotations;
 using VkNet.AudioBypassService.Abstractions;
 using VkNet.AudioBypassService.Models.Vk;
+using VkNet.Utils;
 namespace VkNet.AudioBypassService.Utils;
 
 public sealed class BypassAuthCategory
 {
     private IVkApiInvoker _invoker;
     private IDeviceIdProvider _idProvider;
-    public BypassAuthCategory(IVkApiInvoker invoker, IDeviceIdProvider idProvider)
+    private IReceiptParser _receiptParser;
+    public BypassAuthCategory(IVkApiInvoker invoker, IDeviceIdProvider idProvider, IReceiptParser receiptParser)
     {
         _invoker = invoker;
         _idProvider = idProvider;
+        _receiptParser = receiptParser;
     }
     public Task<ValidatePhoneResponse> ValidatePhoneAsync(string phone, string anonToken, string apiId, [CanBeNull] string sid, bool isResend, bool allowCallReset = true, string flowType = null)
     {
@@ -95,5 +98,18 @@ public sealed class BypassAuthCategory
             {"force_password", forcePassword},
             {"flow_type", flowType}
         });
+    }
+    
+    public async Task<string> RefreshTokenAsync(string oldToken)
+    {
+        var parameters = new VkParameters
+        {
+            { "receipt", await _receiptParser.GetReceiptAsync() },
+            { "access_token", oldToken }
+        };
+
+        var response = await _invoker.CallAsync("auth.refreshToken", parameters);
+
+        return response["token"]?.ToString();
     }
 }

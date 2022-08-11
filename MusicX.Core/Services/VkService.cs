@@ -8,8 +8,11 @@ using System.Diagnostics;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using VkNet;
+using VkNet.Abstractions.Core;
 using VkNet.AudioBypassService.Extensions;
+using VkNet.AudioBypassService.Utils;
 using VkNet.Enums.Filters;
+using VkNet.Exception;
 using VkNet.Model;
 using VkNet.Utils;
 using VkNet.Utils.AntiCaptcha;
@@ -26,6 +29,7 @@ namespace MusicX.Core.Services
 
         public bool IsAuth = false;
         private readonly IDistributedCache _cache;
+        private readonly ServiceProvider _provider;
 
         public VkService(Logger logger)
         {
@@ -37,21 +41,21 @@ namespace MusicX.Core.Services
             var services = new ServiceCollection();
             
             services.AddSingleton<ICaptchaSolver, CaptchaSolver>();
+            services.AddSingleton<ICaptchaHandler, CaptchaHandler>();
             services.AddAudioBypass(builder => builder.UseAndroidNoPassword());
-
-            var provider = services.BuildServiceProvider();
-
+            
             vkApi = new VkApi(services);
+            _provider = services.BuildServiceProvider();
 
 
             var ver = vkApiVersion.Split('.');
 
             vkApi.VkApiVersion.SetVersion(int.Parse(ver[0]), int.Parse(ver[1]));
             
-            _cache = provider.GetRequiredService<IDistributedCache>();
+            _cache = _provider.GetRequiredService<IDistributedCache>();
         }
 
-        public async Task ClearToken()
+        public async Task ClearTokenAsync()
         {
             await vkApi.LogOutAsync();
             vkApi.UserId = null;
@@ -116,6 +120,12 @@ namespace MusicX.Core.Services
             }
            
 
+        }
+
+        public async Task RefreshTokenAsync(string? oldToken = null)
+        {
+            var newToken = await _provider.GetRequiredService<BypassAuthCategory>().RefreshTokenAsync(oldToken ?? vkApi.Token);
+            await SetTokenAsync(newToken, null!);
         }
 
         public async Task<ResponseData> GetAudioCatalogAsync(string url = null)
@@ -362,7 +372,21 @@ namespace MusicX.Core.Services
                     {"need_owner", needOwner }
                 };
 
-                var json  = await vkApi.InvokeAsync("execute.getPlaylist", parameters);
+                string json;
+
+                while (true)
+                {
+                    try
+                    {
+                        json = await vkApi.InvokeAsync("execute.getPlaylist", parameters);
+                        break;
+                    }
+                    catch(AggregateException ex) when (ex.InnerExceptions.OfType<VkApiMethodInvokeException>().Any(b => b.ErrorCode == 25))
+                    {
+                        await RefreshTokenAsync();
+                    }
+                }
+                
                 logger.Debug("RESULT OF 'execute.getPlaylist'" + json);
 
 

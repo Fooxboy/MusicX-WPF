@@ -29,7 +29,8 @@
             MinWidth="400"
             MinHeight="300"
             VerticalAlignment="Center"
-            HorizontalAlignment="Center">
+            HorizontalAlignment="Center"
+            x:Name="RootCard">
             <Frame x:Name="RootFrame" 
                    Margin="12"
                    LoadCompleted="RootFrame_LoadCompleted"

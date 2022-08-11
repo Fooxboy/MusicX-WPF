@@ -22,21 +22,20 @@ namespace VkNet.AudioBypassService
 
 		[NotNull]
 		private readonly IVkApiInvoker _vkApiInvoker;
+		[NotNull]
+		private readonly BypassAuthCategory _authCategory;
 
 		[CanBeNull]
 		private readonly ILogger<VkAndroidAuthorization> _logger;
 
 		#endregion
 
-		[NotNull]
-		public IReceiptParser ReceiptParser { get; }
-
 		public VkAndroidAuthorization([NotNull] IVkApiInvoker vkApiInvoker,
-									  [NotNull] IReceiptParser parser,
+									  [NotNull] BypassAuthCategory authCategory,
 									  [CanBeNull] ILogger<VkAndroidAuthorization> logger)
 		{
 			_vkApiInvoker = vkApiInvoker;
-			ReceiptParser = parser;
+			_authCategory = authCategory;
 			_logger = logger;
 		}
 
@@ -45,16 +44,8 @@ namespace VkNet.AudioBypassService
 			_logger?.LogDebug("1. Авторизация");
 			var authResult = await BaseAuthAsync().ConfigureAwait(false);
 
-			_logger?.LogDebug("2. Получение receipt");
-			var receipt = await ReceiptParser.GetReceipt().ConfigureAwait(false);
-
-			if (string.IsNullOrWhiteSpace(receipt))
-			{
-				throw new VkApiException("receipt is null or empty");
-			}
-
-			_logger?.LogDebug("3. Обновление токена");
-			var newToken = await RefreshTokenAsync(authResult.AccessToken, receipt).ConfigureAwait(false);
+			_logger?.LogDebug("2. Обновление токена");
+			var newToken = await _authCategory.RefreshTokenAsync(authResult.AccessToken).ConfigureAwait(false);
 
 			return new AuthorizationResult
 			{
@@ -110,19 +101,6 @@ namespace VkNet.AudioBypassService
 						throw;
 				}
 			}
-		}
-
-		public async Task<string> RefreshTokenAsync(string oldToken, string receipt)
-		{
-			var parameters = new VkParameters
-			{
-				{ "receipt", receipt },
-				{ "access_token", oldToken }
-			};
-
-			var response = await _vkApiInvoker.CallAsync("auth.refreshToken", parameters).ConfigureAwait(false);
-
-			return response["token"]?.ToString();
 		}
 	}
 }

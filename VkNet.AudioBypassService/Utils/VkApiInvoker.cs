@@ -57,7 +57,7 @@ namespace VkNet.AudioBypassService.Utils
 				parameters.Add("captcha_sid", sid);
 				parameters.Add("captcha_key", key);
 
-				return InvokeAsyncInternal(uri, parameters, cancellationToken).ConfigureAwait(false);
+				return InvokeAsyncInternal(uri, parameters, cancellationToken);
 			});
 
 			return JToken.Parse(response);

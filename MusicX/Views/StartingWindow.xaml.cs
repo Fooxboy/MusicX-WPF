@@ -117,13 +117,27 @@ namespace MusicX.Views
                     {
                         try
                         {
-                            await vkService.SetTokenAsync(config.AccessToken, null);
+                            if (!vkService.IsAuth)
+                                await vkService.SetTokenAsync(config.AccessToken, null);
                             var rootWindow = new RootWindow(navigationService, vkService, logger, configService, notificationsService);
                             rootWindow.Show();
                             return true;
                         }
-                        catch (VkNet.Exception.UserAuthorizationFailException)
+                        catch (VkNet.Exception.VkApiMethodInvokeException ex) when (ex.ErrorCode is 5 or 1117)
                         {
+                            if (!string.IsNullOrEmpty(config.AccessToken))
+                            {
+                                try
+                                {
+                                    await vkService.RefreshTokenAsync(config.AccessToken);
+                                    return false;
+                                }
+                                catch (VkNet.Exception.VkApiMethodInvokeException e) when (e.ErrorCode is 5 or 1117)
+                                {
+                                    // i dont care
+                                }
+                            }
+                            
                             config.AccessToken = null;
                             config.UserId = 0;
 

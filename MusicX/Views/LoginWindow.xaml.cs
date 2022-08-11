@@ -60,8 +60,9 @@ namespace MusicX.Views
         {
             var viewModel = new CaptchaViewModel(url);
             
-            await Dispatcher.InvokeAsync(() =>
+            Dispatcher.InvokeAsync(() =>
             {
+                RootCard.Visibility = Visibility.Collapsed;
                 ModalCard.Visibility = Visibility.Visible;
                 ModalFrame.Navigate(new CaptchaModal
                 {
@@ -73,6 +74,7 @@ namespace MusicX.Views
             
             await Dispatcher.InvokeAsync(() =>
             {
+                RootCard.Visibility = Visibility.Visible;
                 ModalCard.Visibility = Visibility.Collapsed;
             });
 

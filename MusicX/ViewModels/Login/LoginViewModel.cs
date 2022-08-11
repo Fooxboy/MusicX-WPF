@@ -51,7 +51,9 @@ public class LoginViewModel : BaseViewModel
 
         try
         {
-            await _authFlow.AuthorizeAsync().ConfigureAwait(false);
+            var result = await _authFlow.AuthorizeAsync().ConfigureAwait(false);
+            await _vkService.SetTokenAsync(result.AccessToken, null!);
+            await _vkService.RefreshTokenAsync();
             await Task.Delay(3000);
             AuthorizationCompleted?.Invoke(this, EventArgs.Empty);
         }

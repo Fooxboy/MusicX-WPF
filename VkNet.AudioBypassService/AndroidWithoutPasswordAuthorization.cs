@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
 using VkNet.AudioBypassService.Abstractions;
-using VkNet.AudioBypassService.Exceptions;
 using VkNet.AudioBypassService.Models.Vk;
 using VkNet.AudioBypassService.Utils;
 using VkNet.Exception;
@@ -65,20 +64,30 @@ public sealed class AndroidWithoutPasswordAuthorization : IBypassAuthorizationFl
         {
             case FlowType.NeedRegistration:
                 throw new UserAuthorizationFailException(null);
-            case FlowType.NeedValidation:
-                result = await VerifyAsync(anonToken, sid);
-                break;
             case FlowType.NeedPasswordAndValidation:
+            {
                 _params.Password = await PasswordRequested!.Invoke(null);
-                try
+
+                while (true)
                 {
-                    result = await _oauthService.AuthenticateByPasswordAsync(AppSecret, ApiId, ApiId, anonToken, sid, _params.Phone, _params.Password, true, false);
-                }
-                catch (VkAuthException e) when (e.AuthError.Error == "need_validation")
-                {
-                    result = await VerifyAsync(anonToken, sid);
+                    try
+                    {
+                        result = await _oauthService.AuthenticateByPasswordAsync(AppSecret, ApiId, ApiId, anonToken, null, _params.Phone, _params.Password, _params.Code, true, false, null);
+                        break;
+                    }
+                    catch (VkApiMethodInvokeException e) when (e.ErrorCode == 1110)
+                    {
+                        _params.Code = await PhoneConfirmationRequested!.Invoke(new(_params.ForceSms is true ? PhoneConfirmationType.Sms : PhoneConfirmationType.CallReset, 6, null, null, null), null);
+                    }
                 }
                 break;
+            }
+            case FlowType.NeedValidation:
+            {
+                var confirmationSid = await VerifyAsync(anonToken, sid);
+                result = await _oauthService.AuthenticateByPasswordAsync(AppSecret, ApiId, ApiId, anonToken, confirmationSid, _params.Phone, _params.Password, null, true, false);
+                break;
+            }
             default:
                 throw new ArgumentOutOfRangeException(nameof(flowType), flowType, null);
         }
@@ -92,7 +101,7 @@ public sealed class AndroidWithoutPasswordAuthorization : IBypassAuthorizationFl
         return result;
     }
 
-    private async Task<AuthorizationResult> VerifyAsync(string anonToken, string sid)
+    private async Task<string> VerifyAsync(string anonToken, string sid)
     {
         async Task<(PhoneConfirmationEventArgs Args, string Sid, string ExternalId)> BuildArgs(string validationSid = null)
         {
@@ -135,9 +144,10 @@ public sealed class AndroidWithoutPasswordAuthorization : IBypassAuthorizationFl
 
         var (confirmationSid, _, skipPassword, profile) = response;
 
-        var password = skipPassword ? _params.Password : await PasswordRequested!.Invoke(profile);
-
-        return await _oauthService.AuthenticateByPasswordAsync(AppSecret, ApiId, ApiId, anonToken, confirmationSid, _params.Phone, password, true, false);
+        if (!skipPassword)
+            _params.Password ??= await PasswordRequested!.Invoke(profile);
+        
+        return confirmationSid;
     }
     public void SetAuthorizationParams(IApiAuthParams authorizationParams)
     {
