@@ -80,6 +80,14 @@
                 Foreground="White"
                 Header="Перейти к артисту" />
 
+            <StackPanel x:Name="AddToPlaylist" MouseDown="AddToPlaylist_MouseDown"  Orientation="Horizontal">
+                <controls:SymbolIcon Symbol="AlbumAdd20" />
+                <TextBlock
+                    Margin="10,0,0,0"
+                    Foreground="White"
+                    Text="Добавить в плейлист" />
+            </StackPanel>
+
 
             <StackPanel MouseDown="Download_MouseDown" Orientation="Horizontal">
                 <controls:SymbolIcon Symbol="ArrowDownload24" />

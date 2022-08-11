@@ -2,6 +2,7 @@
 using MusicX.Core.Services;
 using MusicX.Services;
 using MusicX.ViewModels;
+using MusicX.ViewModels.Modals;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -51,6 +52,7 @@ namespace MusicX.Views
                 container.Register<SectionViewModel>(Reuse.Singleton);
                 container.Register<PlaylistViewModel>(Reuse.Singleton);
                 container.Register<DownloaderViewModel>(Reuse.Singleton);
+                container.Register<PlaylistSelectorModalViewModel>(Reuse.Singleton);
 
                 container.Register<NavigationService>(Reuse.Singleton);
                 container.Register<ConfigService>(Reuse.Singleton);

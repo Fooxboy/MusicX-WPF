@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MusicX.ViewModels.Modals;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +21,20 @@ namespace MusicX.Views.Modals
     /// </summary>
     public partial class PlaylistSelectorModal : Page
     {
-        public PlaylistSelectorModal()
+
+        public PlaylistSelectorModal(PlaylistSelectorModalViewModel vm)
         {
+            this.DataContext = vm;
+            this.Loaded += PlaylistSelectorModal_Loaded;
             InitializeComponent();
+        }
+
+        private async void PlaylistSelectorModal_Loaded(object sender, RoutedEventArgs e)
+        {
+            if(this.DataContext is PlaylistSelectorModalViewModel vm)
+            {
+                await vm.LoadPlaylistsAsync();
+            }
         }
     }
 }

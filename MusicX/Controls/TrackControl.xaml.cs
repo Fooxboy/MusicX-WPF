@@ -24,6 +24,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using MusicX.ViewModels;
 using WpfAnimatedGif;
+using MusicX.ViewModels.Modals;
 
 namespace MusicX.Controls
 {
@@ -704,6 +705,37 @@ namespace MusicX.Controls
             catch (Exception ex)
             {
                 logger.Error(ex);
+            }
+        }
+
+        private void AddToPlaylist_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var viewModel = StaticService.Container.Resolve<PlaylistSelectorModalViewModel>();
+            var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
+
+            viewModel.PlaylistSelected += ViewModel_PlaylistSelected;
+
+            navigationService.OpenModal(new PlaylistSelectorModal(viewModel), 620, 680);
+        }
+
+        private async void ViewModel_PlaylistSelected(Playlist playlist)
+        {
+            var vk = StaticService.Container.Resolve<VkService>();
+            var notificationsService = StaticService.Container.Resolve<NotificationsService>();
+
+            try
+            {
+                await vk.AddToPlaylistAsync(this.Audio, playlist.OwnerId, playlist.Id);
+
+                notificationsService.Show("Трек добавлен", $"Трек '{this.Audio.Title}' добавлен в плейлист '{playlist.Title}'");
+
+
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, ex.Message);
+
+                notificationsService.Show("Ошибка", "Произошла ошибка при добавлении трека в плейлист");
             }
         }
     }

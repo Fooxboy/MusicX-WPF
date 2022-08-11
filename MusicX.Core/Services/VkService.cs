@@ -961,5 +961,20 @@ namespace MusicX.Core.Services
                 throw;
             }
         }
+
+        public async Task AddToPlaylistAsync(Audio audio, long ownerId, long playlistId)
+        {
+            try
+            {
+                var audioId = audio.OwnerId + "_" + audio.Id;
+                await vkApi.Audio.AddToPlaylistAsync(ownerId, playlistId, new List<string>() { audioId });
+            }catch(Exception ex)
+            {
+                logger.Error("VK API ERROR:");
+                logger.Error(ex, ex.Message);
+                throw;
+            }
+            
+        }
     }
 }

@@ -18,6 +18,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using MusicX.ViewModels;
+using MusicX.ViewModels.Modals;
 
 namespace MusicX.Views
 {
@@ -92,6 +93,14 @@ namespace MusicX.Views
             };
             
             downloader.DownloadQueue.Add(audio);
+        }   
+
+        private void OpenPlaylistSelector_Click(object sender, RoutedEventArgs e)
+        {
+            var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
+            var viewModel = StaticService.Container.Resolve<PlaylistSelectorModalViewModel>();
+
+            navigationService.OpenModal(new PlaylistSelectorModal(viewModel), 620, 680);
         }
     }
 }

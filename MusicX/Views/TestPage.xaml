@@ -66,6 +66,14 @@
                     Click="OpenModal_Click"
                     Content="Открыть модалку" />
 
+
+                <Button
+                    x:Name="OpenPlaylistSelector"
+                    Width="390"
+                    HorizontalAlignment="Left"
+                    Click="OpenPlaylistSelector_Click"
+                    Content="Открыть модалку Добавления трека в плейлист" />
+                
                 <TextBlock
                     Margin="0,30,0,0"
                     FontFamily="{StaticResource VKSansBold}"
