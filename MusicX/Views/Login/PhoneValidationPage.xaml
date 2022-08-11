@@ -6,9 +6,10 @@
       xmlns:local="clr-namespace:MusicX.Views.Login"
       xmlns:viewModels="clr-namespace:MusicX.ViewModels"
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:login="clr-namespace:MusicX.ViewModels.Login"
       mc:Ignorable="d"
       Title="PhoneValidationPage"
-      d:DataContext="{d:DesignInstance viewModels:PhoneValidationViewModel, IsDesignTimeCreatable=True}">
+      d:DataContext="{d:DesignInstance login:PhoneValidationViewModel, IsDesignTimeCreatable=True}">
     <Page.Resources>
         <BooleanToVisibilityConverter x:Key="BoolConverter" />
     </Page.Resources>

@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
@@ -27,12 +28,14 @@ namespace VkNet.AudioBypassService.Utils
 
 		[NotNull]
 		private readonly ICaptchaHandler _captchaHandler;
+		private readonly ILogger<VkApiInvoker> _logger;
 
-		public VkApiInvoker([NotNull] IVkApiVersionManager versionManager, [NotNull] IRestClient restClient, [NotNull] ICaptchaHandler captchaHandler)
+		public VkApiInvoker([NotNull] IVkApiVersionManager versionManager, [NotNull] IRestClient restClient, [NotNull] ICaptchaHandler captchaHandler, ILogger<VkApiInvoker> logger)
 		{
 			_versionManager = versionManager;
 			_restClient = restClient;
 			_captchaHandler = captchaHandler;
+			_logger = logger;
 		}
 
 		public async Task<T> CallAsync<T>(Uri uri, VkParameters parameters, CancellationToken cancellationToken = default)
@@ -81,6 +84,8 @@ namespace VkNet.AudioBypassService.Utils
 			var response = await _restClient.PostAsync(uri, parameters, Encoding.UTF8).ConfigureAwait(false);
 
 			var answer = response.Value ?? response.Message;
+			
+			_logger.LogTrace("Request to {Url} response {Response}", uri, answer);
 
 			VkAuthErrors.IfErrorThrowException(answer);
 			VkErrors.IfErrorThrowException(answer);

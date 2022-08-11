@@ -9,8 +9,12 @@ using System.Windows.Navigation;
 using AsyncAwaitBestPractices;
 using DryIoc;
 using MusicX.ViewModels;
+using MusicX.ViewModels.Login;
+using MusicX.ViewModels.Modals;
 using MusicX.Views.Login;
+using MusicX.Views.Modals;
 using VkNet.AudioBypassService;
+using VkNet.AudioBypassService.Abstractions;
 using VkNet.AudioBypassService.Models.Vk;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
@@ -23,49 +27,93 @@ namespace MusicX.Views
     public partial class LoginWindow : UiWindow
     {
         private readonly CancellationTokenSource _tokenSource = new();
-        private readonly IBoomAuthorizationFlow _authFlow;
+        private readonly IBypassAuthorizationFlow _authFlow;
         private readonly LoginViewModel _viewModel;
+        private readonly CaptchaSolver _captchaSolver;
         public LoginWindow()
         {
             InitializeComponent();
 
-            _authFlow = (IBoomAuthorizationFlow)StaticService.Container.Resolve<VkService>().vkApi.AuthorizationFlow;
+            var vkService = StaticService.Container.Resolve<VkService>();
+            _authFlow = (IBypassAuthorizationFlow)vkService.vkApi.AuthorizationFlow;
+            _captchaSolver = (CaptchaSolver)vkService.vkApi.CaptchaSolver;
             
-            _authFlow.StateChanged += AuthFlowOnStateChanged;
             _authFlow.PhoneConfirmationRequested += AuthFlowOnPhoneConfirmationRequested;
             _authFlow.PasswordRequested += AuthFlowOnPasswordRequested;
             _authFlow.TwoFactorRequested += AuthFlowOnTwoFactorRequested;
             
+            _captchaSolver.CaptchaRequested += CaptchaRequested;
+            
             RootFrame.Navigate(new EnterPhonePage());
             
             _viewModel = ((LoginViewModel)DataContext);
+            
+            _viewModel.AuthorizationCompleted += ViewModelOnAuthorizationCompleted;
             NotificationsLoop().SafeFireAndForget();
+        }
+        private void ViewModelOnAuthorizationCompleted(object? sender, EventArgs e)
+        {
+            _viewModel.AuthorizationCompleted -= ViewModelOnAuthorizationCompleted;
+            Dispatcher.InvokeAsync(Close);
+        }
+        private async Task<string> CaptchaRequested(string url)
+        {
+            var viewModel = new CaptchaViewModel(url);
+            
+            await Dispatcher.InvokeAsync(() =>
+            {
+                ModalCard.Visibility = Visibility.Visible;
+                ModalFrame.Navigate(new CaptchaModal
+                {
+                    DataContext = viewModel
+                });
+            });
+
+            var result = await viewModel.ResultSource.Task.ConfigureAwait(false);
+            
+            await Dispatcher.InvokeAsync(() =>
+            {
+                ModalCard.Visibility = Visibility.Collapsed;
+            });
+
+            return result;
         }
         private Task<string> AuthFlowOnTwoFactorRequested()
         {
-            RootFrame.Navigate(new TwoFactorPage
+            var viewModel = new TwoFactorViewModel();
+            Dispatcher.InvokeAsync(() =>
             {
-                DataContext = new TwoFactorViewModel(_viewModel)
+                RootFrame.Navigate(new TwoFactorPage
+                {
+                    DataContext = viewModel
+                });
             });
 
-            _viewModel.TwoFactorSource = new();
-            return _viewModel.TwoFactorSource.Task;
+            return viewModel.TwoFactorSource.Task;
         }
         private Task<string> AuthFlowOnPasswordRequested(ValidatePhoneProfile profile)
         {
-            RootFrame.Navigate(new PasswordPage
+            var viewModel = new PasswordViewModel(profile);
+            Dispatcher.InvokeAsync(() =>
             {
-                DataContext = new PasswordViewModel(profile, _viewModel)
+                RootFrame.Navigate(new PasswordPage
+                {
+                    DataContext = viewModel
+                });
             });
-            return _viewModel.PasswordSource.Task;
+            return viewModel.PasswordSource.Task;
         }
         private Task<string> AuthFlowOnPhoneConfirmationRequested(PhoneConfirmationEventArgs args, Func<Task<PhoneConfirmationEventArgs>> resend)
         {
-            RootFrame.Navigate(new PhoneValidationPage
+            var viewModel = new PhoneValidationViewModel(args, resend);
+            Dispatcher.InvokeAsync(() =>
             {
-                DataContext = new PhoneValidationViewModel(args, resend, _viewModel)
+                RootFrame.Navigate(new PhoneValidationPage
+                {
+                    DataContext = viewModel
+                });
             });
-            return _viewModel.CodeSource.Task;
+            return viewModel.CodeSource.Task;
         }
 
         private async Task NotificationsLoop()
@@ -82,45 +130,16 @@ namespace MusicX.Views
                 // i dont care
             }
         }
-        
-        private void AuthFlowOnStateChanged(object? sender, BoomAuthState e)
-        {
-            Application.Current.Dispatcher.BeginInvoke(() =>
-            {
-                switch (e)
-                {
-                    case BoomAuthState.None:
-                        RootFrame.Navigate(new EnterPhonePage());
-                        break;
-                    case BoomAuthState.GetSilentToken:
-                    case BoomAuthState.CheckSilentToken:
-                    case BoomAuthState.GetBearerToken:
-                    case BoomAuthState.GetVkToken:
-                    case BoomAuthState.GetPrivateKey:
-                    case BoomAuthState.GetAnonymousToken:
-                        RootFrame.Navigate(new LoadingPage());
-                        break;
-                    case BoomAuthState.PhoneValidation:
-                        break;
-                    case BoomAuthState.PhoneConfirmation:
-                        break;
-                    case BoomAuthState.Authorized:
-                        RootFrame.Navigate(new TextBlock
-                        {
-                            Text = "Это окно можно закрыть",
-                            HorizontalAlignment = HorizontalAlignment.Center,
-                            VerticalAlignment = VerticalAlignment.Center
-                        });
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(e), e, null);
-                }
-            });
-        }
         private void LoginWindow_OnUnloaded(object sender, RoutedEventArgs e)
         {
             _tokenSource.Cancel();
             _tokenSource.Dispose();
+            
+            _authFlow.PhoneConfirmationRequested -= AuthFlowOnPhoneConfirmationRequested;
+            _authFlow.PasswordRequested -= AuthFlowOnPasswordRequested;
+            _authFlow.TwoFactorRequested -= AuthFlowOnTwoFactorRequested;
+            
+            _captchaSolver.CaptchaRequested -= CaptchaRequested;
         }
         
         private void RootFrame_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)

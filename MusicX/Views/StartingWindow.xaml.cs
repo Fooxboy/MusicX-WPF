@@ -125,7 +125,6 @@ namespace MusicX.Views
                         catch (VkNet.Exception.UserAuthorizationFailException)
                         {
                             config.AccessToken = null;
-                            config.UserName = null;
                             config.UserId = 0;
 
                             await configService.SetConfig(config);

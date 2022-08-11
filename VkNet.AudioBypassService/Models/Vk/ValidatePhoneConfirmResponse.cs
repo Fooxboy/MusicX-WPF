@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 namespace VkNet.AudioBypassService.Models.Vk;
 
-public record ValidatePhoneConfirmResponse(string Sid, bool ProfileExists, [property: CanBeNull] ValidatePhoneProfile Profile);
+public record ValidatePhoneConfirmResponse(string Sid, bool ProfileExists, bool CanSkipPassword, [property: CanBeNull] ValidatePhoneProfile Profile);
 
 public record ValidatePhoneProfile(
     string FirstName,

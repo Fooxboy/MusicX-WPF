@@ -1,0 +1,27 @@
+﻿<Page x:Class="MusicX.Views.Modals.CaptchaModal"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:MusicX.Views.Modals"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:modals="clr-namespace:MusicX.ViewModels.Modals"
+      mc:Ignorable="d"
+      d:DataContext="{d:DesignInstance {x:Type modals:CaptchaViewModel}, IsDesignTimeCreatable=True}"
+      Title="CaptchaModal">
+    <StackPanel>
+        <Image Width="130" Height="50"
+               HorizontalAlignment="Center"
+               Source="{Binding CaptchaUrl}"/>
+        <ui:TextBox Margin="0,10" 
+                    PlaceholderText="Капча..."
+                    HorizontalAlignment="Center"
+                    x:Name="CaptchaBox"/>
+        <ui:Button Margin="3"
+                   Icon="Checkmark24"
+                   Content="Подтвердить"
+                   HorizontalAlignment="Center"
+                   Command="{Binding SubmitCommand}"
+                   CommandParameter="{Binding Text, ElementName=CaptchaBox}"/>
+    </StackPanel>
+</Page>

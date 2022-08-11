@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wpfui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
     xmlns:viewModels="clr-namespace:MusicX.ViewModels"
+    xmlns:login="clr-namespace:MusicX.ViewModels.Login"
     Title="Вход в аккаунт"
     Width="800"
     Height="450"
@@ -19,7 +20,7 @@
     Unloaded="LoginWindow_OnUnloaded"
     mc:Ignorable="d">
     <wpfui:UiWindow.DataContext>
-        <viewModels:LoginViewModel />
+        <login:LoginViewModel />
     </wpfui:UiWindow.DataContext>
     <Grid>
         <wpfui:TitleBar />
@@ -33,6 +34,15 @@
                    Margin="12"
                    LoadCompleted="RootFrame_LoadCompleted"
                    DataContextChanged="RootFrame_DataContextChanged"/>
+        </wpfui:Card>
+        
+        <wpfui:Card
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center"
+            Visibility="Collapsed"
+            x:Name="ModalCard">
+            <Frame x:Name="ModalFrame" 
+                   Margin="12"/>
         </wpfui:Card>
 
         <wpfui:Snackbar

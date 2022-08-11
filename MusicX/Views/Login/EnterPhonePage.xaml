@@ -6,10 +6,11 @@
       xmlns:local="clr-namespace:MusicX.Views.Login"
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       xmlns:viewModels="clr-namespace:MusicX.ViewModels"
+      xmlns:login="clr-namespace:MusicX.ViewModels.Login"
       mc:Ignorable="d"
       Background="#202020"
       Style="{StaticResource UiPage}"
-      d:DataContext="{d:DesignInstance {x:Type viewModels:LoginViewModel}}"
+      d:DataContext="{d:DesignInstance {x:Type login:LoginViewModel}}"
       Title="EnterPhonePage">
     <StackPanel Margin="15" HorizontalAlignment="Center">
         <Rectangle Height="48" Width="49">
@@ -26,15 +27,19 @@
                    FontFamily="{StaticResource VKSansBold}"
                    FontSize="20"
                    Text="Вход ВКонтакте"/>
-        <StackPanel Orientation="Horizontal" x:Name="PhonePanel" HorizontalAlignment="Center">
-            <TextBox FontFamily="{StaticResource VKSansMedium}"
-                     Text="{Binding CountryCode, StringFormat={}{0:+###}}"/>
+        <StackPanel Orientation="Horizontal" x:Name="PhonePanel" HorizontalAlignment="Center" Margin="0,0,0,15">
+            <ui:TextBox FontFamily="{StaticResource VKSansMedium}"
+                        Text="{Binding CountryCode, StringFormat={}{0:+###}}"/>
             <ui:TextBox FontFamily="{StaticResource VKSansMedium}"
                      Margin="10,0,0,0"
                      PlaceholderText="Телефон..."
                      MinWidth="140"
                      Text="{Binding PhoneNumber, Mode=OneWayToSource}"/>
         </StackPanel>
+        <ui:ToggleSwitch HorizontalAlignment="Left"
+                         Content="Только смс"
+                         FontFamily="{StaticResource VKSansMedium}"
+                         IsChecked="{Binding ForceSms}"/>
         <ui:Button HorizontalAlignment="Center" 
                    Appearance="Secondary"
                    Content="Войти"

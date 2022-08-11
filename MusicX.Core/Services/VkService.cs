@@ -5,6 +5,8 @@ using MusicX.Core.Models.General;
 using Newtonsoft.Json;
 using NLog;
 using System.Diagnostics;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Logging;
 using VkNet;
 using VkNet.AudioBypassService.Extensions;
 using VkNet.Enums.Filters;
@@ -23,13 +25,21 @@ namespace MusicX.Core.Services
         private readonly string deviceId = "c3427adfd2595c73:A092cf601fef615c8b594f6ad2c63d159";
 
         public bool IsAuth = false;
+        private readonly IDistributedCache _cache;
 
         public VkService(Logger logger)
         {
-            var services = new ServiceCollection();
-            services.AddAudioBypass(builder => builder.UseBoomAuthorization());
+            var log = LogManager.Setup().GetLogger("Common");
 
-            services.ToList();
+            if (logger == null) this.logger = log;
+            else this.logger = logger;
+            
+            var services = new ServiceCollection();
+            
+            services.AddSingleton<ICaptchaSolver, CaptchaSolver>();
+            services.AddAudioBypass(builder => builder.UseAndroidNoPassword());
+
+            var provider = services.BuildServiceProvider();
 
             vkApi = new VkApi(services);
 
@@ -37,11 +47,15 @@ namespace MusicX.Core.Services
             var ver = vkApiVersion.Split('.');
 
             vkApi.VkApiVersion.SetVersion(int.Parse(ver[0]), int.Parse(ver[1]));
+            
+            _cache = provider.GetRequiredService<IDistributedCache>();
+        }
 
-            var log = LogManager.Setup().GetLogger("Common");
-
-            if (logger == null) this.logger = log;
-            else this.logger = logger;
+        public async Task ClearToken()
+        {
+            await vkApi.LogOutAsync();
+            vkApi.UserId = null;
+            await _cache.RemoveAsync("vkToken");
         }
 
         public async Task<string> AuthAsync(string login, string password, Func<string> twoFactorAuth, ICaptchaSolver captchaSolver)
@@ -430,7 +444,7 @@ namespace MusicX.Core.Services
         {
             try
             {
-                var users = await vkApi.Users.GetAsync(new List<long>(), ProfileFields.Photo200);
+                var users = await vkApi.Users.GetAsync(new List<long>(), ProfileFields.Photo200 | ProfileFields.FirstName);
                 var currentUser = users?.FirstOrDefault();
                 return currentUser;
             }catch(Exception ex)

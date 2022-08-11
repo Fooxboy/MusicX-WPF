@@ -11,11 +11,11 @@ namespace VkNet.AudioBypassService.Utils
 	[UsedImplicitly]
 	public class RestClientWithUserAgent : RestClient
 	{
-		public const string SakVersion = "1.76";
+		public const string SakVersion = "1.91";
 		
 		private static readonly IDictionary<string, string> VkHeaders = new Dictionary<string, string>
 		{
-			{ "User-Agent", $"SAK_{SakVersion}(com.uma.musicvk)/7.37-13617 (Android 12; SDK 32; armeabi-v7a; MusicX; ru; 2960x1440)" },
+			{ "User-Agent", "VKAndroidApp/7.37-13617 (Android 12; SDK 32; armeabi-v7a; MusicX; ru; 2960x1440)" },
 			// { "X-VK-Android-Client", "new" }
 		};
 

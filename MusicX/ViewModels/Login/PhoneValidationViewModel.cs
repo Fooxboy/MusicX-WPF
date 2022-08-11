@@ -6,7 +6,7 @@ using AsyncAwaitBestPractices.MVVM;
 using VkNet.AudioBypassService;
 using VkNet.AudioBypassService.Models.Vk;
 using Wpf.Ui.Common;
-namespace MusicX.ViewModels;
+namespace MusicX.ViewModels.Login;
 
 public class PhoneValidationViewModel : BaseViewModel
 {
@@ -14,20 +14,20 @@ public class PhoneValidationViewModel : BaseViewModel
     
     public string Subtitle { get; set; } = string.Empty;
     
-    public string Code { get; set; }
+    public string Code { get; set; } = string.Empty;
     public ICommand SubmitCommand { get; }
     public ICommand ResendCommand { get; }
     public bool ResendAvailable => Args.ValidationResend is not null;
     public bool CanResend => Args.DelayUntilResend < DateTimeOffset.Now;
     public string? TimeLeft { get; set; }
+    
+    public TaskCompletionSource<string> CodeSource { get; } = new();
 
     private readonly Func<Task<PhoneConfirmationEventArgs>> _resend;
-    private readonly LoginViewModel _viewModel;
-    public PhoneValidationViewModel(PhoneConfirmationEventArgs args, Func<Task<PhoneConfirmationEventArgs>> resend, LoginViewModel viewModel)
+    public PhoneValidationViewModel(PhoneConfirmationEventArgs args, Func<Task<PhoneConfirmationEventArgs>> resend)
     {
         Args = args;
         _resend = resend;
-        _viewModel = viewModel;
 
         SubmitCommand = new RelayCommand(Submit);
         ResendCommand = new AsyncCommand(Resend, _ => Args.ValidationResend is not null);
@@ -77,9 +77,9 @@ public class PhoneValidationViewModel : BaseViewModel
     }
     private void Submit()
     {
-        if (Code.Length != Args.CodeLength || !uint.TryParse(Code, out _))
+        if (!uint.TryParse(Code, out _))
             return;
         
-        _viewModel.CodeSource.SetResult(Code);
+        CodeSource.SetResult(Code);
     }
 }

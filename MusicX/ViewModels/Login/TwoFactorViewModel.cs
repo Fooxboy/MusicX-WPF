@@ -1,21 +1,22 @@
-﻿using System.Windows.Input;
+﻿using System.Threading.Tasks;
+using System.Windows.Input;
 using Wpf.Ui.Common;
-namespace MusicX.ViewModels;
+namespace MusicX.ViewModels.Login;
 
 public class TwoFactorViewModel
 {
-    private readonly LoginViewModel _viewModel;
 
-    public TwoFactorViewModel(LoginViewModel viewModel)
+    public TwoFactorViewModel()
     {
-        _viewModel = viewModel;
         SubmitCommand = new RelayCommand(Submit);
     }
     private void Submit()
     {
         if (!string.IsNullOrEmpty(Code))
-            _viewModel.TwoFactorSource?.SetResult(Code);
+            TwoFactorSource.SetResult(Code);
     }
+
+    public TaskCompletionSource<string> TwoFactorSource { get; } = new();
     public ICommand SubmitCommand { get; }
     public string Code { get; set; } = string.Empty;
 }

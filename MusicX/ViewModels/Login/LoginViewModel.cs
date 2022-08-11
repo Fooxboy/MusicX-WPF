@@ -7,22 +7,22 @@ using DryIoc;
 using MusicX.Core.Services;
 using MusicX.Services;
 using VkNet.AudioBypassService;
+using VkNet.AudioBypassService.Abstractions;
 using VkNet.Model;
-namespace MusicX.ViewModels;
+namespace MusicX.ViewModels.Login;
 
 public class LoginViewModel : BaseViewModel
 {
-    private readonly IBoomAuthorizationFlow _authFlow;
+    private readonly IBypassAuthorizationFlow _authFlow;
     public ulong PhoneNumber { get; set; }
     public int CountryCode { get; set; } = 7;
+    public bool ForceSms { get; set; } = true;
     
     public ICommand SubmitPhoneCommand { get; }
     
     public ChannelReader<(string Header, string Content)> Notifications { get; }
 
-    public TaskCompletionSource<string> CodeSource { get; } = new();
-    public TaskCompletionSource<string> PasswordSource { get; } = new();
-    public TaskCompletionSource<string>? TwoFactorSource { get; set; }
+    public event EventHandler? AuthorizationCompleted;
 
     private readonly ChannelWriter<(string Header, string Content)> _notificationsWriter;
     private readonly VkService _vkService;
@@ -30,7 +30,7 @@ public class LoginViewModel : BaseViewModel
     public LoginViewModel()
     {
         _vkService = StaticService.Container.Resolve<VkService>();
-        _authFlow = (IBoomAuthorizationFlow)_vkService.vkApi.AuthorizationFlow;
+        _authFlow = (IBypassAuthorizationFlow)_vkService.vkApi.AuthorizationFlow;
         SubmitPhoneCommand = new AsyncCommand(SubmitPhone);
 
         var channel = Channel.CreateUnbounded<(string Header, string Content)>();
@@ -45,13 +45,15 @@ public class LoginViewModel : BaseViewModel
         
         _authFlow.SetAuthorizationParams(new ApiAuthParams
         {
-            Phone = $"+{CountryCode}{PhoneNumber}"
+            Phone = $"+{CountryCode}{PhoneNumber}",
+            ForceSms = ForceSms
         });
 
         try
         {
-            var result = await _authFlow.AuthorizeAsync();
-            await _vkService.SetTokenAsync(result.AccessToken, null!);
+            await _authFlow.AuthorizeAsync().ConfigureAwait(false);
+            await Task.Delay(3000);
+            AuthorizationCompleted?.Invoke(this, EventArgs.Empty);
         }
         catch (Exception e)
         {

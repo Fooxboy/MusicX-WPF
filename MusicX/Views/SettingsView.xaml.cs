@@ -65,12 +65,11 @@ namespace MusicX.Views
                 ShowRPC.IsChecked = config.ShowRPC.Value;
                 BroacastVK.IsChecked = config.BroadcastVK.Value;
 
-                UserName.Text = config.UserName.Split(' ')[0];
-
                 var usr = await vkService.GetCurrentUserAsync();
 
                 if (usr.Photo200 != null) UserImage.ImageSource = new BitmapImage(usr.Photo200);
 
+                UserName.Text = usr.FirstName;
 
                 var path = $"{AppDomain.CurrentDomain.BaseDirectory}/logs";
 
@@ -136,10 +135,10 @@ namespace MusicX.Views
         private async void DeleteAccount_Click(object sender, RoutedEventArgs e)
         {
             config.AccessToken = null;
-            config.UserName = null;
             config.UserId = 0;
 
             await configService.SetConfig(config);
+            await vkService.ClearToken();
 
             var logger = StaticService.Container.Resolve<Logger>();
             var navigation = StaticService.Container.Resolve<Services.NavigationService>();

@@ -15,9 +15,6 @@ namespace MusicX.Models
         [JsonProperty("user_id")]
         public long UserId { get; set; }
 
-        [JsonProperty("user_name")]
-        public string UserName { get; set; }
-
         [JsonProperty("show_rpc")]
         public bool? ShowRPC { get; set; }
 
