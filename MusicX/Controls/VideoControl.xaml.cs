@@ -22,7 +22,14 @@ namespace MusicX.Controls
     /// </summary>
     public partial class VideoControl : UserControl
     {
-        public Video Video { get; set; }
+        public static readonly DependencyProperty VideoProperty = DependencyProperty.Register(
+            nameof(Video), typeof(Video), typeof(VideoControl));
+
+        public Video Video
+        {
+            get => (Video)GetValue(VideoProperty);
+            set => SetValue(VideoProperty, value);
+        }
         public VideoControl()
         {
             InitializeComponent();
