@@ -174,8 +174,15 @@ namespace MusicX.Controls
 
                 this.IconPlay.Symbol = Wpf.Ui.Common.SymbolRegular.Play24;
 
-                if (ShowCard) this.Card.Visibility = Visibility.Visible;
-                else this.Card.Visibility = Visibility.Collapsed;
+                if (ShowCard)
+                {
+                    this.Card.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    TextsPanel.MaxWidth = double.PositiveInfinity;
+                    this.Card.Visibility = Visibility.Collapsed;
+                }
 
                 Subtitle.Visibility = string.IsNullOrEmpty(Audio.Subtitle) ? Visibility.Collapsed : Visibility.Visible;
 
@@ -638,7 +645,7 @@ namespace MusicX.Controls
             
         }
 
-        private async void RecommendedAudio_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private async void RecommendedAudio_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             try
             {
