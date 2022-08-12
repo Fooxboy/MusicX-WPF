@@ -6,7 +6,8 @@
       xmlns:local="clr-namespace:MusicX.Views.Modals"
       xmlns:models="clr-namespace:MusicX.Core.Models;assembly=MusicX.Core"
       mc:Ignorable="d" 
-      xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI" xmlns:controls="clr-namespace:MusicX.Controls"
+      xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml" 
+      xmlns:controls="clr-namespace:MusicX.Controls"
       d:DesignHeight="450" d:DesignWidth="800"
       Title="CreatePlaylistModal">
 
@@ -40,8 +41,8 @@
                     </Grid>
 
                     <StackPanel Margin="40 15 0 0"  Width="320">
-                        <wpfui:TextBox Text="{Binding Title, Mode=TwoWay}" Placeholder="Название плейлиста"/>
-                        <wpfui:TextBox Text="{Binding Description, Mode=TwoWay}" Margin="0 25 0  0" Placeholder="Описание плейлиста"/>
+                        <wpfui:TextBox Text="{Binding Title, Mode=TwoWay}" PlaceholderText="Название плейлиста"/>
+                        <wpfui:TextBox Text="{Binding Description, Mode=TwoWay}" Margin="0 25 0  0" PlaceholderText="Описание плейлиста"/>
 
                         <StackPanel Margin="0 15 0 0" Orientation="Horizontal">
                             <wpfui:ToggleSwitch IsChecked="{Binding HideFromSearch, Mode=TwoWay}"/>
