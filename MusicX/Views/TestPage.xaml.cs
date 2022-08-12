@@ -93,6 +93,14 @@ namespace MusicX.Views
             };
             
             downloader.DownloadQueue.Add(audio);
+        }   
+
+        private void OpenPlaylistSelector_Click(object sender, RoutedEventArgs e)
+        {
+            var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
+            var viewModel = StaticService.Container.Resolve<PlaylistSelectorModalViewModel>();
+
+            navigationService.OpenModal(new PlaylistSelectorModal(viewModel), 620, 680);
         }
 
         private void OpenPlaylistModal_Click(object sender, RoutedEventArgs e)

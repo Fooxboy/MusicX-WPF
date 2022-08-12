@@ -63,6 +63,14 @@
                     Click="OpenModal_Click"
                     Content="Открыть модалку" />
 
+
+                <Button
+                    x:Name="OpenPlaylistSelector"
+                    Width="390"
+                    HorizontalAlignment="Left"
+                    Click="OpenPlaylistSelector_Click"
+                    Content="Открыть модалку Добавления трека в плейлист" />
+                
                 <Button
                     x:Name="OpenPlaylistModal"
                     Width="390"
