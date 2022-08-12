@@ -9,7 +9,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using WPFUI.Common;
+using Wpf.Ui.Common;
 
 namespace MusicX.ViewModels.Modals
 {

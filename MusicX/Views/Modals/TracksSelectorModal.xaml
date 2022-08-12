@@ -7,7 +7,7 @@
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       xmlns:models="clr-namespace:MusicX.Core.Models;assembly=MusicX.Core"
-      xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
+      xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml"
       xmlns:controls="clr-namespace:MusicX.Controls"
       Title="TracksSelectorModal">
 
