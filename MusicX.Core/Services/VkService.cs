@@ -943,7 +943,8 @@ namespace MusicX.Core.Services
                     {"lang", "ru"},
                     {"device_id", deviceId},
                     {"access_token", vkApi.Token},
-                    {"owner_id", ownerId}
+                    {"owner_id", ownerId},
+                    {"count", 100}
 
                 };
 
