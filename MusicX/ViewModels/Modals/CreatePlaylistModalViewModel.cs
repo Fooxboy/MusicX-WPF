@@ -144,12 +144,15 @@ namespace MusicX.ViewModels.Modals
 
             navigationService.OpenModal(new CreatePlaylistModal(this), 700, 600);
 
-            foreach (var track in selectedTracks) //очень надеюсь что какой то еблан не выберет 100 треков и не будет ждать пол часа добавления блять.
+            if(selectedTracks != null)
             {
-                Tracks.Add(track as Audio);
-            }
+                foreach (var track in selectedTracks) //очень надеюсь что какой то еблан не выберет 100 треков и не будет ждать пол часа добавления блять.
+                {
+                    Tracks.Add(track as Audio);
+                }
 
-            Changed("Tracks");
+                Changed("Tracks");
+            }
         }
 
         public void MoveTracks(Audio source, Audio target)

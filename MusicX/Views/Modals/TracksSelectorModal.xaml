@@ -50,8 +50,8 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
-            <wpfui:Button Command="{Binding CancelCommand}" Grid.Column="0" Foreground="White" Appearance="Secondary"  Content="Отменить"/>
-            <wpfui:Button Command="{Binding ConfirmCommand}" Grid.Column="2" Appearance="Primary"  Foreground="White"  Content="Добавить"/>
+            <wpfui:Button HorizontalAlignment="Stretch" Command="{Binding CancelCommand}" Grid.Column="0" Foreground="White" Appearance="Secondary"  Content="Отменить"/>
+            <wpfui:Button HorizontalAlignment="Stretch" Command="{Binding ConfirmCommand}" Grid.Column="2" Appearance="Primary"  Foreground="White"  Content="Добавить"/>
         </Grid>
     </Grid>
 </Page>

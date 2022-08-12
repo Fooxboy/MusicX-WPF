@@ -23,7 +23,7 @@
                     <Grid Cursor="Hand" HorizontalAlignment="Left" Height="160" Width="160">
                         <Rectangle RadiusX="10" RadiusY="10" HorizontalAlignment="Left" Height="160" Width="160">
                             <Rectangle.Fill>
-                                <ImageBrush ImageSource="{Binding CoverPath}"/>
+                                <ImageBrush Stretch="UniformToFill"  ImageSource="{Binding CoverPath}"/>
 
                             </Rectangle.Fill>
                         </Rectangle>
@@ -58,7 +58,7 @@
 
             <TextBlock Margin="20 15 0 0" Foreground="White" FontSize="18" FontFamily="{StaticResource VKSansMedium}" Text="Список треков"/>
 
-            <wpfui:Button Margin="20 10 20 0" Appearance="Secondary" Command="{Binding AddTracksCommand}" Content="Добавить" Icon="Add24"/>
+            <wpfui:Button Margin="20 10 20 0" HorizontalAlignment="Stretch" Appearance="Secondary" Command="{Binding AddTracksCommand}" Content="Добавить" Icon="Add24"/>
             
         </StackPanel>
 
@@ -94,8 +94,8 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
-            <wpfui:Button Command="{Binding CancelCommand}" Grid.Column="0" Foreground="White" Appearance="Secondary"  Content="Отменить"/>
-            <wpfui:Button Command="{Binding CreateCommand}" IsEnabled="{Binding CreateIsEnable}" Grid.Column="2" Appearance="Primary"  Foreground="White"  Content="Создать"/>
+            <wpfui:Button HorizontalAlignment="Stretch" Command="{Binding CancelCommand}" Grid.Column="0" Foreground="White" Appearance="Secondary"  Content="Отменить"/>
+            <wpfui:Button HorizontalAlignment="Stretch" Command="{Binding CreateCommand}" IsEnabled="{Binding CreateIsEnable}" Grid.Column="2" Appearance="Primary"  Foreground="White"  Content="Создать"/>
         </Grid>
 
         <Grid  HorizontalAlignment="Center" Margin="0 280 0 0" Visibility="{Binding Tracks, Converter={StaticResource ListToVisibilityConverter}, ConverterParameter=True, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center">

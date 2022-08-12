@@ -130,22 +130,7 @@
             </Rectangle.Fill>
         </Rectangle>
 
-        <Grid
-            x:Name="ModalGrid"
-            Grid.RowSpan="5"
-            Grid.ColumnSpan="4"
-            Visibility="Collapsed">
-            <Rectangle Fill="Black" Opacity="0.6" />
-            <Frame x:Name="ModalFrame" />
-            <wpfui:Button
-                x:Name="CloseModalButton"
-                Width="20"
-                Height="20"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                Appearance="Transparent"
-                Icon="ClosedCaption24" />
-        </Grid>
+        
 
         <wpfui:TitleBar
             x:Name="WpfTitleBar"
@@ -254,6 +239,23 @@
                 <wpfui:SymbolIcon Symbol="ArrowLeft32" />
             </Button.Content>
         </wpfui:Button>
+
+        <Grid
+            x:Name="ModalGrid"
+            Grid.RowSpan="5"
+            Grid.ColumnSpan="4"
+            Visibility="Collapsed">
+            <Rectangle Fill="Black" Opacity="0.6" />
+            <Frame x:Name="ModalFrame" />
+            <wpfui:Button
+                x:Name="CloseModalButton"
+                Width="20"
+                Height="20"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Appearance="Transparent"
+                Icon="ClosedCaption24" />
+        </Grid>
 
     </Grid>
 </wpfui:UiWindow>
