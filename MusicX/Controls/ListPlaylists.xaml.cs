@@ -30,15 +30,6 @@ namespace MusicX.Controls
             InitializeComponent();
         }
 
-        public static readonly DependencyProperty PlaylistsProperty =
-          DependencyProperty.Register(nameof(Playlists), typeof(IEnumerable<Playlist>), typeof(ListPlaylists), new PropertyMetadata(Array.Empty<Playlist>()));
-
-        public IEnumerable<Playlist> Playlists
-        {
-            get => (List<Playlist>)GetValue(PlaylistsProperty);
-            set => SetValue(PlaylistsProperty, value);
-        }
-
         public static readonly DependencyProperty ShowFullProperty = DependencyProperty.Register(
             nameof(ShowFull), typeof(bool), typeof(ListPlaylists));
 

@@ -53,6 +53,8 @@ namespace MusicX.Views
                 container.Register<PlaylistViewModel>(Reuse.Singleton);
                 container.Register<DownloaderViewModel>(Reuse.Singleton);
                 container.Register<PlaylistSelectorModalViewModel>(Reuse.Singleton);
+                container.Register<CreatePlaylistModalViewModel>(Reuse.Singleton);
+                container.Register<TracksSelectorModalViewModel>(Reuse.Singleton);
 
                 container.Register<NavigationService>(Reuse.Singleton);
                 container.Register<ConfigService>(Reuse.Singleton);
@@ -119,7 +121,7 @@ namespace MusicX.Views
                                 rootWindow.Show();
                                 this.Close();
                             }
-                            catch (VkNet.Exception.UserAuthorizationFailException e)
+                            catch (VkNet.Exception.VkApiMethodInvokeException e) when (e.ErrorCode is 5 or 1117)
                             {
                                 config.AccessToken = null;
                                 config.UserName = null;

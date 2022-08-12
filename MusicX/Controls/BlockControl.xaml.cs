@@ -113,7 +113,7 @@ namespace MusicX.Controls
 
                     if (Block.Layout.Name == "music_chart_large_slider")
                     {
-                        BlocksPanel.Children.Add(new ListPlaylists() { Playlists = Block.Playlists, /*TODO ShowChart = true,*/ ShowFull = false });
+                        BlocksPanel.Children.Add(new ListPlaylists() { Content = Block.Playlists, /*TODO ShowChart = true,*/ ShowFull = false });
                         logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
 
                         return;
@@ -121,7 +121,7 @@ namespace MusicX.Controls
 
                     if (Block.Layout.Name == "large_slider")
                     {
-                        BlocksPanel.Children.Add(new ListPlaylists() { Playlists = Block.Playlists, ShowFull = false });
+                        BlocksPanel.Children.Add(new ListPlaylists() { Content = Block.Playlists, ShowFull = false });
                         logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
 
                         return;
@@ -129,7 +129,7 @@ namespace MusicX.Controls
 
                     if (Block.Layout.Name == "slider")
                     {
-                        BlocksPanel.Children.Add(new ListPlaylists() { Playlists = Block.Playlists, ShowFull = false });
+                        BlocksPanel.Children.Add(new ListPlaylists() { Content = Block.Playlists, ShowFull = false });
                         logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
 
                         return;
@@ -137,7 +137,7 @@ namespace MusicX.Controls
 
                     if (Block.Layout.Name == "recomms_slider")
                     {
-                        BlocksPanel.Children.Add(new ListPlaylists() { Playlists = Block.Playlists, ShowFull = false });
+                        BlocksPanel.Children.Add(new ListPlaylists() { Content = Block.Playlists, ShowFull = false });
                         logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
 
                         return;
@@ -145,7 +145,7 @@ namespace MusicX.Controls
 
                     if (Block.Layout.Name == "list")
                     {
-                        BlocksPanel.Children.Add(new ListPlaylists() { Playlists = Block.Playlists, ShowFull = true });
+                        BlocksPanel.Children.Add(new ListPlaylists() { Content = Block.Playlists, ShowFull = true });
                         logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
 
                         return;
@@ -153,7 +153,7 @@ namespace MusicX.Controls
 
                     if (Block.Layout.Name == "compact_list")
                     {
-                        BlocksPanel.Children.Add(new ListPlaylists() { Playlists = Block.Playlists, ShowFull = false });
+                        BlocksPanel.Children.Add(new ListPlaylists() { Content = Block.Playlists, ShowFull = false });
                         logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
 
                         return;
@@ -290,7 +290,7 @@ namespace MusicX.Controls
                         card.SetBinding(ButtonBase.CommandProperty, new Binding(nameof(BlockButtonViewModel.InvokeCommand)));
                         card.SetBinding(CardAction.IconProperty, new Binding(nameof(BlockButtonViewModel.Icon)));
                         text.SetBinding(TextBlock.TextProperty, new Binding(nameof(BlockButtonViewModel.Text)));
-
+                        
                         actionBlocksGrid.ColumnDefinitions.Add(new(){ Width = new GridLength(1, GridUnitType.Star) });
                         card.SetValue(Grid.ColumnProperty, i);
                         actionBlocksGrid.Children.Add(card);

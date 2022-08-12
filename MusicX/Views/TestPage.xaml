@@ -56,9 +56,6 @@
                     </TransformGroup>
                 </StackPanel.RenderTransform>
 
-
-
-
                 <Button
                     x:Name="OpenModal"
                     Width="300"
@@ -74,6 +71,13 @@
                     Click="OpenPlaylistSelector_Click"
                     Content="Открыть модалку Добавления трека в плейлист" />
                 
+                <Button
+                    x:Name="OpenPlaylistModal"
+                    Width="390"
+                    HorizontalAlignment="Left"
+                    Click="OpenPlaylistModal_Click"
+                    Content="Открыть модалку создания плейлиста" />
+
                 <TextBlock
                     Margin="0,30,0,0"
                     FontFamily="{StaticResource VKSansBold}"

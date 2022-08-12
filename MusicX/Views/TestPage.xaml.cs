@@ -102,5 +102,13 @@ namespace MusicX.Views
 
             navigationService.OpenModal(new PlaylistSelectorModal(viewModel), 620, 680);
         }
+
+        private void OpenPlaylistModal_Click(object sender, RoutedEventArgs e)
+        {
+            var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
+            var viewModel = StaticService.Container.Resolve<CreatePlaylistModalViewModel>();
+
+            navigationService.OpenModal(new CreatePlaylistModal(viewModel), 700, 600);
+        }
     }
 }
