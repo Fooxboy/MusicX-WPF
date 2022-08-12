@@ -271,14 +271,27 @@ namespace MusicX.Controls
 
                 if (Block.DataType == "action")
                 {
-                    if (Block.Buttons == null) return;
+
+                    List<Core.Models.Button> buttons = new List<Core.Models.Button>();
+
+                    if(Block.Buttons == null)
+                    {
+                        if (Block.Actions == null) return;
+
+                        buttons = Block.Actions;
+
+                    }else
+                    {
+                        buttons = Block.Buttons;
+                    }
 
                     var actionBlocksGrid = new Grid();
 
-                    for (var i = 0; i < Block.Buttons.Count; i++)
+                    for (var i = 0; i < buttons.Count; i++)
                     {
-                        var blockButton = Block.Buttons[i];
-                    
+                        var blockButton = buttons[i];
+
+
                         var text = new TextBlock();
                         var card = new CardAction()
                         {
