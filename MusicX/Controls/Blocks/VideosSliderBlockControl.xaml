@@ -70,6 +70,7 @@
                             <ControlTemplate TargetType="{x:Type UserControl}">
                                 <hc:ScrollViewer VerticalScrollBarVisibility="Disabled" 
                                                  HorizontalScrollBarVisibility="Auto" 
+                                                 CanMouseWheel="False"
                                                  IsInertiaEnabled="True"
                                                  hc:ScrollViewerAttach.AutoHide="True">
                                     <ContentPresenter Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"/>
