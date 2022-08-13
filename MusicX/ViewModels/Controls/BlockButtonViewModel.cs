@@ -45,7 +45,7 @@ public class BlockButtonViewModel : BaseViewModel
                 break;
             case "open_section":
                 Icon = SymbolRegular.Open24;
-                Text = "Открыть";
+                Text = Action.Title ?? "Открыть";
                 break;
             default:
                 Icon = SymbolRegular.AlertOn24;
