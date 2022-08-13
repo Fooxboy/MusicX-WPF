@@ -20,7 +20,8 @@ namespace VkNet.AudioBypassService.Extensions
 
 			services.TryAddSingleton<FakeSafetyNetClient>();
 			services.TryAddSingleton<IVkApiInvoker, VkApiInvoker>();
-			services.TryAddSingleton<IAuthorizationFlow, VkAndroidAuthorization>();
+			services.TryAddSingleton<IVkAndroidAuthorization, VkAndroidAuthorization>();
+			services.TryAddSingleton<IAuthorizationFlow>(s => s.GetRequiredService<IVkAndroidAuthorization>());
 			services.TryAddSingleton<IRestClient, RestClientWithUserAgent>();
 			services.TryAddSingleton<IReceiptParser, ReceiptParser>();
 

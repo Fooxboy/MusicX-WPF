@@ -1,8 +1,9 @@
 using System;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
-using VkNet.Abstractions.Authorization;
 using VkNet.AudioBypassService.Abstractions;
 using VkNet.AudioBypassService.Exceptions;
 using VkNet.AudioBypassService.Utils;
@@ -14,7 +15,7 @@ namespace VkNet.AudioBypassService
 {
 	/// <inheritdoc />
 	[UsedImplicitly]
-	public class VkAndroidAuthorization : IAuthorizationFlow
+	public class VkAndroidAuthorization : IVkAndroidAuthorization
 	{
 		#region Private Fields
 
@@ -22,6 +23,8 @@ namespace VkNet.AudioBypassService
 
 		[NotNull]
 		private readonly IVkApiInvoker _vkApiInvoker;
+		[NotNull]
+		private readonly HttpClient _client;
 
 		[CanBeNull]
 		private readonly ILogger<VkAndroidAuthorization> _logger;
@@ -32,10 +35,12 @@ namespace VkNet.AudioBypassService
 		public IReceiptParser ReceiptParser { get; }
 
 		public VkAndroidAuthorization([NotNull] IVkApiInvoker vkApiInvoker,
-									  [NotNull] IReceiptParser parser,
+									  [NotNull] IReceiptParser parser, 
+									  [NotNull] HttpClient client,
 									  [CanBeNull] ILogger<VkAndroidAuthorization> logger)
 		{
 			_vkApiInvoker = vkApiInvoker;
+			_client = client;
 			ReceiptParser = parser;
 			_logger = logger;
 		}
@@ -123,6 +128,27 @@ namespace VkNet.AudioBypassService
 			var response = await _vkApiInvoker.CallAsync("auth.refreshToken", parameters).ConfigureAwait(false);
 
 			return response["token"]?.ToString();
+		}
+		public async Task<string> AuthByExchangeTokenAsync(string oldToken)
+		{
+			var parameters = new VkParameters
+			{
+				{ "client_id", "2274003" },
+				{ "scope", "all" },
+				{ "device_id", RandomString.Generate(16) },
+				{ "exchange_token", oldToken }
+			};
+
+			var response = await _client.PostAsync("https://oauth.vk.com/auth_by_exchange_token", new FormUrlEncodedContent(parameters));
+
+			if (response.StatusCode != HttpStatusCode.Found)
+				throw new UserAuthorizationFailException(new(){ErrorCode = 5});
+			
+			var blankUrl = response.Headers.Location!.ToString();
+
+			var token = blankUrl['#'..'&']; // string will be access_token=vk1.a.blabla
+			
+			return token['='..];
 		}
 	}
 }

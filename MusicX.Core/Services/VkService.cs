@@ -7,8 +7,10 @@ using NLog;
 using System.Diagnostics;
 using System.Net.Http.Headers;
 using VkNet;
+using VkNet.AudioBypassService.Abstractions;
 using VkNet.AudioBypassService.Extensions;
 using VkNet.Enums.Filters;
+using VkNet.Exception;
 using VkNet.Model;
 using VkNet.Utils;
 using VkNet.Utils.AntiCaptcha;
@@ -24,16 +26,18 @@ namespace MusicX.Core.Services
         private readonly string deviceId = "c3427adfd2595c73:A092cf601fef615c8b594f6ad2c63d159";
 
         public bool IsAuth = false;
+        private readonly IServiceProvider provider;
+        private readonly IVkAndroidAuthorization authFlow;
 
         public VkService(Logger logger)
         {
             var services = new ServiceCollection();
             services.AddAudioBypass();
 
-            services.ToList();
-
             vkApi = new VkApi(services);
 
+            provider = services.BuildServiceProvider();
+            authFlow = provider.GetRequiredService<IVkAndroidAuthorization>();
 
             var ver = vkApiVersion.Split('.');
 
@@ -89,12 +93,19 @@ namespace MusicX.Core.Services
                     AccessToken = token
                 });
 
-                var user = await vkApi.Users.GetAsync(new List<long>());
-                vkApi.UserId = user[0].Id;
+                try
+                {
+                    var user = await vkApi.Users.GetAsync(new List<long>());
+                    vkApi.UserId = user[0].Id;
+                    logger.Info($"User '{user[0].Id}' successful sign in");
+                }
+                catch (VkApiMethodInvokeException e) when (e.ErrorCode == 1117) // token has expired
+                {
+                    var newToken = await authFlow.AuthByExchangeTokenAsync(token);
+                    await SetTokenAsync(newToken, captchaSolver);
+                }
 
                 IsAuth = true;
-
-                logger.Info($"User '{user[0].Id}' successful sign in");
             }catch(Exception ex)
             {
                 logger.Error("VK API ERROR:");
