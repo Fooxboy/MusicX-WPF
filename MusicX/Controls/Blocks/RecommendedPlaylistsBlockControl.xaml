@@ -7,8 +7,12 @@
     xmlns:local="clr-namespace:MusicX.Controls.Blocks"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wpfui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
+    xmlns:collections="clr-namespace:System.Collections;assembly=System.Runtime"
+    xmlns:controls="clr-namespace:MusicX.Controls"
+    xmlns:models="clr-namespace:MusicX.Core.Models;assembly=MusicX.Core"
     d:DesignHeight="450"
     d:DesignWidth="800"
+    x:Name="Control"
     mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -16,21 +20,71 @@
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDark.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <DataTemplate DataType="{x:Type models:RecommendedPlaylist}" x:Key="FullRecommendedPlaylistTemplate">
+                <controls:RecommendedPlaylistControl Margin="0,5" Width="300" Playlist="{Binding}" />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type models:RecommendedPlaylist}" x:Key="RecommendedPlaylistTemplate">
+                <controls:RecommendedPlaylistControl Margin="5,0" Width="300" Playlist="{Binding}" />
+            </DataTemplate>
+
+            <ItemsPanelTemplate x:Key="FullRecommendedPlaylistPanelTemplate">
+                <wpfui:VirtualizingWrapPanel Orientation="Vertical" IsItemsHost="True" />
+            </ItemsPanelTemplate>
+            <ItemsPanelTemplate x:Key="RecommendedPlaylistPanelTemplate">
+                <VirtualizingStackPanel Orientation="Horizontal" IsItemsHost="True" />
+            </ItemsPanelTemplate>
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <StackPanel Margin="0,0,0,10">
-        <hc:ScrollViewer
-            hc:ScrollViewerAttach.AutoHide="True"
-            CanMouseWheel="False"
-            HorizontalScrollBarVisibility="Auto"
-            IsInertiaEnabled="True"
-            VerticalScrollBarVisibility="Hidden">
-            <StackPanel x:Name="ListRecommendsPlist" Orientation="Horizontal" />
+    <UserControl.Style>
+        <Style TargetType="{x:Type UserControl}">
+            <Setter Property="ContentTemplate">
+                <Setter.Value>
+                    <DataTemplate DataType="{x:Type collections:IEnumerable}">
+                        <ItemsControl ItemsSource="{Binding}">
+                            <ItemsControl.Style>
+                                <Style TargetType="{x:Type ItemsControl}"
+                                       BasedOn="{StaticResource {x:Type ItemsControl}}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ShowFull, ElementName=Control}" Value="True">
+                                            <Setter Property="ItemsPanel"
+                                                    Value="{StaticResource FullRecommendedPlaylistPanelTemplate}" />
+                                            <Setter Property="ItemTemplate"
+                                                    Value="{StaticResource FullRecommendedPlaylistTemplate}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding ShowFull, ElementName=Control}" Value="False">
+                                            <Setter Property="ItemsPanel"
+                                                    Value="{StaticResource RecommendedPlaylistPanelTemplate}" />
+                                            <Setter Property="ItemTemplate" Value="{StaticResource RecommendedPlaylistTemplate}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ItemsControl.Style>
+                        </ItemsControl>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
 
-        </hc:ScrollViewer>
-
-
-    </StackPanel>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ShowFull, ElementName=Control}" Value="False">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type UserControl}">
+                                <hc:ScrollViewer VerticalScrollBarVisibility="Disabled"
+                                                 CanMouseWheel="False"
+                                                 HorizontalScrollBarVisibility="Auto"
+                                                 IsInertiaEnabled="True"
+                                                 hc:ScrollViewerAttach.AutoHide="True">
+                                    <ContentPresenter Content="{TemplateBinding Content}"
+                                                      ContentTemplate="{TemplateBinding ContentTemplate}" />
+                                </hc:ScrollViewer>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Style>
 
 </UserControl>

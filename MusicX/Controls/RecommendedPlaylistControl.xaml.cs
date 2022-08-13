@@ -28,7 +28,14 @@ namespace MusicX.Controls
     /// </summary>
     public partial class RecommendedPlaylistControl : UserControl
     {
-        public RecommendedPlaylist Playlist { get; set; }
+        public static readonly DependencyProperty PlaylistProperty = DependencyProperty.Register(
+            nameof(Playlist), typeof(RecommendedPlaylist), typeof(RecommendedPlaylistControl));
+
+        public RecommendedPlaylist Playlist
+        {
+            get => (RecommendedPlaylist)GetValue(PlaylistProperty);
+            set => SetValue(PlaylistProperty, value);
+        }
         public RecommendedPlaylistControl()
         {
             InitializeComponent();

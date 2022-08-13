@@ -369,7 +369,7 @@ namespace MusicX.Controls
 
                 if(Block.DataType == "music_recommended_playlists")
                 {
-                    BlocksPanel.Children.Add(new RecommendedPlaylistsBlockControl() { Playlists = Block.RecommendedPlaylists});
+                    BlocksPanel.Children.Add(new RecommendedPlaylistsBlockControl() { Content = Block.RecommendedPlaylists, ShowFull = Block.Layout.Name == "list" });
                     logger.Info($"loaded {Block.DataType} block ");
                     return;
                 }
