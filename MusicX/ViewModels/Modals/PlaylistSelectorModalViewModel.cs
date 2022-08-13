@@ -38,8 +38,6 @@ namespace MusicX.ViewModels.Modals
 
         public ICommand SelectCommand { get; set; }
 
-        public ICommand CloseCommand { get; set; }
-
         public bool IsLoading { get; set; }
 
         public bool CreateIsEnable { get; set; }
@@ -56,7 +54,6 @@ namespace MusicX.ViewModels.Modals
             this.vkService = vkService;
             this.configService = configService;
 
-            CloseCommand = new RelayCommand(Close);
             SelectCommand = new RelayCommand(Select);
         }
 
@@ -67,15 +64,9 @@ namespace MusicX.ViewModels.Modals
                 PlaylistSelected?.Invoke(SelectedPlaylist);
             }
 
-            this.navigationService.CloseModal();
+            navigationService.CloseModal();
             this.Playlists.Clear();
 
-        }
-
-        public void Close()
-        {
-            this.Playlists.Clear();
-            this.navigationService.CloseModal();
         }
 
         public async Task LoadPlaylistsAsync()

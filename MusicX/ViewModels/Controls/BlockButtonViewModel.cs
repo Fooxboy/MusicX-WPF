@@ -97,14 +97,15 @@ public class BlockButtonViewModel : BaseViewModel
                     var navigationService = StaticService.Container.Resolve<NavigationService>();
                     var viewModel = StaticService.Container.Resolve<CreatePlaylistModalViewModel>();
                     viewModel.IsEdit = false;
-                    navigationService.OpenModal(new CreatePlaylistModal(viewModel), 700, 600);
+                    
+                    navigationService.OpenModal<CreatePlaylistModal>();
                     break;
                 }
                 case "open_section":
                 {
                     var navigation = StaticService.Container.Resolve<NavigationService>();
 
-                    await navigation.OpenSection(Action.SectionId, true);
+                    navigation.OpenSection(Action.SectionId);
                     break;
                 }
             }

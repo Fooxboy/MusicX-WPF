@@ -29,8 +29,6 @@ namespace MusicX.ViewModels.Modals
 
         public ICommand CreateCommand { get; }
 
-        public ICommand CancelCommand { get; }
-
         public ICommand AddTracksCommand { get; }
 
         public ICommand OpenCoverPathCommand { get; set; }
@@ -62,7 +60,6 @@ namespace MusicX.ViewModels.Modals
             this.configService = configService;
             this.notificationsService = notificationsService;
 
-            this.CancelCommand = new RelayCommand(Cancel);
             this.AddTracksCommand = new RelayCommand(AddTracks);
             this.CreateCommand = new AsyncCommand(Create);
             this.OpenCoverPathCommand = new AsyncCommand(OpenCoverPath);
@@ -70,17 +67,9 @@ namespace MusicX.ViewModels.Modals
             this.selectorViewModel.TracksConfirmed += AddSelectedTracks;       
         }
 
-        private void Cancel()
-        {
-            Tracks.Clear();
-            navigationService.CloseModal();
-        }
-
         private void AddTracks()
         {
-            var modal = new TracksSelectorModal(selectorViewModel);
-
-            navigationService.OpenModal(modal, 700, 600);
+            navigationService.OpenModal<TracksSelectorModal>(selectorViewModel);
         }
 
         private async Task Create()
@@ -142,7 +131,7 @@ namespace MusicX.ViewModels.Modals
             CreateIsEnable = true;
             Changed(nameof(CreateIsEnable));
 
-            navigationService.OpenModal(new CreatePlaylistModal(this), 700, 600);
+            navigationService.OpenModal<CreatePlaylistModal>(this);
 
             if(selectedTracks != null)
             {

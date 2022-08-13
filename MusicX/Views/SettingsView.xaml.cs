@@ -21,6 +21,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Windows.Storage;
+using MusicX.Controls;
 using Ookii.Dialogs.Wpf;
 
 namespace MusicX.Views
@@ -28,7 +29,7 @@ namespace MusicX.Views
     /// <summary>
     /// Логика взаимодействия для SettingsView.xaml
     /// </summary>
-    public partial class SettingsView : Page
+    public partial class SettingsView : Page, IMenuPage
     {
         private readonly ConfigService configService;
         private ConfigModel config;
@@ -150,8 +151,6 @@ namespace MusicX.Views
             var notifications = StaticService.Container.Resolve<Services.NotificationsService>();
 
             new LoginWindow(vkService, configService, logger, navigation, notifications).Show();
-
-            navigation.CloseRootWindow();
         }
 
         private async void CheckUpdates_Click(object sender, RoutedEventArgs e)
@@ -174,8 +173,7 @@ namespace MusicX.Views
                 }
                 else
                 {
-                    navigation.OpenModal(new AvalibleNewUpdateModal(navigation, release), 350, 450);
-
+                    navigation.OpenModal<AvalibleNewUpdateModal>(release);
                 }
             }
             catch (Exception ex)
@@ -294,5 +292,6 @@ namespace MusicX.Views
                 UseShellExecute = true
             });
         }
+        public string MenuTag { get; set; }
     }
 }

@@ -22,6 +22,8 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using AsyncAwaitBestPractices;
+using MusicX.Helpers;
 using MusicX.ViewModels;
 using WpfAnimatedGif;
 using MusicX.ViewModels.Modals;
@@ -35,8 +37,7 @@ namespace MusicX.Controls
     {
         private readonly Logger logger;
         private readonly PlayerService player;
-
-
+        
         public BitmapImage BitImage { get; set; }
 
         public TrackControl()
@@ -370,11 +371,11 @@ namespace MusicX.Controls
 
                 if (Audio.MainArtists == null)
                 {
-                    await navigationService.OpenSearchSection(Audio.Artist);
+                    navigationService.OpenSection(Audio.Artist, SectionType.Search);
                 }
                 else
                 {
-                    await navigationService.OpenArtistSection((string)((TextBlock)sender).Tag);
+                    navigationService.OpenSection((string)((TextBlock)sender).Tag, SectionType.Artist);
                 }
             }catch(Exception ex)
             {
@@ -491,13 +492,16 @@ namespace MusicX.Controls
                 if (Audio.Url == String.Empty)
                 {
                     var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
-                    var vkService = StaticService.Container.Resolve<VkService>();
-
-                    navigationService.OpenModal(new TrackNotAvalibleModal(vkService, navigationService, Audio.TrackCode, Audio.OwnerId + "_" + Audio.Id + "_" + Audio.AccessKey), 280, 550);
-
+                    var modalViewModel = StaticService.Container.Resolve<TrackNotAvalibleModalViewModel>();
+                    await modalViewModel.LoadAsync(Audio.TrackCode, Audio.OwnerId + "_" + Audio.Id + "_" + Audio.AccessKey);
+                    
+                    navigationService.OpenModal<TrackNotAvalibleModal>(modalViewModel);
                     return;
                 }
 
+                if (this.FindAncestor<PlaylistView>() is {DataContext: PlaylistViewModel viewModel})
+                    player.CurrentPlaylist = viewModel.PlaylistData;
+                
                 await player.PlayTrack(Audio, LoadOtherTracks);
             }catch(Exception ex)
             {
@@ -550,11 +554,11 @@ namespace MusicX.Controls
 
                 if (Audio.MainArtists == null)
                 {
-                    await navigationService.OpenSearchSection(Audio.Artist);
+                    navigationService.OpenSection(Audio.Artist, SectionType.Search);
                 }
                 else if (sender is FrameworkElement {DataContext: MainArtist artist})
                 {
-                    await navigationService.OpenArtistSection(artist.Id);
+                    navigationService.OpenSection(artist.Id, SectionType.Artist);
                 }
 
                 clickToArtist = false;
@@ -597,7 +601,7 @@ namespace MusicX.Controls
             }catch(FileNotFoundException)
             {
                 var navigation = StaticService.Container.Resolve<Services.NavigationService>();
-                navigation.NavigateToPage(new DownloadsView());
+                navigation.OpenMenuSection("downloads");
             }
         }
 
@@ -628,7 +632,7 @@ namespace MusicX.Controls
                 if (Audio.Album != null)
                 {
                     var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
-                    navigationService.NavigateToPage(new PlaylistView(Audio.Album.Id, Audio.Album.OwnerId, Audio.Album.AccessKey));
+                    navigationService.OpenExternalPage(new PlaylistView(Audio.Album.Id, Audio.Album.OwnerId, Audio.Album.AccessKey));
                 }
 
                 await Task.Delay(100);
@@ -674,7 +678,7 @@ namespace MusicX.Controls
                 blocks.Add(title);
                 blocks.Add(block);
 
-                await navigation.OpenSectionByBlocks(blocks);
+                navigation.OpenSection(items.Response.Section.Id);
 
 
                 clickToArtist = false;
@@ -722,7 +726,7 @@ namespace MusicX.Controls
 
             viewModel.PlaylistSelected += ViewModel_PlaylistSelected;
 
-            navigationService.OpenModal(new PlaylistSelectorModal(viewModel), 620, 680);
+            navigationService.OpenModal<PlaylistSelectorModal>(viewModel);
         }
 
         private async void ViewModel_PlaylistSelected(Playlist playlist)

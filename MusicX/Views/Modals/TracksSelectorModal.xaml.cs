@@ -21,18 +21,15 @@ namespace MusicX.Views.Modals
     /// </summary>
     public partial class TracksSelectorModal : Page
     {
-        private readonly TracksSelectorModalViewModel vm;
-        public TracksSelectorModal(TracksSelectorModalViewModel viewModel)
+        public TracksSelectorModal()
         {
-            this.vm = viewModel;
             this.Loaded += TracksSelectorModalLoaded;
-            this.DataContext = viewModel;
             InitializeComponent();
         }
 
         private async void TracksSelectorModalLoaded(object sender, RoutedEventArgs e)
         {
-           await vm.LoadTracksAsync();
+           await ((TracksSelectorModalViewModel)DataContext).LoadTracksAsync();
         }
 
         private async void MultiSelectListView_ScrollChanged(object sender, ScrollChangedEventArgs e)
@@ -43,7 +40,7 @@ namespace MusicX.Views.Modals
                 //Debug.WriteLine($" ExtentHeight: {e.ExtentHeight} | VerticalOffset: {e.VerticalOffset + Window.GetWindow(this).ActualHeight }");
                 if (e.ExtentHeight < e.VerticalOffset + 10)
                 {
-                    await vm.LoadTracksAsync();
+                    await ((TracksSelectorModalViewModel)DataContext).LoadTracksAsync();
                 }
             }
             catch (Exception ex)

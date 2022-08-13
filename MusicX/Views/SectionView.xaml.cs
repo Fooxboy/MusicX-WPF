@@ -1,172 +1,80 @@
-﻿using DryIoc;
-using MusicX.Core.Models;
+﻿using System;
+using System.Runtime.Serialization;
+using DryIoc;
 using MusicX.Services;
 using MusicX.ViewModels;
-using NLog;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
+using AsyncAwaitBestPractices;
+using Microsoft.Extensions.DependencyInjection;
+using MusicX.Controls;
+using NavigationService = System.Windows.Navigation.NavigationService;
 
-namespace MusicX.Views
+namespace MusicX.Views;
+
+/// <summary>
+/// Логика взаимодействия для SectionView.xaml
+/// </summary>
+public partial class SectionView : Page, IProvideCustomContentState, IMenuPage
 {
-    /// <summary>
-    /// Логика взаимодействия для SectionView.xaml
-    /// </summary>
-    public partial class SectionView : Page
+    public SectionView()
     {
-        public SectionViewModel ViewModel { get; set; }
-        private readonly Logger logger;
+        InitializeComponent();
+    }
+    public CustomContentState GetContentState()
+    {
+        return new SectionState((SectionViewModel)DataContext);
+    }
+    
+    [Serializable]
+    private class SectionState : CustomContentState, ISerializable
+    {
+        private const string TypeKey = "SectionType";
+        private const string IdKey = "SectionId";
+        
+        public override string JournalEntryName => _viewModel.SectionId;
 
-        public SectionView()
+        private SectionViewModel _viewModel;
+        public SectionState(SectionViewModel viewModel)
         {
-            InitializeComponent();
-
-            ViewModel = StaticService.Container.Resolve<SectionViewModel>();
-
-            DataContext = ViewModel;
-
-            ViewModel.ContentLoaded += ViewModel_ContentLoaded;
-
-
-            logger = StaticService.Container.Resolve<Logger>();
-
+            _viewModel = viewModel;
         }
-
-        private void ViewModel_ContentLoaded()
+        
+        public SectionState(SerializationInfo info, StreamingContext context)
         {
-            var amim = (Storyboard)(this.Resources["LoadedAmination"]);
-            amim.Begin();
-
-            ContentGrid.Margin = new Thickness(0, 0, 0, 0);
-        }
-
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-          
-        }
-
-        public async Task LoadSection(string sectionId, bool showTitle = false)
-        {
-            try
-            {
-                if (BlocksScrollView.Items.Count > 0)
-                {
-                    BlocksScrollView.ScrollIntoView(BlocksScrollView.Items[0]);
-                }
-
-
-                var amim = (Storyboard)(this.Resources["LoaderAmimation"]);
-                amim.Begin();
-
-
-                await ViewModel.LoadSection(sectionId, showTitle);
-            }catch (Exception ex)
-            {
-                logger.Error("FATAL ERROR IN LOAD SECTION");
-                logger.Error(ex, ex.Message);
-            }
+            _viewModel = ActivatorUtilities.CreateInstance<SectionViewModel>(StaticService.Container);
+            var sectionId = info.GetString("IdKey") ?? throw new SerializationException($"{IdKey} is required value");
             
-
+            _viewModel.SectionId = sectionId;
+            _viewModel.SectionType = (SectionType)info.GetInt32(TypeKey);
+            _viewModel.LoadAsync().SafeFireAndForget();
         }
-
-        public async Task ReplaceBlocks(string replaceId)
+        
+        public override void Replay(NavigationService navigationService, NavigationMode mode)
         {
-            try
-            {
-                await this.ViewModel.ReplaceBlocks(replaceId);
-
-            }catch(Exception ex)
-            {
-                logger.Error("FATAL ERROR IN REPLACE BLOCK");
-                logger.Error(ex, ex.Message);
-            }
-        }
-
-        public async Task SetBlocks(List<Block> blocks, string next)
-        {
-            try
-            {
-                if (BlocksScrollView.Items.Count > 0)
+            if (navigationService.Content is SectionView section)
+                section.DataContext = _viewModel;
+            else
+                navigationService.Navigate(new SectionView
                 {
-                    BlocksScrollView.ScrollIntoView(BlocksScrollView.Items[0]);
-                }
-
-
-                await ViewModel.LoadBlocks(blocks, next);
-            }catch(Exception ex)
-            {
-                logger.Error("FATAL ERROR IN SET BLOCK");
-                logger.Error(ex, ex.Message);
-            }
-            
+                    DataContext = _viewModel
+                });
         }
-
-        private async void BlocksScrollView_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            try
-            {
-                if (e.ExtentHeight < 400) return;
-
-                //Debug.WriteLine($" ExtentHeight: {e.ExtentHeight} | VerticalOffset: {e.VerticalOffset + Window.GetWindow(this).ActualHeight }");
-                if (e.ExtentHeight < e.VerticalOffset + Window.GetWindow(this).ActualHeight)
-                {
-                    await ViewModel.LoadMore();
-                }
-            }catch(Exception ex)
-            {
-                logger.Error("FATAL ERROR IN SCROLL VIEW CHANGED");
-                logger.Error(ex, ex.Message);
-            }
-            
-        }
-
-        public async Task LoadArtistSection(string artistId)
-        {
-            try
-            {
-                if (BlocksScrollView.Items.Count > 0)
-                {
-                    BlocksScrollView.ScrollIntoView(BlocksScrollView.Items[0]);
-                }
-
-                var amim = (Storyboard)(this.Resources["LoaderAmimation"]);
-                amim.Begin();
-                await ViewModel.LoadArtistSection(artistId);
-            }catch(Exception ex)
-            {
-                logger.Error(ex, ex.Message);
-            }
-        }
-
-        public async Task LoadSearchSection(string query)
-        {
-            try
-            {
-                if (BlocksScrollView.Items.Count > 0)
-                {
-                    BlocksScrollView.ScrollIntoView(BlocksScrollView.Items[0]);
-                }
-
-                var amim = (Storyboard)(this.Resources["LoaderAmimation"]);
-                amim.Begin();
-                await ViewModel.LoadSearchSection(query);
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, ex.Message);
-            }
+            info.AddValue(TypeKey, (int)_viewModel.SectionType);
+            info.AddValue(IdKey, _viewModel.Section.Id);
         }
     }
+    public override string ToString()
+    {
+        return MenuTag;
+    }
+    public string MenuTag
+    {
+        get => _menuTag ?? ((SectionViewModel) DataContext).SectionId;
+        set => _menuTag = value;
+    }
+    private string? _menuTag;
 }

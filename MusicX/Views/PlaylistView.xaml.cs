@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -21,13 +22,15 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using AsyncAwaitBestPractices;
+using Microsoft.Extensions.DependencyInjection;
+using NavigationService = System.Windows.Navigation.NavigationService;
 
 namespace MusicX.Views
 {
     /// <summary>
     /// Логика взаимодействия для PlaylistView.xaml
     /// </summary>
-    public partial class PlaylistView : Page
+    public partial class PlaylistView : Page, IProvideCustomContentState
     {
         public PlaylistViewModel ViewModel { get; set; }
 
@@ -40,29 +43,26 @@ namespace MusicX.Views
         private long currentUserId;
         private bool loading;
 
-        public PlaylistView(Playlist playlist)
+        public PlaylistView(PlaylistViewModel? viewModel = null)
         {
+            ViewModel = viewModel ?? StaticService.Container.Resolve<PlaylistViewModel>();;
             InitializeComponent();
-            ViewModel = StaticService.Container.Resolve<PlaylistViewModel>();
-            logger = StaticService.Container.Resolve<Logger>();
-
             ViewModel.PlaylistLoaded += ViewModel_PlaylistLoaded;
-
-
+            logger = StaticService.Container.Resolve<Logger>();
             DataContext = ViewModel;
+        }
+        public PlaylistView(Playlist playlist) : this()
+        {
             this.playlist = playlist;
+            ViewModel.PlaylistData = new(playlist.Id, playlist.OwnerId, playlist.AccessKey);
         }
 
-        public PlaylistView(long playlistId, long ownerId, string accessKey)
+        public PlaylistView(long playlistId, long ownerId, string accessKey) : this()
         {
-            InitializeComponent();
-            ViewModel = StaticService.Container.Resolve<PlaylistViewModel>();
-
-            ViewModel.PlaylistLoaded += ViewModel_PlaylistLoaded;
-            DataContext = ViewModel;
             this.playlistId = playlistId;
             this.ownerId = ownerId;
             this.accessKey = accessKey;
+            ViewModel.PlaylistData = new(playlistId, ownerId, accessKey);
         }
 
         private void ViewModel_PlaylistLoaded(object? sender, Playlist e)
@@ -99,14 +99,17 @@ namespace MusicX.Views
                         this.AddPlaylist.Icon = Wpf.Ui.Common.SymbolRegular.Delete24;
                     }
                 }
-               
-                if (playlist != null)
+
+                if (ViewModel.Playlist is null)
                 {
-                    await ViewModel.LoadPlaylist(playlist);
-                }
-                else
-                {
-                    await ViewModel.LoadPlaylistFromData(playlistId, ownerId, accessKey);
+                    if (playlist != null)
+                    {
+                        await ViewModel.LoadPlaylist(playlist);
+                    }
+                    else if (accessKey != null)
+                    {
+                        await ViewModel.LoadPlaylistFromData(playlistId, ownerId, accessKey);
+                    }
                 }
 
                
@@ -185,6 +188,7 @@ namespace MusicX.Views
                     PlayPlaylist.Content = "Остановить воспроизведение";
                     PlayPlaylist.Icon = Wpf.Ui.Common.SymbolRegular.Pause20;
 
+                    player.CurrentPlaylist = ViewModel.PlaylistData;
                     await player.PlayTrack(ViewModel.Tracks[0]);
                 }
             }catch (Exception ex)
@@ -212,12 +216,56 @@ namespace MusicX.Views
 
                 var navigation = StaticService.Container.Resolve<Services.NavigationService>();
 
-                navigation.NavigateToPage(new DownloadsView());
+                navigation.OpenMenuSection("downloads");
             }
         }
-        private void Page_OnUnloaded(object sender, RoutedEventArgs e)
+        public CustomContentState GetContentState()
         {
-            ViewModel.Unload();
+            return new PlaylistState(ViewModel);
+        }
+
+        public override string ToString()
+        {
+            return $"{ViewModel.PlaylistData.PlaylistId}_{ViewModel.PlaylistData.OwnerId}_{ViewModel.PlaylistData.AccessKey}";
+        }
+
+        [Serializable]
+        private class PlaylistState : CustomContentState, ISerializable
+        {
+            private const string IdKey = "PlaylistId";
+            private const string OwnerIdKey = "OwnerId";
+            private const string AccessKey = "AccessKey";
+            
+            private readonly PlaylistViewModel _viewModel;
+
+            public override string JournalEntryName => 
+                $"{_viewModel.PlaylistData.PlaylistId}_{_viewModel.PlaylistData.OwnerId}_{_viewModel.PlaylistData.AccessKey}";
+            public PlaylistState(PlaylistViewModel viewModel)
+            {
+                _viewModel = viewModel;
+            }
+
+            public PlaylistState(SerializationInfo info, StreamingContext context)
+            {
+                _viewModel = StaticService.Container.Resolve<PlaylistViewModel>();
+
+                var data = new PlaylistData(info.GetInt64(IdKey), info.GetInt64(OwnerIdKey), info.GetString(AccessKey)!);
+                _viewModel.LoadPlaylistFromData(data)
+                    .SafeFireAndForget();
+            }
+            public override void Replay(NavigationService navigationService, NavigationMode mode)
+            {
+                if (mode is not (NavigationMode.Forward or NavigationMode.Back))
+                    navigationService.Navigate(new PlaylistView(_viewModel));
+            }
+            public void GetObjectData(SerializationInfo info, StreamingContext context)
+            {
+                var (id, ownerId, accessKey) = _viewModel.PlaylistData;
+                
+                info.AddValue(IdKey, id);
+                info.AddValue(OwnerIdKey, ownerId);
+                info.AddValue(AccessKey, accessKey);
+            }
         }
     }
 }

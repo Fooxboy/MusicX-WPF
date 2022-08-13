@@ -49,12 +49,12 @@ namespace MusicX.Views
                 container.Register<DiscordService>(Reuse.Singleton);
                 container.RegisterInstance<Logger>(LogManager.Setup().GetLogger("Common"));
 
-                container.Register<SectionViewModel>(Reuse.Singleton);
-                container.Register<PlaylistViewModel>(Reuse.Singleton);
+                container.Register<SectionViewModel>(Reuse.Transient);
+                container.Register<PlaylistViewModel>(Reuse.Transient);
                 container.Register<DownloaderViewModel>(Reuse.Singleton);
-                container.Register<PlaylistSelectorModalViewModel>(Reuse.Singleton);
-                container.Register<CreatePlaylistModalViewModel>(Reuse.Singleton);
-                container.Register<TracksSelectorModalViewModel>(Reuse.Singleton);
+                container.Register<PlaylistSelectorModalViewModel>(Reuse.Transient);
+                container.Register<CreatePlaylistModalViewModel>(Reuse.Transient);
+                container.Register<TracksSelectorModalViewModel>(Reuse.Transient);
 
                 container.Register<NavigationService>(Reuse.Singleton);
                 container.Register<ConfigService>(Reuse.Singleton);

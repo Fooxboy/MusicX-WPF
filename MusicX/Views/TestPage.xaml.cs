@@ -17,6 +17,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MusicX.Controls;
 using MusicX.ViewModels;
 using MusicX.ViewModels.Modals;
 
@@ -25,7 +26,7 @@ namespace MusicX.Views
     /// <summary>
     /// Логика взаимодействия для TestPage.xaml
     /// </summary>
-    public partial class TestPage : Page
+    public partial class TestPage : Page, IMenuPage
     {
         public TestPage()
         {
@@ -40,7 +41,7 @@ namespace MusicX.Views
         private async void OpenModal_Click(object sender, RoutedEventArgs e)
         {
 
-            var window = Application.Current.MainWindow;
+            /*var window = Application.Current.MainWindow;
             // ...
             IntPtr hwnd = new WindowInteropHelper(window).Handle;
 
@@ -49,28 +50,23 @@ namespace MusicX.Views
             var brr =new Windows.UI.Popups.MessageDialog("brrrrrrrr", "brrrrr");
             WinRT.Interop.InitializeWithWindow.Initialize(brr, hwnd);
 
-            await brr.ShowAsync();
+            await brr.ShowAsync();*/
 
             var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
 
-            //navigationService.OpenModal(new TestModal(), 340, 500);
+            navigationService.OpenModal<TestModal>();
         }
 
-        private async void OpenSectionButton_Click(object sender, RoutedEventArgs e)
+        private void OpenSectionButton_Click(object sender, RoutedEventArgs e)
         {
             var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
-
-            navigationService.CurrentFrame.Navigate(navigationService.SectionView);
-            await navigationService.OpenSection(section.Text);
+            navigationService.OpenSection(section.Text);
         }
 
-        private async void openArtist_Click(object sender, RoutedEventArgs e)
+        private void openArtist_Click(object sender, RoutedEventArgs e)
         {
             var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
-
-            navigationService.CurrentFrame.Navigate(navigationService.SectionView);
-
-            await navigationService.OpenArtistSection(artist.Text);
+            navigationService.OpenSection(artist.Text, SectionType.Artist);
         }
 
         private void showNotification_Click(object sender, RoutedEventArgs e)
@@ -100,7 +96,7 @@ namespace MusicX.Views
             var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
             var viewModel = StaticService.Container.Resolve<PlaylistSelectorModalViewModel>();
 
-            navigationService.OpenModal(new PlaylistSelectorModal(viewModel), 620, 680);
+            navigationService.OpenModal<PlaylistSelectorModal>(viewModel);
         }
 
         private void OpenPlaylistModal_Click(object sender, RoutedEventArgs e)
@@ -108,7 +104,8 @@ namespace MusicX.Views
             var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
             var viewModel = StaticService.Container.Resolve<CreatePlaylistModalViewModel>();
 
-            navigationService.OpenModal(new CreatePlaylistModal(viewModel), 700, 600);
+            navigationService.OpenModal<CreatePlaylistModal>(viewModel);
         }
+        public string MenuTag { get; set; }
     }
 }

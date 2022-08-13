@@ -102,7 +102,7 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <wpfui:NavigationStore
+            <controls:NavigationBar
                 x:Name="navigationBar"
                 Grid.Column="0"
                 Margin="0,0,12,0"
@@ -240,22 +240,8 @@
             </Button.Content>
         </wpfui:Button>
 
-        <Grid
-            x:Name="ModalGrid"
-            Grid.RowSpan="5"
-            Grid.ColumnSpan="4"
-            Visibility="Collapsed">
-            <Rectangle Fill="Black" Opacity="0.6" />
-            <Frame x:Name="ModalFrame" />
-            <wpfui:Button
-                x:Name="CloseModalButton"
-                Width="20"
-                Height="20"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                Appearance="Transparent"
-                Icon="ClosedCaption24" />
-        </Grid>
+        <controls:ModalFrame Grid.Row="1"
+                             x:Name="ModalFrame" />
 
     </Grid>
 </wpfui:UiWindow>

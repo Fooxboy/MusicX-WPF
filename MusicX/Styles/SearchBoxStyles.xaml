@@ -267,7 +267,7 @@
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding Path=Icon, RelativeSource={RelativeSource Self}, Mode=OneWay, Converter={StaticResource IconNotEmptyConverter}}" Value="True" />
-                                <Condition Binding="{Binding Path=IconPosition, RelativeSource={RelativeSource Self}, Mode=OneWay}" Value="Left" />
+                                <Condition Binding="{Binding Path=IconPlacement, RelativeSource={RelativeSource Self}, Mode=OneWay}" Value="Left" />
                             </MultiDataTrigger.Conditions>
                             <Setter TargetName="IconLeft" Property="Visibility" Value="Visible" />
                         </MultiDataTrigger>
@@ -275,7 +275,7 @@
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding Path=Icon, RelativeSource={RelativeSource Self}, Mode=OneWay, Converter={StaticResource IconNotEmptyConverter}}" Value="True" />
-                                <Condition Binding="{Binding Path=IconPosition, RelativeSource={RelativeSource Self}, Mode=OneWay}" Value="Right" />
+                                <Condition Binding="{Binding Path=IconPlacement, RelativeSource={RelativeSource Self}, Mode=OneWay}" Value="Right" />
                             </MultiDataTrigger.Conditions>
                             <Setter TargetName="IconRight" Property="Visibility" Value="Visible" />
                         </MultiDataTrigger>

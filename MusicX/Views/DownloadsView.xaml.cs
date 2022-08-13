@@ -6,6 +6,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using MusicX.Controls;
 using MusicX.ViewModels;
 using Xabe.FFmpeg;
 using Xabe.FFmpeg.Downloader;
@@ -15,7 +16,7 @@ namespace MusicX.Views;
 /// <summary>
 /// Логика взаимодействия для DownloadsView.xaml
 /// </summary>
-public partial class DownloadsView : Page
+public partial class DownloadsView : Page, IMenuPage
 {
     private long maxTotal;
     private string ffmpegPath = Path.Combine(AppContext.BaseDirectory, "ffmpeg");
@@ -112,4 +113,5 @@ public partial class DownloadsView : Page
 
         }
     }
+    public string MenuTag { get; set; }
 }

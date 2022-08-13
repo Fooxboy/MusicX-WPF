@@ -1,164 +1,112 @@
-﻿using MusicX.Core.Models;
-using MusicX.Models.Enums;
-using MusicX.Views;
-using NLog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
+using AsyncAwaitBestPractices;
+using Microsoft.Extensions.DependencyInjection;
+using MusicX.ViewModels;
+namespace MusicX.Services;
 
-namespace MusicX.Services
+public enum SectionType
 {
-    public class NavigationService
+    None,
+    Artist,
+    Search
+}
+public class NavigationService
+{
+    public event EventHandler<SectionViewModel>? ExternalSectionOpened;
+    public event EventHandler<object>? ExternalPageOpened;
+    public event EventHandler<string>? MenuSectionOpened;
+    public event EventHandler? BackRequested;
+    public event EventHandler<string>? ReplaceBlocksRequested;
+    public event EventHandler<object>? ModalOpenRequested;
+    public event EventHandler? ModalCloseRequested;
+
+    private SectionViewModel MakeViewModel(string value, SectionType sectionType)
     {
-        private bool nowModalOpen;
-        public event OpenModalDelegate OpenedModalWindow;
-        public event CloseModalDelegate ClosedModalWindow;
-
-        public delegate void OpenModalDelegate(object Page, int height, int width);
-        public delegate void CloseModalDelegate();
-
-        private readonly Logger logger;
-        private RootWindow rootWindow;
-
-        public SectionView SectionView { get; set; }
-        public Frame CurrentFrame { get; set; }
-
-        public Stack<(NavigationSource Source, object Data)> History { get; set; } = new Stack<(NavigationSource Source, object Data)> ();
-
-        public NavigationService(Logger logger)
+        var viewModel = ActivatorUtilities.CreateInstance<SectionViewModel>(StaticService.Container);
+        
+        switch (sectionType)
         {
-            this.logger = logger;
+            case SectionType.None:
+                viewModel.LoadSection(value).SafeFireAndForget();
+                break;
+            case SectionType.Artist:
+                viewModel.LoadArtistSection(value).SafeFireAndForget();
+                break;
+            case SectionType.Search:
+                viewModel.LoadSearchSection(value).SafeFireAndForget();
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(sectionType), sectionType, null);
         }
-        public void NavigateToPage(object page, bool fromHistory = false)
+        
+        return viewModel;
+    }
+
+    public void OpenSection(string value, SectionType sectionType = SectionType.None)
+    {
+        var viewModel = MakeViewModel(value, sectionType);
+        
+        if (Application.Current.Dispatcher.CheckAccess())
+            ExternalSectionOpened?.Invoke(this, viewModel);
+        else
+            Application.Current.Dispatcher.BeginInvoke(() => ExternalSectionOpened?.Invoke(this, viewModel));
+    }
+    
+    public void OpenMenuSection(string value)
+    {
+        if (Application.Current.Dispatcher.CheckAccess())
+            MenuSectionOpened?.Invoke(this, value);
+        else
+            Application.Current.Dispatcher.BeginInvoke(() => MenuSectionOpened?.Invoke(this, value));
+    }
+
+    public void OpenExternalPage(object content)
+    {
+        if (Application.Current.Dispatcher.CheckAccess())
+            ExternalPageOpened?.Invoke(this, content);
+        else
+            Application.Current.Dispatcher.BeginInvoke(() => ExternalPageOpened?.Invoke(this, content));
+    }
+
+    public void ReplaceBlocks(string id)
+    {
+        if (Application.Current.Dispatcher.CheckAccess())
+            ReplaceBlocksRequested?.Invoke(this, id);
+        else
+            Application.Current.Dispatcher.BeginInvoke(() => ReplaceBlocksRequested?.Invoke(this, id));
+    }
+
+    public void GoBack()
+    {
+        if (Application.Current.Dispatcher.CheckAccess())
+            BackRequested?.Invoke(this, EventArgs.Empty);
+        else
+            Application.Current.Dispatcher.BeginInvoke(() => BackRequested?.Invoke(this, EventArgs.Empty));
+    }
+
+    public void OpenModal<TView>(object? dataContext = null) where TView : Page, new()
+    {
+        TView Create()
         {
-            logger.Info($"Navigate to {page.GetType} page, from history = {fromHistory}");
-            if (!fromHistory) AddHistory(NavigationSource.Page, page);
-
-            CurrentFrame.Navigate(page);
-        }
-
-
-        public void OpenModal(object page, int height, int width)
-        {
-            nowModalOpen = true;
-            OpenedModalWindow?.Invoke(page, height, width);
-        }
-
-        public void CloseModal()
-        {
-            if (!nowModalOpen) return;
-
-            ClosedModalWindow?.Invoke();
-
-            nowModalOpen = false;
-        }
-
-        public async Task OpenSection(string sectionId, bool showTitle = false)
-        {
-            logger.Info($"Open section {sectionId}");
-
-            if (History.First().Source == NavigationSource.Page) CurrentFrame.Navigate(SectionView);
-
-            if (CurrentFrame.Content != typeof(SectionView))
+            return new()
             {
-                CurrentFrame.Navigate(SectionView);
-            }
-            await SectionView.LoadSection(sectionId, showTitle);
+                DataContext = dataContext
+            };
         }
+        
+        if (Application.Current.Dispatcher.CheckAccess())
+            ModalOpenRequested?.Invoke(this, Create());
+        else
+            Application.Current.Dispatcher.BeginInvoke(() => ModalOpenRequested?.Invoke(this, Create()));
+    }
 
-        public async Task OpenArtistSection(string artistId)
-        {
-            logger.Info($"Open artist section with artistId = {artistId}");
-            if (History.First().Source == NavigationSource.Page)
-            {
-                CurrentFrame.Navigate(SectionView);
-            }
-
-            if (CurrentFrame.Content != typeof(SectionView))
-            {
-                CurrentFrame.Navigate(SectionView);
-            }
-            await SectionView.LoadArtistSection(artistId);
-        }
-
-        public async Task OpenSearchSection(string query)
-        {
-            logger.Info($"Open sarch section with query = {query}");
-            if (History.First().Source == NavigationSource.Page) CurrentFrame.Navigate(SectionView);
-
-            if(CurrentFrame.Content != typeof(SectionView))
-            {
-                CurrentFrame.Navigate(SectionView);
-            }
-
-            await SectionView.LoadSearchSection(query);
-        }
-
-        public async Task OpenSectionByBlocks(List<Block> blocks, string next)
-        {
-            logger.Info($"Open section by {blocks.Count} blocks");
-            if (History.First().Source == NavigationSource.Page) CurrentFrame.Navigate(SectionView);
-
-            if (CurrentFrame.Content != typeof(SectionView))
-            {
-                CurrentFrame.Navigate(SectionView);
-            }
-
-            await SectionView.SetBlocks(blocks, next);
-        }
-
-        public void AddHistory(NavigationSource source, object data)
-        {
-            logger.Info($"Add {source} to history with data {data.GetType}");
-
-            History.Push((source, data));
-        }
-
-        public async Task ReplaceBlock(string replace_id)
-        {
-            logger.Info($"Replace block with replace id = {replace_id}");
-            await SectionView.ReplaceBlocks(replace_id);
-        }
-
-        public async Task Back()
-        {
-            logger.Info($"Go to back");
-
-            if (History.Count < 2) return;
-
-            History.Pop();
-
-            var history = History.Pop();
-
-            if(history.Source == NavigationSource.Section)
-            {
-                var blocks = ((List<Block> blocks, string next)) history.Data;
-
-                NavigateToPage(SectionView);
-                await OpenSectionByBlocks(blocks.blocks, blocks.next);
-            }else if(history.Source == NavigationSource.Page)
-            {
-                NavigateToPage(history.Data, true);
-            }
-        }
-
-
-        public async Task OpenSectionByBlocks(List<Block> blocks)
-        {
-            await OpenSectionByBlocks(blocks, null);
-        }
-
-        public void SetRootWindow(RootWindow rootWindow)
-        {
-            this.rootWindow = rootWindow;
-        } 
-
-        public void CloseRootWindow()
-        {
-            rootWindow.Close();
-        }
+    public void CloseModal()
+    {
+        if (Application.Current.Dispatcher.CheckAccess())
+            ModalCloseRequested?.Invoke(this, EventArgs.Empty);
+        else
+            Application.Current.Dispatcher.BeginInvoke(() => ModalCloseRequested?.Invoke(this, EventArgs.Empty));
     }
 }
