@@ -146,7 +146,8 @@
                             Focusable="False"
                             HorizontalScrollBarVisibility="Disabled"
                             IsInertiaEnabled="True"
-                            VerticalScrollBarVisibility="Auto">
+                            VerticalScrollBarVisibility="Auto"
+                            ScrollChanged="SectionScrollViewer_ScrollChanged">
                             <VirtualizingStackPanel Margin="2,0,10,120" IsItemsHost="True" />
                         </hc:ScrollViewer>
                     </ControlTemplate>

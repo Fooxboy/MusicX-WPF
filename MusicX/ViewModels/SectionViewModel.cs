@@ -75,7 +75,10 @@ namespace MusicX.ViewModels
 
                 await Application.Current.Dispatcher.InvokeAsync(() =>
                 {
-                    Blocks.AddRange(section.Section.Blocks, NotifyCollectionChangedAction.Reset);
+                    foreach (var block in section.Section.Blocks)
+                    {
+                        Blocks.Add(block);
+                    }
                 });
 
                 Next = section.Section.NextFrom;

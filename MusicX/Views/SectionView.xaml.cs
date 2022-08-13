@@ -27,6 +27,16 @@ public partial class SectionView : Page, IProvideCustomContentState, IMenuPage
         return new SectionState((SectionViewModel)DataContext);
     }
     
+    private async void SectionScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+    {
+        if (_loading || Math.Abs(e.VerticalOffset - ((ScrollViewer)sender).ScrollableHeight) is > 200 or < 1)
+            return;
+
+        _loading = true;
+        await ((SectionViewModel)DataContext).LoadMore();
+        _loading = false;
+    }
+    
     [Serializable]
     private class SectionState : CustomContentState, ISerializable
     {
@@ -77,4 +87,5 @@ public partial class SectionView : Page, IProvideCustomContentState, IMenuPage
         set => _menuTag = value;
     }
     private string? _menuTag;
+    private bool _loading;
 }
