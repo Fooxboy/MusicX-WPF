@@ -151,6 +151,7 @@ namespace MusicX.Views
             var notifications = StaticService.Container.Resolve<Services.NotificationsService>();
 
             new LoginWindow(vkService, configService, logger, navigation, notifications).Show();
+            Window.GetWindow(this)?.Close();
         }
 
         private async void CheckUpdates_Click(object sender, RoutedEventArgs e)
