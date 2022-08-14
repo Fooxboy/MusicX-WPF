@@ -183,7 +183,9 @@ namespace MusicX.ViewModels
                 await Application.Current.Dispatcher.InvokeAsync(() =>
                 {
                     Blocks.Clear();
+                    Blocks.Add(new() {DataType = "none", Layout = new() {Name = "header", Title = "Ничего не найдено"}});
                 });
+                ContentState = ContentState.Loaded;
             }
             catch (Exception ex)
             {
