@@ -22,8 +22,11 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using AsyncAwaitBestPractices;
+using MusicX.Helpers;
 using MusicX.ViewModels;
 using WpfAnimatedGif;
+using MusicX.ViewModels.Modals;
 
 namespace MusicX.Controls
 {
@@ -34,8 +37,7 @@ namespace MusicX.Controls
     {
         private readonly Logger logger;
         private readonly PlayerService player;
-
-
+        
         public BitmapImage BitImage { get; set; }
 
         public TrackControl()
@@ -74,7 +76,7 @@ namespace MusicX.Controls
         {
             if(player.CurrentTrack != null && player.CurrentTrack.Id == this.Audio.Id)
             {
-                this.IconPlay.Symbol = player.IsPlaying ? WPFUI.Common.SymbolRegular.Pause24 : WPFUI.Common.SymbolRegular.Play24;
+                this.IconPlay.Symbol = player.IsPlaying ? Wpf.Ui.Common.SymbolRegular.Pause24 : Wpf.Ui.Common.SymbolRegular.Play24;
                 UpdatePlayingAnimation(player.IsPlaying);
             }
         }
@@ -86,8 +88,7 @@ namespace MusicX.Controls
 
                 if(!ShowCard)
                 {
-                    Card.Visibility = Visibility.Visible;
-                    Card.Opacity = 100;
+                    Card.Opacity = 1;
                 }
 
 
@@ -109,15 +110,14 @@ namespace MusicX.Controls
 
                 if (!ShowCard)
                 {
-                    Card.Visibility = Visibility.Collapsed;
-                    Card.Opacity = 1;
+                    Card.Opacity = 0;
                 }
 
 
 
 
                 this.IconPlay.Visibility = Visibility.Visible;
-                this.IconPlay.Symbol = WPFUI.Common.SymbolRegular.Play24;
+                this.IconPlay.Symbol = Wpf.Ui.Common.SymbolRegular.Play24;
             }
         }
 
@@ -171,10 +171,17 @@ namespace MusicX.Controls
             try
             {
 
-                this.IconPlay.Symbol = WPFUI.Common.SymbolRegular.Play24;
+                this.IconPlay.Symbol = Wpf.Ui.Common.SymbolRegular.Play24;
 
-                if (ShowCard) this.Card.Visibility = Visibility.Visible;
-                else this.Card.Visibility = Visibility.Collapsed;
+                if (ShowCard)
+                {
+                    this.Card.Opacity = 1;
+                }
+                else
+                {
+                    TextsPanel.MaxWidth = double.PositiveInfinity;
+                    this.Card.Opacity = 0;
+                }
 
                 Subtitle.Visibility = string.IsNullOrEmpty(Audio.Subtitle) ? Visibility.Collapsed : Visibility.Visible;
 
@@ -252,12 +259,12 @@ namespace MusicX.Controls
 
                 if (Audio.OwnerId == config.UserId)
                 {
-                    AddRemoveIcon.Symbol = WPFUI.Common.SymbolRegular.Delete20;
+                    AddRemoveIcon.Symbol = Wpf.Ui.Common.SymbolRegular.Delete20;
                     AddRemoveText.Text = "Удалить";
                 }
                 else
                 {
-                    AddRemoveIcon.Symbol = WPFUI.Common.SymbolRegular.Add24;
+                    AddRemoveIcon.Symbol = Wpf.Ui.Common.SymbolRegular.Add24;
                     AddRemoveText.Text = "Добавить к себе";
 
                 }
@@ -302,8 +309,7 @@ namespace MusicX.Controls
 
                     if (!ShowCard)
                     {
-                        Card.Visibility = Visibility.Visible;
-                        Card.Opacity = 100;
+                        Card.Opacity = 1;
                     }
                 }
                   
@@ -362,11 +368,11 @@ namespace MusicX.Controls
 
                 if (Audio.MainArtists == null)
                 {
-                    await navigationService.OpenSearchSection(Audio.Artist);
+                    navigationService.OpenSection(Audio.Artist, SectionType.Search);
                 }
                 else
                 {
-                    await navigationService.OpenArtistSection((string)((TextBlock)sender).Tag);
+                    navigationService.OpenSection((string)((TextBlock)sender).Tag, SectionType.Artist);
                 }
             }catch(Exception ex)
             {
@@ -412,7 +418,7 @@ namespace MusicX.Controls
                 {
                     if(player.CurrentTrack == null || player.CurrentTrack.Id != this.Audio.Id)
                     {
-                        Card.Visibility = Visibility.Visible;
+                        Card.Opacity = 1;
 
                     }
 
@@ -449,24 +455,13 @@ namespace MusicX.Controls
                     Artists.MaxWidth = oldWidthArtists + 2;
 
                     explicitBadge.Margin = new Thickness(0, 0, 0, 0);
+                    Card.Opacity = 1;
                 }
-
-
-                if (Card == null) return;
-              
-
-                if (!ShowCard)
+                
+                if (player.CurrentTrack == null || player.CurrentTrack.Id != this.Audio.Id)
                 {
-
-                    if (player.CurrentTrack == null || player.CurrentTrack.Id != this.Audio.Id)
-                    {
-                        Card.Visibility = Visibility.Collapsed;
-                    }
-
-                    
+                    Card.Opacity = ShowCard ? 1 : 0;
                 }
-
-                Card.Opacity = 1;
             }catch(Exception ex)
             {
                 logger.Error(ex, ex.Message);
@@ -483,13 +478,16 @@ namespace MusicX.Controls
                 if (Audio.Url == String.Empty)
                 {
                     var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
-                    var vkService = StaticService.Container.Resolve<VkService>();
-
-                    navigationService.OpenModal(new TrackNotAvalibleModal(vkService, navigationService, Audio.TrackCode, Audio.OwnerId + "_" + Audio.Id + "_" + Audio.AccessKey), 280, 550);
-
+                    var modalViewModel = StaticService.Container.Resolve<TrackNotAvalibleModalViewModel>();
+                    await modalViewModel.LoadAsync(Audio.TrackCode, Audio.OwnerId + "_" + Audio.Id + "_" + Audio.AccessKey);
+                    
+                    navigationService.OpenModal<TrackNotAvalibleModal>(modalViewModel);
                     return;
                 }
 
+                if (this.FindAncestor<PlaylistView>() is {DataContext: PlaylistViewModel viewModel})
+                    player.CurrentPlaylist = viewModel.PlaylistData;
+                
                 await player.PlayTrack(Audio, LoadOtherTracks);
             }catch(Exception ex)
             {
@@ -542,11 +540,11 @@ namespace MusicX.Controls
 
                 if (Audio.MainArtists == null)
                 {
-                    await navigationService.OpenSearchSection(Audio.Artist);
+                    navigationService.OpenSection(Audio.Artist, SectionType.Search);
                 }
                 else if (sender is FrameworkElement {DataContext: MainArtist artist})
                 {
-                    await navigationService.OpenArtistSection(artist.Id);
+                    navigationService.OpenSection(artist.Id, SectionType.Artist);
                 }
 
                 clickToArtist = false;
@@ -589,7 +587,7 @@ namespace MusicX.Controls
             }catch(FileNotFoundException)
             {
                 var navigation = StaticService.Container.Resolve<Services.NavigationService>();
-                navigation.NavigateToPage(new DownloadsView());
+                navigation.OpenMenuSection("downloads");
             }
         }
 
@@ -620,7 +618,7 @@ namespace MusicX.Controls
                 if (Audio.Album != null)
                 {
                     var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
-                    navigationService.NavigateToPage(new PlaylistView(Audio.Album.Id, Audio.Album.OwnerId, Audio.Album.AccessKey));
+                    navigationService.OpenExternalPage(new PlaylistView(Audio.Album.Id, Audio.Album.OwnerId, Audio.Album.AccessKey));
                 }
 
                 await Task.Delay(100);
@@ -637,7 +635,7 @@ namespace MusicX.Controls
             
         }
 
-        private async void RecommendedAudio_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private async void RecommendedAudio_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             try
             {
@@ -666,7 +664,7 @@ namespace MusicX.Controls
                 blocks.Add(title);
                 blocks.Add(block);
 
-                await navigation.OpenSectionByBlocks(blocks);
+                navigation.OpenSection(items.Response.Section.Id);
 
 
                 clickToArtist = false;
@@ -704,6 +702,37 @@ namespace MusicX.Controls
             catch (Exception ex)
             {
                 logger.Error(ex);
+            }
+        }
+
+        private void AddToPlaylist_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var viewModel = StaticService.Container.Resolve<PlaylistSelectorModalViewModel>();
+            var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
+
+            viewModel.PlaylistSelected += ViewModel_PlaylistSelected;
+
+            navigationService.OpenModal<PlaylistSelectorModal>(viewModel);
+        }
+
+        private async void ViewModel_PlaylistSelected(Playlist playlist)
+        {
+            var vk = StaticService.Container.Resolve<VkService>();
+            var notificationsService = StaticService.Container.Resolve<NotificationsService>();
+
+            try
+            {
+                await vk.AddToPlaylistAsync(this.Audio, playlist.OwnerId, playlist.Id);
+
+                notificationsService.Show("Трек добавлен", $"Трек '{this.Audio.Title}' добавлен в плейлист '{playlist.Title}'");
+
+
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, ex.Message);
+
+                notificationsService.Show("Ошибка", "Произошла ошибка при добавлении трека в плейлист");
             }
         }
     }

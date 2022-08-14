@@ -443,7 +443,8 @@ namespace MusicX.Core.Helpers
                 {
                     foreach (var suggestionId in block.SuggestionsIds)
                     {
-                        var suggestion = response.Response.Suggestions.SingleOrDefault(b => b.Id == suggestionId);
+                        // first instead of single because vk was giving two identical suggestions for some queries
+                        var suggestion = response.Response.Suggestions.FirstOrDefault(b => b.Id == suggestionId);
 
                         if (suggestion == null) continue;
 

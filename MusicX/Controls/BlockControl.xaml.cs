@@ -13,7 +13,7 @@ using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using MusicX.ViewModels.Controls;
-using WPFUI.Controls;
+using Wpf.Ui.Controls;
 
 namespace MusicX.Controls
 {
@@ -46,6 +46,15 @@ namespace MusicX.Controls
             {
                 SetValue(BlockProperty, value);
             }
+        }
+
+        public static readonly DependencyProperty ArtistProperty = DependencyProperty.Register(
+            nameof(Artist), typeof(Artist), typeof(BlockControl));
+
+        public Artist? Artist
+        {
+            get => (Artist)GetValue(ArtistProperty);
+            set => SetValue(ArtistProperty, value);
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -104,7 +113,7 @@ namespace MusicX.Controls
 
                     if (Block.Layout.Name == "music_chart_large_slider")
                     {
-                        BlocksPanel.Children.Add(new ListPlaylists() { Playlists = Block.Playlists, ShowChart = true, ShowFull = false });
+                        BlocksPanel.Children.Add(new ListPlaylists() { Content = Block.Playlists, /*TODO ShowChart = true,*/ ShowFull = false });
                         logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
 
                         return;
@@ -112,7 +121,7 @@ namespace MusicX.Controls
 
                     if (Block.Layout.Name == "large_slider")
                     {
-                        BlocksPanel.Children.Add(new ListPlaylists() { Playlists = Block.Playlists, ShowFull = false });
+                        BlocksPanel.Children.Add(new ListPlaylists() { Content = Block.Playlists, ShowFull = false });
                         logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
 
                         return;
@@ -120,7 +129,7 @@ namespace MusicX.Controls
 
                     if (Block.Layout.Name == "slider")
                     {
-                        BlocksPanel.Children.Add(new ListPlaylists() { Playlists = Block.Playlists, ShowFull = false });
+                        BlocksPanel.Children.Add(new ListPlaylists() { Content = Block.Playlists, ShowFull = false });
                         logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
 
                         return;
@@ -128,7 +137,7 @@ namespace MusicX.Controls
 
                     if (Block.Layout.Name == "recomms_slider")
                     {
-                        BlocksPanel.Children.Add(new ListPlaylists() { Playlists = Block.Playlists, ShowFull = false });
+                        BlocksPanel.Children.Add(new ListPlaylists() { Content = Block.Playlists, ShowFull = false });
                         logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
 
                         return;
@@ -136,7 +145,15 @@ namespace MusicX.Controls
 
                     if (Block.Layout.Name == "list")
                     {
-                        BlocksPanel.Children.Add(new ListPlaylists() { Playlists = Block.Playlists, ShowFull = true });
+                        BlocksPanel.Children.Add(new ListPlaylists() { Content = Block.Playlists, ShowFull = true });
+                        logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
+
+                        return;
+                    }
+
+                    if (Block.Layout.Name == "compact_list")
+                    {
+                        BlocksPanel.Children.Add(new ListPlaylists() { Content = Block.Playlists, ShowFull = false });
                         logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
 
                         return;
@@ -178,7 +195,13 @@ namespace MusicX.Controls
 
                         BlocksPanel.Children.Add(new MusicCategoryBlockControl() { Links = Block.Links });
                         logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
-                    }else
+                    }
+                    else if (Block.Layout.Name == "music_newsfeed_title")
+                    {
+                        BlocksPanel.Children.Add(new LinksNewsfeedBlockControl() { Links = Block.Links });
+                        logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
+                    }
+                    else
                     {
                         BlocksPanel.Children.Add(new LinksBlockControl() { Block = Block });
                         logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
@@ -248,46 +271,39 @@ namespace MusicX.Controls
 
                 if (Block.DataType == "action")
                 {
-                    if (Block.Buttons == null) return;
+
+                    List<Core.Models.Button> buttons = new List<Core.Models.Button>();
+
+                    if(Block.Buttons == null)
+                    {
+                        if (Block.Actions == null) return;
+
+                        buttons = Block.Actions;
+
+                    }else
+                    {
+                        buttons = Block.Buttons;
+                    }
 
                     var actionBlocksGrid = new Grid();
 
-                    for (var i = 0; i < Block.Buttons.Count; i++)
+                    for (var i = 0; i < buttons.Count; i++)
                     {
-                        var blockButton = Block.Buttons[i];
-                    
+                        var blockButton = buttons[i];
+
+
                         var text = new TextBlock();
                         var card = new CardAction()
                         {
                             Margin = new Thickness(0, 10, 15, 10), 
                             Content = text,
-                            DataContext = new BlockButtonViewModel(blockButton),
+                            DataContext = new BlockButtonViewModel(blockButton, Artist, Block),
                         };
                         
-                        card.SetBinding(ButtonBase.CommandProperty, new Binding("InvokeCommand"));
-
-                        switch (blockButton.Action.Type)
-                        {
-                            case "play_shuffled_audios_from_block":
-                                card.Icon = WPFUI.Common.SymbolRegular.MusicNote2Play20;
-                                text.Text = "Перемешать все";
-                                break;
-                            case "create_playlist":
-                                card.Icon = WPFUI.Common.SymbolRegular.Add24;
-                                text.Text = "Создать плейлист";
-                                break;
-                            case "play_audios_from_block":
-                                card.Icon = WPFUI.Common.SymbolRegular.Play24;
-                                text.Text = "Слушать всё";
-                                break;
-                            case "open_section":
-                                continue;
-                            default:
-                                card.Icon = WPFUI.Common.SymbolRegular.AlertOn24;
-                                text.Text = "content";
-                                break;
-                        }
-
+                        card.SetBinding(ButtonBase.CommandProperty, new Binding(nameof(BlockButtonViewModel.InvokeCommand)));
+                        card.SetBinding(CardAction.IconProperty, new Binding(nameof(BlockButtonViewModel.Icon)));
+                        text.SetBinding(TextBlock.TextProperty, new Binding(nameof(BlockButtonViewModel.Text)));
+                        
                         actionBlocksGrid.ColumnDefinitions.Add(new(){ Width = new GridLength(1, GridUnitType.Star) });
                         card.SetValue(Grid.ColumnProperty, i);
                         actionBlocksGrid.Children.Add(card);
@@ -353,7 +369,7 @@ namespace MusicX.Controls
 
                 if(Block.DataType == "music_recommended_playlists")
                 {
-                    BlocksPanel.Children.Add(new RecommendedPlaylistsBlockControl() { Playlists = Block.RecommendedPlaylists});
+                    BlocksPanel.Children.Add(new RecommendedPlaylistsBlockControl() { Content = Block.RecommendedPlaylists, ShowFull = Block.Layout.Name == "list" });
                     logger.Info($"loaded {Block.DataType} block ");
                     return;
                 }
@@ -362,14 +378,14 @@ namespace MusicX.Controls
                 {
                     if(Block.Layout.Name == "slider")
                     {
-                        BlocksPanel.Children.Add(new VideosSliderBlockControl() { Videos = Block.Videos, ShowFull = false });
+                        BlocksPanel.Children.Add(new VideosSliderBlockControl() { Content = Block.Videos, ShowFull = false });
 
                         return;
                     }
                     
                     if(Block.Layout.Name == "list")
                     {
-                        BlocksPanel.Children.Add(new VideosSliderBlockControl() { Videos = Block.Videos, ShowFull = true });
+                        BlocksPanel.Children.Add(new VideosSliderBlockControl() { Content = Block.Videos, ShowFull = true });
                         return;
                     }
 
@@ -379,14 +395,14 @@ namespace MusicX.Controls
                 {
                     if (Block.Layout.Name == "slider")
                     {
-                        BlocksPanel.Children.Add(new VideosSliderBlockControl() { Videos = Block.ArtistVideos, ShowFull = false });
+                        BlocksPanel.Children.Add(new VideosSliderBlockControl() { Content = Block.ArtistVideos, ShowFull = false });
 
                         return;
                     }
 
                     if (Block.Layout.Name == "list")
                     {
-                        BlocksPanel.Children.Add(new VideosSliderBlockControl() { Videos = Block.ArtistVideos, ShowFull = true });
+                        BlocksPanel.Children.Add(new VideosSliderBlockControl() { Content = Block.ArtistVideos, ShowFull = true });
                         return;
                     }
 

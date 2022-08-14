@@ -97,7 +97,7 @@ namespace MusicX.Controls
 
                 var notificationService = StaticService.Container.Resolve<Services.NavigationService>();
 
-                notificationService.NavigateToPage(new PlaylistView(playlistId, ownerId, accessKey));
+                notificationService.OpenExternalPage(new PlaylistView(playlistId, ownerId, accessKey));
             }
             catch (Exception ex)
             {

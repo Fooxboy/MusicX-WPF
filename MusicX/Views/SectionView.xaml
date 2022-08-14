@@ -7,16 +7,17 @@
     xmlns:local="clr-namespace:MusicX.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:music="clr-namespace:MusicX.Controls"
-    xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
+    xmlns:wpfui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
+    xmlns:viewModels="clr-namespace:MusicX.ViewModels"
     Title="SectionView"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    Loaded="Page_Loaded"
+    d:DataContext="{d:DesignInstance {x:Type viewModels:SectionViewModel}, IsDesignTimeCreatable=True}"
     Style="{StaticResource UiPage}"
     mc:Ignorable="d">
     <Page.Resources>
-        <Storyboard x:Key="LoadedAmination">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ContentGrid" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+        <Storyboard x:Key="LoadedAnimation">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00" Value="1200" />
                 <EasingDoubleKeyFrame KeyTime="00:00:00.8000000" Value="0">
                     <EasingDoubleKeyFrame.EasingFunction>
@@ -27,8 +28,8 @@
         </Storyboard>
 
 
-        <Storyboard x:Key="LoaderAmimation">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LoadingContentGrid" Storyboard.TargetProperty="Opacity">
+        <Storyboard x:Key="LoadingAnimation">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
                 <EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="1">
                     <EasingDoubleKeyFrame.EasingFunction>
@@ -37,8 +38,30 @@
                 </EasingDoubleKeyFrame>
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
+        
+        <Style x:Key="LoadingGridStyle" TargetType="{x:Type Grid}">
+            <Setter Property="Visibility" Value="Collapsed" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ContentState}" Value="Loading">
+                    <Setter Property="Visibility" Value="Visible" />
+                    <DataTrigger.EnterActions>
+                        <BeginStoryboard Storyboard="{StaticResource LoadingAnimation}" />
+                    </DataTrigger.EnterActions>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="LoadedGridStyle" TargetType="{x:Type Grid}">
+            <Setter Property="Visibility" Value="Hidden" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ContentState}" Value="Loaded">
+                    <Setter Property="Visibility" Value="Visible" />
+                    <DataTrigger.EnterActions>
+                        <BeginStoryboard Storyboard="{StaticResource LoadedAnimation}" />
+                    </DataTrigger.EnterActions>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
     </Page.Resources>
-
 
     <Grid>
 
@@ -48,8 +71,7 @@
             VerticalAlignment="Center"
             d:IsHidden="True"
             d:IsLocked="True"
-            Opacity="0"
-            Visibility="{Binding Path=VisibleLoading, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+            Style="{StaticResource LoadingGridStyle}">
             <StackPanel>
                 <wpfui:ProgressRing
                     Width="60"
@@ -71,8 +93,7 @@
         <Grid
             x:Name="ContentGrid"
             RenderTransformOrigin="0.5,0.5"
-            Visibility="{Binding Path=VisibleContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-
+            Style="{StaticResource LoadedGridStyle}">
             <Grid.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform />
@@ -81,6 +102,10 @@
                     <TranslateTransform X="1200" />
                 </TransformGroup>
             </Grid.RenderTransform>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
             <ListBox
                 x:Name="BlocksScrollView"
@@ -88,18 +113,19 @@
                 VerticalContentAlignment="Top"
                 Background="Transparent"
                 BorderThickness="0"
-                ItemsSource="{Binding Path=Blocks, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                ItemsSource="{Binding Blocks}"
                 RenderTransformOrigin="0.5,0.5"
                 ScrollViewer.CanContentScroll="False"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                ScrollViewer.ScrollChanged="BlocksScrollView_ScrollChanged"
                 SnapsToDevicePixels="True">
 
                 <ListBox.Resources>
                     <ResourceDictionary>
                         <ResourceDictionary.MergedDictionaries>
-                            <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDark.xaml" />
-                            <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
+                            <ResourceDictionary
+                                Source="pack://application:,,,/HandyControl;component/Themes/SkinDark.xaml" />
+                            <ResourceDictionary
+                                Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
                         </ResourceDictionary.MergedDictionaries>
                     </ResourceDictionary>
                 </ListBox.Resources>
@@ -120,8 +146,9 @@
                             Focusable="False"
                             HorizontalScrollBarVisibility="Disabled"
                             IsInertiaEnabled="True"
-                            VerticalScrollBarVisibility="Auto">
-                            <StackPanel Margin="2,0,0,120" IsItemsHost="True" />
+                            VerticalScrollBarVisibility="Auto"
+                            ScrollChanged="SectionScrollViewer_ScrollChanged">
+                            <VirtualizingStackPanel Margin="2,0,10,120" IsItemsHost="True" />
                         </hc:ScrollViewer>
                     </ControlTemplate>
                 </ListBox.Template>
@@ -142,15 +169,16 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid>
-                            <music:BlockControl Block="{Binding}" />
+                            <music:BlockControl Block="{Binding}"
+                                                Artist="{Binding DataContext.Artist, ElementName=BlocksScrollView}" />
                         </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-
-
+            
+            <wpfui:ProgressRing Grid.Row="1"
+                                Visibility="{Binding IsLoadingMore, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                IsIndeterminate="True"/>
         </Grid>
-
-
     </Grid>
 </Page>

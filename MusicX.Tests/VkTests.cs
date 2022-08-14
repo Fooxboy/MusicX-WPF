@@ -126,5 +126,17 @@ namespace MusicX.Tests
             }
 
         }
+
+
+        [Fact]
+        public async Task SetCoverImage()
+        {
+            var vkSevice = new VkService(null);
+            await vkSevice.SetTokenAsync("", null);
+
+            await vkSevice.SetPlaylistCoverAsync(308764786, 13);
+        }
+
+
     }
 }

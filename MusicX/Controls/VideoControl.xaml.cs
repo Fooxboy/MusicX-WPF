@@ -22,7 +22,14 @@ namespace MusicX.Controls
     /// </summary>
     public partial class VideoControl : UserControl
     {
-        public Video Video { get; set; }
+        public static readonly DependencyProperty VideoProperty = DependencyProperty.Register(
+            nameof(Video), typeof(Video), typeof(VideoControl));
+
+        public Video Video
+        {
+            get => (Video)GetValue(VideoProperty);
+            set => SetValue(VideoProperty, value);
+        }
         public VideoControl()
         {
             InitializeComponent();
@@ -34,7 +41,7 @@ namespace MusicX.Controls
             try
             {
                 VideoImage.ImageSource = new BitmapImage(new Uri(Video.Image[3].Url));
-                Time.Text = TimeSpan.FromSeconds(Video.Duration).Minutes + ":" + TimeSpan.FromSeconds(Video.Duration).Seconds;
+                Time.Text = TimeSpan.FromSeconds(Video.Duration).ToString("m\\:ss");
                 NameVideo.Text = Video.Title;
                 AuthorVideo.Text = Video.MainArtists[0].Name;
             }catch (Exception ex)

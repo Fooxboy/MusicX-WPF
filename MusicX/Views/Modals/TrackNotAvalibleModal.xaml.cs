@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MusicX.Controls;
 
 namespace MusicX.Views.Modals
 {
@@ -21,47 +22,9 @@ namespace MusicX.Views.Modals
     /// </summary>
     public partial class TrackNotAvalibleModal : Page
     {
-        private readonly VkService vkService;
-        private readonly Services.NavigationService navigationService;
-        private readonly string trackCode;
-        private readonly string audioId;
-        public TrackNotAvalibleModal(VkService vkService, Services.NavigationService navigationService, string trackCode, string audioId)
+        public TrackNotAvalibleModal()
         {
             InitializeComponent();
-            this.vkService = vkService;
-            this.trackCode = trackCode;
-            this.audioId = audioId;
-            this.navigationService = navigationService;
-        }
-
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-            await Task.Run(async () =>
-            {
-                try
-                {
-                    var res = await vkService.AudioGetRestrictionPopup(trackCode, audioId);
-
-                    await Application.Current.Dispatcher.BeginInvoke(() =>
-                    {
-                        Image.Source = new BitmapImage(new Uri(res.Icons[0].Url));
-                        Title.Text = res.Title;
-                        Description.Text = res.Text;
-
-                        LoadingGrid.Visibility = Visibility.Collapsed;
-                        ContentGrid.Visibility = Visibility.Visible;
-                    });
-                }catch (Exception ex)
-                {
-                    this.navigationService.CloseModal();
-                }
-                
-            });
-        }
-
-        private void CloseButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.navigationService.CloseModal();
         }
     }
 }

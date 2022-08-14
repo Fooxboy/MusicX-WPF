@@ -64,7 +64,14 @@ namespace MusicX.Controls
             }
         }
 
-        public bool ShowFull { get; set; } = false;
+        public static readonly DependencyProperty ShowFullProperty = DependencyProperty.Register(
+            nameof(ShowFull), typeof(bool), typeof(PlaylistControl));
+
+        public bool ShowFull
+        {
+            get => (bool)GetValue(ShowFullProperty);
+            set => SetValue(ShowFullProperty, value);
+        }
 
         public string ChartPosition { get; set; } = null;
 
@@ -79,12 +86,11 @@ namespace MusicX.Controls
                 if (player.CurrentPlaylistId == Playlist.Id)
                 {
                     nowPlay = true;
-                    iconPlay.Symbol = WPFUI.Common.SymbolRegular.Pause24;
+                    iconPlay.Symbol = Wpf.Ui.Common.SymbolRegular.Pause24;
                 }
                 
                 if (ShowFull)
                 {
-                    Card.Opacity = 0;
                     CompactGrid.Visibility = Visibility.Collapsed;
                     FullGrid.Visibility = Visibility.Visible;
                     Title.Text = Playlist.Title;
@@ -217,27 +223,22 @@ namespace MusicX.Controls
             if (service.CurrentPlaylistId == Playlist?.Id)
             {
                 nowPlay = true;
-                iconPlay.Symbol = WPFUI.Common.SymbolRegular.Pause24;
+                iconPlay.Symbol = Wpf.Ui.Common.SymbolRegular.Pause24;
             }
             else
             {
-                iconPlay.Symbol = WPFUI.Common.SymbolRegular.Play24;
+                iconPlay.Symbol = Wpf.Ui.Common.SymbolRegular.Play24;
             }
         }
 
         private void UserControl_MouseEnter(object sender, MouseEventArgs e)
         {
             PlayPlaylistGrid.Visibility = Visibility.Visible;
-            Card.Visibility = Visibility.Visible;
-            Card.Opacity = 0.5;
         }
 
         private void UserControl_MouseLeave(object sender, MouseEventArgs e)
         {
             PlayPlaylistGrid.Visibility = Visibility.Collapsed;
-
-            Card.Visibility = Visibility.Collapsed;
-            Card.Opacity = 0;
         }
 
         private async void CardAction_Click(object sender, RoutedEventArgs e)
@@ -246,14 +247,14 @@ namespace MusicX.Controls
             if (nowLoad) return;
             var notificationService = StaticService.Container.Resolve<Services.NavigationService>();
 
-            notificationService.NavigateToPage(new PlaylistView(Playlist));
+            notificationService.OpenExternalPage(new PlaylistView(Playlist));
         }
 
         private void FullGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             var notificationService = StaticService.Container.Resolve<Services.NavigationService>();
 
-            notificationService.NavigateToPage(new PlaylistView(Playlist));
+            notificationService.OpenExternalPage(new PlaylistView(Playlist));
         }
 
         private void PlayPlaylistGrid_MouseEnter(object sender, MouseEventArgs e)
@@ -283,15 +284,16 @@ namespace MusicX.Controls
                 {
                     nowPlay = true;
 
-                    iconPlay.Symbol = WPFUI.Common.SymbolRegular.Timer20;
+                    iconPlay.Symbol = Wpf.Ui.Common.SymbolRegular.Timer20;
                     var vkService = StaticService.Container.Resolve<VkService>();
 
                     var audios = await vkService.LoadFullPlaylistAsync(Playlist.Id, Playlist.OwnerId, Playlist.AccessKey);
 
                     await playerService.Play(0, audios.Items);
                     playerService.CurrentPlaylistId = Playlist.Id;
+                    playerService.CurrentPlaylist = new(Playlist.Id, Playlist.OwnerId, Playlist.AccessKey);
 
-                    iconPlay.Symbol = WPFUI.Common.SymbolRegular.Pause24;
+                    iconPlay.Symbol = Wpf.Ui.Common.SymbolRegular.Pause24;
 
                     nowLoad = false;
 
@@ -299,7 +301,7 @@ namespace MusicX.Controls
                 else
                 {
                     playerService.Pause();
-                    iconPlay.Symbol = WPFUI.Common.SymbolRegular.Play24;
+                    iconPlay.Symbol = Wpf.Ui.Common.SymbolRegular.Play24;
 
                     await Task.Delay(400);
                     nowLoad = false;

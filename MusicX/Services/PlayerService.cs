@@ -66,7 +66,6 @@ namespace MusicX.Services
 
         private readonly VkService vkService;
         private readonly Logger logger;
-        private readonly PlaylistViewModel plViewModel;
         private readonly DiscordService discordService;
         private readonly ConfigService configService;
         private readonly NotificationsService notificationsService;
@@ -74,12 +73,13 @@ namespace MusicX.Services
         private ConfigModel config;
         private Audio _nextPlayTrack;
         private long _currentPlaylistId;
+        
+        public PlaylistData? CurrentPlaylist { get; set; }
 
-        public PlayerService(VkService vkService, Logger logger, PlaylistViewModel plViewModel, DiscordService discordService, ConfigService configService, NotificationsService notificationsService)
+        public PlayerService(VkService vkService, Logger logger, DiscordService discordService, ConfigService configService, NotificationsService notificationsService)
         {
             this.vkService = vkService;
             this.logger = logger;
-            this.plViewModel = plViewModel;
             this.discordService = discordService;
             this.configService = configService;
             player = new MediaPlayer();
@@ -266,78 +266,15 @@ namespace MusicX.Services
 
                 await vkService.StatsTrackEvents(list);
 
-                if (loadParentToQueue)
+                if (track.ParentBlockId != null && loadParentToQueue)
                 {
-                    Debug.WriteLine("LOAD TRACKS...");
-                    await Application.Current.Dispatcher.InvokeAsync(() => QueueLoadingStateChanged.Invoke(this, new(QueueLoadingState.Started)));
+                    Debug.WriteLine("track.ParentBlockId != null");
+                    CurrentPlaylist = null;
 
-                    if (track.ParentBlockId != null)
+                    if (track.ParentBlockId == this.CurrentBlockId)
                     {
-                        Debug.WriteLine("track.ParentBlockId != null");
+                        CurrentIndex = Tracks.IndexOf(Tracks.Single(a => a.Id == CurrentTrack.Id));
 
-                        if (track.ParentBlockId == this.CurrentBlockId)
-                        {
-                            CurrentIndex = Tracks.IndexOf(Tracks.Single(a => a.Id == CurrentTrack.Id));
-
-
-                            if (CurrentIndex + 1 > Tracks.Count - 1)
-                            {
-                                NextPlayTrack = CurrentTrack;
-                            }
-                            else
-                            {
-                                NextPlayTrack = Tracks[CurrentIndex + 1];
-
-                            }
-                            return;
-                        }
-
-                        Debug.WriteLine($"track.ParentBlockId = {track.ParentBlockId} | this.blockId = {this.CurrentBlockId} ");
-
-                        Debug.WriteLine("track.ParentBlockId != this.blockId");
-
-
-                    }
-                    else
-                    {
-                        Debug.WriteLine("LOAD FROM PLAYLIST");
-
-                        if (CurrentPlaylistId == plViewModel.Playlist.Id)
-                        {
-                            CurrentIndex = Tracks.IndexOf(Tracks.Single(a => a.Id == track.Id));
-
-                            if (CurrentIndex + 1 > Tracks.Count - 1)
-                            {
-                                NextPlayTrack = CurrentTrack;
-                            }
-                            else
-                            {
-                                NextPlayTrack = Tracks[CurrentIndex + 1];
-
-                            }
-                            return;
-                        }
-
-                        Debug.WriteLine($"loadedPlaylistIdTracks = {CurrentPlaylistId} |  plViewModel.Playlist.Id = {plViewModel.Playlist.Id}");
-
-                        logger.Info($"Load tracks with playlist id {plViewModel.Playlist.Id}");
-
-                        var fullPlaylist = await vkService.LoadFullPlaylistAsync(plViewModel.Playlist.Id, plViewModel.Playlist.OwnerId, plViewModel.Playlist.AccessKey);
-                        await Application.Current.Dispatcher.InvokeAsync(() => Tracks.ReplaceRange(fullPlaylist.Audios));
-
-                        Debug.WriteLine("Now play queue:");
-
-                        int c = 0;
-                        foreach (var trackDebug in Tracks)
-                        {
-                            Debug.WriteLine($"[{c}]{trackDebug.Artist} - {trackDebug.Title}");
-                            c++;
-                        }
-
-                        CurrentPlaylistId = plViewModel.Playlist.Id;
-                        CurrentIndex = Tracks.IndexOf(Tracks.Single(a => a.Id == track.Id));
-
-                        Debug.WriteLine($"Played track with index: {CurrentIndex}");
 
                         if (CurrentIndex + 1 > Tracks.Count - 1)
                         {
@@ -351,6 +288,9 @@ namespace MusicX.Services
                         return;
                     }
 
+                    Debug.WriteLine($"track.ParentBlockId = {track.ParentBlockId} | this.blockId = {this.CurrentBlockId} ");
+
+                    Debug.WriteLine("track.ParentBlockId != this.blockId");
 
                     await Task.Run(async () =>
                     {
@@ -386,6 +326,63 @@ namespace MusicX.Services
                         }
 
                     });
+                }
+                else
+                {
+                    Debug.WriteLine("LOAD FROM PLAYLIST");
+
+                    if (CurrentPlaylistId == CurrentPlaylist?.PlaylistId)
+                    {
+                        CurrentIndex = Tracks.IndexOf(Tracks.Single(a => a.Id == track.Id));
+
+                        if (CurrentIndex + 1 > Tracks.Count - 1)
+                        {
+                            NextPlayTrack = CurrentTrack;
+                        }
+                        else
+                        {
+                            NextPlayTrack = Tracks[CurrentIndex + 1];
+
+                        }
+                        return;
+                    }
+
+                    if (CurrentPlaylist is null)
+                        return;
+
+                    var (playlistId, ownerId, accessKey) = CurrentPlaylist;
+
+                    Debug.WriteLine($"loadedPlaylistIdTracks = {CurrentPlaylistId} |  plViewModel.Playlist.Id = {playlistId}");
+
+                    logger.Info($"Load tracks with playlist id {playlistId}");
+
+                    var fullPlaylist = await vkService.LoadFullPlaylistAsync(playlistId, ownerId, accessKey);
+                    await Application.Current.Dispatcher.InvokeAsync(() => Tracks.ReplaceRange(fullPlaylist.Audios));
+
+                    Debug.WriteLine("Now play queue:");
+
+                    int c = 0;
+                    foreach (var trackDebug in Tracks)
+                    {
+                        Debug.WriteLine($"[{c}]{trackDebug.Artist} - {trackDebug.Title}");
+                        c++;
+                    }
+
+                    CurrentPlaylistId = playlistId;
+                    CurrentIndex = Tracks.IndexOf(Tracks.Single(a => a.Id == track.Id));
+
+                    Debug.WriteLine($"Played track with index: {CurrentIndex}");
+
+                    if (CurrentIndex + 1 > Tracks.Count - 1)
+                    {
+                        NextPlayTrack = CurrentTrack;
+                    }
+                    else
+                    {
+                        NextPlayTrack = Tracks[CurrentIndex + 1];
+
+                    }
+                    return;
                 }
 
                 CurrentIndex = Tracks.IndexOf(Tracks.Single(a => a.Id == CurrentTrack.Id));

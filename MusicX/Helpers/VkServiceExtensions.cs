@@ -31,6 +31,9 @@ public static class VkServiceExtensions
         {
             var data = await service.GetSectionAsync(blockId, next);
 
+            if (data.Audios is null)
+                yield break;
+            
             foreach (var item in data.Audios)
             {
                 yield return item;

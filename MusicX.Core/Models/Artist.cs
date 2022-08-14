@@ -19,5 +19,11 @@ namespace MusicX.Core.Models
 
         [JsonProperty("photo")]
         public List<Image> Photo { get; set; }
+        
+        [JsonProperty("is_followed")]
+        public bool IsFollowed { get; set; }
+        
+        [JsonProperty("can_follow")]
+        public bool CanFollow { get; set; }
     }
 }

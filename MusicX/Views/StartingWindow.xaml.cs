@@ -2,6 +2,7 @@
 using MusicX.Core.Services;
 using MusicX.Services;
 using MusicX.ViewModels;
+using MusicX.ViewModels.Modals;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -17,19 +18,21 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Wpf.Ui.Appearance;
+using Wpf.Ui.Controls;
 
 namespace MusicX.Views
 {
     /// <summary>
     /// Логика взаимодействия для StartingWindow.xaml
     /// </summary>
-    public partial class StartingWindow : Window
+    public partial class StartingWindow : UiWindow
     {
         public StartingWindow()
         {
             InitializeComponent();
            // this.Background = Brushes.Black;
-
+           Accent.Apply(Accent.GetColorizationColor(), ThemeType.Dark);
         }
 
         private Container container;
@@ -46,9 +49,12 @@ namespace MusicX.Views
                 container.Register<DiscordService>(Reuse.Singleton);
                 container.RegisterInstance<Logger>(LogManager.Setup().GetLogger("Common"));
 
-                container.Register<SectionViewModel>(Reuse.Singleton);
-                container.Register<PlaylistViewModel>(Reuse.Singleton);
+                container.Register<SectionViewModel>(Reuse.Transient);
+                container.Register<PlaylistViewModel>(Reuse.Transient);
                 container.Register<DownloaderViewModel>(Reuse.Singleton);
+                container.Register<PlaylistSelectorModalViewModel>(Reuse.Transient);
+                container.Register<CreatePlaylistModalViewModel>(Reuse.Transient);
+                container.Register<TracksSelectorModalViewModel>(Reuse.Transient);
 
                 container.Register<NavigationService>(Reuse.Singleton);
                 container.Register<ConfigService>(Reuse.Singleton);
@@ -115,7 +121,7 @@ namespace MusicX.Views
                                 rootWindow.Show();
                                 this.Close();
                             }
-                            catch (VkNet.Exception.UserAuthorizationFailException e)
+                            catch (VkNet.Exception.VkApiMethodInvokeException e) when (e.ErrorCode is 5 or 1117)
                             {
                                 config.AccessToken = null;
                                 config.UserName = null;

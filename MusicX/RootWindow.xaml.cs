@@ -9,22 +9,31 @@ using MusicX.Views.Modals;
 using NLog;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Navigation;
 using AsyncAwaitBestPractices;
-using WPFUI.Controls;
+using Microsoft.Extensions.DependencyInjection;
+using MusicX.Controls;
+using MusicX.ViewModels;
+using Wpf.Ui.Appearance;
+using Wpf.Ui.Controls;
+using Wpf.Ui.Extensions;
+using NavigationService = MusicX.Services.NavigationService;
 
 namespace MusicX
 {
     /// <summary>
     /// Логика взаимодействия для RootWindow.xaml
     /// </summary>
-    public partial class RootWindow : Window
+    public partial class RootWindow : UiWindow
     {
         private readonly NavigationService navigationService;
         private readonly VkService vkService;
@@ -37,20 +46,7 @@ namespace MusicX
         public RootWindow(NavigationService navigationService, VkService vkService, Logger logger, ConfigService configService, NotificationsService notificationsService)
         {
             //Style = "{StaticResource UiWindow}"
-            var os = Environment.OSVersion;
 
-
-            if (os.Version.Build >= 22000)
-            {
-                this.Background = Brushes.Transparent;
-
-                this.Foreground = Brushes.White;
-            }else
-            {
-                this.WindowStyle = WindowStyle.None;
-                this.AllowsTransparency = true;
-            }
-            
             InitializeComponent();     
             this.navigationService = navigationService;
             this.vkService = vkService;
@@ -61,14 +57,9 @@ namespace MusicX
 
             playerSerivce.TrackChangedEvent += PlayerSerivce_TrackChangedEvent;
 
-            navigationService.ClosedModalWindow += NavigationService_ClosedModalWindow;
-            navigationService.OpenedModalWindow += NavigationService_OpenedModalWindow;
-
-
             notificationsService.NewNotificationEvent += NotificationsService_NewNotificationEvent;
 
-            
-
+            Accent.Apply(Accent.GetColorizationColor(), ThemeType.Dark);
         }
 
 
@@ -94,19 +85,6 @@ namespace MusicX
             await RootSnackbar.ShowAsync();
         }
 
-        private void NavigationService_OpenedModalWindow(object Page, int height, int width)
-        {
-            ModalGrid.Visibility = Visibility.Visible;
-            ModalFrame.Height = height;
-            ModalFrame.Width = width;
-            ModalFrame.Navigate(Page);
-        }
-
-        private void NavigationService_ClosedModalWindow()
-        {
-            ModalGrid.Visibility = Visibility.Collapsed;
-        }
-
         private void PlayerSerivce_TrackChangedEvent(object? sender, EventArgs e)
         {
             if (PlayerShowed) return;
@@ -123,77 +101,54 @@ namespace MusicX
             {
                 var os = Environment.OSVersion;
 
-                if (os.Version.Build >= 22000)
-                {
-                    this.Background = Brushes.Transparent;
-
-                    IntPtr windowHandle = new WindowInteropHelper(this).Handle;
-
-                    WPFUI.Appearance.Background.Remove(windowHandle);
-
-                    WPFUI.Appearance.Theme.Set(
-                    WPFUI.Appearance.ThemeType.Dark,     // Theme type
-                    WPFUI.Appearance.BackgroundType.Mica, // Background type
-                    true  ,                                // Whether to change accents automatically
-                    forceBackground: true
-                    );
-
-                    WPFUI.Appearance.Theme.Apply(WPFUI.Appearance.ThemeType.Dark, WPFUI.Appearance.BackgroundType.Mica, true, true);
-
-
-                    WPFUI.Appearance.Background.ApplyDarkMode(windowHandle);
-                    this.Background = Brushes.Transparent;
-                    WPFUI.Appearance.Background.Apply(windowHandle, WPFUI.Appearance.BackgroundType.Mica, true);
-
-                }
-
                 logger.Info($"OS Version: {os.VersionString}");
                 logger.Info($"OS Build: {os.Version.Build}");
-
                 
-                if (os.Version.Build < 22000)
-                {
-                    this.Background = (Brush)new BrushConverter().ConvertFrom("#FF202020");
-                    
-                }
-
-                navigationService.CurrentFrame = RootFrame;
-                navigationService.SectionView = new SectionView();
-                navigationService.SetRootWindow(this);
+                navigationService.MenuSectionOpened += NavigationServiceOnMenuSectionOpened;
+                navigationService.ExternalSectionOpened += NavigationServiceOnExternalSectionOpened;
+                navigationService.BackRequested += NavigationServiceOnBackRequested;
+                navigationService.ExternalPageOpened += NavigationServiceOnExternalPageOpened;
+                navigationService.ReplaceBlocksRequested += NavigationServiceOnReplaceBlocksRequested;
+                navigationService.ModalOpenRequested += NavigationServiceOnModalOpenRequested;
+                navigationService.ModalCloseRequested += NavigationServiceOnModalCloseRequested;
 
                 var catalogs = await vkService.GetAudioCatalogAsync();
-                var podcast = await vkService.GetPodcastsAsync();
 
-                catalogs.Catalog.Sections.Add(podcast.Catalog.Sections[0]);
-
-                var icons = new List<WPFUI.Common.SymbolRegular>()
+                var icons = new List<Wpf.Ui.Common.SymbolRegular>()
                 {
-                    WPFUI.Common.SymbolRegular.MusicNote120,
-                    WPFUI.Common.SymbolRegular.Headphones20,
-                    WPFUI.Common.SymbolRegular.MusicNote2Play20,
-                    WPFUI.Common.SymbolRegular.FoodPizza20,
-                    WPFUI.Common.SymbolRegular.Play12,
-                    WPFUI.Common.SymbolRegular.Star16,
-                    WPFUI.Common.SymbolRegular.PlayCircle48,
-                    WPFUI.Common.SymbolRegular.HeadphonesSoundWave20,
-                    WPFUI.Common.SymbolRegular.Speaker228,
+                    Wpf.Ui.Common.SymbolRegular.MusicNote120,
+                    Wpf.Ui.Common.SymbolRegular.Headphones20,
+                    Wpf.Ui.Common.SymbolRegular.MusicNote2Play20,
+                    Wpf.Ui.Common.SymbolRegular.FoodPizza20,
+                    Wpf.Ui.Common.SymbolRegular.Play12,
+                    Wpf.Ui.Common.SymbolRegular.Star16,
+                    Wpf.Ui.Common.SymbolRegular.PlayCircle48,
+                    Wpf.Ui.Common.SymbolRegular.HeadphonesSoundWave20,
+                    Wpf.Ui.Common.SymbolRegular.Speaker228,
 
 
                 };
 
+                var updatesSection = await vkService.GetAudioCatalogAsync("https://vk.com/audio?section=updates");
+                
+                if (updatesSection.Catalog?.Sections?.Count > 0)
+                {
+                    var section = updatesSection.Catalog.Sections[0];
+                    section.Title = "Подписки";
+                    catalogs.Catalog.Sections.Insert(catalogs.Catalog.Sections.Count - 1, section);
+                }
 
                 var rand = new Random();
 
                 foreach (var section in catalogs.Catalog.Sections)
                 {
-                    var sectionPage = navigationService.SectionView;
+                    Wpf.Ui.Common.SymbolRegular icon;
 
-                    WPFUI.Common.SymbolRegular icon;
-
-                    if (section.Title.ToLower() == "главная") icon = WPFUI.Common.SymbolRegular.Home24;
-                    else if (section.Title.ToLower() == "моя музыка") icon = WPFUI.Common.SymbolRegular.MusicNote120;
-                    else if (section.Title.ToLower() == "обзор") icon = WPFUI.Common.SymbolRegular.CompassNorthwest28;
-                    else if (section.Title.ToLower() == "подкасты") icon = WPFUI.Common.SymbolRegular.HeadphonesSoundWave20;
+                    if (section.Title.ToLower() == "главная") icon = Wpf.Ui.Common.SymbolRegular.Home24;
+                    else if (section.Title.ToLower() == "моя музыка") icon = Wpf.Ui.Common.SymbolRegular.MusicNote120;
+                    else if (section.Title.ToLower() == "обзор") icon = Wpf.Ui.Common.SymbolRegular.CompassNorthwest28;
+                    else if (section.Title.ToLower() == "подкасты") icon = Wpf.Ui.Common.SymbolRegular.HeadphonesSoundWave20;
+                    else if (section.Title.ToLower() == "подписки") icon = Wpf.Ui.Common.SymbolRegular.Feed24;
                     else
                     {
                         var number = rand.Next(0, icons.Count);
@@ -205,26 +160,25 @@ namespace MusicX
 
                     if (section.Title.ToLower() == "моя музыка") section.Title = "Музыка";
 
+                    var viewModel = ActivatorUtilities.CreateInstance<SectionViewModel>(StaticService.Container);
+                    viewModel.SectionId = section.Id;
 
-                    var navigationItem = new NavigationItem() { PageTag = section.Id, Icon = icon, Content = section.Title, Page = typeof(SectionView), Instance = sectionPage };
+                    var navigationItem = new NavigationBarItem() { Tag = section.Id, PageDataContext = viewModel, Icon = icon, Content = section.Title, PageType = typeof(SectionView) };
                     navigationBar.Items.Add(navigationItem);
                 }
 
 #if DEBUG
-                var item = new NavigationItem() { PageTag = "test", Icon = WPFUI.Common.SymbolRegular.AppFolder24, Content = "TEST", Page = typeof(TestPage), Instance = new TestPage() };
+                var item = new NavigationBarItem() { Tag = "test", Icon = Wpf.Ui.Common.SymbolRegular.AppFolder24, Content = "TEST", PageType = typeof(TestPage) };
                 navigationBar.Items.Add(item);
 #endif
 
-                navigationBar.Items.Add(new NavigationItem() { PageTag = "downloads", Icon = WPFUI.Common.SymbolRegular.ArrowDownload48, Content = "Загрузки", Page = typeof(DownloadsView), Instance = new DownloadsView() });
-                var item2 = new NavigationItem() { PageTag = "settings", Icon = WPFUI.Common.SymbolRegular.Settings24, Content = "Настройки", Page = typeof(SettingsView), Instance = new SettingsView(configService) };
+                navigationBar.Items.Add(new NavigationBarItem() { Tag = "downloads", PageDataContext = StaticService.Container.Resolve<DownloaderViewModel>(), Icon = Wpf.Ui.Common.SymbolRegular.ArrowDownload48, Content = "Загрузки", PageType = typeof(DownloadsView) });
+                var item2 = new NavigationBarItem() { Tag = "settings", Icon = Wpf.Ui.Common.SymbolRegular.Settings24, Content = "Настройки", PageType = typeof(SettingsView) };
 
                 navigationBar.Items.Add(item2);
 
-                navigationBar.Navigated += NavigationBar_Navigated; ;
-
-                navigationBar.Navigate(catalogs.Catalog.Sections[0].Id);
-
-
+                navigationBar.Items[0].RaiseEvent(new(ButtonBase.ClickEvent));
+                
                 var thread = new Thread(CheckUpdatesInStart);
                 thread.Start();
             }
@@ -235,13 +189,50 @@ namespace MusicX
             }
             
         }
+        private void NavigationServiceOnModalCloseRequested(object? sender, EventArgs e)
+        {
+            ModalFrame.Close();
+        }
+        private void NavigationServiceOnModalOpenRequested(object? sender, object e)
+        {
+            ModalFrame.Open(e);
+        }
+        private void NavigationServiceOnReplaceBlocksRequested(object? sender, string e)
+        {
+            if (RootFrame.GetDataContext() is SectionViewModel viewModel)
+                viewModel.ReplaceBlocks(e).SafeFireAndForget();
+        }
+        private void NavigationServiceOnExternalPageOpened(object? sender, object e)
+        {
+            RootFrame.Navigate(e);
+        }
+        private void NavigationServiceOnBackRequested(object? sender, EventArgs e)
+        {
+            if (!RootFrame.CanGoBack)
+                return;
+            
+            RootFrame.GoBack();
+            RootFrame.RemoveBackEntry();
+        }
+        private void NavigationServiceOnExternalSectionOpened(object? sender, SectionViewModel e)
+        {
+            RootFrame.Navigate(new SectionView
+            {
+                DataContext = e
+            });
+        }
+        private void NavigationServiceOnMenuSectionOpened(object? sender, string s)
+        {
+            navigationBar.Items.First(b => b.Tag is string tag && tag == s)
+                .RaiseEvent(new(ButtonBase.ClickEvent));
+        }
 
-        private async void NavigationBar_Navigated([System.Diagnostics.CodeAnalysis.NotNull] WPFUI.Controls.Interfaces.INavigation sender, WPFUI.Common.RoutedNavigationEventArgs e)
+        private async void NavigationBar_Navigated(Wpf.Ui.Controls.Interfaces.INavigation sender, Wpf.Ui.Common.RoutedNavigationEventArgs e)
         {
             var current = e.CurrentPage;
 
-            if (current.PageTag == "test" || current.PageTag == "settings" || current.PageTag == "downloads") return;
-            await navigationService.SectionView.LoadSection((string)current.PageTag);
+            if (current.PageTag is "test" or "settings" or "downloads") return;
+            await StaticService.Container.Resolve<SectionViewModel>().LoadSection(current.PageTag).ConfigureAwait(false);
         }
 
       
@@ -254,13 +245,13 @@ namespace MusicX
 
                 var query = SearchBox.Text;
 
-                await navigationService.OpenSearchSection(query);
+                navigationService.OpenSection(query, SectionType.Search);
             }
         }
 
-        private async void Button_Click(object sender, RoutedEventArgs e)
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
-            await navigationService.Back();
+            navigationService.GoBack();
         }
 
         private void playerControl_MouseDown(object sender, MouseButtonEventArgs e)
@@ -293,7 +284,7 @@ namespace MusicX
         {
             try
             {
-                await navigationService.OpenSearchSection(null);
+                navigationService.OpenSection(null, SectionType.Search);
 
             }catch (Exception ex)
             {
@@ -315,12 +306,8 @@ namespace MusicX
 
                 var release = await github.GetLastRelease();
 
-
-                await Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-                {
-                    if (release.TagName != StaticService.Version) navigationService.OpenModal(new AvalibleNewUpdateModal(navigationService, release), 350, 450);
-
-                }));
+                if (release.TagName != StaticService.Version)
+                    navigationService.OpenModal<AvalibleNewUpdateModal>(release);
             }catch(Exception ex)
             {
                 logger.Error(ex, ex.Message);
@@ -368,6 +355,11 @@ namespace MusicX
             var playerService = StaticService.Container.Resolve<PlayerService>();
             if (playerService.Tracks.Count > 0 && playerService.Tracks.IndexOf(playerService.CurrentTrack) < playerService.Tracks.Count)
                 playerService.NextTrack().SafeFireAndForget();
+        }
+        private void RootFrame_OnMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton is MouseButton.XButton1)
+                navigationService.GoBack();
         }
     }
 }

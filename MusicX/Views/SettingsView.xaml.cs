@@ -21,6 +21,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Windows.Storage;
+using MusicX.Controls;
 using Ookii.Dialogs.Wpf;
 
 namespace MusicX.Views
@@ -28,18 +29,18 @@ namespace MusicX.Views
     /// <summary>
     /// Логика взаимодействия для SettingsView.xaml
     /// </summary>
-    public partial class SettingsView : Page
+    public partial class SettingsView : Page, IMenuPage
     {
         private readonly ConfigService configService;
         private ConfigModel config;
         private readonly VkService vkService;
-        public SettingsView(ConfigService configService)
+        public SettingsView()
         {
             InitializeComponent();
 
             this.vkService = StaticService.Container.Resolve<VkService>();
 
-            this.configService = configService;
+            this.configService = StaticService.Container.Resolve<ConfigService>();
 
             this.Loaded += SettingsView_Loaded;
             
@@ -97,31 +98,35 @@ namespace MusicX.Views
                 memory = Math.Round(memory, 2);
                 MemoryLogs.Text = memory.ToString();
                 
-                di = new DirectoryInfo(config.DownloadDirectory ?? string.Empty);
-
-                if (di.Exists)
+                if(config.DownloadDirectory != null)
                 {
-                    memory = 0;
+                    di = new DirectoryInfo(config.DownloadDirectory);
 
-                    foreach (FileInfo file in di.GetFiles())
+                    if (di.Exists)
                     {
-                        memory += file.Length / 1024;
-                    }
+                        memory = 0;
 
-                    if (memory > 1024)
-                    {
-                        memory /= 1024;
-                        MemoryTypeTracks.Text = "МБ";
-                    }
-                    else
-                    {
-                        MemoryTypeTracks.Text = "КБ";
+                        foreach (FileInfo file in di.GetFiles())
+                        {
+                            memory += file.Length / 1024;
+                        }
 
-                    }
+                        if (memory > 1024)
+                        {
+                            memory /= 1024;
+                            MemoryTypeTracks.Text = "МБ";
+                        }
+                        else
+                        {
+                            MemoryTypeTracks.Text = "КБ";
 
-                    memory = Math.Round(memory, 2);
-                    MemoryTracks.Text = memory.ToString();
+                        }
+
+                        memory = Math.Round(memory, 2);
+                        MemoryTracks.Text = memory.ToString();
+                    }
                 }
+                
 
                 this.VersionApp.Text = StaticService.Version + " " + StaticService.VersionKind;
                 this.BuildDate.Text = StaticService.BuildDate;
@@ -146,8 +151,7 @@ namespace MusicX.Views
             var notifications = StaticService.Container.Resolve<Services.NotificationsService>();
 
             new LoginWindow(vkService, configService, logger, navigation, notifications).Show();
-
-            navigation.CloseRootWindow();
+            Window.GetWindow(this)?.Close();
         }
 
         private async void CheckUpdates_Click(object sender, RoutedEventArgs e)
@@ -170,8 +174,7 @@ namespace MusicX.Views
                 }
                 else
                 {
-                    navigation.OpenModal(new AvalibleNewUpdateModal(navigation, release), 350, 450);
-
+                    navigation.OpenModal<AvalibleNewUpdateModal>(release);
                 }
             }
             catch (Exception ex)
@@ -290,5 +293,6 @@ namespace MusicX.Views
                 UseShellExecute = true
             });
         }
+        public string MenuTag { get; set; }
     }
 }

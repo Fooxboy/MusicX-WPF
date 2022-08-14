@@ -21,26 +21,18 @@ namespace MusicX.Controls.Blocks
     /// </summary>
     public partial class VideosSliderBlockControl : UserControl
     {
+        public static readonly DependencyProperty ShowFullProperty = DependencyProperty.Register(
+            nameof(ShowFull), typeof(bool), typeof(VideosSliderBlockControl));
 
-        public List<Video> Videos;
-        public bool ShowFull;
+        public bool ShowFull
+        {
+            get => (bool)GetValue(ShowFullProperty);
+            set => SetValue(ShowFullProperty, value);
+        }
 
         public VideosSliderBlockControl()
         {
             InitializeComponent();
-            this.Loaded += VideosSliderBlockControl_Loaded;
-        }
-
-        private void VideosSliderBlockControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            if(ShowFull)
-            {
-                ListAllVideos.Orientation = Orientation.Vertical;
-            }
-            foreach(var video in Videos)
-            {
-                ListAllVideos.Children.Add(new VideoControl() { Height = 200, Width = 300, Video = video, Margin = new Thickness(0, 0, 10, 0) });
-            }
         }
     }
 }

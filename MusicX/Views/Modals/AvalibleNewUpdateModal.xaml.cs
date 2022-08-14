@@ -23,26 +23,19 @@ namespace MusicX.Views.Modals
     /// </summary>
     public partial class AvalibleNewUpdateModal : Page
     {
-        private readonly Services.NavigationService navigationService;
-        private readonly Release release;
-        public AvalibleNewUpdateModal(Services.NavigationService navigationService, Release release)
+        public AvalibleNewUpdateModal()
         {
             InitializeComponent();
-            this.navigationService = navigationService;
-            this.release = release;
             this.Loaded += AvalibleNewUpdateModal_Loaded;
         }
 
         private void AvalibleNewUpdateModal_Loaded(object sender, RoutedEventArgs e)
         {
+            if (DataContext is not Release release)
+                return;
             OldVersion.Text = StaticService.Version;
             NewVersion.Text = release.TagName;
             Changelog.Text = release.Body;
-        }
-
-        private void CloseButton_Click(object sender, RoutedEventArgs e)
-        {
-            navigationService.CloseModal();
         }
 
         private void Update_Click(object sender, RoutedEventArgs e)

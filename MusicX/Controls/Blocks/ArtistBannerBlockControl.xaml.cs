@@ -7,8 +7,17 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
+using DryIoc;
+using MusicX.Helpers;
+using MusicX.Services;
+using MusicX.ViewModels;
+using MusicX.ViewModels.Controls;
+using MusicX.Views;
+using Wpf.Ui.Controls;
 
 namespace MusicX.Controls.Blocks
 {
@@ -55,10 +64,35 @@ namespace MusicX.Controls.Blocks
                 });
 
                
-            }).Start(); 
+            }).Start();
 
-            
+            if (Block.Actions is null)
+                return;
 
+            var sectionViewModel = (SectionViewModel)this.FindAncestor<SectionView>()!.DataContext;
+
+            for (var i = 0; i < Block.Actions.Count; i++)
+            {
+                var action = Block.Actions[i];
+                
+                var text = new TextBlock();
+                var card = new CardAction()
+                {
+                    Margin = new Thickness(0, 10, 15, 10),
+                    Content = text,
+                    DataContext = new BlockButtonViewModel(action, sectionViewModel.Artist, Block),
+                    ShowChevron = false,
+                    Height = 45
+                };
+
+                card.SetBinding(ButtonBase.CommandProperty, new Binding(nameof(BlockButtonViewModel.InvokeCommand)));
+                card.SetBinding(CardAction.IconProperty, new Binding(nameof(BlockButtonViewModel.Icon)));
+                text.SetBinding(TextBlock.TextProperty, new Binding(nameof(BlockButtonViewModel.Text)));
+
+                ActionsGrid.ColumnDefinitions.Add(new() {MinWidth = 170});
+                card.SetValue(Grid.ColumnProperty, i);
+                ActionsGrid.Children.Add(card);
+            }
         }
 
         private void ActionArtistButton_Click(object sender, RoutedEventArgs e)

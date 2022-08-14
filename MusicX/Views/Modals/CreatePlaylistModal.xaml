@@ -1,0 +1,120 @@
+﻿<Page x:Class="MusicX.Views.Modals.CreatePlaylistModal"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:MusicX.Views.Modals"
+      xmlns:models="clr-namespace:MusicX.Core.Models;assembly=MusicX.Core"
+      mc:Ignorable="d"
+      xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:controls="clr-namespace:MusicX.Controls"
+      d:DesignHeight="450" d:DesignWidth="800"
+      Width="700"
+      Height="600"
+      Title="Создание нового плейлиста">
+
+    <Grid>
+        <StackPanel Margin="20">
+            <wpfui:Card>
+
+                <StackPanel Orientation="Horizontal">
+
+                    <Grid Cursor="Hand" HorizontalAlignment="Left" Height="160" Width="160">
+                        <Rectangle RadiusX="10" RadiusY="10" HorizontalAlignment="Left" Height="160" Width="160">
+                            <Rectangle.Fill>
+                                <ImageBrush Stretch="UniformToFill" ImageSource="{Binding CoverPath}" />
+
+                            </Rectangle.Fill>
+                        </Rectangle>
+
+
+                        <Rectangle Fill="Black" RadiusX="10" RadiusY="10" HorizontalAlignment="Left" Height="160"
+                                   Width="160" Opacity="0.4" />
+
+                        <wpfui:SymbolIcon FontSize="30" Symbol="Pen32" HorizontalAlignment="Center"
+                                          VerticalAlignment="Center" />
+
+
+                        <Grid.InputBindings>
+                            <MouseBinding MouseAction="LeftClick" Command="{Binding OpenCoverPathCommand}" />
+                        </Grid.InputBindings>
+
+                    </Grid>
+
+                    <StackPanel Margin="40 15 0 0" Width="320">
+                        <wpfui:TextBox Text="{Binding Title, Mode=TwoWay}" PlaceholderText="Название плейлиста" />
+                        <wpfui:TextBox Text="{Binding Description, Mode=TwoWay}" Margin="0 25 0  0"
+                                       PlaceholderText="Описание плейлиста" />
+
+                        <StackPanel Margin="0 15 0 0" Orientation="Horizontal">
+                            <wpfui:ToggleSwitch IsChecked="{Binding HideFromSearch, Mode=TwoWay}" />
+                            <TextBlock Margin="5 2 0 0" Foreground="White" Text="Скрыть из поиска и рекомендаций" />
+                        </StackPanel>
+
+                    </StackPanel>
+
+
+                </StackPanel>
+
+            </wpfui:Card>
+
+            <TextBlock Margin="0 15 0 0" Foreground="White" FontSize="18" FontFamily="{StaticResource VKSansMedium}"
+                       Text="Список треков" />
+
+            <wpfui:Button Margin="0 10 0 0" HorizontalAlignment="Stretch" Appearance="Secondary"
+                          Command="{Binding AddTracksCommand}" Content="Добавить" Icon="Add24" />
+
+            <ListView AllowDrop="True" Margin="0 10 0 0" ItemsSource="{Binding Tracks, Mode=TwoWay}">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel CacheLength="10" CacheLengthUnit="Item" Orientation="Vertical" />
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource {x:Type ListViewItem}}">
+                        <EventSetter Event="Drop" Handler="ListViewItem_Drop" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+
+                <ListView.ItemTemplate>
+                    <DataTemplate DataType="{x:Type models:Audio}">
+                        <Grid>
+                            <wpfui:SymbolIcon HorizontalAlignment="Left" Symbol="ReOrderDotsVertical24"
+                                              MouseDown="SymbolIcon_MouseDown" />
+                            <controls:TrackControl Margin="20 0 0 0" Audio="{Binding}" />
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+
+                <ListView.Style>
+                    <Style TargetType="ListView" BasedOn="{StaticResource {x:Type ListView}}">
+                        <Style.Triggers>
+                            <DataTrigger
+                                Binding="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=Items.Count}"
+                                Value="0">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate>
+                                            <StackPanel HorizontalAlignment="Center">
+                                                <wpfui:SymbolIcon FontSize="40" Symbol="Attach12" />
+                                                <TextBlock HorizontalAlignment="Center" FontSize="15" Margin="0 10 0 0"
+                                                           Text="Нужно добавить хотя бы один трек" />
+                                            </StackPanel>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListView.Style>
+            </ListView>
+
+
+        </StackPanel>
+        
+        <wpfui:Button HorizontalAlignment="Right" VerticalAlignment="Bottom" Command="{Binding CreateCommand}"
+                      IsEnabled="{Binding CreateIsEnable}"
+                      Appearance="Primary" Foreground="White" Content="Создать" Margin="0 20 0 0" />
+    </Grid>
+</Page>

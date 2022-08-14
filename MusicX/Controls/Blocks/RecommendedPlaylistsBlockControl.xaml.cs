@@ -21,22 +21,17 @@ namespace MusicX.Controls.Blocks
     /// </summary>
     public partial class RecommendedPlaylistsBlockControl : UserControl
     {
+        public static readonly DependencyProperty ShowFullProperty = DependencyProperty.Register(
+            nameof(ShowFull), typeof(bool), typeof(RecommendedPlaylistsBlockControl));
 
-        public List<RecommendedPlaylist> Playlists { get; set; }
+        public bool ShowFull
+        {
+            get => (bool)GetValue(ShowFullProperty);
+            set => SetValue(ShowFullProperty, value);
+        }
         public RecommendedPlaylistsBlockControl()
         {
             InitializeComponent();
-
-            this.Loaded += RecommendedPlaylistsBlockControl_Loaded;
-        }
-
-        private void RecommendedPlaylistsBlockControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            foreach(var plist in Playlists)
-            {
-                ListRecommendsPlist.Children.Add(new RecommendedPlaylistControl() { Playlist = plist, Width=300, Margin = new Thickness(0, 0, 10, 0) });
-
-            }
         }
     }
 }

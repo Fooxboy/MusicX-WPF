@@ -36,7 +36,8 @@ public static class VkMarkdownBehavior
             block.Inlines.Clear();
             return;
         }
-        
+
+        var index = 0;
         foreach (Match match in MarkdownRegex.Matches(text))
         {
             var link = match.Groups["link"].Value;
@@ -47,7 +48,7 @@ public static class VkMarkdownBehavior
             else if (!link.StartsWith("https://vk.com"))
                 link = "https://vk.com";
 
-            block.Inlines.Add(text[..match.Index]);
+            block.Inlines.Add(text[index..match.Index]);
             
             var hyperlink = new Hyperlink
             {
@@ -58,11 +59,11 @@ public static class VkMarkdownBehavior
             
             block.Inlines.Add(hyperlink);
 
-            text = text[(match.Index + match.Length)..];
+            index = match.Index + match.Length;
         }
         
         // add remaining text
-        block.Inlines.Add(text);
+        block.Inlines.Add(text[index..]);
     }
     private static void HyperlinkOnRequestNavigate(object sender, RequestNavigateEventArgs e)
     {
