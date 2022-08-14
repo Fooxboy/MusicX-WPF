@@ -87,8 +87,7 @@ namespace MusicX.Controls
 
                 if(!ShowCard)
                 {
-                    Card.Visibility = Visibility.Visible;
-                    Card.Opacity = 100;
+                    Card.Opacity = 1;
                 }
 
 
@@ -110,8 +109,7 @@ namespace MusicX.Controls
 
                 if (!ShowCard)
                 {
-                    Card.Visibility = Visibility.Collapsed;
-                    Card.Opacity = 1;
+                    Card.Opacity = 0;
                 }
 
 
@@ -176,12 +174,12 @@ namespace MusicX.Controls
 
                 if (ShowCard)
                 {
-                    this.Card.Visibility = Visibility.Visible;
+                    this.Card.Opacity = 1;
                 }
                 else
                 {
                     TextsPanel.MaxWidth = double.PositiveInfinity;
-                    this.Card.Visibility = Visibility.Collapsed;
+                    this.Card.Opacity = 0;
                 }
 
                 Subtitle.Visibility = string.IsNullOrEmpty(Audio.Subtitle) ? Visibility.Collapsed : Visibility.Visible;
@@ -310,8 +308,7 @@ namespace MusicX.Controls
 
                     if (!ShowCard)
                     {
-                        Card.Visibility = Visibility.Visible;
-                        Card.Opacity = 100;
+                        Card.Opacity = 1;
                     }
                 }
                   
@@ -420,7 +417,7 @@ namespace MusicX.Controls
                 {
                     if(player.CurrentTrack == null || player.CurrentTrack.Id != this.Audio.Id)
                     {
-                        Card.Visibility = Visibility.Visible;
+                        Card.Opacity = 1;
 
                     }
 
@@ -457,24 +454,13 @@ namespace MusicX.Controls
                     Artists.MaxWidth = oldWidthArtists + 2;
 
                     explicitBadge.Margin = new Thickness(0, 0, 0, 0);
+                    Card.Opacity = 1;
                 }
-
-
-                if (Card == null) return;
-              
-
-                if (!ShowCard)
+                
+                if (player.CurrentTrack == null || player.CurrentTrack.Id != this.Audio.Id)
                 {
-
-                    if (player.CurrentTrack == null || player.CurrentTrack.Id != this.Audio.Id)
-                    {
-                        Card.Visibility = Visibility.Collapsed;
-                    }
-
-                    
+                    Card.Opacity = ShowCard ? 1 : 0;
                 }
-
-                Card.Opacity = 1;
             }catch(Exception ex)
             {
                 logger.Error(ex, ex.Message);
