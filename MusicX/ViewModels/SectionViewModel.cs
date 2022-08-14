@@ -167,6 +167,7 @@ namespace MusicX.ViewModels
                 logger.Info($"Load section {sectionId}");
                 ContentState = ContentState.Loading;
                 SectionId = sectionId;
+                SectionType = SectionType.None;
 
                 var section = await vkService.GetSectionAsync(sectionId).ConfigureAwait(false);
 
