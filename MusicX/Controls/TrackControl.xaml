@@ -122,8 +122,7 @@
 
         <ui:Card
             x:Name="Card"
-            Margin="0,0,15,0"
-            Visibility="Visible">
+            Margin="0,0,15,0">
             <ui:Card.Style>
                 <Style TargetType="{x:Type ui:Card}" BasedOn="{StaticResource {x:Type ui:Card}}">
                     <Setter Property="Template">
@@ -187,7 +186,7 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Orientation="Horizontal">
-                <Grid Margin="8,6.5,6,6">
+                <Grid Margin="8,6.5,6,6" VerticalAlignment="Center">
 
                     <Rectangle
                         Grid.Row="0"
