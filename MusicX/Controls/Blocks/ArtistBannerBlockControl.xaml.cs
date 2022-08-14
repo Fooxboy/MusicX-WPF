@@ -12,9 +12,11 @@ using System.Windows.Data;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using DryIoc;
+using MusicX.Helpers;
 using MusicX.Services;
 using MusicX.ViewModels;
 using MusicX.ViewModels.Controls;
+using MusicX.Views;
 using Wpf.Ui.Controls;
 
 namespace MusicX.Controls.Blocks
@@ -67,7 +69,7 @@ namespace MusicX.Controls.Blocks
             if (Block.Actions is null)
                 return;
 
-            var sectionViewModel = StaticService.Container.Resolve<SectionViewModel>();
+            var sectionViewModel = (SectionViewModel)this.FindAncestor<SectionView>()!.DataContext;
 
             for (var i = 0; i < Block.Actions.Count; i++)
             {

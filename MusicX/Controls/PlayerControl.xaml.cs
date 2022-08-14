@@ -301,10 +301,10 @@ namespace MusicX.Controls
 
                 if (playerService.CurrentTrack.MainArtists == null)
                 {
-                    await navigationService.OpenSearchSection(playerService.CurrentTrack.Artist);
+                    navigationService.OpenSection(playerService.CurrentTrack.Artist, SectionType.Search);
                 }else
                 {
-                    await navigationService.OpenArtistSection(playerService.CurrentTrack.MainArtists[0].Id);
+                    navigationService.OpenSection(playerService.CurrentTrack.MainArtists[0].Id, SectionType.Artist);
                 }
 
             }
@@ -437,7 +437,7 @@ namespace MusicX.Controls
 
                 var navigation = StaticService.Container.Resolve<Services.NavigationService>();
 
-                navigation.NavigateToPage(new DownloadsView());
+                navigation.OpenMenuSection("downloads");
                 //go to download page
             }
 
@@ -480,7 +480,7 @@ namespace MusicX.Controls
             if (playerService.CurrentTrack.Album != null)
             {
                 var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
-                navigationService.NavigateToPage(new PlaylistView(playerService.CurrentTrack.Album.Id, playerService.CurrentTrack.Album.OwnerId, playerService.CurrentTrack.Album.AccessKey));
+                navigationService.OpenExternalPage(new PlaylistView(playerService.CurrentTrack.Album.Id, playerService.CurrentTrack.Album.OwnerId, playerService.CurrentTrack.Album.AccessKey));
             }
         }
 

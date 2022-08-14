@@ -247,14 +247,14 @@ namespace MusicX.Controls
             if (nowLoad) return;
             var notificationService = StaticService.Container.Resolve<Services.NavigationService>();
 
-            notificationService.NavigateToPage(new PlaylistView(Playlist));
+            notificationService.OpenExternalPage(new PlaylistView(Playlist));
         }
 
         private void FullGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             var notificationService = StaticService.Container.Resolve<Services.NavigationService>();
 
-            notificationService.NavigateToPage(new PlaylistView(Playlist));
+            notificationService.OpenExternalPage(new PlaylistView(Playlist));
         }
 
         private void PlayPlaylistGrid_MouseEnter(object sender, MouseEventArgs e)
@@ -291,6 +291,7 @@ namespace MusicX.Controls
 
                     await playerService.Play(0, audios.Items);
                     playerService.CurrentPlaylistId = Playlist.Id;
+                    playerService.CurrentPlaylist = new(Playlist.Id, Playlist.OwnerId, Playlist.AccessKey);
 
                     iconPlay.Symbol = Wpf.Ui.Common.SymbolRegular.Pause24;
 

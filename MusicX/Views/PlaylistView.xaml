@@ -13,7 +13,6 @@
     d:DesignHeight="720"
     d:DesignWidth="1280"
     Loaded="Page_Loaded"
-    Unloaded="Page_OnUnloaded"
     mc:Ignorable="d">
 
     <Page.Resources>

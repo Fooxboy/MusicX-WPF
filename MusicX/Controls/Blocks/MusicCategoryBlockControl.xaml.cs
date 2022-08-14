@@ -50,7 +50,7 @@ namespace MusicX.Controls.Blocks
         private async Task OpenPage(Link link)
         {
             var music = await vkService.GetAudioCatalogAsync(link.Url);
-            await navigationService.OpenSection(music.Catalog.DefaultSection, true);
+            navigationService.OpenSection(music.Catalog.DefaultSection);
 
             return;
         }

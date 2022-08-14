@@ -114,13 +114,13 @@ namespace MusicX.Controls.Blocks
                 {
                     var bnt = Block.Actions[0];
 
-                    await navigationService.OpenSection(bnt.SectionId, true);
+                    navigationService.OpenSection(bnt.SectionId);
                     return;
                 }
 
                 var button = Block.Buttons[0];
 
-                await navigationService.OpenSection(button.SectionId, true);
+                navigationService.OpenSection(button.SectionId);
             }
             catch (Exception ex)
             {
@@ -153,7 +153,7 @@ namespace MusicX.Controls.Blocks
 
                 var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
 
-                await navigationService.ReplaceBlock(option.ReplacementId);
+                navigationService.ReplaceBlocks(option.ReplacementId);
             }
             catch (Exception ex)
             {

@@ -121,7 +121,7 @@ namespace MusicX.Controls
         {
             var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
 
-            navigationService.NavigateToPage(new PlaylistView(Playlist.Playlist.Id,Playlist.Playlist.OwnerId , Playlist.Playlist.AccessKey));
+            navigationService.OpenExternalPage(new PlaylistView(Playlist.Playlist.Id,Playlist.Playlist.OwnerId , Playlist.Playlist.AccessKey));
         }
 
         private void PlayButton_MouseEnter(object sender, MouseEventArgs e)
@@ -151,12 +151,9 @@ namespace MusicX.Controls
                     nowPlay = true;
 
                     Icons.Symbol = Wpf.Ui.Common.SymbolRegular.Timer20;
-                    var vkService = StaticService.Container.Resolve<VkService>();
 
-                    var audios = await vkService.LoadFullPlaylistAsync(Playlist.Playlist.Id, Playlist.Playlist.OwnerId, Playlist.Playlist.AccessKey);
-
-                    await playerService.Play(0, audios.Items);
-                    playerService.CurrentPlaylistId = Playlist.Id;
+                    playerService.CurrentPlaylist = new(Playlist.Playlist.Id, Playlist.Playlist.OwnerId, Playlist.Playlist.AccessKey);
+                    await playerService.PlayTrack(Playlist.Audios[0], false);
 
                     Icons.Symbol = Wpf.Ui.Common.SymbolRegular.Pause24;
 

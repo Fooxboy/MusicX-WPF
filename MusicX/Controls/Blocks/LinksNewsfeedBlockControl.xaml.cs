@@ -55,7 +55,7 @@ public partial class LinksNewsfeedBlockControl : UserControl
 
                     }
                     var music = await vkService.GetAudioCatalogAsync(link.Url);
-                    await navigationService.OpenSection(music.Catalog.DefaultSection, true);
+                    navigationService.OpenSection(music.Catalog.DefaultSection);
 
                     return;
                 }
@@ -63,7 +63,7 @@ public partial class LinksNewsfeedBlockControl : UserControl
                 {
                     var url = new Uri(link.Url);
 
-                    await navigationService.OpenArtistSection(url.Segments.LastOrDefault());
+                    navigationService.OpenSection(url.Segments.LastOrDefault(), SectionType.Artist);
                     break;
                 }
                 case "group" or "user":
@@ -73,7 +73,7 @@ public partial class LinksNewsfeedBlockControl : UserControl
                     {
                         var music = await vkService.GetAudioCatalogAsync(link.Url);
 
-                        await navigationService.OpenSection(music.Catalog.DefaultSection);
+                        navigationService.OpenSection(music.Catalog.DefaultSection);
 
                         return;
                     }
@@ -90,7 +90,7 @@ public partial class LinksNewsfeedBlockControl : UserControl
                 {
                     var curator = await vkService.GetAudioCuratorAsync(link.Meta.TrackCode, link.Url);
 
-                    await navigationService.OpenSection(curator.Catalog.DefaultSection);
+                    navigationService.OpenSection(curator.Catalog.DefaultSection);
                     break;
                 }
             }

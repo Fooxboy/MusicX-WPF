@@ -15,6 +15,9 @@ using MusicX.Helpers;
 
 namespace MusicX.ViewModels
 {
+    [Serializable]
+    public record PlaylistData(long PlaylistId, long OwnerId, string AccessKey);
+    
     public class PlaylistViewModel:BaseViewModel
     {
 
@@ -32,7 +35,8 @@ namespace MusicX.ViewModels
 
         public Visibility VisibileAddInfo { get; set; } = Visibility.Visible;
 
-        public Playlist Playlist { get; set; }
+        public Playlist Playlist { get; private set; }
+        public PlaylistData PlaylistData { get; set; }
         
         public Visibility VisibleLoadingMore { get; set; } = Visibility.Collapsed;
 
@@ -71,16 +75,20 @@ namespace MusicX.ViewModels
                 await Application.Current.Dispatcher.InvokeAsync(Add);
             VisibleLoadingMore = Visibility.Collapsed;
         }
+        
 
         public async Task LoadPlaylist(Playlist playlist, bool delete = true)
         {
             try
             {
                 logger.Info("Load playlist");
-                if (delete)
+                PlaylistData = new(playlist.Id, playlist.OwnerId, playlist.AccessKey);
+                if (delete && Tracks.Count > 0)
                 {
-                    if (Tracks.Count > 0) Tracks.Clear();
-
+                    if (Application.Current.Dispatcher.CheckAccess())
+                        Tracks.Clear();
+                    else
+                        await Application.Current.Dispatcher.InvokeAsync(Tracks.Clear);
                 }
                 VisibleContent = Visibility.Collapsed;
                 VisibleLoading = Visibility.Visible;
@@ -214,6 +222,11 @@ namespace MusicX.ViewModels
             }
 
         }
+        public Task LoadPlaylistFromData(PlaylistData data)
+        {
+            var (playlistId, ownerId, accessKey) = data;
+            return LoadPlaylistFromData(playlistId, ownerId, accessKey);
+        }
 
         public async Task<bool> AddPlaylist()
         {
@@ -246,22 +259,6 @@ namespace MusicX.ViewModels
 
                 return false;
             }
-        }
-        public void Unload()
-        {
-            VisibleLoading = Visibility.Collapsed;
-            VisibleContent = Visibility.Collapsed;
-            VisibileAddInfo = Visibility.Collapsed;
-            
-            Tracks.Clear();
-            Title = string.Empty;
-            Cover = string.Empty;
-            Description = string.Empty;
-            Genres = string.Empty;
-            Plays = string.Empty;
-            Year = string.Empty;
-            ArtistText = string.Empty;
-            Playlist = null!;
         }
     }
 }

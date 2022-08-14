@@ -12,11 +12,12 @@
                 <ResourceDictionary Source="pack://application:,,,/Wpf.Ui;component/Styles/Theme/Dark.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Wpf.Ui;component/Styles/Wpf.Ui.xaml" />
                 <ResourceDictionary x:Name="ListViewStyles" Source="Styles/ListViewStyles.xaml" />
-                <ResourceDictionary x:Name="ListViewStyles" Source="Styles/SliderStyles.xaml" />
+                <ResourceDictionary x:Name="SliderStyles" Source="Styles/SliderStyles.xaml" />
                 <ResourceDictionary x:Name="SearchBoxStyles" Source="Styles/SearchBoxStyles.xaml" />
                 <ResourceDictionary x:Name="CardActionStyles" Source="Styles/CardActionStyles.xaml" />
                 <ResourceDictionary x:Name="TextBlockStyles" Source="Styles/TextBlockStyles.xaml" />
-
+                <ResourceDictionary x:Name="NavBarStyles" Source="Styles/NavigationBarStyles.xaml" />
+                <ResourceDictionary x:Name="ModalFrameStyles" Source="Styles/ModalFrameStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <FontFamily x:Key="SegoeFluentIcons">pack://application:,,,/;component/Fonts/#Segoe Fluent Icons</FontFamily>

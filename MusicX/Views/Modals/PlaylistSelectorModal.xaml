@@ -10,18 +10,12 @@
       
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="PlaylistSelectorModal">
+      Title="Выберите плейлист">
 
-    <Grid>
-        <Rectangle Fill="#414141" RadiusX="10" RadiusY="10"></Rectangle>
-
-        <StackPanel>
-            <TextBlock HorizontalAlignment="Center" Margin="0 20 0 0" Text="Выберите плейлист" Foreground="White" FontSize="20" FontFamily="{StaticResource VKSansDemiBold}"/>
-        </StackPanel>
-
+    <StackPanel>
         <wpfui:ProgressRing IsIndeterminate="True" Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
-        <ListView SelectedItem="{Binding SelectedPlaylist, Mode=TwoWay}" ItemsSource="{Binding Playlists}" Margin="2 60 2 60">
+        <ListView MaxWidth="700" SelectedItem="{Binding SelectedPlaylist, Mode=TwoWay}" ItemsSource="{Binding Playlists}" Margin="2 0 2 15">
 
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -58,8 +52,7 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
-            <wpfui:Button Command="{Binding CloseCommand}" HorizontalAlignment="Stretch" Grid.Column="0" Foreground="White" Appearance="Secondary"  Content="Отменить"/>
             <wpfui:Button Command="{Binding SelectCommand}" HorizontalAlignment="Stretch" IsEnabled="{Binding CreateIsEnable}" Grid.Column="2" Appearance="Primary"  Foreground="White"  Content="Выбрать"/>
         </Grid>
-    </Grid>
+    </StackPanel>
 </Page>

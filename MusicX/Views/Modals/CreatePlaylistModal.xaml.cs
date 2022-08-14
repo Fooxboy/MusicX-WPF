@@ -22,11 +22,8 @@ namespace MusicX.Views.Modals
     /// </summary>
     public partial class CreatePlaylistModal : Page
     {
-        private readonly CreatePlaylistModalViewModel vm;
-        public CreatePlaylistModal(CreatePlaylistModalViewModel viewModel)
+        public CreatePlaylistModal()
         {
-            this.vm = viewModel;
-            this.DataContext = viewModel;
             InitializeComponent();
         }
 
@@ -35,7 +32,7 @@ namespace MusicX.Views.Modals
             var source = (Audio)e.Data.GetData(typeof(Audio))!;
             var target = (Audio)((ListViewItem)sender).DataContext;
 
-            this.vm.MoveTracks(source, target);
+            ((CreatePlaylistModalViewModel)DataContext).MoveTracks(source, target);
             
         }
 

@@ -5,105 +5,90 @@ using NLog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using AsyncAwaitBestPractices;
+using MusicX.Controls;
+using MusicX.Helpers;
 using VkNet.Exception;
 
 namespace MusicX.ViewModels
 {
-    public class SectionViewModel : BaseViewModel
+    public enum ContentState
+    {
+        Loading,
+        Loaded
+    }
+    
+    public class SectionViewModel : BaseViewModel, INotifyOnActivated
     {
         private readonly VkService vkService;
-        private readonly NavigationService navigationService;
         private readonly Logger logger;
         private readonly NotificationsService notificationsService;
 
-        public event Action ContentLoaded;
-
-        public Visibility VisibleLoading { get; set; }
-
-        public Visibility VisibleContent { get; set; }
-
+        public ContentState ContentState { get; set; }
+        public bool IsLoadingMore { get; set; }
+        public SectionType SectionType { get; set; }
+        public string SectionId { get; set; }
         public Section Section { get; set; }
-        public string Next { get; set; }
+        public string? Next { get; set; }
         
         public Artist? Artist { get; set; }
 
-        public ObservableCollection<Block> Blocks { get; set; } = new ObservableCollection<Block>();
+        public ObservableRangeCollection<Block> Blocks { get; set; } = new();
 
-        public SectionViewModel(VkService vkService, NavigationService navigationService, Logger logger, NotificationsService notificationsService)
+        public SectionViewModel(VkService vkService, Logger logger, NotificationsService notificationsService)
         {
             this.vkService = vkService;
-            VisibleContent = Visibility.Collapsed;
-            VisibleLoading = Visibility.Collapsed;
-            this.navigationService = navigationService;
             this.logger = logger;
             this.notificationsService = notificationsService;
         }
 
-        private bool nowLoading = false;
-
+        public Task LoadAsync()
+        {
+            return SectionType switch
+            {
+                SectionType.None => LoadSection(SectionId),
+                SectionType.Artist => LoadArtistSection(SectionId),
+                SectionType.Search => LoadSearchSection(SectionId),
+                _ => throw new ArgumentOutOfRangeException()
+            };
+        }
 
         public async Task LoadMore()
         {
-            int indexLoad = -1;
-
-            await Task.Run(async () =>
+            try
             {
-                try
+                if (IsLoadingMore) return;
+                if (Next == null) return;
+                logger.Info($"Load more for {Next} next");
+
+                IsLoadingMore = true;
+                
+                logger.Info($"Load more section content with next id = {Next}");
+
+                var section = await vkService.GetSectionAsync(Section.Id, Next).ConfigureAwait(false);
+
+                await Application.Current.Dispatcher.InvokeAsync(() =>
                 {
-
-                    if (nowLoading) return;
-                    if (Next == null) return;
-
-                    logger.Info($"Load more for {Next} next");
-
-                    nowLoading = true;
-
-                    await Application.Current.Dispatcher.BeginInvoke(new Action(async () =>
-                    {
-                        var loadBlock = new Block() { DataType = "loader" };
-
-                        Blocks.Add(loadBlock);
-                        indexLoad = Blocks.IndexOf(loadBlock);
-
-                        Changed("Blocks");
-
-                    }));
-                    logger.Info($"Load more section content with next id = {Next}");
-
-                    var section = await vkService.GetSectionAsync(Section.Id, Next).ConfigureAwait(false);
-
                     foreach (var block in section.Section.Blocks)
                     {
-                        await Application.Current.Dispatcher.BeginInvoke(new Action(async () =>
-                        {
-                            this.Blocks.Add(block);
-                        }));
+                        Blocks.Add(block);
                     }
+                });
 
-                    Next = section.Section.NextFrom;
-
-                    Changed("Blocks");
-                    nowLoading = false;
-
-                }
-                catch (Exception ex)
-                {
-                    logger.Error(ex, ex.Message);
-
-                    notificationsService.Show("Произошла ошибка", "MusicX не смог подргрузить контент");
-                }
-            });
-
-            if(indexLoad != -1)
+                Next = section.Section.NextFrom;
+                IsLoadingMore = false;
+            }
+            catch (Exception ex)
             {
-                Blocks.RemoveAt(indexLoad);
+                logger.Error(ex, ex.Message);
 
-                Changed("Blocks");
+                notificationsService.Show("Произошла ошибка", "MusicX не смог подргрузить контент");
             }
         }
 
@@ -124,21 +109,11 @@ namespace MusicX.ViewModels
                         break;
                     }
 
-                    await Application.Current.Dispatcher.BeginInvoke(() =>
+                    await Application.Current.Dispatcher.InvokeAsync(() =>
                     {
-                        for (int i = startIndex; i < Blocks.Count - 1; i++)
-                        {
-                            Blocks.RemoveAt(i);
-                        }
-
-                        foreach (var block in replace.ToBlocks)
-                        {
-                            Blocks.Add(block);
-                        }
+                        Blocks.RemoveRange(Blocks.ToArray()[startIndex..]);
+                        Blocks.AddRange(replace.ToBlocks, NotifyCollectionChangedAction.Reset);
                     });
-
-
-
                 }
 
 
@@ -146,151 +121,66 @@ namespace MusicX.ViewModels
             catch (Exception ex)
             {
                 logger.Error(ex, ex.Message);
-                    notificationsService.Show("Произошла ошибка", "MusicX не смог заменить блоки");
-
+                notificationsService.Show("Произошла ошибка", "MusicX не смог заменить блоки");
             }
-            Changed("Blocks");
         }
 
         public async Task LoadBlocks(List<Block> blocks, string nextValue)
         {
-            this.Next = nextValue;
-            nowOpenSearchSug = false;
-            navigationService.AddHistory(Models.Enums.NavigationSource.Section, (blocks, this.Next));
-
-            await Task.Run(async () =>
-            {
-                try
-                {
-                    logger.Info("Load from blocks");
-                    await Application.Current.Dispatcher.BeginInvoke(() =>
-                    {
-                        try
-                        {
-                            this.Blocks.Clear();
-
-
-                            foreach (var block in blocks)
-                            {
-                                this.Blocks.Add(block);
-                            }
-                            Changed("Blocks");
-                        }
-                        catch (Exception ex)
-                        {
-                            logger.Error(ex, ex.Message);
-
-                            notificationsService.Show("Произошла ошибка", "MusicX не смог подргрузить контент");
-                        }
-
-                    });
-
-                    await Application.Current.Dispatcher.BeginInvoke(() =>
-                    {
-                        VisibleLoading = Visibility.Collapsed;
-                        VisibleContent = Visibility.Visible;
-
-                        Changed("VisibleLoading");
-                        Changed("VisibleContent");
-                        Changed("Blocks");
-
-                        this.ContentLoaded?.Invoke();
-
-                    });
-
-                }
-                catch (Exception ex)
-                {
-                    logger.Error(ex, ex.Message);
-
-                    notificationsService.Show("Произошла ошибка", "MusicX не смог загрузить контент");
-
-                }
-            });
-            
-        }
-
-        public async Task LoadSection(string sectionId, bool showTitle = false)
-        {
+            Next = nextValue;
             nowOpenSearchSug = false;
 
             try
             {
-                logger.Info($"Load section {sectionId}");
-
-                await Application.Current.Dispatcher.BeginInvoke(() =>
-                {
-                    VisibleLoading = Visibility.Visible;
-                    VisibleContent = Visibility.Collapsed;
-
-                    Changed("VisibleLoading");
-                    Changed("VisibleContent");
-                });
-
-
-                var section = await vkService.GetSectionAsync(sectionId).ConfigureAwait(false);
-
-                this.Section = section.Section;
-
-                navigationService.AddHistory(Models.Enums.NavigationSource.Section, (section.Section.Blocks, section.Section.NextFrom));
-
-                this.Section = section.Section;
-                Artist = section.Artists?.FirstOrDefault();
-                logger.Info($"Loaded {section.Section.Blocks.Count} blocks");
-
-
-                var obsCollection = new ObservableCollection<Block>();
-
-                if (showTitle)
-                {
-                    obsCollection.Add(new Block() {DataType = "none", Layout = new Layout() {Name = "header", Title = Section.Title}});
-                }
-                foreach (var block in section.Section.Blocks)
-                {
-                    obsCollection.Add(block);
-                }
-
-                await Application.Current.Dispatcher.BeginInvoke(() =>
+                logger.Info("Load from blocks");
+                
+                ContentState = ContentState.Loading;
+                
+                await Application.Current.Dispatcher.InvokeAsync(() =>
                 {
                     try
                     {
-                        this.Blocks = null;
-
-                        this.Blocks = obsCollection;
-
-                        obsCollection = null;
+                        Blocks.ReplaceRange(blocks);
                     }
                     catch (Exception ex)
                     {
-                        logger.Error("Fatal error during show blocks:");
-
                         logger.Error(ex, ex.Message);
+                        notificationsService.Show("Произошла ошибка", "MusicX не смог подргрузить контент");
                     }
-
                 });
 
-                Next = section.Section.NextFrom;
+                ContentState = ContentState.Loaded;
+                logger.Info($"Loaded {blocks.Count} blocks");
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, ex.Message);
 
+                notificationsService.Show("Произошла ошибка", "MusicX не смог загрузить контент");
+            }
+        }
 
-                await Application.Current.Dispatcher.BeginInvoke(() =>
-                {
+        public async Task LoadSection(string sectionId, bool showTitle = false)
+        {
+            try
+            {
+                logger.Info($"Load section {sectionId}");
+                ContentState = ContentState.Loading;
+                SectionId = sectionId;
 
-                    VisibleLoading = Visibility.Collapsed;
-                    VisibleContent = Visibility.Visible;
+                var section = await vkService.GetSectionAsync(sectionId).ConfigureAwait(false);
 
-                    Changed("VisibleLoading");
-                    Changed("VisibleContent");
-                    Changed("Blocks");
+                Section = section.Section;
+                Artist = section.Artists?.FirstOrDefault();
+                
+                if (showTitle)
+                    section.Section.Blocks.Insert(0, new() {DataType = "none", Layout = new() {Name = "header", Title = Section.Title}});
 
-                    this.ContentLoaded?.Invoke();
-
-                });
-
-
+                await LoadBlocks(section.Section.Blocks, section.Section.NextFrom);
             }
             catch (VkApiMethodInvokeException ex) when (ex.ErrorCode == 104)
             {
-                await Application.Current.Dispatcher.BeginInvoke(() =>
+                await Application.Current.Dispatcher.InvokeAsync(() =>
                 {
                     Blocks.Clear();
                 });
@@ -302,39 +192,25 @@ namespace MusicX.ViewModels
                 logger.Error(ex, ex.Message);
 
                 notificationsService.Show("Произошла ошибка", "MusicX не смог загрузить контент");
-
             }
-
         }
 
         public async Task LoadArtistSection(string artistId)
         {
-            nowOpenSearchSug = false;
             try
             {
-                await Application.Current.Dispatcher.BeginInvoke(() =>
-                {
-                    VisibleLoading = Visibility.Visible;
-                    VisibleContent = Visibility.Collapsed;
-
-                    Changed("VisibleLoading");
-                    Changed("VisibleContent");
-                });
-
+                ContentState = ContentState.Loading;
+                SectionType = SectionType.Artist;
+                SectionId = artistId;
                 var artist = await vkService.GetAudioArtistAsync(artistId);
-
-
-                await this.LoadSection(artist.Catalog.DefaultSection);
-                
+                await LoadSection(artist.Catalog.DefaultSection);
             }
             catch (Exception ex)
             {
                 logger.Error($"Fatal error in Load artist section with artistId = {artistId}");
-
                 logger.Error(ex, ex.Message);
 
                 notificationsService.Show("Произошла ошибка", "MusicX не смог загрузить контент");
-
             }
         }
 
@@ -344,14 +220,10 @@ namespace MusicX.ViewModels
             try
             {
                 if (query == null && nowOpenSearchSug) return;
-                await Application.Current.Dispatcher.BeginInvoke(() =>
-                {
-                    VisibleLoading = Visibility.Visible;
-                    VisibleContent = Visibility.Collapsed;
 
-                    Changed("VisibleLoading");
-                    Changed("VisibleContent");
-                });
+                ContentState = ContentState.Loading;
+                SectionType = SectionType.Search;
+                SectionId = query;
                 var res = await vkService.GetAudioSearchAsync(query);
 
                 if(query == null)
@@ -360,19 +232,19 @@ namespace MusicX.ViewModels
                     try
                     {
                         res.Catalog.Sections[0].Blocks[1].Suggestions = res.Suggestions;
-                        await this.LoadBlocks(res.Catalog.Sections[0].Blocks, null);
+                        await LoadBlocks(res.Catalog.Sections[0].Blocks, null);
                         nowOpenSearchSug = true;
                     }
                     catch (Exception ex)
                     {
-                        await this.LoadBlocks(res.Catalog.Sections[0].Blocks, null);
+                        await LoadBlocks(res.Catalog.Sections[0].Blocks, null);
                     }
 
                     return;
                 }
 
                 nowOpenSearchSug = false;
-                await this.LoadSection(res.Catalog.DefaultSection);
+                await LoadSection(res.Catalog.DefaultSection);
 
             }
             catch (Exception ex)
@@ -384,6 +256,11 @@ namespace MusicX.ViewModels
                 notificationsService.Show("Произошла ошибка", "MusicX не смог загрузить контент");
 
             }
+        }
+        public void OnActivated()
+        {
+            if (Section is null)
+                LoadAsync().SafeFireAndForget();
         }
     }
 }

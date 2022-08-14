@@ -22,9 +22,8 @@ namespace MusicX.Views.Modals
     public partial class PlaylistSelectorModal : Page
     {
 
-        public PlaylistSelectorModal(PlaylistSelectorModalViewModel vm)
+        public PlaylistSelectorModal()
         {
-            this.DataContext = vm;
             this.Loaded += PlaylistSelectorModal_Loaded;
             InitializeComponent();
         }

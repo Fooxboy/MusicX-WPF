@@ -67,7 +67,7 @@ namespace MusicX.Controls
             {
                 var result = await vkService.GetAudioSearchAsync(Suggestion.Title, Suggestion.Context);
 
-                await navigationService.OpenSection(result.Catalog.DefaultSection);
+                navigationService.OpenSection(result.Catalog.DefaultSection);
             }catch(Exception ex)
             {
                 logger.Error(ex, ex.Message);

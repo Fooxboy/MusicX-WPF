@@ -124,7 +124,7 @@ namespace MusicX.Controls
 
                     }
                     var music = await vkService.GetAudioCatalogAsync(Link.Url);
-                    await navigationService.OpenSection(music.Catalog.DefaultSection, true);
+                    navigationService.OpenSection(music.Catalog.DefaultSection);
 
                     return;
                 }
@@ -133,7 +133,7 @@ namespace MusicX.Controls
                 {
                     var url = new Uri(Link.Url);
 
-                    await navigationService.OpenArtistSection(url.Segments.LastOrDefault());
+                    navigationService.OpenSection(url.Segments.LastOrDefault(), SectionType.Artist);
                 }
 
                 if (Link.Meta.ContentType == "group" || Link.Meta.ContentType == "user")
@@ -143,7 +143,7 @@ namespace MusicX.Controls
                     {
                         var music = await vkService.GetAudioCatalogAsync(Link.Url);
 
-                        await navigationService.OpenSection(music.Catalog.DefaultSection, false);
+                        navigationService.OpenSection(music.Catalog.DefaultSection);
 
                         return;
                     }
@@ -161,7 +161,7 @@ namespace MusicX.Controls
 
                     var curator = await vkService.GetAudioCuratorAsync(Link.Meta.TrackCode, Link.Url);
 
-                    await navigationService.OpenSection(curator.Catalog.DefaultSection);
+                    navigationService.OpenSection(curator.Catalog.DefaultSection);
 
                 }
             }catch(Exception ex)
