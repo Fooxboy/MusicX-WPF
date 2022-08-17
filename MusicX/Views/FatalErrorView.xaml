@@ -9,7 +9,7 @@
     Title="Ошибка запуска"
     Width="800"
     Height="450"
-    WindowStyle="None"
+    Background="#202020"
     ExtendsContentIntoTitleBar="True"
     WindowBackdropType="Mica"
     WindowCornerPreference="Round"
