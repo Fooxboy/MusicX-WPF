@@ -115,7 +115,6 @@
             x:Name="RootFrame"
             Grid.RowSpan="2"
             Grid.Column="1"
-            MouseUp="RootFrame_OnMouseUp"
             Margin="73,50,0,0" />
 
         <Rectangle

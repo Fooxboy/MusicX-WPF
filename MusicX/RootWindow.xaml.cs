@@ -347,10 +347,5 @@ namespace MusicX
             if (playerService.Tracks.Count > 0 && playerService.Tracks.IndexOf(playerService.CurrentTrack) < playerService.Tracks.Count)
                 playerService.NextTrack().SafeFireAndForget();
         }
-        private void RootFrame_OnMouseUp(object sender, MouseButtonEventArgs e)
-        {
-            if (e.ChangedButton is MouseButton.XButton1)
-                navigationService.GoBack();
-        }
     }
 }
