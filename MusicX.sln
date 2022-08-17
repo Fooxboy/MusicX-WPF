@@ -30,6 +30,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscordRPC", "DiscordRPC\Di
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfAnimatedGif", "WpfAnimatedGif\WpfAnimatedGif.csproj", "{9A7108E9-98F6-4D90-AB03-788DA1769566}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicX.Avalonia", "MusicX.Avalonia\MusicX.Avalonia.csproj", "{E2C61095-E619-4A6D-8B56-4E2A7D86782E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -80,6 +82,10 @@ Global
 		{9A7108E9-98F6-4D90-AB03-788DA1769566}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9A7108E9-98F6-4D90-AB03-788DA1769566}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9A7108E9-98F6-4D90-AB03-788DA1769566}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2C61095-E619-4A6D-8B56-4E2A7D86782E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2C61095-E619-4A6D-8B56-4E2A7D86782E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2C61095-E619-4A6D-8B56-4E2A7D86782E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2C61095-E619-4A6D-8B56-4E2A7D86782E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
