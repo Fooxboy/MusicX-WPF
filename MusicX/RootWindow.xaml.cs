@@ -227,15 +227,6 @@ namespace MusicX
                 .RaiseEvent(new(ButtonBase.ClickEvent));
         }
 
-        private async void NavigationBar_Navigated(Wpf.Ui.Controls.Interfaces.INavigation sender, Wpf.Ui.Common.RoutedNavigationEventArgs e)
-        {
-            var current = e.CurrentPage;
-
-            if (current.PageTag is "test" or "settings" or "downloads") return;
-            await StaticService.Container.Resolve<SectionViewModel>().LoadSection(current.PageTag).ConfigureAwait(false);
-        }
-
-      
 
         private async void TextBox_KeyUp(object sender, KeyEventArgs e)
         {

@@ -48,15 +48,23 @@ namespace MusicX.ViewModels
             this.notificationsService = notificationsService;
         }
 
-        public Task LoadAsync()
+        public async Task LoadAsync()
         {
-            return SectionType switch
+            ContentState = ContentState.Loading;
+            try
             {
-                SectionType.None => LoadSection(SectionId),
-                SectionType.Artist => LoadArtistSection(SectionId),
-                SectionType.Search => LoadSearchSection(SectionId),
-                _ => throw new ArgumentOutOfRangeException()
-            };
+                await (SectionType switch
+                {
+                    SectionType.None => LoadSection(SectionId),
+                    SectionType.Artist => LoadArtistSection(SectionId),
+                    SectionType.Search => LoadSearchSection(SectionId),
+                    _ => throw new ArgumentOutOfRangeException()
+                });
+            }
+            finally
+            {
+                ContentState = ContentState.Loaded;
+            }
         }
 
         public async Task LoadMore()
@@ -133,9 +141,7 @@ namespace MusicX.ViewModels
             try
             {
                 logger.Info("Load from blocks");
-                
-                ContentState = ContentState.Loading;
-                
+
                 await Application.Current.Dispatcher.InvokeAsync(() =>
                 {
                     try
@@ -149,7 +155,6 @@ namespace MusicX.ViewModels
                     }
                 });
 
-                ContentState = ContentState.Loaded;
                 logger.Info($"Loaded {blocks.Count} blocks");
             }
             catch (Exception ex)
@@ -160,14 +165,11 @@ namespace MusicX.ViewModels
             }
         }
 
-        public async Task LoadSection(string sectionId, bool showTitle = false)
+        private async Task LoadSection(string sectionId, bool showTitle = false)
         {
             try
             {
                 logger.Info($"Load section {sectionId}");
-                ContentState = ContentState.Loading;
-                SectionId = sectionId;
-                SectionType = SectionType.None;
 
                 var section = await vkService.GetSectionAsync(sectionId).ConfigureAwait(false);
 
@@ -186,7 +188,6 @@ namespace MusicX.ViewModels
                     Blocks.Clear();
                     Blocks.Add(new() {DataType = "none", Layout = new() {Name = "header", Title = "Ничего не найдено"}});
                 });
-                ContentState = ContentState.Loaded;
             }
             catch (Exception ex)
             {
@@ -198,13 +199,10 @@ namespace MusicX.ViewModels
             }
         }
 
-        public async Task LoadArtistSection(string artistId)
+        private async Task LoadArtistSection(string artistId)
         {
             try
             {
-                ContentState = ContentState.Loading;
-                SectionType = SectionType.Artist;
-                SectionId = artistId;
                 var artist = await vkService.GetAudioArtistAsync(artistId);
                 await LoadSection(artist.Catalog.DefaultSection);
             }
@@ -218,15 +216,12 @@ namespace MusicX.ViewModels
         }
 
         private bool nowOpenSearchSug = false;
-        public async Task LoadSearchSection(string query)
+        private async Task LoadSearchSection(string query)
         {
             try
             {
                 if (query == null && nowOpenSearchSug) return;
 
-                ContentState = ContentState.Loading;
-                SectionType = SectionType.Search;
-                SectionId = query;
                 var res = await vkService.GetAudioSearchAsync(query);
 
                 if(query == null)
