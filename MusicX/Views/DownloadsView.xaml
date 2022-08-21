@@ -51,6 +51,7 @@
                     x:Name="DownloadButton"
                     Width="240"
                     Margin="0,30,0,0"
+                    HorizontalAlignment="Center"
                     Appearance="Secondary"
                     Click="DownloadButton_Click"
                     Content="Скачать"
