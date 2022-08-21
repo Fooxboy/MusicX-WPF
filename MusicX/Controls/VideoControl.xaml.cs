@@ -14,6 +14,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using DryIoc;
+using MusicX.Services;
+using NavigationService = MusicX.Services.NavigationService;
 
 namespace MusicX.Controls
 {
@@ -44,23 +47,22 @@ namespace MusicX.Controls
                 Time.Text = TimeSpan.FromSeconds(Video.Duration).ToString("m\\:ss");
                 NameVideo.Text = Video.Title;
                 AuthorVideo.Text = Video.MainArtists[0].Name;
+                ReleaseDate.Text = DateTimeOffset.FromUnixTimeSeconds(Video.ReleaseDate).ToString("yyyy");
+                
+                if (Video.Genres?.Count > 0)
+                {
+                    Genre.Text = string.Join(" ,", Video.Genres.Select(b => b.Name));
+                }
+                else
+                {
+                    Genre.Visibility = Visibility.Collapsed;
+                }
             }catch (Exception ex)
             {
                 NameVideo.Text = Video.Title;
                 AuthorVideo.Text = "";
             }
            
-        }
-
-        private void UserControl_MouseEnter(object sender, MouseEventArgs e)
-        {
-            this.Cursor = Cursors.Hand;
-        }
-
-        private void UserControl_MouseLeave(object sender, MouseEventArgs e)
-        {
-            this.Cursor = Cursors.Arrow;
-
         }
 
         private void UserControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -70,6 +72,23 @@ namespace MusicX.Controls
                 FileName = Video.Player,
                 UseShellExecute = true
             });
+        }
+
+        private void AuthorVideo_OnMouseEnter(object sender, MouseEventArgs e)
+        {
+            AuthorVideo.TextDecorations.Add(TextDecorations.Underline);
+        }
+
+        private void AuthorVideo_OnMouseLeave(object sender, MouseEventArgs e)
+        {
+            AuthorVideo.TextDecorations.Clear();
+        }
+
+        private void AuthorVideo_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var navigationService = StaticService.Container.Resolve<NavigationService>();
+            
+            navigationService.OpenSection(Video.MainArtists[0].Id, SectionType.Artist);
         }
     }
 }

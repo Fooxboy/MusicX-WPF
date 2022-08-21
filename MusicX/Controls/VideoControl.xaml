@@ -8,14 +8,12 @@
     xmlns:wpfui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    MouseEnter="UserControl_MouseEnter"
-    MouseLeave="UserControl_MouseLeave"
-    MouseLeftButtonDown="UserControl_MouseLeftButtonDown"
     mc:Ignorable="d">
     <Grid>
 
         <StackPanel>
-            <Grid>
+            <Grid Cursor="Hand" ForceCursor="True"
+                  MouseLeftButtonDown="UserControl_MouseLeftButtonDown">
 
                 <Rectangle
                     Height="150"
@@ -55,12 +53,25 @@
                 Margin="0,5,0,0"
                 FontWeight="DemiBold"
                 Foreground="White"
+                MouseLeftButtonDown="UserControl_MouseLeftButtonDown"
                 Text="Название видео" />
             <TextBlock
                 x:Name="AuthorVideo"
-                Foreground="White"
+                Cursor="Hand"
+                MouseEnter="AuthorVideo_OnMouseEnter"
+                MouseLeave="AuthorVideo_OnMouseLeave"
+                MouseLeftButtonDown="AuthorVideo_OnMouseLeftButtonDown"
                 Opacity="0.6"
                 Text="Автор" />
+            <StackPanel Orientation="Horizontal" Opacity="0.4">
+                <TextBlock
+                    x:Name="ReleaseDate"
+                    Text="2077"/>
+                <TextBlock
+                    x:Name="Genre"
+                    Margin="5,0,0,0"
+                    Text="Кибер-Панк"/>
+            </StackPanel>
         </StackPanel>
     </Grid>
 </UserControl>
