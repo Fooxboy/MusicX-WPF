@@ -35,7 +35,7 @@
                     RadiusX="5"
                     RadiusY="5">
                     <Rectangle.Fill>
-                        <ImageBrush x:Name="VideoImage" Stretch="Fill" />
+                        <ImageBrush x:Name="VideoImage" Stretch="UniformToFill" />
                     </Rectangle.Fill>
                 </Rectangle>
 
