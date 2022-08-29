@@ -473,8 +473,9 @@ namespace MusicX.Controls
         {
             try
             {
-                await Task.Delay(100);
-                if (clickToArtist) return;
+                if (e.Source is TextBlock)
+                    return;
+                
                 if (Audio.Url == String.Empty)
                 {
                     var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
@@ -530,12 +531,10 @@ namespace MusicX.Controls
 
         }
 
-        bool clickToArtist = false;
         private async void Artists_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             try
             {
-                clickToArtist = true;
                 var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
 
                 if (Audio.MainArtists == null)
@@ -546,13 +545,9 @@ namespace MusicX.Controls
                 {
                     navigationService.OpenSection(artist.Id, SectionType.Artist);
                 }
-
-                clickToArtist = false;
             }
             catch (Exception ex)
             {
-                clickToArtist = false;
-
                 logger.Error(ex, ex.Message);
                 StaticService.Container.Resolve<NotificationsService>().Show("Ошибка", "Нам не удалось перейти на эту секцию");
             }
@@ -611,8 +606,6 @@ namespace MusicX.Controls
 
         private async void Title_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            clickToArtist = true;
-
             try
             {
                 if (Audio.Album != null)
@@ -621,15 +614,9 @@ namespace MusicX.Controls
                     navigationService.OpenExternalPage(new PlaylistView(Audio.Album.Id, Audio.Album.OwnerId, Audio.Album.AccessKey));
                 }
 
-                await Task.Delay(100);
-
-                clickToArtist = false;
-
             }
             catch (Exception ex)
             {
-                clickToArtist = false;
-
                 logger.Error(ex, ex.Message);
             }
             
@@ -643,7 +630,6 @@ namespace MusicX.Controls
 
                 notifications.Show("Уже ищем", "Сейчас мы найдем похожие треки, подождите");
 
-                clickToArtist = true;
                 var vk = StaticService.Container.Resolve<VkService>();
 
                 var items = await vk.GetRecommendationsAudio(Audio.OwnerId + "_" + Audio.Id);
@@ -665,14 +651,9 @@ namespace MusicX.Controls
                 blocks.Add(block);
 
                 navigation.OpenSection(items.Response.Section.Id);
-
-
-                clickToArtist = false;
             }
             catch (Exception ex)
             {
-                clickToArtist = false;
-
                 logger.Error(ex, ex.Message);
                 var notifications = StaticService.Container.Resolve<Services.NotificationsService>();
 
