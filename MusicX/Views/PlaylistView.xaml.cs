@@ -26,6 +26,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NavigationService = System.Windows.Navigation.NavigationService;
 using MusicX.ViewModels.Modals;
 using MusicX.Views.Modals;
+using System.Diagnostics;
 
 namespace MusicX.Views
 {
@@ -50,9 +51,17 @@ namespace MusicX.Views
             ViewModel = viewModel ?? StaticService.Container.Resolve<PlaylistViewModel>();;
             InitializeComponent();
             ViewModel.PlaylistLoaded += ViewModel_PlaylistLoaded;
+            ViewModel.PlaylistNotLoaded += ViewModel_PlaylistNotLoaded;
             logger = StaticService.Container.Resolve<Logger>();
             DataContext = ViewModel;
         }
+
+        private void ViewModel_PlaylistNotLoaded(object? sender, Playlist e)
+        {
+            FuckYouVK.Visibility = Visibility.Visible;
+            LoadingContentGrid.Visibility = Visibility.Collapsed;
+        }
+
         public PlaylistView(Playlist playlist) : this()
         {
             this.playlist = playlist;
@@ -290,6 +299,15 @@ namespace MusicX.Views
 
 
             await ViewModel.LoadPlaylistFromData(this.playlist.Id, this.playlist.OwnerId, this.playlist.AccessKey);
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "https://t.me/MusicXPlayer/132",
+                UseShellExecute = true
+            });
         }
     }
 }
