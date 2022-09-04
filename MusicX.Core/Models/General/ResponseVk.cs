@@ -83,5 +83,8 @@ namespace MusicX.Core.Models.General
         [JsonProperty("artist_videos")]
         public List<Video> ArtistVideos { get; set; }
 
+        [JsonProperty("placeholders")]
+        public List<Placeholder> Placeholders { get; set; }
+
     }
 }
