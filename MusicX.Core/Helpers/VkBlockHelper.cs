@@ -281,6 +281,19 @@ namespace MusicX.Core.Helpers
                     }
                 }
 
+                if (response.Response.Block.PlaceholdersIds != null || response.Response.Block.PlaceholdersIds.Count > 0)
+                {
+                    foreach (var placeholderId in response.Response.Block.PlaceholdersIds)
+                    {
+                        var placeholder = response.Response.Placeholders.SingleOrDefault(b => b.Id == placeholderId);
+
+                        if (placeholder == null) continue;
+
+                        response.Response.Block.Placeholders.Add(placeholder);
+
+                    }
+                }
+
                 if (response.Response.Block.ArtistsIds != null || response.Response.Block.ArtistsIds.Count > 0)
                 {
                     foreach (var artistId in response.Response.Block.ArtistsIds)
@@ -435,6 +448,20 @@ namespace MusicX.Core.Helpers
                         if (link == null) continue;
 
                         block.Links.Add(link);
+
+                    }
+                }
+
+                if (block.PlaceholdersIds != null || block.PlaceholdersIds.Count > 0)
+                {
+                    foreach (var placeholderId in block.PlaceholdersIds)
+                    {
+
+                        var placeholder = response.Response.Placeholders.SingleOrDefault(b => b.Id == placeholderId);
+
+                        if (placeholder == null) continue;
+
+                        block.Placeholders.Add(placeholder);
 
                     }
                 }
