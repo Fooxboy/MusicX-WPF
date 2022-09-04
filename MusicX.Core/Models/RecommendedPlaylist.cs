@@ -1,9 +1,5 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace MusicX.Core.Models
 {
@@ -26,6 +22,9 @@ namespace MusicX.Core.Models
 
         [JsonProperty("color")]
         public string Color { get; set; }
+
+        [JsonProperty("cover")]
+        public string Cover { get; set; }
 
         public Playlist Playlist { get; set; }
 

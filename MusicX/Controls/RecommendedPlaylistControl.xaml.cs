@@ -57,25 +57,33 @@ namespace MusicX.Controls
                     value = Convert.ToDouble(Playlist.Percentage.Replace('.', ','));
                 }
 
-
                 value = Math.Round(value, 2);
-                Percent.Text = $"{value * 100}%";
+                Percent.Text = $"{Math.Truncate(value * 100)}%";
                 Subtitle.Text = Playlist.PercentageTitle;
 
                 NamePlaylist.Text = Playlist.Playlist.Title;
                 OwnerName.Text = Playlist.Playlist.OwnerName;
-                var brr = (SolidColorBrush)new BrushConverter().ConvertFrom(Playlist.Color);
 
-                var brrTwo = brr.Clone();
+                if(Playlist.Cover != null)
+                {
+                    var image = new ImageBrush();
+                    image.ImageSource = new BitmapImage(new Uri(Playlist.Cover));
+                    BackgroundRectangle.Fill = image;
+                    OwnerName.Visibility = Visibility.Collapsed;
+                }else
+                {
+                    var brr = (SolidColorBrush)new BrushConverter().ConvertFrom(Playlist.Color);
 
+                    var brrTwo = brr.Clone();
 
-                Color color = brrTwo.Color;
-                color.R += 50;
-                color.B += 20;
-                color.G += 72;
+                    Color color = brrTwo.Color;
+                    color.R += 50;
+                    color.B += 20;
+                    color.G += 72;
 
-                GradientBackground.GradientStops.Add(new GradientStop() { Color = brr.Color, Offset = 0.0 });
-                GradientBackground.GradientStops.Add(new GradientStop() { Color = color, Offset = 1.1 });
+                    GradientBackground.GradientStops.Add(new GradientStop() { Color = brr.Color, Offset = 0.0 });
+                    GradientBackground.GradientStops.Add(new GradientStop() { Color = color, Offset = 1.1 });
+                }
 
                 //BackgroundRectangle.Fill = 
 
