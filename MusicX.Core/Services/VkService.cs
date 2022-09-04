@@ -1084,5 +1084,22 @@ namespace MusicX.Core.Services
             }
         }
 
+        public async Task EditPlaylistAsync(long ownerId, int playlistId, string title, string description, List<Audio> tracks)
+        {
+            try
+            {
+                var audios = tracks.Select(t => t.OwnerId + "_" + t.Id);
+
+                var result = await vkApi.Audio.EditPlaylistAsync(ownerId, playlistId, title, description, audios);
+
+            }
+            catch (Exception ex)
+            {
+                logger.Error("VK API ERROR:");
+                logger.Error(ex, ex.Message);
+                throw;
+            }
+        }
+
     }
 }

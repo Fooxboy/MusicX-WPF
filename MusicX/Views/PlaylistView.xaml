@@ -243,15 +243,25 @@
                                 <controls:Button
                                     x:Name="PlayPlaylist"
                                     Width="150"
-                                    Margin="20,0,0,0"
+                                    Margin="10,0,0,0"
                                     Appearance="Secondary"
                                     Click="PlayPlaylist_Click"
                                     Content="Воспроизвести"
                                     Icon="Play20" />
+
+                                <controls:Button
+                                    x:Name="EditPlaylist"
+                                    Width="150"
+                                    Margin="10,0,0,0"
+                                    Appearance="Secondary"
+                                    Click="EditPlaylist_Click"
+                                    Content="Редактировать"
+                                    Icon="Edit16" />
+
                                 <controls:Button
                                     x:Name="DownloadPlaylist"
                                     Width="120"
-                                    Margin="20,0,0,0"
+                                    Margin="10,0,0,0"
                                     Appearance="Secondary"
                                     Click="DownloadPlaylist_Click"
                                     Content="Скачать"
