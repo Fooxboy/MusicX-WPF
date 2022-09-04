@@ -395,7 +395,11 @@ namespace DiscordRPC.RPC
 								ProcessCommandQueue();
 
 								//Wait for some time, or until a command has been queued up
-								queueUpdatedEvent.WaitOne(POLL_RATE);
+								try
+                                {
+									queueUpdatedEvent.WaitOne(POLL_RATE);
+
+								}catch { }
 							}
 
 							#endregion

@@ -2,6 +2,7 @@
 using Microsoft.Win32;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
+using MusicX.Models;
 using MusicX.Services;
 using MusicX.Views.Modals;
 using System;
@@ -33,6 +34,12 @@ namespace MusicX.ViewModels.Modals
 
         public ICommand OpenCoverPathCommand { get; set; }
 
+        public ICommand DeleteTrackCommand { get; set; }
+
+        public event Action<bool> EndEvent;
+
+        private long editPlaylistId { get; set; }
+
         private readonly NavigationService navigationService;
 
         private readonly VkService vkService;
@@ -63,8 +70,33 @@ namespace MusicX.ViewModels.Modals
             this.AddTracksCommand = new RelayCommand(AddTracks);
             this.CreateCommand = new AsyncCommand(Create);
             this.OpenCoverPathCommand = new AsyncCommand(OpenCoverPath);
+            this.DeleteTrackCommand = new RelayCommand((parameter) => DeleteTrack(parameter));
+            this.selectorViewModel.TracksConfirmed += AddSelectedTracks;    
+            
+        }
 
-            this.selectorViewModel.TracksConfirmed += AddSelectedTracks;       
+        public void LoadDataFromPlaylist(Playlist plist)
+        {
+            this.CreateIsEnable = true;
+            this.CoverPath = plist.Cover;
+            this.Description = plist.Description;
+            this.HideFromSearch = true;
+            this.IsEdit = true;
+            this.Title = plist.Title;
+            this.editPlaylistId = plist.Id;
+
+            foreach (var track in plist.Audios)
+            {
+                this.Tracks.Add(track);
+            }
+
+        }
+
+        private void DeleteTrack(object parameter)
+        {
+            var track = parameter as Audio;
+
+            Tracks.Remove(track);
         }
 
         private void AddTracks()
@@ -87,32 +119,80 @@ namespace MusicX.ViewModels.Modals
 
                 var config = await configService.GetConfig();
 
-                var playlistId = await vkService.CreatePlaylistAsync(config.UserId, this.Title, this.Description, Tracks.ToList());
+                long playlistId = 0;
 
-                if(!string.IsNullOrEmpty(CoverPath))
+                if(isEdit)
                 {
-                    var uploadServer = await vkService.GetPlaylistCoverUploadServerAsync(config.UserId, playlistId);
+                    await EditAsync(config, this.editPlaylistId);
+                    playlistId = editPlaylistId;
+                }else
+                {
+                    playlistId = await vkService.CreatePlaylistAsync(config.UserId, this.Title, this.Description, Tracks.ToList());
 
-                    var image = await vkService.UploadPlaylistCoverAsync(uploadServer.Response.UploadUrl, CoverPath);
-
-                    await vkService.SetPlaylistCoverAsync(config.UserId, playlistId, image.Hash, image.Photo);
                 }
-               
+
+                if(!this.CoverPath.StartsWith("http"))
+                {
+                    await UploadCoverPlaylist(config, playlistId);
+                }
+
                 Tracks.Clear();
 
                 navigationService.CloseModal();
 
-                notificationsService.Show("Плейлист создан", $"Плейлист '{Title}' теперь находится в списке Ваших плейлистов.");
+                if(isEdit)
+                {
+                    notificationsService.Show("Плейлист изменен", $"Плейлист '{Title}' теперь изменен.");
 
-            }catch(Exception ex)
+                }else
+                {
+                    notificationsService.Show("Плейлист создан", $"Плейлист '{Title}' теперь находится в списке Ваших плейлистов.");
+                }
+
+                EndEvent?.Invoke(true);
+
+            }
+            catch(Exception ex)
             {
                 CreateIsEnable = true;
                 Changed(nameof(CreateIsEnable));
 
                 notificationsService.Show("Ошибка", $"MusicX не смог создать плейлист :(");
 
+                EndEvent?.Invoke(false);
+
+
             }
 
+        }
+
+        private async Task UploadCoverPlaylist(ConfigModel config, long playlistId)
+        {
+            if (!string.IsNullOrEmpty(CoverPath))
+            {
+                var uploadServer = await vkService.GetPlaylistCoverUploadServerAsync(config.UserId, playlistId);
+
+                var image = await vkService.UploadPlaylistCoverAsync(uploadServer.Response.UploadUrl, CoverPath);
+
+                await vkService.SetPlaylistCoverAsync(config.UserId, playlistId, image.Hash, image.Photo);
+            }
+        }
+
+        private async Task EditAsync(ConfigModel config, long playlistId)
+        {
+            try
+            {
+
+                await vkService.EditPlaylistAsync(config.UserId, Convert.ToInt32(playlistId), this.Title, this.Description, Tracks.ToList());
+            }
+            catch(Exception ex)
+            {
+                CreateIsEnable = true;
+                Changed(nameof(CreateIsEnable));
+
+                notificationsService.Show("Ошибка", $"MusicX не смог изменить плейлист :(");
+                throw ex;
+            }
         }
 
         private async Task OpenCoverPath()
@@ -170,5 +250,7 @@ namespace MusicX.ViewModels.Modals
             Description = "";
             Tracks.Clear();
         }
+
     }
+    
 }
