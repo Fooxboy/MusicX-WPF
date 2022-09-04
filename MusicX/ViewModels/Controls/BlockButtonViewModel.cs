@@ -98,7 +98,7 @@ public class BlockButtonViewModel : BaseViewModel
                     var viewModel = StaticService.Container.Resolve<CreatePlaylistModalViewModel>();
                     viewModel.IsEdit = false;
                     
-                    navigationService.OpenModal<CreatePlaylistModal>();
+                    navigationService.OpenModal<CreatePlaylistModal>(viewModel);
                     break;
                 }
                 case "open_section":

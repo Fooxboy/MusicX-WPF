@@ -64,7 +64,7 @@
             <wpfui:Button Margin="0 10 0 0" HorizontalAlignment="Stretch" Appearance="Secondary"
                           Command="{Binding AddTracksCommand}" Content="Добавить" Icon="Add24" />
 
-            <ListView AllowDrop="True" Margin="0 10 0 0" ItemsSource="{Binding Tracks, Mode=TwoWay}">
+            <ListView AllowDrop="True" Margin="0 10 0 0" Height="260" ItemsSource="{Binding Tracks, Mode=TwoWay}">
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <VirtualizingStackPanel CacheLength="10" CacheLengthUnit="Item" Orientation="Vertical" />
@@ -82,7 +82,7 @@
                         <Grid>
                             <wpfui:SymbolIcon HorizontalAlignment="Left" Symbol="ReOrderDotsVertical24"
                                               MouseDown="SymbolIcon_MouseDown" />
-                            <controls:TrackControl Margin="20 0 0 0" Audio="{Binding}" />
+                            <controls:TrackControl Margin="20 0 -20 0" Audio="{Binding}" />
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
@@ -96,11 +96,14 @@
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate>
-                                            <StackPanel HorizontalAlignment="Center">
-                                                <wpfui:SymbolIcon FontSize="40" Symbol="Attach12" />
-                                                <TextBlock HorizontalAlignment="Center" FontSize="15" Margin="0 10 0 0"
+                                            <Grid Height="260" VerticalAlignment="Stretch">
+                                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                    <wpfui:SymbolIcon FontSize="40" Symbol="Attach12" />
+                                                    <TextBlock HorizontalAlignment="Center" FontSize="15" Margin="0 10 0 0"
                                                            Text="Нужно добавить хотя бы один трек" />
-                                            </StackPanel>
+                                                </StackPanel>
+                                            </Grid>
+                                           
                                         </ControlTemplate>
                                     </Setter.Value>
                                 </Setter>
