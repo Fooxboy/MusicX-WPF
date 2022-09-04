@@ -22,6 +22,8 @@ namespace MusicX.ViewModels
     {
 
         public event EventHandler<Playlist> PlaylistLoaded;
+
+        public event EventHandler<Playlist> PlaylistNotLoaded;
         public string Title { get; set; }
         public string ArtistText { get; set; }
         public string Genres { get; set; }
@@ -196,6 +198,8 @@ namespace MusicX.ViewModels
                 logger.Error(ex, ex.Message);
 
                 notificationsService.Show("Произошла ошибка", "MusicX не смог загрузить контент");
+
+                PlaylistNotLoaded?.Invoke(this, this.Playlist);
 
             }
         }
