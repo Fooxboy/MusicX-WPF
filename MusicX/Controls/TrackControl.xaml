@@ -347,7 +347,7 @@
             <TextBlock
                 x:Name="Time"
                 Grid.Column="1"
-                Margin="3,0,20,0"
+                Margin="3,0,25,0"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
                 Foreground="White"
