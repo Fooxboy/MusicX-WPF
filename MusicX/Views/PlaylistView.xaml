@@ -243,15 +243,25 @@
                                 <controls:Button
                                     x:Name="PlayPlaylist"
                                     Width="150"
-                                    Margin="20,0,0,0"
+                                    Margin="10,0,0,0"
                                     Appearance="Secondary"
                                     Click="PlayPlaylist_Click"
                                     Content="Воспроизвести"
                                     Icon="Play20" />
+
+                                <controls:Button
+                                    x:Name="EditPlaylist"
+                                    Width="150"
+                                    Margin="10,0,0,0"
+                                    Appearance="Secondary"
+                                    Click="EditPlaylist_Click"
+                                    Content="Редактировать"
+                                    Icon="Edit16" />
+
                                 <controls:Button
                                     x:Name="DownloadPlaylist"
                                     Width="120"
-                                    Margin="20,0,0,0"
+                                    Margin="10,0,0,0"
                                     Appearance="Secondary"
                                     Click="DownloadPlaylist_Click"
                                     Content="Скачать"
@@ -273,6 +283,24 @@
                                        IsIndeterminate="True"/>
             </StackPanel>
         </hc:ScrollViewer>
+
+
+        <Grid x:Name="FuckYouVK" Visibility="Collapsed">
+            <controls:Card Width="650">
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock HorizontalAlignment="Center" FontSize="60" FontFamily="{StaticResource VKSansBold}" Text="ТАК-ТАК!"/>
+                    <TextBlock HorizontalAlignment="Center" Margin="0 30 0 0" FontFamily="{StaticResource VKSansDemiBold}" FontSize="30" Text="MusicX не смог загрузить плейлист"/>
+                    <TextBlock HorizontalAlignment="Center" Margin="0 15 0 0" FontSize="19" Text="Возможно, у Вас включена защита от подозрительных приложений"/>
+                    <TextBlock HorizontalAlignment="Center" Text="Попробуйте её отключить и попробовать ещё раз"/>
+                    <TextBlock HorizontalAlignment="Center" Margin="0 20 0 0" Text="Подоброная инструкция доступна в телеграм канале:"/>
+
+                    <controls:Button Content="Открыть инструкцию" Appearance="Primary" HorizontalAlignment="Center" Click="Button_Click" Margin="0 20 0 0"/>
+
+                </StackPanel>
+            </controls:Card>
+           
+          
+        </Grid>
 
     </Grid>
 </Page>

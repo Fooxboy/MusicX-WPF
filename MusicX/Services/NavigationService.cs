@@ -25,21 +25,11 @@ public class NavigationService
     private SectionViewModel MakeViewModel(string value, SectionType sectionType)
     {
         var viewModel = ActivatorUtilities.CreateInstance<SectionViewModel>(StaticService.Container);
+
+        viewModel.SectionId = value;
+        viewModel.SectionType = sectionType;
         
-        switch (sectionType)
-        {
-            case SectionType.None:
-                viewModel.LoadSection(value).SafeFireAndForget();
-                break;
-            case SectionType.Artist:
-                viewModel.LoadArtistSection(value).SafeFireAndForget();
-                break;
-            case SectionType.Search:
-                viewModel.LoadSearchSection(value).SafeFireAndForget();
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(sectionType), sectionType, null);
-        }
+        viewModel.LoadAsync().SafeFireAndForget();
         
         return viewModel;
     }

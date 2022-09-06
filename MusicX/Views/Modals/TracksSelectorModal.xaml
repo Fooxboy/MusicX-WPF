@@ -9,6 +9,7 @@
       xmlns:models="clr-namespace:MusicX.Core.Models;assembly=MusicX.Core"
       xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml"
       xmlns:controls="clr-namespace:MusicX.Controls"
+      Width="800"
       Title="Выбор треков">
 
     <Grid>

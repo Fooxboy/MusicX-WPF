@@ -227,15 +227,6 @@ namespace MusicX
                 .RaiseEvent(new(ButtonBase.ClickEvent));
         }
 
-        private async void NavigationBar_Navigated(Wpf.Ui.Controls.Interfaces.INavigation sender, Wpf.Ui.Common.RoutedNavigationEventArgs e)
-        {
-            var current = e.CurrentPage;
-
-            if (current.PageTag is "test" or "settings" or "downloads") return;
-            await StaticService.Container.Resolve<SectionViewModel>().LoadSection(current.PageTag).ConfigureAwait(false);
-        }
-
-      
 
         private async void TextBox_KeyUp(object sender, KeyEventArgs e)
         {
@@ -355,11 +346,6 @@ namespace MusicX
             var playerService = StaticService.Container.Resolve<PlayerService>();
             if (playerService.Tracks.Count > 0 && playerService.Tracks.IndexOf(playerService.CurrentTrack) < playerService.Tracks.Count)
                 playerService.NextTrack().SafeFireAndForget();
-        }
-        private void RootFrame_OnMouseUp(object sender, MouseButtonEventArgs e)
-        {
-            if (e.ChangedButton is MouseButton.XButton1)
-                navigationService.GoBack();
         }
     }
 }

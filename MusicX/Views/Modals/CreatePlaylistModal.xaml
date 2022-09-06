@@ -11,6 +11,7 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Width="700"
       Height="600"
+      xmlns:Self="clr-namespace:MusicX.ViewModels.Modals"
       Title="Создание нового плейлиста">
 
     <Grid>
@@ -64,7 +65,7 @@
             <wpfui:Button Margin="0 10 0 0" HorizontalAlignment="Stretch" Appearance="Secondary"
                           Command="{Binding AddTracksCommand}" Content="Добавить" Icon="Add24" />
 
-            <ListView AllowDrop="True" Margin="0 10 0 0" ItemsSource="{Binding Tracks, Mode=TwoWay}">
+            <ListView x:Name="listViewTracks" AllowDrop="True" Margin="0 10 0 0" Height="260" ItemsSource="{Binding Tracks, Mode=TwoWay}">
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <VirtualizingStackPanel CacheLength="10" CacheLengthUnit="Item" Orientation="Vertical" />
@@ -82,7 +83,10 @@
                         <Grid>
                             <wpfui:SymbolIcon HorizontalAlignment="Left" Symbol="ReOrderDotsVertical24"
                                               MouseDown="SymbolIcon_MouseDown" />
-                            <controls:TrackControl Margin="20 0 0 0" Audio="{Binding}" />
+                            <controls:TrackControl Margin="20 0 20 0" Audio="{Binding}" />
+
+                            <wpfui:Button HorizontalAlignment="Right" Margin="0 0 -5 0" Height="58" Icon="Delete24"
+                                          Command="{Binding ElementName=listViewTracks, Path=DataContext.DeleteTrackCommand}" CommandParameter="{Binding}"/>
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
@@ -96,11 +100,14 @@
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate>
-                                            <StackPanel HorizontalAlignment="Center">
-                                                <wpfui:SymbolIcon FontSize="40" Symbol="Attach12" />
-                                                <TextBlock HorizontalAlignment="Center" FontSize="15" Margin="0 10 0 0"
+                                            <Grid Height="260" VerticalAlignment="Stretch">
+                                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                    <wpfui:SymbolIcon FontSize="40" Symbol="Attach12" />
+                                                    <TextBlock HorizontalAlignment="Center" FontSize="15" Margin="0 10 0 0"
                                                            Text="Нужно добавить хотя бы один трек" />
-                                            </StackPanel>
+                                                </StackPanel>
+                                            </Grid>
+                                           
                                         </ControlTemplate>
                                     </Setter.Value>
                                 </Setter>
@@ -112,9 +119,25 @@
 
 
         </StackPanel>
-        
+
         <wpfui:Button HorizontalAlignment="Right" VerticalAlignment="Bottom" Command="{Binding CreateCommand}"
                       IsEnabled="{Binding CreateIsEnable}"
-                      Appearance="Primary" Foreground="White" Content="Создать" Margin="0 20 0 0" />
+                      Appearance="Primary" Foreground="White" Margin="0 20 0 0" >
+
+            <wpfui:Button.Style>
+                <Style TargetType="wpfui:Button" BasedOn="{StaticResource {x:Type wpfui:Button}}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsEdit}" Value="False">
+                            <Setter Property="Content"  Value="Создать"/>
+                        </DataTrigger>
+
+                        <DataTrigger Binding="{Binding IsEdit}" Value="True">
+                            <Setter Property="Content" Value="Изменить"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </wpfui:Button.Style>
+
+        </wpfui:Button>
     </Grid>
 </Page>

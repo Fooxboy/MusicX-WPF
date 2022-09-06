@@ -352,6 +352,7 @@
                                           Height="40"
                                           Margin="0,0,20,0"
                                           Padding="0"
+                                          BorderBrush="#292929"
                                           HorizontalContentAlignment="Center"
                                           Background="Transparent">
                                 <ToggleButton.ToolTip>

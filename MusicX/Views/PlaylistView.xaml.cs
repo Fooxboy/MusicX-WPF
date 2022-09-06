@@ -24,6 +24,9 @@ using System.Windows.Shapes;
 using AsyncAwaitBestPractices;
 using Microsoft.Extensions.DependencyInjection;
 using NavigationService = System.Windows.Navigation.NavigationService;
+using MusicX.ViewModels.Modals;
+using MusicX.Views.Modals;
+using System.Diagnostics;
 
 namespace MusicX.Views
 {
@@ -48,9 +51,17 @@ namespace MusicX.Views
             ViewModel = viewModel ?? StaticService.Container.Resolve<PlaylistViewModel>();;
             InitializeComponent();
             ViewModel.PlaylistLoaded += ViewModel_PlaylistLoaded;
+            ViewModel.PlaylistNotLoaded += ViewModel_PlaylistNotLoaded;
             logger = StaticService.Container.Resolve<Logger>();
             DataContext = ViewModel;
         }
+
+        private void ViewModel_PlaylistNotLoaded(object? sender, Playlist e)
+        {
+            FuckYouVK.Visibility = Visibility.Visible;
+            LoadingContentGrid.Visibility = Visibility.Collapsed;
+        }
+
         public PlaylistView(Playlist playlist) : this()
         {
             this.playlist = playlist;
@@ -68,10 +79,15 @@ namespace MusicX.Views
         private void ViewModel_PlaylistLoaded(object? sender, Playlist e)
         {
             this.playlist = e;
-            if (e.OwnerId == currentUserId)
+            if (this.playlist.Permissions.Delete)
             {
                 this.AddPlaylist.Content = "Удалить плейлист";
                 this.AddPlaylist.Icon = Wpf.Ui.Common.SymbolRegular.Delete24;
+            }
+
+            if(!this.playlist.Permissions.Edit)
+            {
+                this.EditPlaylist.Visibility = Visibility.Collapsed;
             }
         }
         private async void PlaylistScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
@@ -266,6 +282,32 @@ namespace MusicX.Views
                 info.AddValue(OwnerIdKey, ownerId);
                 info.AddValue(AccessKey, accessKey);
             }
+        }
+
+        private void EditPlaylist_Click(object sender, RoutedEventArgs e)
+        {
+            var viewModel = StaticService.Container.Resolve<CreatePlaylistModalViewModel>();
+            viewModel.EndEvent += ViewModel_EndEvent;
+            var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
+            viewModel.LoadDataFromPlaylist(this.playlist);
+            navigationService.OpenModal<CreatePlaylistModal>(viewModel);
+        }
+
+        private async void ViewModel_EndEvent(bool sucess)
+        {
+            if (!sucess) return;
+
+
+            await ViewModel.LoadPlaylistFromData(this.playlist.Id, this.playlist.OwnerId, this.playlist.AccessKey);
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "https://t.me/MusicXPlayer/132",
+                UseShellExecute = true
+            });
         }
     }
 }

@@ -22,7 +22,7 @@ namespace MusicX.Core.Services
 
         public readonly VkApi vkApi;
         private readonly Logger logger;
-        private readonly string vkApiVersion = "5.188";
+        private readonly string vkApiVersion = "5.160";
         private readonly string deviceId = "c3427adfd2595c73:A092cf601fef615c8b594f6ad2c63d159";
 
         public bool IsAuth = false;
@@ -1081,6 +1081,23 @@ namespace MusicX.Core.Services
 
                 return data;
 
+            }
+        }
+
+        public async Task EditPlaylistAsync(long ownerId, int playlistId, string title, string description, List<Audio> tracks)
+        {
+            try
+            {
+                var audios = tracks.Select(t => t.OwnerId + "_" + t.Id);
+
+                var result = await vkApi.Audio.EditPlaylistAsync(ownerId, playlistId, title, description, audios);
+
+            }
+            catch (Exception ex)
+            {
+                logger.Error("VK API ERROR:");
+                logger.Error(ex, ex.Message);
+                throw;
             }
         }
 

@@ -82,7 +82,7 @@ namespace MusicX.Controls
 
                 if (Block.DataType == "placeholder")
                 {
-                    BlocksPanel.Children.Add(new PlaceholderBlockControl());
+                    BlocksPanel.Children.Add(new PlaceholderBlockControl(Block));
 
                     logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
 
