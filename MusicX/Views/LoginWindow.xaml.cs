@@ -81,7 +81,7 @@ namespace MusicX.Views
                 var login = Login.Text;
                 var password = Password.Password;
 
-                var token = await vkService.AuthAsync(login, password, TwoAuthDelegate, null);
+                var token = await vkService.AuthAsync(login, password, TwoAuthDelegate);
                 var currentUser = await vkService.GetCurrentUserAsync();
 
                 var config = await configService.GetConfig();

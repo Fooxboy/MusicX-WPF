@@ -638,19 +638,19 @@ namespace MusicX.Controls
 
                 var ids = new List<string>();
 
-                foreach (var audio in items.Response.Items)
+                foreach (var audio in items.Items)
                 {
                     ids.Add(audio.OwnerId + "_" + audio.Id + "_" + audio.AccessKey);
                 }
 
-                var block = new MusicX.Core.Models.Block { Audios = items.Response.Items, AudiosIds = ids, DataType = "music_audios", Layout = new Layout() { Name = "list" } };
+                var block = new MusicX.Core.Models.Block { Audios = items.Items, AudiosIds = ids, DataType = "music_audios", Layout = new Layout() { Name = "list" } };
                 var title = new MusicX.Core.Models.Block { DataType = "none", Layout = new Layout() { Name = "header", Title = $"Треки похожие на \"{Audio.Title}\"" } };
 
                 var blocks = new List<Core.Models.Block>();
                 blocks.Add(title);
                 blocks.Add(block);
 
-                navigation.OpenSection(items.Response.Section.Id);
+                navigation.OpenSection(items.Section.Id);
             }
             catch (Exception ex)
             {

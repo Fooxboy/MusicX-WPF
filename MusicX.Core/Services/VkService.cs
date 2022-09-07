@@ -7,10 +7,13 @@ using NLog;
 using System.Diagnostics;
 using System.Net.Http.Headers;
 using VkNet;
+using VkNet.Abstractions;
+using VkNet.Abstractions.Core;
 using VkNet.AudioBypassService.Abstractions;
 using VkNet.AudioBypassService.Extensions;
 using VkNet.Enums.Filters;
 using VkNet.Exception;
+using VkNet.Extensions.DependencyInjection;
 using VkNet.Model;
 using VkNet.Utils;
 using VkNet.Utils.AntiCaptcha;
@@ -20,7 +23,8 @@ namespace MusicX.Core.Services
     public class VkService
     {
 
-        public readonly VkApi vkApi;
+        public readonly IVkApiCategories vkApi;
+        private readonly IVkApiInvoke apiInvoke;
         private readonly Logger logger;
         private readonly string vkApiVersion = "5.160";
         private readonly string deviceId = "c3427adfd2595c73:A092cf601fef615c8b594f6ad2c63d159";
@@ -33,15 +37,17 @@ namespace MusicX.Core.Services
         {
             var services = new ServiceCollection();
             services.AddAudioBypass();
-
-            vkApi = new VkApi(services);
+            services.AddVkNet();
 
             provider = services.BuildServiceProvider();
             authFlow = provider.GetRequiredService<IVkAndroidAuthorization>();
+            vkApi = provider.GetRequiredService<IVkApiCategories>();
+            apiInvoke = provider.GetRequiredService<IVkApiInvoke>();
 
             var ver = vkApiVersion.Split('.');
 
-            vkApi.VkApiVersion.SetVersion(int.Parse(ver[0]), int.Parse(ver[1]));
+            provider.GetRequiredService<IVkApiVersionManager>()
+                    .SetVersion(int.Parse(ver[0]), int.Parse(ver[1]));
 
             var log = LogManager.Setup().GetLogger("Common");
 
@@ -49,13 +55,15 @@ namespace MusicX.Core.Services
             else this.logger = logger;
         }
 
-        public async Task<string> AuthAsync(string login, string password, Func<string> twoFactorAuth, ICaptchaSolver captchaSolver)
+        public async Task<string> AuthAsync(string login, string password, Func<string> twoFactorAuth)
         {
             try
             {
                 logger.Info("Invoke auth with login and password");
-                vkApi.CaptchaSolver = captchaSolver;
-                await vkApi.AuthorizeAsync(new ApiAuthParams()
+
+                var auth = provider.GetRequiredService<IVkApiAuthAsync>();
+                
+                await auth.AuthorizeAsync(new ApiAuthParams()
                 {
                     Login = login,
                     Password = password,
@@ -64,14 +72,13 @@ namespace MusicX.Core.Services
 
 
                 var user = await vkApi.Users.GetAsync(new List<long>());
-                vkApi.UserId = user[0].Id;
 
                 IsAuth = true;
 
                 logger.Info($"User '{user[0].Id}' successful sign in");
 
 
-                return vkApi.Token;
+                return provider.GetRequiredService<IVkTokenStore>().Token;
             }catch(Exception ex)
             {
                 logger.Error("VK API ERROR:");
@@ -81,14 +88,15 @@ namespace MusicX.Core.Services
            
         }
 
-        public async Task SetTokenAsync(string token, ICaptchaSolver captchaSolver)
+        public async Task SetTokenAsync(string token)
         {
             try
             {
                 logger.Info("Set user token");
 
-                vkApi.CaptchaSolver = captchaSolver;
-                await vkApi.AuthorizeAsync(new ApiAuthParams()
+                var auth = provider.GetRequiredService<IVkApiAuthAsync>();
+                
+                await auth.AuthorizeAsync(new ApiAuthParams()
                 {
                     AccessToken = token
                 });
@@ -96,13 +104,12 @@ namespace MusicX.Core.Services
                 try
                 {
                     var user = await vkApi.Users.GetAsync(new List<long>());
-                    vkApi.UserId = user[0].Id;
                     logger.Info($"User '{user[0].Id}' successful sign in");
                 }
                 catch (VkApiMethodInvokeException e) when (e.ErrorCode == 1117) // token has expired
                 {
                     var newToken = await authFlow.AuthByExchangeTokenAsync(token);
-                    await SetTokenAsync(newToken, captchaSolver);
+                    await SetTokenAsync(newToken);
                 }
 
                 IsAuth = true;
@@ -124,10 +131,9 @@ namespace MusicX.Core.Services
 
                 var parameters = new VkParameters
                 {
-                    {"v", vkApiVersion},
-                    {"lang", "ru"},
+                    
                     {"extended", "1"},
-                    {"access_token", vkApi.Token},
+                    
                     {"device_id", deviceId}
                 };
 
@@ -136,14 +142,14 @@ namespace MusicX.Core.Services
                     parameters.Add("url", url);
                 }
 
-                var json = await vkApi.InvokeAsync("catalog.getAudio", parameters);
+                var json = await apiInvoke.InvokeAsync("catalog.getAudio", parameters);
                 logger.Debug("RESULT OF 'catalog.getAudio'" + json);
 
-                var model = JsonConvert.DeserializeObject<ResponseVk>(json);
+                var model = JsonConvert.DeserializeObject<ResponseData>(json);
 
                 logger.Info("Successful invoke 'catalog.getAudio' ");
 
-                return model.Proccess().Response;
+                return model.Proccess();
             }catch(Exception ex)
             {
                 logger.Error("VK API ERROR:");
@@ -162,10 +168,9 @@ namespace MusicX.Core.Services
 
                 var parameters = new VkParameters
                 {
-                    {"v", vkApiVersion},
-                    {"lang", "ru"},
+                    
                     {"extended", "1"},
-                    {"access_token", vkApi.Token},
+                    
                     {"device_id", deviceId},
                     {"section_id", sectionId },
                     {"need_blocks", 1 },
@@ -174,16 +179,16 @@ namespace MusicX.Core.Services
                 if (startFrom != null) parameters.Add("start_from", startFrom);
 
 
-                var json = await vkApi.InvokeAsync("catalog.getSection", parameters);
+                var json = await apiInvoke.InvokeAsync("catalog.getSection", parameters);
                 logger.Debug("RESULT OF 'catalog.getSection'" + json);
 
 
-                var model = JsonConvert.DeserializeObject<ResponseVk>(json);
+                var model = JsonConvert.DeserializeObject<ResponseData>(json);
 
                  logger.Info("Successful invoke 'catalog.getSection' ");
 
 
-                return model.Proccess().Response;
+                return model.Proccess();
             }catch (Exception ex)
             {
                 logger.Error("VK API ERROR:");
@@ -200,24 +205,23 @@ namespace MusicX.Core.Services
 
                 var parameters = new VkParameters
                 {
-                    {"v", vkApiVersion},
-                    {"lang", "ru"},
+                    
                     {"extended", "1"},
                     {"device_id", deviceId},
-                    {"access_token", vkApi.Token},
+                    
                     {"block_id", blockId },
                 };
 
 
-                var json = await vkApi.InvokeAsync("catalog.getBlockItems", parameters);
+                var json = await apiInvoke.InvokeAsync("catalog.getBlockItems", parameters);
                 logger.Debug("RESULT OF 'catalog.getBlockItems'" + json);
 
 
-                var model = JsonConvert.DeserializeObject<ResponseVk>(json);
+                var model = JsonConvert.DeserializeObject<ResponseData>(json);
 
                 logger.Info("Successful invoke 'catalog.getBlockItems' ");
 
-                return model.Proccess().Response;
+                return model.Proccess();
             }catch(Exception ex)
             {
                 logger.Error("VK API ERROR:");
@@ -234,10 +238,9 @@ namespace MusicX.Core.Services
 
                 var parameters = new VkParameters
                 {
-                    {"v", vkApiVersion},
-                    {"lang", "ru"},
+                    
                     {"extended", "1"},
-                    {"access_token", vkApi.Token},
+                    
                     {"device_id", deviceId},
                 };
 
@@ -249,14 +252,14 @@ namespace MusicX.Core.Services
                 if (context != null) parameters.Add("context", context);
 
 
-                var json = await vkApi.InvokeAsync("catalog.getAudioSearch", parameters);
+                var json = await apiInvoke.InvokeAsync("catalog.getAudioSearch", parameters);
                 logger.Debug("RESULT OF 'catalog.getAudioSearch'" + json);
 
 
-                var model = JsonConvert.DeserializeObject<ResponseVk>(json);
+                var model = JsonConvert.DeserializeObject<ResponseData>(json);
                 logger.Info("Successful invoke 'catalog.getAudioSearch' ");
 
-                return model.Proccess().Response;
+                return model.Proccess();
             }catch(Exception ex)
             {
                 logger.Error("VK API ERROR:");
@@ -273,26 +276,25 @@ namespace MusicX.Core.Services
 
                 var parameters = new VkParameters
                 {
-                    {"v", vkApiVersion},
-                    {"lang", "ru"},
+                    
                     {"extended", "1"},
-                    {"access_token", vkApi.Token},
+                    
                     {"device_id", deviceId},
                     {"artist_id", artistId}
 
                 };
 
 
-                var json = await vkApi.InvokeAsync("catalog.getAudioArtist", parameters);
+                var json = await apiInvoke.InvokeAsync("catalog.getAudioArtist", parameters);
                 logger.Debug("RESULT OF 'catalog.getAudioArtist'" + json);
 
 
-                var model = JsonConvert.DeserializeObject<ResponseVk>(json);
+                var model = JsonConvert.DeserializeObject<ResponseData>(json);
 
                 logger.Info("Successful invoke 'catalog.getAudioArtist' ");
 
 
-                return model.Proccess().Response;
+                return model.Proccess();
             }catch (Exception ex)
             {
                 logger.Error("VK API ERROR:");
@@ -309,26 +311,25 @@ namespace MusicX.Core.Services
 
                 var parameters = new VkParameters
                 {
-                    {"v", vkApiVersion},
-                    {"lang", "ru"},
+                    
                     {"extended", "1"},
                     {"device_id", deviceId},
-                    {"access_token", vkApi.Token},
+                    
                     {"curator_id", curatorId},
                     {"url", url}
                 };
 
 
-                var json = await vkApi.InvokeAsync("catalog.getAudioCurator", parameters);
+                var json = await apiInvoke.InvokeAsync("catalog.getAudioCurator", parameters);
                 logger.Debug("RESULT OF 'catalog.getAudioCurator'" + json);
 
 
-                var model = JsonConvert.DeserializeObject<ResponseVk>(json);
+                var model = JsonConvert.DeserializeObject<ResponseData>(json);
 
                 logger.Info("Successful invoke 'catalog.getAudioCurator' ");
 
 
-                return model.Proccess().Response;
+                return model.Proccess();
             }catch(Exception ex)
             {
                 logger.Error("VK API ERROR:");
@@ -355,21 +356,21 @@ namespace MusicX.Core.Services
                     {"func_v", 9 },
                     {"id", albumId},
                     {"audio_offset", offset },
-                    {"access_token", vkApi.Token},
+                    
                     {"count", "10"},
                     {"need_owner", needOwner }
                 };
 
-                var json  = await vkApi.InvokeAsync("execute.getPlaylist", parameters);
+                var json  = await apiInvoke.InvokeAsync("execute.getPlaylist", parameters);
                 logger.Debug("RESULT OF 'execute.getPlaylist'" + json);
 
 
-                var model = JsonConvert.DeserializeObject<ResponseVk>(json);
+                var model = JsonConvert.DeserializeObject<ResponseData>(json);
 
                 logger.Info("Successful invoke 'execute.getPlaylist' ");
 
 
-                return model.Proccess().Response;
+                return model.Proccess();
             }catch(Exception ex)
             {
                 logger.Error("VK API ERROR:");
@@ -387,15 +388,14 @@ namespace MusicX.Core.Services
 
                 var parameters = new VkParameters
                 {
-                    {"v", vkApiVersion},
-                    {"lang", "ru"},
-                    {"access_token", vkApi.Token},
+                    
+                    
                     {"audio_id", audioId},
                     {"owner_id", ownerId}
                 };
 
 
-                var json = await vkApi.InvokeAsync("audio.add", parameters);
+                var json = await apiInvoke.InvokeAsync("audio.add", parameters);
                 logger.Debug("RESULT OF 'audio.add'" + json);
 
 
@@ -416,15 +416,14 @@ namespace MusicX.Core.Services
 
                 var parameters = new VkParameters
                 {
-                    {"v", vkApiVersion},
-                    {"lang", "ru"},
-                    {"access_token", vkApi.Token},
+                    
+                    
                     {"audio_id", audioId},
                     {"owner_id", ownerId}
                 };
 
 
-                var json = await vkApi.InvokeAsync("audio.delete", parameters);
+                var json = await apiInvoke.InvokeAsync("audio.delete", parameters);
 
                 logger.Debug("RESULT OF 'audio.delete'" + json);
 
@@ -524,9 +523,8 @@ namespace MusicX.Core.Services
 
                 var parameters = new VkParameters
                 {
-                    {"v", vkApiVersion},
-                    {"lang", "ru"},
-                    {"access_token", vkApi.Token},
+                    
+                    
                     {"playlist_id", playlistId},
                     {"owner_id", ownerId},
                     
@@ -534,7 +532,7 @@ namespace MusicX.Core.Services
 
                 if (accessKey != null) parameters.Add("access_key", accessKey);
 
-                var json = await vkApi.InvokeAsync("audio.followPlaylist", parameters);
+                var json = await apiInvoke.InvokeAsync("audio.followPlaylist", parameters);
 
                 logger.Debug("RESULT OF 'audio.followPlaylist'" + json);
 
@@ -573,9 +571,8 @@ namespace MusicX.Core.Services
 
                 var parameters = new VkParameters
                 {
-                    {"v", vkApiVersion},
-                    {"lang", "ru"},
-                    {"access_token", vkApi.Token},
+                    
+                    
                     {"offset", offset },
                     {"count", count }
                 };
@@ -596,16 +593,16 @@ namespace MusicX.Core.Services
                 }
 
 
-                var json = await vkApi.InvokeAsync("audio.get", parameters);
+                var json = await apiInvoke.InvokeAsync("audio.get", parameters);
 
                 logger.Debug("RESULT OF 'audio.get'" + json);
 
 
-                var model = JsonConvert.DeserializeObject<ResponseVk>(json);
+                var model = JsonConvert.DeserializeObject<ResponseData>(json);
 
                 logger.Info("Successful invoke 'audio.get' ");
 
-                return model.Response;
+                return model;
                 //vkApi.Audio.GetAsync(new VkNet.Model.RequestParams.AudioGetParams() { })
             }catch(Exception ex)
             {
@@ -625,26 +622,25 @@ namespace MusicX.Core.Services
 
                 var parameters = new VkParameters
                 {
-                    {"v", vkApiVersion},
-                    {"lang", "ru"},
+                    
                     {"device_id", deviceId},
-                    {"access_token", vkApi.Token},
+                    
                     {"replacement_ids", replaceId},
                 };
 
 
 
-                var json = await vkApi.InvokeAsync("catalog.replaceBlocks", parameters);
+                var json = await apiInvoke.InvokeAsync("catalog.replaceBlocks", parameters);
 
                 logger.Debug("RESULT OF 'catalog.replaceBlocks'" + json);
 
 
-                var model = JsonConvert.DeserializeObject<ResponseVk>(json);
+                var model = JsonConvert.DeserializeObject<ResponseData>(json);
 
                 logger.Info("Successful invoke 'catalog.replaceBlocks' ");
 
 
-                return model.Proccess().Response;
+                return model.Proccess();
             }catch(Exception ex)
             {
                 logger.Error("VK API ERROR:");
@@ -662,16 +658,15 @@ namespace MusicX.Core.Services
                 var stats = JsonConvert.SerializeObject(obj);
                 var parameters = new VkParameters
                 {
-                    {"v", vkApiVersion},
-                    {"lang", "ru"},
+                    
                     {"device_id", deviceId},
-                    {"access_token", vkApi.Token},
+                    
                     {"events", stats},
                 };
 
                 Debug.WriteLine($"SEND stats.trackEvents : {stats}");
 
-                var json = await vkApi.InvokeAsync("stats.trackEvents", parameters);
+                var json = await apiInvoke.InvokeAsync("stats.trackEvents", parameters);
 
                 logger.Info("Successful invoke 'stats.trackEvents' ");
             }catch(Exception ex)
@@ -691,15 +686,14 @@ namespace MusicX.Core.Services
 
                 var parameters = new VkParameters
                 {
-                    {"v", vkApiVersion},
-                    {"lang", "ru"},
+                    
                     {"device_id", deviceId},
-                    {"access_token", vkApi.Token},
+                    
                     {"curator_id", curatorId},
                 };
 
 
-                var json = await vkApi.InvokeAsync("audio.followCurator", parameters);
+                var json = await apiInvoke.InvokeAsync("audio.followCurator", parameters);
 
                 logger.Debug("RESULT OF 'audio.followCurator'" + json);
             }
@@ -719,15 +713,14 @@ namespace MusicX.Core.Services
 
                 var parameters = new VkParameters
                 {
-                    {"v", vkApiVersion},
-                    {"lang", "ru"},
+                    
                     {"device_id", deviceId},
-                    {"access_token", vkApi.Token},
+                    
                     {"curator_id", curatorId},
                 };
 
 
-                var json = await vkApi.InvokeAsync("audio.unfollowCurator", parameters);
+                var json = await apiInvoke.InvokeAsync("audio.unfollowCurator", parameters);
 
                 logger.Debug("RESULT OF 'audio.unfollowCurator'" + json);
             }
@@ -748,16 +741,15 @@ namespace MusicX.Core.Services
 
                 var parameters = new VkParameters
                 {
-                    {"v", vkApiVersion},
-                    {"lang", "ru"},
+                    
                     {"device_id", deviceId},
-                    {"access_token", vkApi.Token},
+                    
                     {"artist_id", artistId},
                     {"ref", referenceId},
                 };
 
 
-                var json = await vkApi.InvokeAsync("audio.followArtist", parameters);
+                var json = await apiInvoke.InvokeAsync("audio.followArtist", parameters);
 
                 logger.Debug("RESULT OF 'audio.followArtist'" + json);
             }
@@ -777,16 +769,15 @@ namespace MusicX.Core.Services
 
                 var parameters = new VkParameters
                 {
-                    {"v", vkApiVersion},
-                    {"lang", "ru"},
+                    
                     {"device_id", deviceId},
-                    {"access_token", vkApi.Token},
+                    
                     {"artist_id", artistId},
                     {"ref", referenceId},
                 };
 
 
-                var json = await vkApi.InvokeAsync("audio.unfollowArtist", parameters);
+                var json = await apiInvoke.InvokeAsync("audio.unfollowArtist", parameters);
 
                 logger.Debug("RESULT OF 'audio.unfollowArtist'" + json);
             }
@@ -807,23 +798,22 @@ namespace MusicX.Core.Services
 
                 var parameters = new VkParameters
                 {
-                    {"v", vkApiVersion},
-                    {"lang", "ru"},
+                    
                     {"device_id", deviceId},
-                    {"access_token", vkApi.Token},
+                    
                     {"track_code", trackCode},
                     {"audio_id", audio }
                 };
 
 
-                var json = await vkApi.InvokeAsync("audio.getRestrictionPopup", parameters);
+                var json = await apiInvoke.InvokeAsync("audio.getRestrictionPopup", parameters);
 
-                var model = JsonConvert.DeserializeObject<ResponseRestrictionPopup>(json);
+                var model = JsonConvert.DeserializeObject<RestrictionPopupData>(json);
 
 
                 logger.Debug("RESULT OF 'audio.getRestrictionPopup'" + json);
 
-                return model.Response;
+                return model;
             }
             catch (Exception ex)
             {
@@ -842,25 +832,24 @@ namespace MusicX.Core.Services
 
                 var parameters = new VkParameters
                 {
-                    {"v", vkApiVersion},
-                    {"lang", "ru"},
+                    
                     {"extended", "1"},
                     {"device_id", deviceId},
-                    {"access_token", vkApi.Token},
+                    
                     {"url", url},
                 };
 
 
-                var json = await vkApi.InvokeAsync("catalog.getPodcasts", parameters);
+                var json = await apiInvoke.InvokeAsync("catalog.getPodcasts", parameters);
                 logger.Debug("RESULT OF 'catalog.getPodcasts'" + json);
 
 
-                var model = JsonConvert.DeserializeObject<ResponseVk>(json);
+                var model = JsonConvert.DeserializeObject<ResponseData>(json);
 
                 logger.Info("Successful invoke 'catalog.getAudioCurator' ");
 
 
-                return model.Proccess().Response;
+                return model.Proccess();
             }
             catch (Exception ex)
             {
@@ -876,43 +865,41 @@ namespace MusicX.Core.Services
 
             var parameters = new VkParameters
                 {
-                    {"v", vkApiVersion},
-                    {"lang", "ru"},
+                    
                     {"extended", "1"},
                     {"device_id", deviceId},
-                    {"access_token", vkApi.Token},
+                    
                     {"code", code},
                 };
 
 
-            var json = await vkApi.InvokeAsync("execute", parameters);
+            var json = await apiInvoke.InvokeAsync("execute", parameters);
 
 
-            var model = JsonConvert.DeserializeObject<ResponseVk>(json);
+            var model = JsonConvert.DeserializeObject<ResponseData>(json);
 
             logger.Debug("RESULT OF 'execute'" + json);
 
-            return model.Proccess().Response;
+            return model.Proccess();
         }
 
-        public async Task<ResponseVk> GetRecommendationsAudio(string audio)
+        public async Task<ResponseData> GetRecommendationsAudio(string audio)
         {
             try
             {
                 var parameters = new VkParameters
                 {
-                    {"v", vkApiVersion},
-                    {"lang", "ru"},
+                    
                     {"device_id", deviceId},
-                    {"access_token", vkApi.Token},
+                    
                     {"target_audio", audio},
                 };
 
 
-                var json = await vkApi.InvokeAsync("audio.getRecommendations", parameters);
+                var json = await apiInvoke.InvokeAsync("audio.getRecommendations", parameters);
 
 
-                var model = JsonConvert.DeserializeObject<ResponseVk>(json);
+                var model = JsonConvert.DeserializeObject<ResponseData>(json);
 
                 return model;
             }catch (Exception ex)
@@ -950,22 +937,21 @@ namespace MusicX.Core.Services
             {
                 var parameters = new VkParameters
                 {
-                    {"v", vkApiVersion},
-                    {"lang", "ru"},
+                    
                     {"device_id", deviceId},
-                    {"access_token", vkApi.Token},
+                    
                     {"owner_id", ownerId},
                     {"count", 100}
 
                 };
 
 
-                var json = await vkApi.InvokeAsync("audio.getPlaylists", parameters);
+                var json = await apiInvoke.InvokeAsync("audio.getPlaylists", parameters);
 
 
-                var model = JsonConvert.DeserializeObject<OldResponseVk<Playlist>>(json);
+                var model = JsonConvert.DeserializeObject<OldResponseData<Playlist>>(json);
 
-                return model.Response.Items;
+                return model.Items;
             }
             catch (Exception ex)
             {
@@ -1013,10 +999,9 @@ namespace MusicX.Core.Services
             {
                 var parameters = new VkParameters
                 {
-                    {"v", vkApiVersion},
-                    {"lang", "ru"},
+                    
                     {"device_id", deviceId},
-                    {"access_token", vkApi.Token},
+                    
                     {"owner_id", ownerId},
                     {"playlist_id", playlistId},
                     {"hash", hash},
@@ -1024,7 +1009,7 @@ namespace MusicX.Core.Services
                 };
 
 
-                var json = await vkApi.InvokeAsync("audio.setPlaylistCoverPhoto", parameters);
+                var json = await apiInvoke.InvokeAsync("audio.setPlaylistCoverPhoto", parameters);
 
             }
             catch (Exception ex)
@@ -1041,15 +1026,14 @@ namespace MusicX.Core.Services
             {
                 var parameters = new VkParameters
                 {
-                    {"v", vkApiVersion},
-                    {"lang", "ru"},
+                    
                     {"device_id", deviceId},
-                    {"access_token", vkApi.Token},
+                    
                     {"owner_id", ownerId},
                     {"playlist_id", playlistId},
                 };
 
-                var json = await vkApi.InvokeAsync("photos.getAudioPlaylistCoverUploadServer", parameters);
+                var json = await apiInvoke.InvokeAsync("photos.getAudioPlaylistCoverUploadServer", parameters);
 
                 var model = JsonConvert.DeserializeObject<UploadPlaylistCoverServerResult>(json);
 

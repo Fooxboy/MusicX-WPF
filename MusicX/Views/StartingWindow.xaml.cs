@@ -116,7 +116,7 @@ namespace MusicX.Views
                             try
                             {
 
-                                await vkService.SetTokenAsync(config.AccessToken, null);
+                                await vkService.SetTokenAsync(config.AccessToken);
                                 var rootWindow = new RootWindow(navigationService, vkService, logger, configService, notificationsService);
                                 rootWindow.Show();
                                 this.Close();
