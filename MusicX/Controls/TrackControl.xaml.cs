@@ -1,5 +1,4 @@
-﻿using DryIoc;
-using MusicX.Core.Models;
+﻿using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Services;
 using MusicX.Views;
@@ -8,21 +7,13 @@ using NLog;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Cache;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using AsyncAwaitBestPractices;
+using Microsoft.Extensions.DependencyInjection;
 using MusicX.Helpers;
 using MusicX.ViewModels;
 using WpfAnimatedGif;
@@ -43,8 +34,8 @@ namespace MusicX.Controls
         public TrackControl()
         {
             InitializeComponent();
-            logger = StaticService.Container.Resolve<Logger>();
-            player = StaticService.Container.Resolve<PlayerService>();
+            logger = StaticService.Container.GetRequiredService<Logger>();
+            player = StaticService.Container.GetRequiredService<PlayerService>();
 
 
             player.TrackChangedEvent += Player_TrackChangedEvent;
@@ -252,7 +243,7 @@ namespace MusicX.Controls
                 
 
 
-                var configService = StaticService.Container.Resolve<Services.ConfigService>();
+                var configService = StaticService.Container.GetRequiredService<Services.ConfigService>();
 
 
                 var config = await configService.GetConfig();
@@ -364,7 +355,7 @@ namespace MusicX.Controls
         {
             try
             {
-                var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
+                var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
 
                 if (Audio.MainArtists == null)
                 {
@@ -377,7 +368,7 @@ namespace MusicX.Controls
             }catch(Exception ex)
             {
                 logger.Error(ex, ex.Message);
-                StaticService.Container.Resolve<NotificationsService>().Show("Ошибка", "Нам не удалось перейти на эту секцию");
+                StaticService.Container.GetRequiredService<NotificationsService>().Show("Ошибка", "Нам не удалось перейти на эту секцию");
             }
 
         }
@@ -478,8 +469,8 @@ namespace MusicX.Controls
                 
                 if (Audio.Url == String.Empty)
                 {
-                    var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
-                    var modalViewModel = StaticService.Container.Resolve<TrackNotAvalibleModalViewModel>();
+                    var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
+                    var modalViewModel = StaticService.Container.GetRequiredService<TrackNotAvalibleModalViewModel>();
                     await modalViewModel.LoadAsync(Audio.TrackCode, Audio.OwnerId + "_" + Audio.Id + "_" + Audio.AccessKey);
                     
                     navigationService.OpenModal<TrackNotAvalibleModal>(modalViewModel);
@@ -535,7 +526,7 @@ namespace MusicX.Controls
         {
             try
             {
-                var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
+                var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
 
                 if (Audio.MainArtists == null)
                 {
@@ -549,14 +540,14 @@ namespace MusicX.Controls
             catch (Exception ex)
             {
                 logger.Error(ex, ex.Message);
-                StaticService.Container.Resolve<NotificationsService>().Show("Ошибка", "Нам не удалось перейти на эту секцию");
+                StaticService.Container.GetRequiredService<NotificationsService>().Show("Ошибка", "Нам не удалось перейти на эту секцию");
             }
         }
 
         private async void AddRemove_MouseDown(object sender, MouseButtonEventArgs e)
         {
-           var configService = StaticService.Container.Resolve<Services.ConfigService>();
-            var vkService = StaticService.Container.Resolve<VkService>();
+           var configService = StaticService.Container.GetRequiredService<Services.ConfigService>();
+            var vkService = StaticService.Container.GetRequiredService<VkService>();
 
 
             var config = await configService.GetConfig();
@@ -573,7 +564,7 @@ namespace MusicX.Controls
 
         private void Download_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            var downloader = StaticService.Container.Resolve<DownloaderViewModel>();
+            var downloader = StaticService.Container.GetRequiredService<DownloaderViewModel>();
 
             try
             {
@@ -581,7 +572,7 @@ namespace MusicX.Controls
                 downloader.StartDownloadingCommand.Execute(null);
             }catch(FileNotFoundException)
             {
-                var navigation = StaticService.Container.Resolve<Services.NavigationService>();
+                var navigation = StaticService.Container.GetRequiredService<Services.NavigationService>();
                 navigation.OpenMenuSection("downloads");
             }
         }
@@ -610,7 +601,7 @@ namespace MusicX.Controls
             {
                 if (Audio.Album != null)
                 {
-                    var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
+                    var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
                     navigationService.OpenExternalPage(new PlaylistView(Audio.Album.Id, Audio.Album.OwnerId, Audio.Album.AccessKey));
                 }
 
@@ -626,15 +617,15 @@ namespace MusicX.Controls
         {
             try
             {
-                var notifications = StaticService.Container.Resolve<Services.NotificationsService>();
+                var notifications = StaticService.Container.GetRequiredService<Services.NotificationsService>();
 
                 notifications.Show("Уже ищем", "Сейчас мы найдем похожие треки, подождите");
 
-                var vk = StaticService.Container.Resolve<VkService>();
+                var vk = StaticService.Container.GetRequiredService<VkService>();
 
                 var items = await vk.GetRecommendationsAudio(Audio.OwnerId + "_" + Audio.Id);
 
-                var navigation = StaticService.Container.Resolve<Services.NavigationService>();
+                var navigation = StaticService.Container.GetRequiredService<Services.NavigationService>();
 
                 var ids = new List<string>();
 
@@ -655,7 +646,7 @@ namespace MusicX.Controls
             catch (Exception ex)
             {
                 logger.Error(ex, ex.Message);
-                var notifications = StaticService.Container.Resolve<Services.NotificationsService>();
+                var notifications = StaticService.Container.GetRequiredService<Services.NotificationsService>();
 
                 notifications.Show("Ошибка", "Мы не смогли найти подходящие треки");
 
@@ -688,8 +679,8 @@ namespace MusicX.Controls
 
         private void AddToPlaylist_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            var viewModel = StaticService.Container.Resolve<PlaylistSelectorModalViewModel>();
-            var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
+            var viewModel = StaticService.Container.GetRequiredService<PlaylistSelectorModalViewModel>();
+            var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
 
             viewModel.PlaylistSelected += ViewModel_PlaylistSelected;
 
@@ -698,8 +689,8 @@ namespace MusicX.Controls
 
         private async void ViewModel_PlaylistSelected(Playlist playlist)
         {
-            var vk = StaticService.Container.Resolve<VkService>();
-            var notificationsService = StaticService.Container.Resolve<NotificationsService>();
+            var vk = StaticService.Container.GetRequiredService<VkService>();
+            var notificationsService = StaticService.Container.GetRequiredService<NotificationsService>();
 
             try
             {

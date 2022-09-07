@@ -1,21 +1,12 @@
-﻿using DryIoc;
-using MusicX.Core.Models;
+﻿using MusicX.Core.Models;
 using MusicX.Services;
 using NLog;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace MusicX.Controls.Blocks
 {
@@ -51,7 +42,7 @@ namespace MusicX.Controls.Blocks
             }
             catch (Exception ex)
             {
-                var logger = StaticService.Container.Resolve<Logger>();
+                var logger = StaticService.Container.GetRequiredService<Logger>();
 
                 logger.Error(ex, ex.Message);
             }

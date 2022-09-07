@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
-using DryIoc;
 using MusicX.Services;
 using MusicX.ViewModels;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
 using AsyncAwaitBestPractices;

@@ -1,11 +1,11 @@
-﻿using DryIoc;
-using MusicX.Services;
+﻿using MusicX.Services;
 using NLog;
 using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using Microsoft.Extensions.DependencyInjection;
 using MusicX.Controls;
 using MusicX.ViewModels;
 using Xabe.FFmpeg;
@@ -24,7 +24,7 @@ public partial class DownloadsView : Page, IMenuPage
     public DownloadsView()
     {
         InitializeComponent();
-        DataContext = StaticService.Container.Resolve<DownloaderViewModel>();
+        DataContext = StaticService.Container.GetRequiredService<DownloaderViewModel>();
         this.Loaded += DownloadsView_Loaded;
     }
 
@@ -63,7 +63,7 @@ public partial class DownloadsView : Page, IMenuPage
 
         await FFmpegDownloader.GetLatestVersion(FFmpegVersion.Official, ffmpegPath, new Progress<ProgressInfo>(Client_DownloadProgressChanged));
             
-        var notifications = StaticService.Container.Resolve<Services.NotificationsService>();
+        var notifications = StaticService.Container.GetRequiredService<Services.NotificationsService>();
         notifications.Show("Загрузка завершена", "Дополнительный компонент был загружен. Теперь Вы можете скачивать музыку!");
 
         ContentGrid.Visibility = Visibility.Visible;
@@ -104,10 +104,10 @@ public partial class DownloadsView : Page, IMenuPage
         }
         catch (Exception ex)
         {
-            var notifications = StaticService.Container.Resolve<Services.NotificationsService>();
+            var notifications = StaticService.Container.GetRequiredService<Services.NotificationsService>();
             notifications.Show("Произошла ошибка", "Мы не смогли скачать дополнительный компонент, попробуйте перезапустить приложение.");
 
-            var logger = StaticService.Container.Resolve<Logger>();
+            var logger = StaticService.Container.GetRequiredService<Logger>();
 
             logger.Error(ex, ex.Message);
 

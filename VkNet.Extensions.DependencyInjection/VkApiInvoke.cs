@@ -17,7 +17,6 @@ public class VkApiInvoke : IVkApiInvoke
     private readonly IEnumerable<JsonConverter> _defaultConverters = new JsonConverter[]
     {
         new VkCollectionJsonConverter(),
-        new VkDefaultJsonConverter(),
         new UnixDateTimeConverter(),
         new AttachmentJsonConverter(),
         new StringEnumConverter(),

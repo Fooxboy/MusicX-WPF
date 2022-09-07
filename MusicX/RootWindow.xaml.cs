@@ -1,8 +1,4 @@
-﻿using DryIoc;
-using Microsoft.AppCenter;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
-using MusicX.Core.Services;
+﻿using MusicX.Core.Services;
 using MusicX.Services;
 using MusicX.Views;
 using MusicX.Views.Modals;
@@ -15,10 +11,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using System.Windows.Interop;
-using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Navigation;
 using AsyncAwaitBestPractices;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Controls;
@@ -53,7 +46,7 @@ namespace MusicX
             this.logger = logger;
             this.configService = configService;
             this.notificationsService = notificationsService;
-            var playerSerivce = StaticService.Container.Resolve<PlayerService>();
+            var playerSerivce = StaticService.Container.GetRequiredService<PlayerService>();
 
             playerSerivce.TrackChangedEvent += PlayerSerivce_TrackChangedEvent;
 
@@ -172,7 +165,7 @@ namespace MusicX
                 navigationBar.Items.Add(item);
 #endif
 
-                navigationBar.Items.Add(new NavigationBarItem() { Tag = "downloads", PageDataContext = StaticService.Container.Resolve<DownloaderViewModel>(), Icon = Wpf.Ui.Common.SymbolRegular.ArrowDownload48, Content = "Загрузки", PageType = typeof(DownloadsView) });
+                navigationBar.Items.Add(new NavigationBarItem() { Tag = "downloads", PageDataContext = StaticService.Container.GetRequiredService<DownloaderViewModel>(), Icon = Wpf.Ui.Common.SymbolRegular.ArrowDownload48, Content = "Загрузки", PageType = typeof(DownloadsView) });
                 var item2 = new NavigationBarItem() { Tag = "settings", Icon = Wpf.Ui.Common.SymbolRegular.Settings24, Content = "Настройки", PageType = typeof(SettingsView) };
 
                 navigationBar.Items.Add(item2);
@@ -293,7 +286,7 @@ namespace MusicX
             try
             {
                 await Task.Delay(2000);
-                var github = StaticService.Container.Resolve<GithubService>();
+                var github = StaticService.Container.GetRequiredService<GithubService>();
 
                 var release = await github.GetLastRelease();
 
@@ -314,7 +307,7 @@ namespace MusicX
             if (e.Key == Key.Space)
             {
 
-                var playerService = StaticService.Container.Resolve<PlayerService>();
+                var playerService = StaticService.Container.GetRequiredService<PlayerService>();
 
                 if (playerService == null) return;
 
@@ -326,13 +319,13 @@ namespace MusicX
         }
         private void Previous_OnClick(object? sender, EventArgs e)
         {
-            var playerService = StaticService.Container.Resolve<PlayerService>();
+            var playerService = StaticService.Container.GetRequiredService<PlayerService>();
             if (playerService.Tracks.Count > 0 && playerService.Tracks.IndexOf(playerService.CurrentTrack) > 0)
                 playerService.PreviousTrack().SafeFireAndForget();
         }
         private void PlayPause_OnClick(object? sender, EventArgs e)
         {
-            var playerService = StaticService.Container.Resolve<PlayerService>();
+            var playerService = StaticService.Container.GetRequiredService<PlayerService>();
             if (playerService.CurrentTrack is null)
                 return;
             
@@ -343,7 +336,7 @@ namespace MusicX
         }
         private void Next_OnClick(object? sender, EventArgs e)
         {
-            var playerService = StaticService.Container.Resolve<PlayerService>();
+            var playerService = StaticService.Container.GetRequiredService<PlayerService>();
             if (playerService.Tracks.Count > 0 && playerService.Tracks.IndexOf(playerService.CurrentTrack) < playerService.Tracks.Count)
                 playerService.NextTrack().SafeFireAndForget();
         }

@@ -2,7 +2,6 @@ using System;
 using System.Windows;
 using System.Windows.Media;
 using Wpf.Ui.Common;
-using Wpf.Ui.Controls;
 using Button = System.Windows.Controls.Button;
 namespace MusicX.Controls;
 

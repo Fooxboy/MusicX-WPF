@@ -1,25 +1,16 @@
-﻿using DryIoc;
-using MusicX.Core.Models;
+﻿using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Services;
 using MusicX.Views;
 using NLog;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Microsoft.Extensions.DependencyInjection;
 using MusicX.Helpers;
 
 namespace MusicX.Controls
@@ -35,7 +26,7 @@ namespace MusicX.Controls
         {
             InitializeComponent();
 
-            logger = StaticService.Container.Resolve<Logger>();
+            logger = StaticService.Container.GetRequiredService<Logger>();
 
             this.Unloaded += PlaylistControl_Unloaded;
         }
@@ -80,7 +71,7 @@ namespace MusicX.Controls
             
             try
             {
-                var player = StaticService.Container.Resolve<PlayerService>();
+                var player = StaticService.Container.GetRequiredService<PlayerService>();
                 player.CurrentPlaylistChanged += PlayerOnCurrentPlaylistChanged;
 
                 if (player.CurrentPlaylistId == Playlist.Id)
@@ -245,14 +236,14 @@ namespace MusicX.Controls
         {
             await Task.Delay(200);
             if (nowLoad) return;
-            var notificationService = StaticService.Container.Resolve<Services.NavigationService>();
+            var notificationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
 
             notificationService.OpenExternalPage(new PlaylistView(Playlist));
         }
 
         private void FullGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var notificationService = StaticService.Container.Resolve<Services.NavigationService>();
+            var notificationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
 
             notificationService.OpenExternalPage(new PlaylistView(Playlist));
         }
@@ -278,14 +269,14 @@ namespace MusicX.Controls
             {
                 nowLoad = true;
 
-                var playerService = StaticService.Container.Resolve<PlayerService>();
+                var playerService = StaticService.Container.GetRequiredService<PlayerService>();
 
                 if (!nowPlay)
                 {
                     nowPlay = true;
 
                     iconPlay.Symbol = Wpf.Ui.Common.SymbolRegular.Timer20;
-                    var vkService = StaticService.Container.Resolve<VkService>();
+                    var vkService = StaticService.Container.GetRequiredService<VkService>();
 
                     var audios = await vkService.LoadFullPlaylistAsync(Playlist.Id, Playlist.OwnerId, Playlist.AccessKey);
 

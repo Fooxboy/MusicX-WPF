@@ -1,21 +1,14 @@
-﻿using DryIoc;
-using MusicX.Core.Models;
+﻿using MusicX.Core.Models;
 using MusicX.Services;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace MusicX.Controls
 {
@@ -50,7 +43,7 @@ namespace MusicX.Controls
         {
 
 
-            var bannerService = StaticService.Container.Resolve<BannerService>();
+            var bannerService = StaticService.Container.GetRequiredService<BannerService>();
 
             bannerService.ShowBannerEvent += BannerService_ShowBannerEvent;
 
@@ -137,7 +130,7 @@ namespace MusicX.Controls
 
             //IsSelected = true;
 
-            var bannerService = StaticService.Container.Resolve<BannerService>();
+            var bannerService = StaticService.Container.GetRequiredService<BannerService>();
 
             bannerService.OpenBanner(Banner);
         }

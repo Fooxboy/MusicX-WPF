@@ -1,12 +1,6 @@
-﻿
-using DryIoc;
-using Microsoft.AppCenter;
+﻿using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
-using MusicX.Core.Services;
-using MusicX.Services;
-using MusicX.ViewModels;
-using NLog;
 using System.Windows;
 
 namespace MusicX

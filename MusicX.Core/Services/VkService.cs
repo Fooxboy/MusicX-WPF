@@ -1,22 +1,18 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using MusicX.Core.Helpers;
+﻿using MusicX.Core.Helpers;
 using MusicX.Core.Models;
 using MusicX.Core.Models.General;
 using Newtonsoft.Json;
 using NLog;
 using System.Diagnostics;
 using System.Net.Http.Headers;
-using VkNet;
 using VkNet.Abstractions;
 using VkNet.Abstractions.Core;
 using VkNet.AudioBypassService.Abstractions;
-using VkNet.AudioBypassService.Extensions;
 using VkNet.Enums.Filters;
 using VkNet.Exception;
 using VkNet.Extensions.DependencyInjection;
 using VkNet.Model;
 using VkNet.Utils;
-using VkNet.Utils.AntiCaptcha;
 
 namespace MusicX.Core.Services
 {
@@ -30,24 +26,22 @@ namespace MusicX.Core.Services
         private readonly string deviceId = "c3427adfd2595c73:A092cf601fef615c8b594f6ad2c63d159";
 
         public bool IsAuth = false;
-        private readonly IServiceProvider provider;
         private readonly IVkAndroidAuthorization authFlow;
-
-        public VkService(Logger logger)
+        private readonly IVkTokenStore tokenStore;
+        private readonly IVkApiAuthAsync auth;
+        
+        public VkService(Logger logger, IVkApiCategories vkApi, IVkApiInvoke apiInvoke,
+                         IVkAndroidAuthorization authFlow, IVkApiVersionManager versionManager,
+                         IVkTokenStore tokenStore, IVkApiAuthAsync auth)
         {
-            var services = new ServiceCollection();
-            services.AddAudioBypass();
-            services.AddVkNet();
-
-            provider = services.BuildServiceProvider();
-            authFlow = provider.GetRequiredService<IVkAndroidAuthorization>();
-            vkApi = provider.GetRequiredService<IVkApiCategories>();
-            apiInvoke = provider.GetRequiredService<IVkApiInvoke>();
+            this.vkApi = vkApi;
+            this.apiInvoke = apiInvoke;
+            this.authFlow = authFlow;
+            this.tokenStore = tokenStore;
+            this.auth = auth;
 
             var ver = vkApiVersion.Split('.');
-
-            provider.GetRequiredService<IVkApiVersionManager>()
-                    .SetVersion(int.Parse(ver[0]), int.Parse(ver[1]));
+            versionManager.SetVersion(int.Parse(ver[0]), int.Parse(ver[1]));
 
             var log = LogManager.Setup().GetLogger("Common");
 
@@ -61,8 +55,6 @@ namespace MusicX.Core.Services
             {
                 logger.Info("Invoke auth with login and password");
 
-                var auth = provider.GetRequiredService<IVkApiAuthAsync>();
-                
                 await auth.AuthorizeAsync(new ApiAuthParams()
                 {
                     Login = login,
@@ -78,7 +70,7 @@ namespace MusicX.Core.Services
                 logger.Info($"User '{user[0].Id}' successful sign in");
 
 
-                return provider.GetRequiredService<IVkTokenStore>().Token;
+                return tokenStore.Token;
             }catch(Exception ex)
             {
                 logger.Error("VK API ERROR:");
@@ -94,8 +86,6 @@ namespace MusicX.Core.Services
             {
                 logger.Info("Set user token");
 
-                var auth = provider.GetRequiredService<IVkApiAuthAsync>();
-                
                 await auth.AuthorizeAsync(new ApiAuthParams()
                 {
                     AccessToken = token

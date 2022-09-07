@@ -5,11 +5,10 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
-using DryIoc;
+using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Services;
-using MusicX.ViewModels;
 using NLog;
 
 namespace MusicX.Controls.Blocks;
@@ -34,9 +33,9 @@ public partial class LinksNewsfeedBlockControl : UserControl
         if (sender is not FrameworkElement {DataContext: Link link})
             return;
         
-        var vkService = StaticService.Container.Resolve<VkService>();
-        var navigationService = StaticService.Container.Resolve<NavigationService>();
-        var logger = StaticService.Container.Resolve<Logger>();
+        var vkService = StaticService.Container.GetRequiredService<VkService>();
+        var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
+        var logger = StaticService.Container.GetRequiredService<Logger>();
         
         try
         {

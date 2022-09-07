@@ -1,19 +1,17 @@
-﻿using DryIoc;
-using MusicX.Core.Services;
+﻿using MusicX.Core.Services;
 using MusicX.Models;
 using MusicX.Services;
 using MusicX.Views;
 using NLog;
 using System;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
+using Microsoft.Extensions.DependencyInjection;
 using MusicX.Behaviors;
 using MusicX.Core.Models;
 using MusicX.ViewModels;
@@ -34,8 +32,8 @@ namespace MusicX.Controls
         {
             InitializeComponent();
 
-            this.playerService = StaticService.Container.Resolve<PlayerService>();
-            this.logger = StaticService.Container.Resolve<Logger>();
+            this.playerService = StaticService.Container.GetRequiredService<PlayerService>();
+            this.logger = StaticService.Container.GetRequiredService<Logger>();
             playerService.PlayStateChangedEvent += PlayerService_PlayStateChangedEvent;
             playerService.PositionTrackChangedEvent += PlayerService_PositionTrackChangedEvent;
             playerService.TrackChangedEvent += PlayerService_TrackChangedEvent;
@@ -283,7 +281,7 @@ namespace MusicX.Controls
         private async Task SaveVolume()
         {
             var value = Volume.Value * 100;
-            var configService = StaticService.Container.Resolve<ConfigService>();
+            var configService = StaticService.Container.GetRequiredService<ConfigService>();
 
             var conf = await configService.GetConfig();
             conf.Volume = (int)value;
@@ -297,7 +295,7 @@ namespace MusicX.Controls
         {
             try
             {
-                var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
+                var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
 
                 if (playerService.CurrentTrack.MainArtists == null)
                 {
@@ -319,8 +317,8 @@ namespace MusicX.Controls
         {
             try
             {
-                var vkService = StaticService.Container.Resolve<VkService>();
-                var notificationService = StaticService.Container.Resolve<Services.NotificationsService>();
+                var vkService = StaticService.Container.GetRequiredService<VkService>();
+                var notificationService = StaticService.Container.GetRequiredService<Services.NotificationsService>();
 
                 if (playerService.CurrentTrack.OwnerId == config.UserId)
                 {
@@ -343,7 +341,7 @@ namespace MusicX.Controls
                 logger.Error("Error in like track");
                 logger.Error(ex, ex.Message);
 
-                var notificationService = StaticService.Container.Resolve<NotificationsService>();
+                var notificationService = StaticService.Container.GetRequiredService<NotificationsService>();
 
                 notificationService.Show("Ошибка", $"Мы не смогли добавить этот трек :с");
             }
@@ -351,7 +349,7 @@ namespace MusicX.Controls
 
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            var configService = StaticService.Container.Resolve<ConfigService>();
+            var configService = StaticService.Container.GetRequiredService<ConfigService>();
 
             this.config = await configService.GetConfig();
             
@@ -391,7 +389,7 @@ namespace MusicX.Controls
 
         private async void OpenFullScreen_Click(object sender, RoutedEventArgs e)
         {
-            var notificationService = StaticService.Container.Resolve<Services.NotificationsService>();
+            var notificationService = StaticService.Container.GetRequiredService<Services.NotificationsService>();
             var mainWindow = Window.GetWindow(this);
 
             if (fullScreenWindow is not null || mainWindow is null)
@@ -428,14 +426,14 @@ namespace MusicX.Controls
             try
             {
                 DownloadButton.IsEnabled = false;
-                var downloader = StaticService.Container.Resolve<DownloaderViewModel>();
+                var downloader = StaticService.Container.GetRequiredService<DownloaderViewModel>();
 
                 downloader.DownloadQueue.Add(playerService.CurrentTrack);
                 downloader.StartDownloadingCommand.Execute(null);
             }catch(FileNotFoundException ex)
             {
 
-                var navigation = StaticService.Container.Resolve<Services.NavigationService>();
+                var navigation = StaticService.Container.GetRequiredService<Services.NavigationService>();
 
                 navigation.OpenMenuSection("downloads");
                 //go to download page
@@ -479,7 +477,7 @@ namespace MusicX.Controls
         {
             if (playerService.CurrentTrack.Album != null)
             {
-                var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
+                var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
                 navigationService.OpenExternalPage(new PlaylistView(playerService.CurrentTrack.Album.Id, playerService.CurrentTrack.Album.OwnerId, playerService.CurrentTrack.Album.AccessKey));
             }
         }

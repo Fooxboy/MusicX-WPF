@@ -4,8 +4,6 @@ using NLog;
 using System;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Interop;
-using System.Windows.Media;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
 

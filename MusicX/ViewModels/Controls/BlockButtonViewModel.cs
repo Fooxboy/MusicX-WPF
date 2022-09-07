@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows.Input;
-using DryIoc;
+using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Services;
@@ -70,7 +70,7 @@ public class BlockButtonViewModel : BaseViewModel
             {
                 case "toggle_artist_subscription" when _artist is not null && _parentBlock is not null:
                 {
-                    var vkService = StaticService.Container.Resolve<VkService>();
+                    var vkService = StaticService.Container.GetRequiredService<VkService>();
 
                     if (_artist.IsFollowed)
                         await vkService.UnfollowArtist(Action.ArtistId, _parentBlock.Id);
@@ -83,8 +83,8 @@ public class BlockButtonViewModel : BaseViewModel
                 }
                 case "play_shuffled_audios_from_block" or "play_audios_from_block":
                 {
-                    var vkService = StaticService.Container.Resolve<VkService>();
-                    var playerService = StaticService.Container.Resolve<PlayerService>();
+                    var vkService = StaticService.Container.GetRequiredService<VkService>();
+                    var playerService = StaticService.Container.GetRequiredService<PlayerService>();
 
                     var res = await vkService.GetBlockItemsAsync(Action.BlockId);
 
@@ -93,9 +93,9 @@ public class BlockButtonViewModel : BaseViewModel
                 }
                 case "create_playlist":
                 {
-                    var notificationService = StaticService.Container.Resolve<NotificationsService>();
-                    var navigationService = StaticService.Container.Resolve<NavigationService>();
-                    var viewModel = StaticService.Container.Resolve<CreatePlaylistModalViewModel>();
+                    var notificationService = StaticService.Container.GetRequiredService<NotificationsService>();
+                    var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
+                    var viewModel = StaticService.Container.GetRequiredService<CreatePlaylistModalViewModel>();
                     viewModel.IsEdit = false;
                     
                     navigationService.OpenModal<CreatePlaylistModal>(viewModel);
@@ -103,7 +103,7 @@ public class BlockButtonViewModel : BaseViewModel
                 }
                 case "open_section":
                 {
-                    var navigation = StaticService.Container.Resolve<NavigationService>();
+                    var navigation = StaticService.Container.GetRequiredService<NavigationService>();
 
                     navigation.OpenSection(Action.SectionId);
                     break;
@@ -113,7 +113,7 @@ public class BlockButtonViewModel : BaseViewModel
         }
         catch (Exception e)
         {
-            StaticService.Container.Resolve<Logger>().Error(e, "Failed to invoke action {Type}", Action.Action.Type);
+            StaticService.Container.GetRequiredService<Logger>().Error(e, "Failed to invoke action {Type}", Action.Action.Type);
         }
     }
 }

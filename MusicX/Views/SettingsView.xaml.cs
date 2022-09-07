@@ -1,26 +1,15 @@
-﻿using DryIoc;
-using MusicX.Core.Services;
+﻿using MusicX.Core.Services;
 using MusicX.Models;
 using MusicX.Services;
 using MusicX.Views.Modals;
 using NLog;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Windows.Storage;
+using Microsoft.Extensions.DependencyInjection;
 using MusicX.Controls;
 using Ookii.Dialogs.Wpf;
 
@@ -38,9 +27,9 @@ namespace MusicX.Views
         {
             InitializeComponent();
 
-            this.vkService = StaticService.Container.Resolve<VkService>();
+            this.vkService = StaticService.Container.GetRequiredService<VkService>();
 
-            this.configService = StaticService.Container.Resolve<ConfigService>();
+            this.configService = StaticService.Container.GetRequiredService<ConfigService>();
 
             this.Loaded += SettingsView_Loaded;
             
@@ -132,7 +121,7 @@ namespace MusicX.Views
                 this.BuildDate.Text = StaticService.BuildDate;
             }catch (Exception ex)
             {
-                var logger = StaticService.Container.Resolve<Logger>();
+                var logger = StaticService.Container.GetRequiredService<Logger>();
                 logger.Error(ex, ex.Message);
             }
 
@@ -146,9 +135,9 @@ namespace MusicX.Views
 
             await configService.SetConfig(config);
 
-            var logger = StaticService.Container.Resolve<Logger>();
-            var navigation = StaticService.Container.Resolve<Services.NavigationService>();
-            var notifications = StaticService.Container.Resolve<Services.NotificationsService>();
+            var logger = StaticService.Container.GetRequiredService<Logger>();
+            var navigation = StaticService.Container.GetRequiredService<Services.NavigationService>();
+            var notifications = StaticService.Container.GetRequiredService<Services.NotificationsService>();
 
             new LoginWindow(vkService, configService, logger, navigation, notifications).Show();
             Window.GetWindow(this)?.Close();
@@ -156,12 +145,12 @@ namespace MusicX.Views
 
         private async void CheckUpdates_Click(object sender, RoutedEventArgs e)
         {
-            var notifications = StaticService.Container.Resolve<Services.NotificationsService>();
+            var notifications = StaticService.Container.GetRequiredService<Services.NotificationsService>();
 
             try
             {
-                var navigation = StaticService.Container.Resolve<Services.NavigationService>();
-                var github = StaticService.Container.Resolve<GithubService>();
+                var navigation = StaticService.Container.GetRequiredService<Services.NavigationService>();
+                var github = StaticService.Container.GetRequiredService<GithubService>();
 
                 var release = await github.GetLastRelease();
 
@@ -283,7 +272,7 @@ namespace MusicX.Views
         {
             if (string.IsNullOrEmpty(config.DownloadDirectory) || !Directory.Exists(config.DownloadDirectory))
             {
-                StaticService.Container.Resolve<NotificationsService>().Show("Ошибка", "Сначала выберите папку");
+                StaticService.Container.GetRequiredService<NotificationsService>().Show("Ошибка", "Сначала выберите папку");
                 return;
             }
             

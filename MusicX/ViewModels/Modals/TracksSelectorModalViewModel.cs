@@ -1,13 +1,11 @@
 ﻿using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Services;
-using MusicX.Views.Modals;
 using NLog;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Wpf.Ui.Common;

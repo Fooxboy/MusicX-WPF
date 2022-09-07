@@ -1,20 +1,11 @@
-﻿using DryIoc;
-using MusicX.Core.Models;
+﻿using MusicX.Core.Models;
 using MusicX.Services;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace MusicX.Controls
 {
@@ -49,7 +40,7 @@ namespace MusicX.Controls
 
         private void Play_Click(object sender, RoutedEventArgs e)
         {
-            var notificationService = StaticService.Container.Resolve<Services.NotificationsService>();
+            var notificationService = StaticService.Container.GetRequiredService<Services.NotificationsService>();
 
             notificationService.Show("Невозможно воспроизвести подкаст", $"Music X пока что не умеет воспроизводить подкасты.");
         }

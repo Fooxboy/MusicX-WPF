@@ -1,14 +1,10 @@
-﻿using DryIoc;
-using MusicX.Core.Models;
+﻿using MusicX.Core.Models;
 using MusicX.Services;
 using NLog;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace MusicX.Controls.Blocks
 {
@@ -108,7 +104,7 @@ namespace MusicX.Controls.Blocks
         {
             try
             {
-                var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
+                var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
 
                 if (Block.Actions.Count > 0)
                 {
@@ -124,7 +120,7 @@ namespace MusicX.Controls.Blocks
             }
             catch (Exception ex)
             {
-                var logger = StaticService.Container.Resolve<Logger>();
+                var logger = StaticService.Container.GetRequiredService<Logger>();
 
                 logger.Error(ex, ex.Message);
             }
@@ -151,13 +147,13 @@ namespace MusicX.Controls.Blocks
 
                 }
 
-                var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
+                var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
 
                 navigationService.ReplaceBlocks(option.ReplacementId);
             }
             catch (Exception ex)
             {
-                var logger = StaticService.Container.Resolve<Logger>();
+                var logger = StaticService.Container.GetRequiredService<Logger>();
 
                 logger.Error(ex, ex.Message);
             }
