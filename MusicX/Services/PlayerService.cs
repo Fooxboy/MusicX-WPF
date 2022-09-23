@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -17,7 +19,6 @@ using Windows.Media.Streaming.Adaptive;
 using Windows.Storage.Streams;
 using MusicX.Helpers;
 using MusicX.Core.Models.Boom;
-using Windows.Web.Http;
 
 namespace MusicX.Services
 {
@@ -425,7 +426,7 @@ namespace MusicX.Services
                     client.DefaultRequestHeaders.Add("X-App-Id", "6767438");
                     client.DefaultRequestHeaders.Add("X-Client-Version", "10265");
 
-                    client.DefaultRequestHeaders.Authorization = new Windows.Web.Http.Headers.HttpCredentialsHeaderValue("Bearer", config.BoomToken);
+                    client.DefaultRequestHeaders.Authorization = new ("Bearer", config.BoomToken);
 
                     boomClient = client;
 
@@ -440,8 +441,15 @@ namespace MusicX.Services
                 //var source = MediaSource.CreateFromAdaptiveMediaSource(mediaSource);
                 //player.Source = source;
 
-                player.Source = MediaSource.CreateFromStream()
+                var response = await boomClient.GetAsync(track.File);
 
+                response.EnsureSuccessStatusCode();
+
+                var stream = await response.Content.ReadAsStreamAsync();
+
+                player.Source = MediaSource.CreateFromStream(stream.AsRandomAccessStream(),
+                                                             response.Content.Headers.ContentType?.MediaType ??
+                                                             "audio/mpeg");
                 player.Play();
 
                 //new Thread(UpdateWindowsData).Start();
