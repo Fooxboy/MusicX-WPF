@@ -13,7 +13,7 @@ namespace MusicX.Tests
         {
             var vkSevice = new VkService(null);
 
-            await vkSevice.SetTokenAsync("", null);
+            await vkSevice.SetTokenAsync(null);
 
             var catalog = await vkSevice.GetAudioCatalogAsync();
 

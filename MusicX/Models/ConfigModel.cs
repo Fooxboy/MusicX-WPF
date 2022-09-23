@@ -30,5 +30,11 @@ namespace MusicX.Models
         
         [JsonProperty("download_directory")]
         public string? DownloadDirectory { get; set; }
+
+        [JsonProperty("boom_token")]
+        public string BoomToken { get; set; }
+
+        [JsonProperty("boom_uuid")]
+        public string BoomUuid { get; set; }
     }
 }

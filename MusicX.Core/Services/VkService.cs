@@ -1075,5 +1075,45 @@ namespace MusicX.Core.Services
             }
         }
 
+        public async Task<BoomToken> GetBoomToken()
+        {
+            var uuid = Guid.NewGuid();
+
+            try
+            {
+                var parameters = new VkParameters
+                {
+
+                    {"device_id", deviceId},
+                    {"app_id", 6767438 },
+                    {"app_id", 6767438 },
+                    {"timestamp", (int)DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalSeconds },
+                    {"app_secret", "ppBOmwQYYOMGulmaiPyK" },
+                    {"package", "com.uma.musicvk" },
+                    {"uuid", uuid.ToString() },
+                    {"digest_hash", "2D0D1nXbs2cX1/Q8wFkyv93NHts="}
+                };
+
+                var json = await apiInvoke.InvokeAsync("auth.getCredentialsForService", parameters);
+
+                var result = JsonConvert.DeserializeObject<List<BoomToken>>(json);
+
+                var model = result.FirstOrDefault();
+
+                if(model != null)
+                {
+                    model.Uuid = uuid.ToString();
+                }
+
+                return model;
+            }
+            catch (Exception ex)
+            {
+                logger.Error("VK API ERROR:");
+                logger.Error(ex, ex.Message);
+                throw;
+            }
+        }
+
     }
 }

@@ -42,6 +42,7 @@ namespace MusicX.Views
                 collection.AddSingleton<ServerService>();
                 collection.AddSingleton<GithubService>();
                 collection.AddSingleton<DiscordService>();
+                collection.AddSingleton<BoomService>();
                 collection.AddSingleton(LogManager.Setup().GetLogger("Common"));
 
                 collection.AddTransient<SectionViewModel>();
@@ -50,6 +51,7 @@ namespace MusicX.Views
                 collection.AddTransient<CreatePlaylistModalViewModel>();
                 collection.AddTransient<TracksSelectorModalViewModel>();
                 collection.AddSingleton<DownloaderViewModel>();
+                collection.AddSingleton<VKMixViewModel>();
 
                 collection.AddSingleton<NavigationService>();
                 collection.AddSingleton<ConfigService>();
@@ -101,7 +103,7 @@ namespace MusicX.Views
                 {
                     try
                     {
-                        if (config.AccessToken is null)
+                        if (string.IsNullOrEmpty(config.AccessToken))
                         {
                             var login = new LoginWindow(vkService, configService, logger, navigationService, notificationsService);
                             login.Show();

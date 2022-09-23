@@ -16,6 +16,8 @@ using Windows.Media.Playback;
 using Windows.Media.Streaming.Adaptive;
 using Windows.Storage.Streams;
 using MusicX.Helpers;
+using MusicX.Core.Models.Boom;
+using Windows.Web.Http;
 
 namespace MusicX.Services
 {
@@ -72,7 +74,9 @@ namespace MusicX.Services
         private ConfigModel config;
         private Audio _nextPlayTrack;
         private long _currentPlaylistId;
-        
+
+        private HttpClient boomClient;
+
         public PlaylistData? CurrentPlaylist { get; set; }
 
         public PlayerService(VkService vkService, Logger logger, DiscordService discordService, ConfigService configService, NotificationsService notificationsService)
@@ -254,8 +258,6 @@ namespace MusicX.Services
                     discordService.SetTrackPlay(artist, CurrentTrack.Title, t, cover);
                 }
 
-                
-
 
                 TrackChangedEvent?.Invoke(this, EventArgs.Empty);
 
@@ -411,6 +413,44 @@ namespace MusicX.Services
             }
         }
 
+        public async Task PlayBoomTrack(Track track, List<Track> tracks)
+        {
+            try
+            {
+                if(boomClient == null)
+                {
+                    var config = await configService.GetConfig();
+                    var client = new HttpClient();
+                    client.DefaultRequestHeaders.Add("User-Agent", "okhttp/5.0.0-alpha.10");
+                    client.DefaultRequestHeaders.Add("X-App-Id", "6767438");
+                    client.DefaultRequestHeaders.Add("X-Client-Version", "10265");
+
+                    client.DefaultRequestHeaders.Authorization = new Windows.Web.Http.Headers.HttpCredentialsHeaderValue("Bearer", config.BoomToken);
+
+                    boomClient = client;
+
+                }
+                player.PlaybackSession.Position = TimeSpan.Zero;
+                player.Pause();
+
+
+                //var result = await AdaptiveMediaSource.CreateFromUriAsync(new Uri(track.File), boomClient);
+
+                //var mediaSource = result.MediaSource;
+                //var source = MediaSource.CreateFromAdaptiveMediaSource(mediaSource);
+                //player.Source = source;
+
+                player.Source = MediaSource.CreateFromStream()
+
+                player.Play();
+
+                //new Thread(UpdateWindowsData).Start();
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
 
         private void UpdateWindowsData()
         {
@@ -845,8 +885,6 @@ namespace MusicX.Services
             }
 
         }
-
-
 
         private void MediaPlayerOnCurrentStateChanged(MediaPlaybackSession sender, object args)
         {
