@@ -15,6 +15,7 @@ using System.Windows.Media.Animation;
 using AsyncAwaitBestPractices;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Controls;
+using MusicX.Services.Player;
 using MusicX.ViewModels;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;

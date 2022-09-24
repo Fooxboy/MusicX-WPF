@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Helpers;
+using MusicX.Services.Player;
 using MusicX.ViewModels;
 using WpfAnimatedGif;
 using MusicX.ViewModels.Modals;

@@ -9,6 +9,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
+using MusicX.Services.Player;
 using VkNet.AudioBypassService.Extensions;
 using VkNet.Extensions.DependencyInjection;
 using Wpf.Ui.Appearance;

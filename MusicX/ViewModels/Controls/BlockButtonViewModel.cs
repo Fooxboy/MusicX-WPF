@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Services;
+using MusicX.Services.Player;
 using MusicX.ViewModels.Modals;
 using MusicX.Views.Modals;
 using NLog;

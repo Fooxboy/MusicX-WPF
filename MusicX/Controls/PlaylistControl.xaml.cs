@@ -12,6 +12,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Helpers;
+using MusicX.Services.Player;
 
 namespace MusicX.Controls
 {

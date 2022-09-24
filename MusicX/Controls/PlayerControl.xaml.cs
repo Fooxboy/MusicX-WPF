@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Behaviors;
 using MusicX.Core.Models;
+using MusicX.Services.Player;
 using MusicX.ViewModels;
 using Wpf.Ui.Common;
 

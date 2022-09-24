@@ -15,6 +15,7 @@ using NavigationService = System.Windows.Navigation.NavigationService;
 using MusicX.ViewModels.Modals;
 using MusicX.Views.Modals;
 using System.Diagnostics;
+using MusicX.Services.Player;
 
 namespace MusicX.Views
 {
