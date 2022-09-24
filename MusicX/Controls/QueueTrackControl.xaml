@@ -1,0 +1,103 @@
+﻿<UserControl x:Class="MusicX.Controls.QueueTrackControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:MusicX.Controls"
+             xmlns:playlists="clr-namespace:MusicX.Services.Player.Playlists"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:cache="clr-namespace:System.Net.Cache;assembly=System.Net.Requests"
+             xmlns:converters="clr-namespace:MusicX.Converters"
+             mc:Ignorable="d"
+             d:DesignHeight="80" d:DesignWidth="300"
+             d:DataContext="{d:DesignInstance Type={x:Type playlists:PlaylistTrack}}">
+    <UserControl.Resources>
+        <converters:TrackArtistsToStringConverter x:Key="ArtistsToStringConverter" />
+
+        <Storyboard x:Key="PlayBorderFadeIn">
+            <DoubleAnimation Storyboard.TargetName="PlayBorder"
+                             Storyboard.TargetProperty="Opacity"
+                             Duration="0:0:.16"
+                             From="0"
+                             To="1" />
+        </Storyboard>
+        <Storyboard x:Key="PlayBorderFadeOut">
+            <DoubleAnimation Storyboard.TargetName="PlayBorder"
+                             Storyboard.TargetProperty="Opacity"
+                             Duration="0:0:.16"
+                             From="1"
+                             To="0" />
+        </Storyboard>
+    </UserControl.Resources>
+
+    <Grid MouseLeftButtonUp="Track_OnClick">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <Grid.Triggers>
+            <EventTrigger RoutedEvent="MouseEnter">
+                <BeginStoryboard Storyboard="{StaticResource PlayBorderFadeIn}" />
+            </EventTrigger>
+            <EventTrigger RoutedEvent="MouseLeave">
+                <BeginStoryboard Storyboard="{StaticResource PlayBorderFadeOut}" />
+            </EventTrigger>
+        </Grid.Triggers>
+
+        <ui:SymbolIcon Symbol="MusicNote124"
+                       HorizontalContentAlignment="Center"
+                       VerticalContentAlignment="Center"
+                       FontSize="20"
+                       Margin="10,0,0,0" />
+        <Border Grid.Column="0" CornerRadius="5" Width="45" Height="45"
+                Margin="10,0,0,0">
+            <Border.Style>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="Background">
+                        <Setter.Value>
+                            <ImageBrush ImageSource="{Binding AlbumId.CoverUrl, FallbackValue={x:Null}}" />
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding AlbumId.CoverUrl, FallbackValue={x:Null}}" Value="{x:Null}">
+                            <Setter Property="Background" Value="{DynamicResource ControlElevationBorderBrush}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+        </Border>
+
+        <Grid Grid.Column="0" Width="45" Height="45"
+              Margin="10,0,0,0"
+              x:Name="PlayBorder" Opacity="0">
+            <Rectangle Fill="Black" RadiusX="5" RadiusY="5" Opacity="0.6" />
+            <ui:SymbolIcon Symbol="Play24"
+                           HorizontalContentAlignment="Center"
+                           VerticalContentAlignment="Center"
+                           FontSize="20" />
+        </Grid>
+
+        <StackPanel Grid.Column="1" Margin="10,0,0,0">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="{Binding Title}"
+                           FontSize="16"
+                           FontWeight="DemiBold"
+                           TextTrimming="CharacterEllipsis" />
+                <TextBlock Text="{Binding Subtitle}"
+                           Margin="5,3,2,0"
+                           Opacity="0.3"
+                           TextTrimming="CharacterEllipsis" />
+            </StackPanel>
+
+            <TextBlock VerticalAlignment="Center"
+                       Opacity="0.7"
+                       Text="{Binding Converter={StaticResource ArtistsToStringConverter}}" />
+        </StackPanel>
+
+        <TextBlock Grid.Column="2" Margin="0,0,10,0"
+                   VerticalAlignment="Center"
+                   Text="{Binding Data.Duration, StringFormat=m\\:ss}" />
+    </Grid>
+</UserControl>

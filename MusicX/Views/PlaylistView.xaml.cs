@@ -15,7 +15,9 @@ using NavigationService = System.Windows.Navigation.NavigationService;
 using MusicX.ViewModels.Modals;
 using MusicX.Views.Modals;
 using System.Diagnostics;
+using MusicX.Core.Services;
 using MusicX.Services.Player;
+using MusicX.Services.Player.Playlists;
 
 namespace MusicX.Views
 {
@@ -193,8 +195,7 @@ namespace MusicX.Views
                     PlayPlaylist.Content = "Остановить воспроизведение";
                     PlayPlaylist.Icon = Wpf.Ui.Common.SymbolRegular.Pause20;
 
-                    player.CurrentPlaylist = ViewModel.PlaylistData;
-                    await player.PlayTrack(ViewModel.Tracks[0]);
+                    await player.PlayAsync(new VkPlaylistPlaylist(StaticService.Container.GetRequiredService<VkService>(), ViewModel.PlaylistData));
                 }
             }catch (Exception ex)
             {

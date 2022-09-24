@@ -12,11 +12,13 @@ using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.Media.Streaming.Adaptive;
 using Windows.Storage.Streams;
+using AsyncAwaitBestPractices;
 using MusicX.Core.Models;
 using MusicX.Core.Models.Boom;
 using MusicX.Core.Services;
 using MusicX.Helpers;
 using MusicX.Models;
+using MusicX.Services.Player.Playlists;
 using MusicX.ViewModels;
 using NLog;
 
@@ -25,19 +27,10 @@ namespace MusicX.Services.Player;
 public class PlayerService
 {
     public int CurrentIndex;
-    public string CurrentBlockId { get; set; }
-    public long CurrentPlaylistId
-    {
-        get => _currentPlaylistId;
-        set
-        {
-            _currentPlaylistId = value;
-            Application.Current.Dispatcher.BeginInvoke(() => CurrentPlaylistChanged?.Invoke(this, EventArgs.Empty));
-        }
-    }
-    public readonly ObservableRangeCollection<Audio> Tracks = new();
-    public Audio CurrentTrack;
-    public Audio NextPlayTrack
+    
+    public readonly ObservableRangeCollection<PlaylistTrack> Tracks = new();
+    public PlaylistTrack? CurrentTrack { get; private set; }
+    public PlaylistTrack? NextPlayTrack
     {
         get => _nextPlayTrack;
         set
@@ -65,16 +58,15 @@ public class PlayerService
     private readonly DiscordService discordService;
     private readonly ConfigService configService;
     private readonly NotificationsService notificationsService;
+    private readonly IEnumerable<ITrackMediaSource> _mediaSources;
 
     private ConfigModel config;
-    private Audio _nextPlayTrack;
-    private long _currentPlaylistId;
+    private PlaylistTrack? _nextPlayTrack;
 
-    private HttpClient boomClient;
+    public IPlaylist? CurrentPlaylist { get; set; }
 
-    public PlaylistData? CurrentPlaylist { get; set; }
-
-    public PlayerService(VkService vkService, Logger logger, DiscordService discordService, ConfigService configService, NotificationsService notificationsService)
+    public PlayerService(VkService vkService, Logger logger, DiscordService discordService, ConfigService configService,
+                         NotificationsService notificationsService, IEnumerable<ITrackMediaSource> mediaSources)
     {
         this.vkService = vkService;
         this.logger = logger;
@@ -115,11 +107,105 @@ public class PlayerService
         _positionTimer.Tick += PositionTimerOnTick;
         this.discordService = discordService;
         this.notificationsService = notificationsService;
-
-           
+        _mediaSources = mediaSources;
     }
 
-    public async Task PlayTrack(Audio track, bool loadParentToQueue = true)
+    public void Play()
+    {
+        if (CurrentTrack is not null)
+            PlayTrackAsync(CurrentTrack).SafeFireAndForget();
+    }
+
+    public Task PlayTrackFromQueueAsync(int index)
+    {
+        return PlayTrackAsync(Tracks[index]);
+    }
+    
+    private async Task PlayTrackAsync(PlaylistTrack track)
+    {
+        if (CurrentTrack != track)
+            player.PlaybackSession.Position = TimeSpan.Zero;
+        
+        player.Pause();
+        
+        CurrentTrack = track;
+        CurrentIndex = Tracks.IndexOf(track);
+        NextPlayTrack = Tracks.ElementAtOrDefault(CurrentIndex + 1);
+
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            TrackChangedEvent.Invoke(this, EventArgs.Empty);
+            NextTrackChanged?.Invoke(this, EventArgs.Empty);
+        });
+        
+        var sources = await Task.WhenAll(_mediaSources.Select(b => b.CreateMediaSourceAsync(track)));
+
+        player.Source = sources.First(b => b is not null);
+        player.Play();
+        UpdateWindowsData().SafeFireAndForget();
+    }
+
+    public async Task PlayAsync(IPlaylist playlist, PlaylistTrack? firstTrack = null)
+    {
+        if (!playlist.CanLoad)
+            throw new InvalidOperationException("Playlist should be loadable for first play");
+
+        if (!Application.Current.Dispatcher.CheckAccess())
+        {
+            await Application.Current.Dispatcher.InvokeAsync(() => PlayAsync(playlist).SafeFireAndForget());
+        }
+
+        try
+        {
+            CurrentPlaylist = playlist;
+            CurrentPlaylistChanged?.Invoke(this, EventArgs.Empty);
+            
+            Task? firstTrackTask = null;
+            if (firstTrack is not null)
+            {
+                if (Application.Current.Dispatcher.CheckAccess())
+                {
+                    Tracks.Clear();
+                    Tracks.Add(firstTrack);
+                }
+                else
+                {
+                    await Application.Current.Dispatcher.InvokeAsync(() =>
+                    {
+                        Tracks.Clear();
+                        Tracks.Add(firstTrack);
+                    });
+                }
+                
+                firstTrackTask = PlayTrackAsync(firstTrack);
+            }
+
+            QueueLoadingStateChanged.Invoke(this, new(QueueLoadingState.Started));
+
+            var loadTask = playlist.LoadAsync().ToArrayAsync().AsTask();
+
+            if (firstTrackTask is null)
+                await loadTask;
+            else
+                await Task.WhenAll(loadTask, firstTrackTask);
+            
+            Tracks.ReplaceRange(loadTask.Result);
+
+            if (!IsPlaying)
+                await PlayTrackAsync(Tracks[0]);
+        }
+        catch (Exception e)
+        {
+            logger.Error(e);
+            notificationsService.Show("Ошибка", "Произошла ошибка при воспроизведении");
+        }
+        finally
+        {
+            QueueLoadingStateChanged.Invoke(this, new(QueueLoadingState.Finished));
+        }
+    }
+
+    /*public async Task PlayTrack(Audio track, bool loadParentToQueue = true)
     {
         try
         {
@@ -452,41 +538,9 @@ public class PlayerService
         {
 
         }
-    }
+    }*/
 
-    private void UpdateWindowsData()
-    {
-        try
-        {
-            Thread.Sleep(1000);
-
-            var updater = player.SystemMediaTransportControls.DisplayUpdater;
-
-
-            updater.MusicProperties.Title = CurrentTrack.Title;
-            updater.MusicProperties.Artist = CurrentTrack.Artist;
-            updater.MusicProperties.TrackNumber = 1;
-            updater.MusicProperties.AlbumArtist = CurrentTrack.Artist;
-            updater.MusicProperties.AlbumTitle = CurrentTrack.Title;
-            updater.MusicProperties.AlbumTrackCount = 1;
-
-
-
-            if (CurrentTrack.Album != null)
-            {
-                player.SystemMediaTransportControls.DisplayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri(CurrentTrack.Album.Cover));
-
-            }
-
-            player.SystemMediaTransportControls.DisplayUpdater.Update();
-        }catch(Exception ex)
-        {
-            logger.Error(ex, ex.Message);
-        }
-           
-    }
-
-    public async Task Play(int index, List<Audio> tracks = null)
+    /*public async Task Play(int index, List<Audio> tracks = null)
     {
         try
         {
@@ -653,51 +707,9 @@ public class PlayerService
 
         }
 
-    }
-
-    private async Task SetDiscordTrack()
-    {
-        string artist;
-
-        if (CurrentTrack.MainArtists?.Count > 0)
-        {
-            string s = string.Empty;
-            foreach (var trackArtist in CurrentTrack.MainArtists)
-            {
-                s += trackArtist.Name + ", ";
-            }
-
-            var artists = s.Remove(s.Length - 2);
-
-            artist = artists;
-
-        }
-        else
-        {
-            artist = CurrentTrack.Artist;
-        }
-
-        TimeSpan t = TimeSpan.FromSeconds(CurrentTrack.Duration);
-
-        t -= player.Position;
-
-
-        string cover = "";
-        if (CurrentTrack.Album == null)
-        {
-            cover = "album";
-        }
-        else
-        {
-            cover = CurrentTrack.Album.Cover;
-        }
-
-        discordService.RemoveTrackPlay();
-
-        discordService.SetTrackPlay(artist, CurrentTrack.Title, t, cover);
-    }
-
-    public async Task TryPlay()
+    }*/
+    
+    /*public async Task TryPlay()
     {
         try
         {
@@ -723,34 +735,9 @@ public class PlayerService
 
         }
 
-    }
-
-    public async Task NextTrack()
-    {
-        try
-        {
-            logger.Info("Next track");
-                
-            if (CurrentIndex + 1 > Tracks.Count - 1)
-            {
-                return;
-            }
-
-            CurrentTrack = Tracks[CurrentIndex + 1];
-            CurrentIndex += 1;
-                
-            await Play(CurrentIndex, null);
-        }catch(Exception ex)
-        {
-            logger.Error("Error in playerService => NextTrack");
-            logger.Error(ex, ex.Message);
-
-            notificationsService.Show("Ошибка", "Произошла ошибка при воспроизведении");
-
-        }
-    }
-
-    public async void Play()
+    }*/
+    
+    /*public async void Play()
     {
         try
         {
@@ -770,6 +757,114 @@ public class PlayerService
 
         }
 
+    }*/
+
+    private async Task UpdateWindowsData()
+    {
+        try
+        {
+            await Task.Delay(1000);
+
+            var updater = player.SystemMediaTransportControls.DisplayUpdater;
+
+
+            updater.MusicProperties.Title = CurrentTrack.Title;
+            updater.MusicProperties.Artist = CurrentTrack.GetArtistsString();
+            updater.MusicProperties.TrackNumber = 1;
+            updater.MusicProperties.AlbumArtist = CurrentTrack.MainArtists.First().Name;
+            updater.MusicProperties.AlbumTitle = CurrentTrack.AlbumId?.Name ?? string.Empty;
+            updater.MusicProperties.AlbumTrackCount = 1;
+
+
+
+            if (CurrentTrack.AlbumId is not null)
+            {
+                player.SystemMediaTransportControls.DisplayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri(CurrentTrack.AlbumId.CoverUrl));
+
+            }
+
+            player.SystemMediaTransportControls.DisplayUpdater.Update();
+        }catch(Exception ex)
+        {
+            logger.Error(ex, ex.Message);
+        }
+           
+    }
+    
+    private async Task SetDiscordTrack()
+    {
+        string artist;
+
+        if (CurrentTrack.MainArtists?.Count > 0)
+        {
+            string s = string.Empty;
+            foreach (var trackArtist in CurrentTrack.MainArtists)
+            {
+                s += trackArtist.Name + ", ";
+            }
+
+            var artists = s.Remove(s.Length - 2);
+
+            artist = artists;
+
+        }
+        else
+        {
+            artist = CurrentTrack.GetArtistsString();
+        }
+
+        var t = CurrentTrack.Data.Duration;
+
+        t -= player.Position;
+
+
+        var cover = CurrentTrack.AlbumId?.CoverUrl ?? "album";
+
+        discordService.RemoveTrackPlay();
+
+        discordService.SetTrackPlay(artist, CurrentTrack.Title, t, cover);
+    }
+
+    public async Task NextTrack()
+    {
+        try
+        {
+            logger.Info("Next track");
+
+            async Task LoadMore()
+            {
+                var array = await CurrentPlaylist!.LoadAsync().ToArrayAsync();
+                if (Application.Current.Dispatcher.CheckAccess())
+                    Tracks.AddRangeSequential(array);
+                else
+                    await Application.Current.Dispatcher.InvokeAsync(() => Tracks.AddRangeSequential(array));
+            }
+            
+            if (CurrentIndex + 1 > Tracks.Count - 1)
+            {
+                if (CurrentPlaylist?.CanLoad == false)
+                    return;
+                await LoadMore();
+            }
+
+            CurrentTrack = Tracks[CurrentIndex + 1];
+            CurrentIndex += 1;
+            
+            // its last track and we can load more
+            if (CurrentIndex == Tracks.Count - 1 && CurrentPlaylist?.CanLoad == true)
+            {
+                await LoadMore();
+            }
+                
+            await PlayTrackAsync(CurrentTrack);
+        }catch(Exception ex)
+        {
+            logger.Error("Error in playerService => NextTrack");
+            logger.Error(ex, ex.Message);
+
+            notificationsService.Show("Ошибка", "Произошла ошибка при воспроизведении");
+
+        }
     }
 
     public double Volume
@@ -795,27 +890,12 @@ public class PlayerService
     public TimeSpan Duration => player?.NaturalDuration ?? TimeSpan.Zero;
       
 
-    public bool IsPlaying => player.PlaybackSession.PlaybackState == MediaPlaybackState.Playing
-                             || player.PlaybackSession.PlaybackState == MediaPlaybackState.Opening
-                             || player.PlaybackSession.PlaybackState == MediaPlaybackState.Buffering;
-
-        
-
-    public void SetTracks(List<Audio> tracks)
-    {
-        if (!Application.Current.Dispatcher.CheckAccess())
-            Application.Current.Dispatcher.Invoke(() => Tracks.ReplaceRange(tracks));
-        else
-            Tracks.ReplaceRange(tracks);
-    }
+    public bool IsPlaying => player.PlaybackSession.PlaybackState is MediaPlaybackState.Playing or MediaPlaybackState.Opening or MediaPlaybackState.Buffering;
 
     public async void Pause()
     {
 
-        if (config == null)
-        {
-            config = await configService.GetConfig();
-        }
+        config ??= await configService.GetConfig();
 
         if (config.ShowRPC == null)
         {
@@ -872,8 +952,10 @@ public class PlayerService
                 var index = CurrentIndex - 1;
                 if (index < 0) index = Tracks.Count - 1;
 
+                CurrentTrack = Tracks[index];
+                
                 TrackChangedEvent?.Invoke(this, EventArgs.Empty);
-                await Play(index, null);
+                await PlayTrackAsync(CurrentTrack);
             }
         }
         catch (Exception e)
@@ -950,7 +1032,7 @@ public class PlayerService
         Tracks.ReplaceRange(list);
 
         if (CurrentTrack != Tracks[0])
-            await PlayTrack(Tracks[0], false).ConfigureAwait(false);
+            await PlayTrackAsync(Tracks[0]).ConfigureAwait(false);
     }
 
     public void SetRepeat(bool repeat)
@@ -980,9 +1062,9 @@ public class PlayerService
             notificationsService.Show("Ошибка", "Произошла ошибкба SourceNotSupported");
 
 
-            //audio source url may expire
-            await TryPlay();
-            return;
+            if (CurrentTrack is not null)
+                //audio source url may expire
+                await PlayTrackAsync(CurrentTrack);
         }
         else if (args.Error == MediaPlayerError.NetworkError)
         {
@@ -1009,7 +1091,7 @@ public class PlayerService
             PositionTrackChangedEvent?.Invoke(this, Position);
         }));
     }
-    public async void RemoveFromQueue(Audio audio)
+    public async void RemoveFromQueue(PlaylistTrack audio)
     {
         if (audio == CurrentTrack)
         {
@@ -1022,19 +1104,19 @@ public class PlayerService
         if (!Tracks.Remove(audio))
             return;
             
-        CurrentIndex = Tracks.IndexOf(CurrentTrack);
+        CurrentIndex = Tracks.IndexOf(CurrentTrack!);
             
         if (audio == NextPlayTrack)
             NextPlayTrack = Tracks.ElementAtOrDefault(CurrentIndex + 1);
     }
 
-    public async void InsertToQueue(Audio audio, bool afterCurrent)
+    public async void InsertToQueue(PlaylistTrack audio, bool afterCurrent)
     {
         if (Tracks.Count == 0 && !IsPlaying)
         {
             Tracks.Add(audio);
             // so we dont had to deal with deadlocks if insertion was triggered with dispatcher context
-            await PlayTrack(audio, false).ConfigureAwait(false);
+            await PlayTrackAsync(audio).ConfigureAwait(false);
             return;
         }
             

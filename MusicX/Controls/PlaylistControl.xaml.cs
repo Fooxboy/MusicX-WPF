@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Helpers;
 using MusicX.Services.Player;
+using MusicX.Services.Player.Playlists;
 
 namespace MusicX.Controls
 {
@@ -75,7 +76,7 @@ namespace MusicX.Controls
                 var player = StaticService.Container.GetRequiredService<PlayerService>();
                 player.CurrentPlaylistChanged += PlayerOnCurrentPlaylistChanged;
 
-                if (player.CurrentPlaylistId == Playlist.Id)
+                if (player.CurrentPlaylist is VkPlaylistPlaylist {Data: {} data} && data.PlaylistId == Playlist.Id)
                 {
                     nowPlay = true;
                     iconPlay.Symbol = Wpf.Ui.Common.SymbolRegular.Pause24;
@@ -212,7 +213,7 @@ namespace MusicX.Controls
             if (sender is not PlayerService service)
                 return;
 
-            if (service.CurrentPlaylistId == Playlist?.Id)
+            if (service.CurrentPlaylist is VkPlaylistPlaylist {Data: {} data} && data.PlaylistId == Playlist.Id)
             {
                 nowPlay = true;
                 iconPlay.Symbol = Wpf.Ui.Common.SymbolRegular.Pause24;
@@ -279,11 +280,9 @@ namespace MusicX.Controls
                     iconPlay.Symbol = Wpf.Ui.Common.SymbolRegular.Timer20;
                     var vkService = StaticService.Container.GetRequiredService<VkService>();
 
-                    var audios = await vkService.LoadFullPlaylistAsync(Playlist.Id, Playlist.OwnerId, Playlist.AccessKey);
-
-                    await playerService.Play(0, audios.Items);
-                    playerService.CurrentPlaylistId = Playlist.Id;
-                    playerService.CurrentPlaylist = new(Playlist.Id, Playlist.OwnerId, Playlist.AccessKey);
+                    await playerService.PlayAsync(
+                        new VkPlaylistPlaylist(vkService, new(Playlist.Id, Playlist.OwnerId, Playlist.AccessKey)),
+                        Playlist.Audios[0].ToTrack());
 
                     iconPlay.Symbol = Wpf.Ui.Common.SymbolRegular.Pause24;
 

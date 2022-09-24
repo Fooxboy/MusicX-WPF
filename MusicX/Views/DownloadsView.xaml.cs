@@ -32,7 +32,7 @@ public partial class DownloadsView : Page, IMenuPage
     {
         if(!File.Exists(Path.Combine(ffmpegPath, "version.json")))
         {
-            NoAvalible.Visibility = Visibility.Visible;
+            NoAvailable.Visibility = Visibility.Visible;
 
             return;
         }
@@ -41,7 +41,7 @@ public partial class DownloadsView : Page, IMenuPage
     }
     private async void DownloadButton_Click(object sender, RoutedEventArgs e)
     {
-        NoAvalible.Visibility = Visibility.Collapsed;
+        NoAvailable.Visibility = Visibility.Collapsed;
         DownloadFfmpeg.Visibility = Visibility.Visible;
 
         await DownloadFfmpegAsync();

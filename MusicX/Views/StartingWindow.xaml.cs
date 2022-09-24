@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Services.Player;
+using MusicX.Services.Player.Sources;
 using VkNet.AudioBypassService.Extensions;
 using VkNet.Extensions.DependencyInjection;
 using Wpf.Ui.Appearance;
@@ -45,6 +46,9 @@ namespace MusicX.Views
                 collection.AddSingleton<DiscordService>();
                 collection.AddSingleton<BoomService>();
                 collection.AddSingleton(LogManager.Setup().GetLogger("Common"));
+
+                collection.AddSingleton<ITrackMediaSource, BoomMediaSource>();
+                collection.AddSingleton<ITrackMediaSource, VkMediaSource>();
 
                 collection.AddTransient<SectionViewModel>();
                 collection.AddTransient<PlaylistViewModel>();

@@ -11,7 +11,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Extensions.DependencyInjection;
+using MusicX.Core.Services;
 using MusicX.Services.Player;
+using MusicX.Services.Player.Playlists;
 
 namespace MusicX.Controls
 {
@@ -87,7 +89,7 @@ namespace MusicX.Controls
                 var player = StaticService.Container.GetRequiredService<PlayerService>();
                 player.CurrentPlaylistChanged += PlayerOnCurrentPlaylistChanged;
 
-                if (player.CurrentPlaylistId == Playlist.Id)
+                if (player.CurrentPlaylist is VkPlaylistPlaylist {Data: {} data} && data.PlaylistId == Playlist.Id)
                 {
                     nowPlay = true;
                     Icons.Symbol = Wpf.Ui.Common.SymbolRegular.Pause24;
@@ -106,7 +108,7 @@ namespace MusicX.Controls
             if (sender is not PlayerService service)
                 return;
 
-            if (service.CurrentPlaylistId == Playlist?.Id)
+            if (service.CurrentPlaylist is VkPlaylistPlaylist {Data: {} data} && data.PlaylistId == Playlist.Id)
             {
                 nowPlay = true;
                 Icons.Symbol = Wpf.Ui.Common.SymbolRegular.Pause24;
@@ -145,15 +147,18 @@ namespace MusicX.Controls
                 nowLoad = true;
 
                 var playerService = StaticService.Container.GetRequiredService<PlayerService>();
+                var vkService = StaticService.Container.GetRequiredService<VkService>();
 
                 if (!nowPlay)
                 {
                     nowPlay = true;
 
                     Icons.Symbol = Wpf.Ui.Common.SymbolRegular.Timer20;
-
-                    playerService.CurrentPlaylist = new(Playlist.Playlist.Id, Playlist.Playlist.OwnerId, Playlist.Playlist.AccessKey);
-                    await playerService.PlayTrack(Playlist.Audios[0], false);
+                    
+                    await playerService.PlayAsync(new VkPlaylistPlaylist(
+                                                      vkService,
+                                                      new(Playlist.Playlist.Id, Playlist.Playlist.OwnerId,
+                                                          Playlist.Playlist.AccessKey)), Playlist.Audios[0].ToTrack());
 
                     Icons.Symbol = Wpf.Ui.Common.SymbolRegular.Pause24;
 

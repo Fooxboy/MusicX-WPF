@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MusicX.Services.Player;
+using MusicX.Services.Player.Playlists;
 
 namespace MusicX.ViewModels
 {
@@ -62,7 +63,7 @@ namespace MusicX.ViewModels
             if (SelectedArtist == null) return;
             var radioByArtist = await boomSerivce.GetArtistMixAsync(SelectedArtist.ApiId);
 
-            await playerService.PlayBoomTrack(radioByArtist.Tracks.FirstOrDefault(), new List<Track>());
+            await playerService.PlayAsync(new RadioPlaylist(boomSerivce, radioByArtist), radioByArtist.Tracks[0].ToTrack());
         }
 
         private async Task LoadMixesAsync()

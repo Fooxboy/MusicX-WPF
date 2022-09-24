@@ -14,7 +14,6 @@
 
   <ItemGroup>
     <PackageReference Include="NLog" Version="4.7.14" />
-    <PackageReference Include="NLog.Config" Version="4.7.14" />
     <PackageReference Include="NLog.Schema" Version="5.0.0-rc2" />
     <PackageReference Include="VkNet" Version="1.70.0" />
   </ItemGroup>

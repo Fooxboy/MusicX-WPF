@@ -10,23 +10,23 @@ using System.Threading.Tasks;
 
 namespace MusicX.Core.Services
 {
-    public class BoomService
+    public class BoomService : IDisposable
     {
         private readonly string deviceId = "c3427adfd2595c73:A092cf601fef615c8b594f6ad2c63d159";
         private readonly Logger logger;
         private bool isAuth = false;
         private string token = string.Empty;
 
-        HttpClient client;
+        public HttpClient Client { get; }
 
         public BoomService(Logger logger)
         {
-            client = new HttpClient();
-            client.DefaultRequestHeaders.Add("User-Agent", "okhttp/5.0.0-alpha.10");
-            client.DefaultRequestHeaders.Add("X-App-Id", "6767438");
-            client.DefaultRequestHeaders.Add("X-Client-Version", "10265");
-            client.DefaultRequestHeaders.Add("X-Client-Version", "10265");
-            client.BaseAddress = new Uri("https://api.moosic.io/");
+            Client = new HttpClient();
+            Client.DefaultRequestHeaders.Add("User-Agent", "okhttp/5.0.0-alpha.10");
+            Client.DefaultRequestHeaders.Add("X-App-Id", "6767438");
+            Client.DefaultRequestHeaders.Add("X-Client-Version", "10265");
+            Client.DefaultRequestHeaders.Add("X-Client-Version", "10265");
+            Client.BaseAddress = new Uri("https://api.moosic.io/");
 
             var log = LogManager.Setup().GetLogger("Common");
 
@@ -170,7 +170,7 @@ namespace MusicX.Core.Services
         {
             if(isAuth)
             {
-                client.DefaultRequestHeaders.Authorization =
+                Client.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer", token);
             }
 
@@ -184,10 +184,15 @@ namespace MusicX.Core.Services
                 }
             } 
 
-            var response = await client.GetAsync(method + "?" + parameters);
+            using var response = await Client.GetAsync(method + "?" + parameters);
 
             var result = await response.Content.ReadAsStringAsync();
             return result;
-        } 
+        }
+
+        public void Dispose()
+        {
+            Client.Dispose();
+        }
     }
 }

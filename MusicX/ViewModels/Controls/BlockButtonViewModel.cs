@@ -5,6 +5,7 @@ using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Services;
 using MusicX.Services.Player;
+using MusicX.Services.Player.Playlists;
 using MusicX.ViewModels.Modals;
 using MusicX.Views.Modals;
 using NLog;
@@ -87,9 +88,7 @@ public class BlockButtonViewModel : BaseViewModel
                     var vkService = StaticService.Container.GetRequiredService<VkService>();
                     var playerService = StaticService.Container.GetRequiredService<PlayerService>();
 
-                    var res = await vkService.GetBlockItemsAsync(Action.BlockId);
-
-                    await playerService.PlayTrack(res.Audios[0]);
+                    await playerService.PlayAsync(new VkBlockPlaylist(vkService, Action.BlockId));
                     break;
                 }
                 case "create_playlist":

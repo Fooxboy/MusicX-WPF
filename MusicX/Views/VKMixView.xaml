@@ -78,7 +78,7 @@
                 
                 <TextBlock Text="Микс по жанрам" FontSize="20" Margin="0,25,0,0" FontFamily="{StaticResource VKSansMedium}" />
 
-                <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,0,0,120" HorizontalScrollBarVisibility="Auto">
+                <ScrollViewer VerticalScrollBarVisibility="Disabled" Margin="0,0,0,120" HorizontalScrollBarVisibility="Auto">
                     <ListView Margin="0,20,0,0" SelectedItem="{Binding SelectedTag}" ItemsSource="{Binding Tags}">
 
                         <ListView.ItemContainerStyle>

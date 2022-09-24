@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using MusicX.Services.Player;
+using MusicX.Services.Player.Playlists;
 
 namespace MusicX.Views
 {
@@ -40,7 +41,7 @@ namespace MusicX.Views
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 this.SetData();
-                PositionSlider.Maximum = playerService.CurrentTrack.Duration;
+                PositionSlider.Maximum = playerService.CurrentTrack!.Data.Duration.TotalSeconds;
 
             });
         }
@@ -55,13 +56,13 @@ namespace MusicX.Views
 
             try
             {
-                PositionSlider.Maximum = playerService.CurrentTrack.Duration;
+                PositionSlider.Maximum = playerService.CurrentTrack!.Data.Duration.TotalSeconds;
 
 
-                if (playerService.CurrentTrack.Album != null)
+                if (playerService.CurrentTrack.AlbumId != null)
                 {
 
-                    var bitmapImage = new BitmapImage(new Uri(playerService.CurrentTrack.Album.Thumb.Photo600));
+                    var bitmapImage = new BitmapImage(new Uri(playerService.CurrentTrack.AlbumId.CoverUrl));
                     BackgroundImage.Source = bitmapImage;
                     CoverImage.ImageSource = bitmapImage;
                     CoverNote.Visibility = Visibility.Collapsed;
@@ -75,9 +76,9 @@ namespace MusicX.Views
 
                 if (playerService.NextPlayTrack != null)
                 {
-                    if (playerService.NextPlayTrack.Album != null)
+                    if (playerService.NextPlayTrack.AlbumId != null)
                     {
-                        NextTrackCover.ImageSource = new BitmapImage(new Uri(playerService.NextPlayTrack.Album.Cover));
+                        NextTrackCover.ImageSource = new BitmapImage(new Uri(playerService.NextPlayTrack.AlbumId.CoverUrl));
                         NextTrackNote.Visibility = Visibility.Collapsed;
                     }
                     else
@@ -101,7 +102,7 @@ namespace MusicX.Views
                     }
                     else
                     {
-                        NextTrackArtist.Text = playerService.NextPlayTrack.Artist;
+                        NextTrackArtist.Text = playerService.NextPlayTrack.GetArtistsString();
                     }
                 }
 
@@ -121,7 +122,7 @@ namespace MusicX.Views
                 }
                 else
                 {
-                    ArtistName.Text = playerService.CurrentTrack.Artist;
+                    ArtistName.Text = playerService.CurrentTrack.GetArtistsString();
                 }
             }catch (Exception ex)
             {

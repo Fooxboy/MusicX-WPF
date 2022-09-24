@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Controls;
+using MusicX.Services.Player.Playlists;
 using MusicX.ViewModels;
 using MusicX.ViewModels.Modals;
 
@@ -75,7 +76,7 @@ namespace MusicX.Views
                 Url = url.Text
             };
             
-            downloader.DownloadQueue.Add(audio);
+            downloader.DownloadQueue.Add(audio.ToTrack());
         }   
 
         private void OpenPlaylistSelector_Click(object sender, RoutedEventArgs e)

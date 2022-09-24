@@ -29,16 +29,18 @@ namespace MusicX.Core.Services
         private readonly IVkAndroidAuthorization authFlow;
         private readonly IVkTokenStore tokenStore;
         private readonly IVkApiAuthAsync auth;
-        
+        private readonly IVkApi _api;
+
         public VkService(Logger logger, IVkApiCategories vkApi, IVkApiInvoke apiInvoke,
                          IVkAndroidAuthorization authFlow, IVkApiVersionManager versionManager,
-                         IVkTokenStore tokenStore, IVkApiAuthAsync auth)
+                         IVkTokenStore tokenStore, IVkApiAuthAsync auth, IVkApi api)
         {
             this.vkApi = vkApi;
             this.apiInvoke = apiInvoke;
             this.authFlow = authFlow;
             this.tokenStore = tokenStore;
             this.auth = auth;
+            _api = api;
 
             var ver = vkApiVersion.Split('.');
             versionManager.SetVersion(int.Parse(ver[0]), int.Parse(ver[1]));
@@ -64,7 +66,7 @@ namespace MusicX.Core.Services
 
 
                 var user = await vkApi.Users.GetAsync(new List<long>());
-
+                _api.UserId = user[0].Id;
                 IsAuth = true;
 
                 logger.Info($"User '{user[0].Id}' successful sign in");
@@ -94,6 +96,7 @@ namespace MusicX.Core.Services
                 try
                 {
                     var user = await vkApi.Users.GetAsync(new List<long>());
+                    _api.UserId = user[0].Id;
                     logger.Info($"User '{user[0].Id}' successful sign in");
                 }
                 catch (VkApiMethodInvokeException e) when (e.ErrorCode == 1117) // token has expired

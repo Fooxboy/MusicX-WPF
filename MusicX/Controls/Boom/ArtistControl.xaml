@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MusicX.Controls.Boom" xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:behaviors="clr-namespace:MusicX.Behaviors"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid MouseEnter="Grid_MouseEnter" MouseLeave="Grid_MouseLeave">
@@ -33,9 +34,21 @@
 
             </Grid>
 
-            <TextBlock Margin="0 5 0 0" x:Name="Name" HorizontalAlignment="Center" FontSize="18" FontFamily="{StaticResource VKSansBold}" />
-            <TextBlock Margin="0 5 0 0" x:Name="Description" HorizontalAlignment="Center" Foreground="#929292" TextWrapping="Wrap" FontFamily="{StaticResource VKSansRegular}"/>
-
+            <ScrollViewer behaviors:AutoScrollBehavior.AutoScroll="True"
+                          Margin="0 5 0 0"
+                          HorizontalAlignment="Center"
+                          VerticalScrollBarVisibility="Disabled"
+                          HorizontalScrollBarVisibility="Hidden">
+                <TextBlock x:Name="Name" FontSize="18" FontFamily="{StaticResource VKSansBold}" />
+            </ScrollViewer>
+            
+            <TextBlock Margin="0 5 0 0"
+                       HorizontalAlignment="Center"
+                       x:Name="Description" 
+                       Foreground="#929292" 
+                       TextWrapping="Wrap"
+                       TextTrimming="WordEllipsis"
+                       FontFamily="{StaticResource VKSansRegular}" />
         </StackPanel>
     </Grid>
 </UserControl>

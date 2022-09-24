@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wpfui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
     xmlns:models="clr-namespace:MusicX.Core.Models;assembly=MusicX.Core"
+    xmlns:playlists="clr-namespace:MusicX.Services.Player.Playlists"
     Loaded="UserControl_Loaded"
     mc:Ignorable="d">
     <UserControl.Resources>
@@ -420,7 +421,7 @@
                         </ItemsPanelTemplate>
                     </ListBox.ItemsPanel>
                     <ListBox.ItemTemplate>
-                        <DataTemplate DataType="{x:Type models:Audio}">
+                        <DataTemplate DataType="{x:Type playlists:PlaylistTrack}">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
@@ -428,8 +429,7 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <wpfui:SymbolIcon Symbol="ReOrderDotsVertical24" MouseDown="ReorderButton_OnMouseDown" />
-                                <local:TrackControl Grid.Column="1" Audio="{Binding}" ShowCard="False"
-                                                    LoadOtherTracks="False" />
+                                <local:QueueTrackControl Grid.Column="1" />
                                 <wpfui:Button Grid.Column="2"
                                               Icon="Dismiss24"
                                               Appearance="Transparent"
