@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -7,6 +8,7 @@ using System.Net.Mime;
 using System.Threading;
 using System.Threading.Tasks;
 using MusicX.Core.Models;
+using MusicX.Core.Services;
 using MusicX.Services.Player.Playlists;
 using TagLib;
 using TagLib.Id3v2;
@@ -23,10 +25,12 @@ public class DownloaderService
     private readonly string ffmpegPath = $"{AppDomain.CurrentDomain.BaseDirectory}ffmpeg";
 
     private readonly ConfigService configService;
+    private readonly BoomService _boomService;
 
-    public DownloaderService(ConfigService configService)
+    public DownloaderService(ConfigService configService, BoomService boomService)
     {
         this.configService = configService;
+        _boomService = boomService;
         FFmpeg.SetExecutablesPath(ffmpegPath);
     }
 
@@ -67,15 +71,21 @@ public class DownloaderService
         if (File.Exists(fileDownloadPath))
             File.Delete(fileDownloadPath);
 
-        var conversion = await FFmpeg.Conversions.FromSnippet.ExtractAudio(audio.Data.Url, fileDownloadPath);
+        var conversion = FFmpeg.Conversions.New()
+                               .SetOutput(fileDownloadPath)
+                               .AddParameter($"-i {audio.Data.Url}");
 
         conversion.OnDataReceived += Ffmpeg_Data;
         if (progress is not null)
             conversion.OnProgress += (_, args) => progress.Report(args);
 
-        await conversion.SetOutputFormat(Format.mp3)
-            .AddParameter("-http_persistent false", ParameterPosition.PreInput)
-            .Start(cancellationToken);
+        conversion.AddParameter(
+            audio.Data is VkTrackData
+                ? "-http_persistent false"
+                : $"-headers \"Authorization: {_boomService.Client.DefaultRequestHeaders.Authorization}\"",
+            ParameterPosition.PreInput);
+
+        await conversion.Start(cancellationToken);
         await AddMetadataAsync(audio, fileDownloadPath, cancellationToken);
     }
 
