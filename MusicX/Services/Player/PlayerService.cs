@@ -851,7 +851,7 @@ public class PlayerService
                 await LoadMore();
             }
 
-            CurrentTrack = Tracks[CurrentIndex + 1];
+            var nextTrack = Tracks[CurrentIndex + 1];
             CurrentIndex += 1;
             
             // its last track and we can load more
@@ -860,7 +860,7 @@ public class PlayerService
                 await LoadMore();
             }
                 
-            await PlayTrackAsync(CurrentTrack);
+            await PlayTrackAsync(nextTrack);
         }catch(Exception ex)
         {
             logger.Error("Error in playerService => NextTrack");
@@ -956,10 +956,10 @@ public class PlayerService
                 var index = CurrentIndex - 1;
                 if (index < 0) index = Tracks.Count - 1;
 
-                CurrentTrack = Tracks[index];
+                var previousTrack = Tracks[index];
                 
                 TrackChangedEvent?.Invoke(this, EventArgs.Empty);
-                await PlayTrackAsync(CurrentTrack);
+                await PlayTrackAsync(previousTrack);
             }
         }
         catch (Exception e)
