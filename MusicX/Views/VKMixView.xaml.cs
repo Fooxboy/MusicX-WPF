@@ -16,13 +16,14 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MusicX.Controls;
 
 namespace MusicX.Views
 {
     /// <summary>
     /// Логика взаимодействия для VKMixView.xaml
     /// </summary>
-    public partial class VKMixView : Page
+    public partial class VKMixView : Page, IMenuPage
     {
         public VKMixView()
         {
@@ -51,5 +52,7 @@ namespace MusicX.Views
                 await model.ArtistSelected();
             }
         }
+
+        public string MenuTag { get; set; }
     }
 }
