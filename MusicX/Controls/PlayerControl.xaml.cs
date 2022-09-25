@@ -67,7 +67,7 @@ namespace MusicX.Controls
             {
 
                 if (playerService == null) return;
-
+                DataContext = playerService.CurrentTrack;
                 if (playerService.CurrentTrack!.Data.IsExplicit)
                 {
                     explicitBadge.Visibility = Visibility.Visible;
