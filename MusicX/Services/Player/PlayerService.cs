@@ -123,9 +123,13 @@ public class PlayerService
     
     private async Task PlayTrackAsync(PlaylistTrack track)
     {
-        if (CurrentTrack != track)
-            player.PlaybackSession.Position = TimeSpan.Zero;
+        if (CurrentTrack == track)
+        {
+            player.Play();
+            return;
+        }
         
+        player.PlaybackSession.Position = TimeSpan.Zero;
         player.Pause();
         
         CurrentTrack = track;
