@@ -186,7 +186,7 @@ public class PlayerService
                     _statsListeners.Select(b => b.TrackChangedAsync(CurrentTrack, firstTrack, ChangeReason.PlaylistChange)));
             }
 
-            QueueLoadingStateChanged.Invoke(this, new(QueueLoadingState.Started));
+            QueueLoadingStateChanged?.Invoke(this, new(QueueLoadingState.Started));
 
             var loadTask = playlist.LoadAsync().ToArrayAsync().AsTask();
 
@@ -196,6 +196,7 @@ public class PlayerService
                 await Task.WhenAll(loadTask, firstTrackTask);
             
             Tracks.ReplaceRange(loadTask.Result);
+            CurrentIndex = Tracks.IndexOf(CurrentTrack!);
 
             if (!IsPlaying)
             {

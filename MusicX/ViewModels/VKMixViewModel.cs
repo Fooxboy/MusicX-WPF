@@ -47,7 +47,7 @@ namespace MusicX.ViewModels
             logger.Info("Открытие страницы VK Mix");
             var config = await configService.GetConfig();
 
-            if(!string.IsNullOrEmpty(config.BoomToken) && config.BoomTokenTtl < DateTimeOffset.Now)
+            if(!string.IsNullOrEmpty(config.BoomToken) && config.BoomTokenTtl > DateTimeOffset.Now)
             {
                 logger.Info("Авторизация VK Mix уже была пройдена, загрузка...");
                 boomSerivce.SetToken(config.BoomToken);

@@ -13,6 +13,7 @@
              d:DataContext="{d:DesignInstance Type={x:Type playlists:PlaylistTrack}}">
     <UserControl.Resources>
         <converters:TrackArtistsToStringConverter x:Key="ArtistsToStringConverter" />
+        <converters:EmptyStringToVisibilityConverter x:Key="StringToVisibilityConverter" />
 
         <Storyboard x:Key="PlayBorderFadeIn">
             <DoubleAnimation Storyboard.TargetName="PlayBorder"
@@ -74,10 +75,17 @@
               x:Name="PlayBorder" Opacity="0">
             <Rectangle Fill="Black" RadiusX="5" RadiusY="5" Opacity="0.6" />
             <ui:SymbolIcon Symbol="Play24"
+                           x:Name="IconPlay"
                            HorizontalContentAlignment="Center"
                            VerticalContentAlignment="Center"
                            FontSize="20" />
         </Grid>
+        
+        <Image Grid.Column="0" x:Name="PanelAnim"
+               Visibility="Collapsed"
+               Margin="10,0,0,0"
+               Width="45"
+               Height="45"/>
 
         <StackPanel Grid.Column="1" Margin="10,0,0,0">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
@@ -86,9 +94,27 @@
                            FontWeight="DemiBold"
                            TextTrimming="CharacterEllipsis" />
                 <TextBlock Text="{Binding Subtitle}"
-                           Margin="5,3,2,0"
+                           Margin="5,3,0,0"
                            Opacity="0.3"
+                           Visibility="{Binding Subtitle, Converter={StaticResource StringToVisibilityConverter}}"
                            TextTrimming="CharacterEllipsis" />
+                <Border
+                    Width="16"
+                    Height="16"
+                    Margin="5,0,0,0"
+                    BorderBrush="White"
+                    BorderThickness="1"
+                    CornerRadius="2"
+                    Opacity="0.4"
+                    Visibility="{Binding Data.IsExplicit, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <TextBlock
+                        Margin="0,0,0,1"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontFamily="{StaticResource VKSansBold}"
+                        FontSize="12"
+                        Text="E" />
+                </Border>
             </StackPanel>
 
             <TextBlock VerticalAlignment="Center"

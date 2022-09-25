@@ -13,7 +13,7 @@ public static partial class TrackExtensions
             : track.Artists!.Select(ToTrackArtist).ToArray();
 
         return new(track.Name, string.Empty, track.Album?.ToAlbumId(), mainArtists, Array.Empty<TrackArtist>(),
-            new(track.File, track.IsLiked, track.IsExplicit, TimeSpan.FromSeconds(track.Duration)));
+            new BoomTrackData(track.File, track.IsLiked, track.IsExplicit, TimeSpan.FromSeconds(track.Duration), track.ApiId));
     }
 
     public static TrackArtist ToTrackArtist(this Artist artist)
