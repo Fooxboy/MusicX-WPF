@@ -10,10 +10,13 @@ public class RadioPlaylist : PlaylistBase<Radio>
 {
     private readonly BoomService _boomService;
     private bool _firstCall = true;
-    public RadioPlaylist(BoomService boomService, Radio data)
+    private BoomRadioType _radioType;
+
+    public RadioPlaylist(BoomService boomService, Radio data, BoomRadioType radioType)
     {
         _boomService = boomService;
         Data = data;
+        _radioType = radioType;
     }
 
     public override IAsyncEnumerable<PlaylistTrack> LoadAsync()
@@ -27,8 +30,21 @@ public class RadioPlaylist : PlaylistBase<Radio>
 
     private async IAsyncEnumerable<PlaylistTrack> LoadAsyncInternal()
     {
-        var radio = await _boomService.GetArtistMixAsync(Data.Artist.ApiId);
-        
+        Radio radio;
+        if(_radioType == BoomRadioType.Artist)
+        {
+            radio = await _boomService.GetArtistMixAsync(Data.Artist.ApiId);
+        }else if(_radioType == BoomRadioType.Personal)
+        {
+            radio = await _boomService.GetPersonalMixAsync();
+        }else if(_radioType == BoomRadioType.Tag)
+        {
+            radio = await _boomService.GetTagMixAsync(Data.Tag.ApiId);
+        }else
+        {
+            radio = null;
+        }
+
         foreach (var track in radio.Tracks)
         {
             yield return track.ToTrack();

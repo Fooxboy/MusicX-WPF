@@ -1,4 +1,5 @@
-﻿using MusicX.Core.Models.Boom;
+﻿using MusicX.Core.Exceptions.Boom;
+using MusicX.Core.Models.Boom;
 using Newtonsoft.Json;
 using NLog;
 using System;
@@ -185,6 +186,11 @@ namespace MusicX.Core.Services
             } 
 
             using var response = await Client.GetAsync(method + "?" + parameters);
+
+            if(response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                throw new UnauthorizedException();
+            }
 
             var result = await response.Content.ReadAsStringAsync();
             return result;

@@ -45,7 +45,7 @@ namespace MusicX.Views
 
         private async void ArtistSelected(object sender, MouseButtonEventArgs e)
         {
-            await Task.Delay(1000);
+            await Task.Delay(500);
             if (this.DataContext is VKMixViewModel model)
             {
                 await model.ArtistSelected();

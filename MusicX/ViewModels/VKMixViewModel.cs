@@ -11,6 +11,9 @@ using System.Text;
 using System.Threading.Tasks;
 using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
+using MusicX.Core.Exceptions.Boom;
+using System.Windows.Input;
+using AsyncAwaitBestPractices.MVVM;
 
 namespace MusicX.ViewModels
 {
@@ -30,9 +33,13 @@ namespace MusicX.ViewModels
             this.configService = configService;
             this.logger = logger;
             this.playerService = playerService;
+
+            this.PlayPersonalMixCommand = new AsyncCommand(PlayPersonalMixAsync);
         }
 
         public bool IsLoaded { get; set; }
+
+        public bool IsLoadingMix { get; set; }
 
         public ObservableCollection<Artist> Artists { get; set; } = new ObservableCollection<Artist>();
 
@@ -41,6 +48,8 @@ namespace MusicX.ViewModels
         public Artist SelectedArtist { get; set; }
 
         public Tag SelectedTag { get; set; }
+
+        public ICommand PlayPersonalMixCommand { get; set; }
 
         public async Task OpenedMixesAsync()
         {
@@ -61,9 +70,16 @@ namespace MusicX.ViewModels
         public async Task ArtistSelected()
         {
             if (SelectedArtist == null) return;
+            IsLoadingMix = true;
+            Changed("IsLoadingMix");
             var radioByArtist = await boomSerivce.GetArtistMixAsync(SelectedArtist.ApiId);
 
-            await playerService.PlayAsync(new RadioPlaylist(boomSerivce, radioByArtist), radioByArtist.Tracks[0].ToTrack());
+            await playerService.PlayAsync(new RadioPlaylist(boomSerivce, radioByArtist, BoomRadioType.Artist), radioByArtist.Tracks[0].ToTrack());
+
+            IsLoadingMix = false;
+
+            Changed("IsLoadingMix");
+
         }
 
         private async Task LoadMixesAsync()
@@ -82,6 +98,15 @@ namespace MusicX.ViewModels
 
                 Changed("Artists");
                 Changed("IsLoaded");
+            }catch(UnauthorizedException ex)
+            {
+                logger.Error("Boom unauthorizedException");
+                logger.Info("Попытка заново получить токен...");
+
+                var config = await configService.GetConfig();
+                await this.AuthBoomAsync(config);
+
+                await LoadMixesAsync();
             }
             catch (Exception ex)
             {
@@ -118,6 +143,33 @@ namespace MusicX.ViewModels
 
                 logger.Error(ex, ex.Message);
 
+            }
+        }
+
+        private async Task PlayPersonalMixAsync()
+        {
+            try
+            {
+                IsLoadingMix = true;
+                Changed("IsLoadingMix");
+                var personalMix =  await boomSerivce.GetPersonalMixAsync();
+
+                await playerService.PlayAsync(new RadioPlaylist(boomSerivce, personalMix, BoomRadioType.Personal), personalMix.Tracks[0].ToTrack());
+
+
+                IsLoadingMix = false;
+                Changed("IsLoadingMix");
+
+            }
+            catch (UnauthorizedException ex)
+            {
+                logger.Error("Boom UnauthorizedException");
+                logger.Info("Попытка заново получить токен...");
+
+                var config = await configService.GetConfig();
+                await this.AuthBoomAsync(config);
+
+                await PlayPersonalMixAsync();
             }
         }
     }

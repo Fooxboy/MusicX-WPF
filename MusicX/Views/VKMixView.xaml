@@ -42,7 +42,7 @@
                         <TextBlock Text="Динамический плейлист, который подстраивается под Ваш вкус" FontSize="17" FontFamily="{StaticResource VKSansRegular}"/>
                     </StackPanel>
 
-                    <wpfui:Button HorizontalAlignment="Right" VerticalAlignment="Bottom" Icon="Play16" Content="Слушать" Width="200" BorderBrush="White" BorderThickness="1" Appearance="Secondary"  Margin="0 0 30 30"/>
+                    <wpfui:Button HorizontalAlignment="Right" Command="{Binding PlayPersonalMixCommand}" VerticalAlignment="Bottom" Icon="Play16" Content="Слушать" Width="200" BorderBrush="White" BorderThickness="1" Appearance="Secondary"  Margin="0 0 30 30"/>
                 </Grid>
 
                 <TextBlock Text="Микс по артистам" FontSize="20" Margin="0,15,0,0" FontFamily="{StaticResource VKSansMedium}" />
@@ -114,6 +114,17 @@
                 <StackPanel Margin="20">
                     <wpfui:ProgressRing  IsIndeterminate="True"/>
                     <TextBlock Margin="0, 10,0,0" Text="Получаем Ваши миксы..."/>
+                </StackPanel>
+            </wpfui:Card>
+        </Grid>
+
+        <Grid Visibility="{Binding IsLoadingMix, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Rectangle Fill="Black" Opacity="0.7"/>
+
+            <wpfui:Card HorizontalAlignment="Center">
+                <StackPanel Margin="20">
+                    <wpfui:ProgressRing  IsIndeterminate="True"/>
+                    <TextBlock Margin="0, 20,0,0" Text="Подождите, мы получаем Ваш микс"/>
                 </StackPanel>
             </wpfui:Card>
         </Grid>

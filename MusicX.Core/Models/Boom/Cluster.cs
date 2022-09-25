@@ -19,7 +19,7 @@ namespace MusicX.Core.Models.Boom
         public List<Artist> Artists { get; set; }
 
         [JsonProperty("cover")]
-        public Cover Cover { get; set; }
+        public Avatar Cover { get; set; }
 
         [JsonProperty("tags")]
         public List<Tag> Tags { get; set; }
