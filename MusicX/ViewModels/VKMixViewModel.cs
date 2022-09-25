@@ -56,7 +56,7 @@ namespace MusicX.ViewModels
             logger.Info("Открытие страницы VK Mix");
             var config = await configService.GetConfig();
 
-            if(!string.IsNullOrEmpty(config.BoomToken))
+            if(!string.IsNullOrEmpty(config.BoomToken) && config.BoomTokenTtl > DateTimeOffset.Now)
             {
                 logger.Info("Авторизация VK Mix уже была пройдена, загрузка...");
                 boomSerivce.SetToken(config.BoomToken);
@@ -126,7 +126,8 @@ namespace MusicX.ViewModels
 
                 var boomToken = await boomSerivce.AuthByTokenAsync(boomVkToken.Token, boomVkToken.Uuid);
 
-                config.BoomToken = boomToken.AccessToken; 
+                config.BoomToken = boomToken.AccessToken;
+                config.BoomTokenTtl = DateTimeOffset.Now + TimeSpan.FromSeconds(boomToken.ExpiresIn);
                 config.BoomUuid = boomVkToken.Uuid;
 
                 await configService.SetConfig(config);

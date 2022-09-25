@@ -15,10 +15,10 @@ using Windows.Storage.Streams;
 using AsyncAwaitBestPractices;
 using MusicX.Core.Models;
 using MusicX.Core.Models.Boom;
-using MusicX.Core.Services;
 using MusicX.Helpers;
 using MusicX.Models;
 using MusicX.Services.Player.Playlists;
+using MusicX.Services.Player.TrackStats;
 using MusicX.ViewModels;
 using NLog;
 
@@ -46,32 +46,26 @@ public class PlayerService
     public bool IsRepeat { get; set; }
 
     public event EventHandler? NextTrackChanged;
-    public event EventHandler PlayStateChangedEvent;
-    public event EventHandler<TimeSpan> PositionTrackChangedEvent;
-    public event EventHandler TrackChangedEvent;
+    public event EventHandler? PlayStateChangedEvent;
+    public event EventHandler<TimeSpan>? PositionTrackChangedEvent;
+    public event EventHandler? TrackChangedEvent;
     public event EventHandler? CurrentPlaylistChanged;
 
-    public event EventHandler<QueueLoadingEventArgs> QueueLoadingStateChanged; 
+    public event EventHandler<QueueLoadingEventArgs>? QueueLoadingStateChanged;
 
-    private readonly VkService vkService;
     private readonly Logger logger;
-    private readonly DiscordService discordService;
-    private readonly ConfigService configService;
     private readonly NotificationsService notificationsService;
     private readonly IEnumerable<ITrackMediaSource> _mediaSources;
+    private readonly IEnumerable<ITrackStatsListener> _statsListeners;
 
-    private ConfigModel config;
     private PlaylistTrack? _nextPlayTrack;
 
     public IPlaylist? CurrentPlaylist { get; set; }
 
-    public PlayerService(VkService vkService, Logger logger, DiscordService discordService, ConfigService configService,
-                         NotificationsService notificationsService, IEnumerable<ITrackMediaSource> mediaSources)
+    public PlayerService(Logger logger, NotificationsService notificationsService,
+                         IEnumerable<ITrackMediaSource> mediaSources, IEnumerable<ITrackStatsListener> statsListeners)
     {
-        this.vkService = vkService;
         this.logger = logger;
-        this.discordService = discordService;
-        this.configService = configService;
         player = new MediaPlayer();
 
         player.AudioCategory = MediaPlayerAudioCategory.Media;
@@ -105,27 +99,37 @@ public class PlayerService
         _positionTimer = new DispatcherTimer();
         _positionTimer.Interval = TimeSpan.FromMilliseconds(500);
         _positionTimer.Tick += PositionTimerOnTick;
-        this.discordService = discordService;
         this.notificationsService = notificationsService;
         _mediaSources = mediaSources;
+        _statsListeners = statsListeners;
     }
 
-    public void Play()
+    public async void Play()
     {
-        if (CurrentTrack is not null)
-            PlayTrackAsync(CurrentTrack).SafeFireAndForget();
+        if (CurrentTrack is null) return;
+        
+        await PlayTrackAsync(CurrentTrack);
+        await Task.WhenAll(
+            _statsListeners.Select(b => b.TrackPlayStateChangedAsync(CurrentTrack!, player.Position, false)));
     }
 
-    public Task PlayTrackFromQueueAsync(int index)
+    public async Task PlayTrackFromQueueAsync(int index)
     {
-        return PlayTrackAsync(Tracks[index]);
+        var previousTrack = CurrentTrack!;
+        await PlayTrackAsync(Tracks[index]);
+        await Task.WhenAll(
+            _statsListeners.Select(b => b.TrackChangedAsync(previousTrack, CurrentTrack!, ChangeReason.TrackChange)));
     }
     
     private async Task PlayTrackAsync(PlaylistTrack track)
     {
-        if (CurrentTrack != track)
-            player.PlaybackSession.Position = TimeSpan.Zero;
+        if (CurrentTrack == track)
+        {
+            player.Play();
+            return;
+        }
         
+        player.PlaybackSession.Position = TimeSpan.Zero;
         player.Pause();
         
         CurrentTrack = track;
@@ -159,7 +163,7 @@ public class PlayerService
         {
             CurrentPlaylist = playlist;
             CurrentPlaylistChanged?.Invoke(this, EventArgs.Empty);
-            
+
             Task? firstTrackTask = null;
             if (firstTrack is not null)
             {
@@ -178,9 +182,11 @@ public class PlayerService
                 }
                 
                 firstTrackTask = PlayTrackAsync(firstTrack);
+                await Task.WhenAll(
+                    _statsListeners.Select(b => b.TrackChangedAsync(CurrentTrack, firstTrack, ChangeReason.PlaylistChange)));
             }
 
-            QueueLoadingStateChanged.Invoke(this, new(QueueLoadingState.Started));
+            QueueLoadingStateChanged?.Invoke(this, new(QueueLoadingState.Started));
 
             var loadTask = playlist.LoadAsync().ToArrayAsync().AsTask();
 
@@ -190,9 +196,15 @@ public class PlayerService
                 await Task.WhenAll(loadTask, firstTrackTask);
             
             Tracks.ReplaceRange(loadTask.Result);
+            CurrentIndex = Tracks.IndexOf(CurrentTrack!);
 
             if (!IsPlaying)
+            {
+                var previousTrack = CurrentTrack;
                 await PlayTrackAsync(Tracks[0]);
+                await Task.WhenAll(
+                    _statsListeners.Select(b => b.TrackChangedAsync(previousTrack, CurrentTrack!, ChangeReason.PlaylistChange)));
+            }
         }
         catch (Exception e)
         {
@@ -790,40 +802,6 @@ public class PlayerService
         }
            
     }
-    
-    private async Task SetDiscordTrack()
-    {
-        string artist;
-
-        if (CurrentTrack.MainArtists?.Count > 0)
-        {
-            string s = string.Empty;
-            foreach (var trackArtist in CurrentTrack.MainArtists)
-            {
-                s += trackArtist.Name + ", ";
-            }
-
-            var artists = s.Remove(s.Length - 2);
-
-            artist = artists;
-
-        }
-        else
-        {
-            artist = CurrentTrack.GetArtistsString();
-        }
-
-        var t = CurrentTrack.Data.Duration;
-
-        t -= player.Position;
-
-
-        var cover = CurrentTrack.AlbumId?.CoverUrl ?? "album";
-
-        discordService.RemoveTrackPlay();
-
-        discordService.SetTrackPlay(artist, CurrentTrack.Title, t, cover);
-    }
 
     public async Task NextTrack()
     {
@@ -847,7 +825,7 @@ public class PlayerService
                 await LoadMore();
             }
 
-            CurrentTrack = Tracks[CurrentIndex + 1];
+            var nextTrack = Tracks[CurrentIndex + 1];
             CurrentIndex += 1;
             
             // its last track and we can load more
@@ -855,8 +833,12 @@ public class PlayerService
             {
                 await LoadMore();
             }
-                
-            await PlayTrackAsync(CurrentTrack);
+
+            var previousTrack = CurrentTrack!;
+
+            await PlayTrackAsync(nextTrack);
+            await Task.WhenAll(
+                _statsListeners.Select(b => b.TrackChangedAsync(previousTrack, nextTrack, ChangeReason.NextButton)));
         }catch(Exception ex)
         {
             logger.Error("Error in playerService => NextTrack");
@@ -894,30 +876,15 @@ public class PlayerService
 
     public async void Pause()
     {
-
-        config ??= await configService.GetConfig();
-
-        if (config.ShowRPC == null)
-        {
-            config.ShowRPC = true;
-
-            await configService.SetConfig(config);
-        }
-
-        if (config.ShowRPC.Value)
-        {
-            discordService.RemoveTrackPlay(true);
-        }
-
         try
         {
             player.Pause();
-
+            await Task.WhenAll(
+                _statsListeners.Select(b => b.TrackPlayStateChangedAsync(CurrentTrack!, player.Position, true)));
         }catch (Exception ex)
         {
             logger.Error(ex, ex.Message);
         }
-
     }
 
     public void SetVolume(double volume)
@@ -934,12 +901,10 @@ public class PlayerService
         }
         catch (Exception e)
         {
-                
+            logger.Error(e, e.Message);
         }
     }
-
-       
-
+    
     public async Task PreviousTrack()
     {
         try
@@ -952,10 +917,13 @@ public class PlayerService
                 var index = CurrentIndex - 1;
                 if (index < 0) index = Tracks.Count - 1;
 
-                CurrentTrack = Tracks[index];
+                var previousTrack = Tracks[index];
+                var prevCurrentTrack = CurrentTrack!;
                 
-                TrackChangedEvent?.Invoke(this, EventArgs.Empty);
-                await PlayTrackAsync(CurrentTrack);
+                await PlayTrackAsync(previousTrack);
+                
+                await Task.WhenAll(
+                    _statsListeners.Select(b => b.TrackChangedAsync(prevCurrentTrack, previousTrack!, ChangeReason.PrevButton)));
             }
         }
         catch (Exception e)

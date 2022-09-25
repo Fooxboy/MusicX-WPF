@@ -24,7 +24,7 @@ public class VkPlaylistPlaylist : PlaylistBase<PlaylistData>
         var (id, ownerId, accessKey) = Data;
         var playlist = await _vkService.LoadFullPlaylistAsync(id, ownerId, accessKey);
         
-        foreach (var audio in playlist.Playlist.Audios)
+        foreach (var audio in playlist.Audios)
         {
             yield return audio.ToTrack();
         }
