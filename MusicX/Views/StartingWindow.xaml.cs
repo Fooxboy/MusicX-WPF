@@ -11,6 +11,7 @@ using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Services.Player;
 using MusicX.Services.Player.Sources;
+using MusicX.Services.Player.TrackStats;
 using VkNet.AudioBypassService.Extensions;
 using VkNet.Extensions.DependencyInjection;
 using Wpf.Ui.Appearance;
@@ -49,6 +50,9 @@ namespace MusicX.Views
 
                 collection.AddSingleton<ITrackMediaSource, BoomMediaSource>();
                 collection.AddSingleton<ITrackMediaSource, VkMediaSource>();
+
+                collection.AddSingleton<ITrackStatsListener, DiscordTrackStats>();
+                collection.AddSingleton<ITrackStatsListener, VkTrackBroadcastStats>();
 
                 collection.AddTransient<SectionViewModel>();
                 collection.AddTransient<PlaylistViewModel>();
