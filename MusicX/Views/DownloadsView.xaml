@@ -9,6 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wpfui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
     xmlns:viewModels="clr-namespace:MusicX.ViewModels"
+    xmlns:converters="clr-namespace:MusicX.Converters"
     Title="DownloadsView"
     d:DesignHeight="450"
     d:DesignWidth="800"
@@ -18,11 +19,12 @@
     <Page.Resources>
         <BitmapImage x:Key="TrackIcon" UriSource="../Assets/icons/albums_white.png" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <converters:TrackArtistsToStringConverter x:Key="ArtistsToStringConverter" />
     </Page.Resources>
 
     <Grid>
         <Grid
-            x:Name="NoAvalible"
+            x:Name="NoAvailable"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             Visibility="Collapsed">
@@ -132,7 +134,7 @@
                                         RadiusX="10"
                                         RadiusY="10">
                                         <Rectangle.Fill>
-                                            <ImageBrush ImageSource="{Binding CurrentDownloadingAudio.Album.Cover, FallbackValue={StaticResource TrackIcon}}" />
+                                            <ImageBrush ImageSource="{Binding CurrentDownloadingAudio.AlbumId.CoverUrl, FallbackValue={StaticResource TrackIcon}}" />
                                         </Rectangle.Fill>
                                     </Rectangle>
 
@@ -148,7 +150,7 @@
                                             FontSize="16"
                                             Foreground="White"
                                             Opacity="0.7"
-                                            Text="{Binding CurrentDownloadingAudio.Artist, FallbackValue=Имя исполнителя}" />
+                                            Text="{Binding CurrentDownloadingAudio, Converter={StaticResource ArtistsToStringConverter}, FallbackValue=Имя исполнителя}" />
 
                                     </StackPanel>
 
@@ -235,7 +237,7 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <controls:TrackControl Audio="{Binding}" ShowCard="False" />
+                                    <controls:QueueTrackControl Margin="0,0,0,10" />
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>

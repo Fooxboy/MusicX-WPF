@@ -9,10 +9,15 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
+using MusicX.Services.Player;
+using MusicX.Services.Player.Sources;
+using MusicX.Services.Player.TrackStats;
 using VkNet.AudioBypassService.Extensions;
 using VkNet.Extensions.DependencyInjection;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
+using System.Collections.Generic;
+using Microsoft.AppCenter.Analytics;
 
 namespace MusicX.Views
 {
@@ -31,6 +36,15 @@ namespace MusicX.Views
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
 
+            var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+            Analytics.TrackEvent("StartApp", properties);
+
             await Task.Run(async () =>
             {
                 var collection = new ServiceCollection();
@@ -42,7 +56,14 @@ namespace MusicX.Views
                 collection.AddSingleton<ServerService>();
                 collection.AddSingleton<GithubService>();
                 collection.AddSingleton<DiscordService>();
+                collection.AddSingleton<BoomService>();
                 collection.AddSingleton(LogManager.Setup().GetLogger("Common"));
+
+                collection.AddSingleton<ITrackMediaSource, BoomMediaSource>();
+                collection.AddSingleton<ITrackMediaSource, VkMediaSource>();
+
+                collection.AddSingleton<ITrackStatsListener, DiscordTrackStats>();
+                collection.AddSingleton<ITrackStatsListener, VkTrackBroadcastStats>();
 
                 collection.AddTransient<SectionViewModel>();
                 collection.AddTransient<PlaylistViewModel>();
@@ -50,6 +71,7 @@ namespace MusicX.Views
                 collection.AddTransient<CreatePlaylistModalViewModel>();
                 collection.AddTransient<TracksSelectorModalViewModel>();
                 collection.AddSingleton<DownloaderViewModel>();
+                collection.AddSingleton<VKMixViewModel>();
 
                 collection.AddSingleton<NavigationService>();
                 collection.AddSingleton<ConfigService>();
@@ -101,7 +123,7 @@ namespace MusicX.Views
                 {
                     try
                     {
-                        if (config.AccessToken is null)
+                        if (string.IsNullOrEmpty(config.AccessToken))
                         {
                             var login = new LoginWindow(vkService, configService, logger, navigationService, notificationsService);
                             login.Show();

@@ -15,9 +15,13 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Helpers;
+using MusicX.Services.Player;
+using MusicX.Services.Player.Playlists;
 using MusicX.ViewModels;
 using WpfAnimatedGif;
 using MusicX.ViewModels.Modals;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 
 namespace MusicX.Controls
 {
@@ -65,7 +69,7 @@ namespace MusicX.Controls
 
         private void Player_PlayStateChangedEvent(object? sender, EventArgs e)
         {
-            if(player.CurrentTrack != null && player.CurrentTrack.Id == this.Audio.Id)
+            if (player.CurrentTrack is { Data: VkTrackData data } && data.Id == this.Audio.Id)
             {
                 this.IconPlay.Symbol = player.IsPlaying ? Wpf.Ui.Common.SymbolRegular.Pause24 : Wpf.Ui.Common.SymbolRegular.Play24;
                 UpdatePlayingAnimation(player.IsPlaying);
@@ -74,7 +78,7 @@ namespace MusicX.Controls
 
         private void Player_TrackChangedEvent(object? sender, EventArgs e)
         {
-            if(player.CurrentTrack.Id == this.Audio.Id)
+            if (player.CurrentTrack is { Data: VkTrackData data } && data.Id == this.Audio.Id)
             {
 
                 if(!ShowCard)
@@ -103,9 +107,6 @@ namespace MusicX.Controls
                 {
                     Card.Opacity = 0;
                 }
-
-
-
 
                 this.IconPlay.Visibility = Visibility.Visible;
                 this.IconPlay.Symbol = Wpf.Ui.Common.SymbolRegular.Play24;
@@ -289,7 +290,7 @@ namespace MusicX.Controls
                 }
 
 
-                if (player.CurrentTrack != null && player.CurrentTrack.Id == this.Audio.Id)
+                if (player.CurrentTrack is { Data: VkTrackData data } && data.Id == this.Audio.Id)
                 {
                     PlayButtons.Visibility = Visibility.Visible;
                     IconPlay.Visibility = Visibility.Collapsed;
@@ -385,7 +386,7 @@ namespace MusicX.Controls
 
 
 
-                if(player.CurrentTrack == null || player.CurrentTrack.Id != this.Audio.Id)
+                if (player.CurrentTrack is { Data: VkTrackData data } && data.Id != this.Audio.Id)
                 {
                     PlayButtons.Visibility = Visibility.Visible;
                 }
@@ -407,7 +408,7 @@ namespace MusicX.Controls
              
                 if (!ShowCard)
                 {
-                    if(player.CurrentTrack == null || player.CurrentTrack.Id != this.Audio.Id)
+                    if (player.CurrentTrack is { Data: VkTrackData data1 } && data1.Id != this.Audio.Id)
                     {
                         Card.Opacity = 1;
 
@@ -433,7 +434,7 @@ namespace MusicX.Controls
 
                
 
-                if (player.CurrentTrack == null || player.CurrentTrack.Id != this.Audio.Id)
+                if (player.CurrentTrack is { Data: VkTrackData data } && data.Id != this.Audio.Id)
                 {
                     PlayButtons.Visibility = Visibility.Collapsed;
                 }
@@ -449,7 +450,7 @@ namespace MusicX.Controls
                     Card.Opacity = 1;
                 }
                 
-                if (player.CurrentTrack == null || player.CurrentTrack.Id != this.Audio.Id)
+                if (player.CurrentTrack is { Data: VkTrackData data1 } && data1.Id != this.Audio.Id)
                 {
                     Card.Opacity = ShowCard ? 1 : 0;
                 }
@@ -464,6 +465,15 @@ namespace MusicX.Controls
         {
             try
             {
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Analytics.TrackEvent("PlayTrack", properties);
+
                 if (e.Source is TextBlock)
                     return;
                 
@@ -477,12 +487,23 @@ namespace MusicX.Controls
                     return;
                 }
 
-                if (this.FindAncestor<PlaylistView>() is {DataContext: PlaylistViewModel viewModel})
-                    player.CurrentPlaylist = viewModel.PlaylistData;
+                var vkService = StaticService.Container.GetRequiredService<VkService>();
                 
-                await player.PlayTrack(Audio, LoadOtherTracks);
+                if (this.FindAncestor<PlaylistView>() is { DataContext: PlaylistViewModel viewModel })
+                    await player.PlayAsync(new VkPlaylistPlaylist(vkService, viewModel.PlaylistData), Audio.ToTrack());
+                else
+                    await player.PlayAsync(new VkBlockPlaylist(vkService, Audio.ParentBlockId, LoadOtherTracks), Audio.ToTrack());
             }catch(Exception ex)
             {
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 logger.Error(ex, ex.Message);
             }
            
@@ -568,7 +589,7 @@ namespace MusicX.Controls
 
             try
             {
-                downloader.DownloadQueue.Add(Audio);
+                downloader.DownloadQueue.Add(Audio.ToTrack());
                 downloader.StartDownloadingCommand.Execute(null);
             }catch(FileNotFoundException)
             {
@@ -658,7 +679,7 @@ namespace MusicX.Controls
         {
             try
             {
-                player.InsertToQueue(Audio, true);
+                player.InsertToQueue(Audio.ToTrack(), true);
             }
             catch (Exception ex)
             {
@@ -669,7 +690,7 @@ namespace MusicX.Controls
         {
             try
             {
-                player.InsertToQueue(Audio, false);
+                player.InsertToQueue(Audio.ToTrack(), false);
             }
             catch (Exception ex)
             {

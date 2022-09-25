@@ -12,6 +12,11 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Helpers;
+using MusicX.Services.Player;
+using MusicX.Services.Player.Playlists;
+using System.Collections.Generic;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 
 namespace MusicX.Controls
 {
@@ -74,7 +79,7 @@ namespace MusicX.Controls
                 var player = StaticService.Container.GetRequiredService<PlayerService>();
                 player.CurrentPlaylistChanged += PlayerOnCurrentPlaylistChanged;
 
-                if (player.CurrentPlaylistId == Playlist.Id)
+                if (player.CurrentPlaylist is VkPlaylistPlaylist {Data: {} data} && data.PlaylistId == Playlist.Id)
                 {
                     nowPlay = true;
                     iconPlay.Symbol = Wpf.Ui.Common.SymbolRegular.Pause24;
@@ -211,7 +216,7 @@ namespace MusicX.Controls
             if (sender is not PlayerService service)
                 return;
 
-            if (service.CurrentPlaylistId == Playlist?.Id)
+            if (service.CurrentPlaylist is VkPlaylistPlaylist {Data: {} data} && data.PlaylistId == Playlist.Id)
             {
                 nowPlay = true;
                 iconPlay.Symbol = Wpf.Ui.Common.SymbolRegular.Pause24;
@@ -234,6 +239,15 @@ namespace MusicX.Controls
 
         private async void CardAction_Click(object sender, RoutedEventArgs e)
         {
+            var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+            Analytics.TrackEvent("OpenPlaylist", properties);
+
             await Task.Delay(200);
             if (nowLoad) return;
             var notificationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
@@ -267,6 +281,15 @@ namespace MusicX.Controls
         {
             try
             {
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Analytics.TrackEvent("PlayPlaylistWithButton", properties);
+
                 nowLoad = true;
 
                 var playerService = StaticService.Container.GetRequiredService<PlayerService>();
@@ -278,11 +301,9 @@ namespace MusicX.Controls
                     iconPlay.Symbol = Wpf.Ui.Common.SymbolRegular.Timer20;
                     var vkService = StaticService.Container.GetRequiredService<VkService>();
 
-                    var audios = await vkService.LoadFullPlaylistAsync(Playlist.Id, Playlist.OwnerId, Playlist.AccessKey);
-
-                    await playerService.Play(0, audios.Items);
-                    playerService.CurrentPlaylistId = Playlist.Id;
-                    playerService.CurrentPlaylist = new(Playlist.Id, Playlist.OwnerId, Playlist.AccessKey);
+                    await playerService.PlayAsync(
+                        new VkPlaylistPlaylist(vkService, new(Playlist.Id, Playlist.OwnerId, Playlist.AccessKey)),
+                        Playlist.Audios[0].ToTrack());
 
                     iconPlay.Symbol = Wpf.Ui.Common.SymbolRegular.Pause24;
 
@@ -302,6 +323,15 @@ namespace MusicX.Controls
                 }
             }catch (Exception ex)
             {
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 nowLoad = false;
             }
         }

@@ -29,16 +29,18 @@ namespace MusicX.Core.Services
         private readonly IVkAndroidAuthorization authFlow;
         private readonly IVkTokenStore tokenStore;
         private readonly IVkApiAuthAsync auth;
-        
+        private readonly IVkApi _api;
+
         public VkService(Logger logger, IVkApiCategories vkApi, IVkApiInvoke apiInvoke,
                          IVkAndroidAuthorization authFlow, IVkApiVersionManager versionManager,
-                         IVkTokenStore tokenStore, IVkApiAuthAsync auth)
+                         IVkTokenStore tokenStore, IVkApiAuthAsync auth, IVkApi api)
         {
             this.vkApi = vkApi;
             this.apiInvoke = apiInvoke;
             this.authFlow = authFlow;
             this.tokenStore = tokenStore;
             this.auth = auth;
+            _api = api;
 
             var ver = vkApiVersion.Split('.');
             versionManager.SetVersion(int.Parse(ver[0]), int.Parse(ver[1]));
@@ -64,7 +66,7 @@ namespace MusicX.Core.Services
 
 
                 var user = await vkApi.Users.GetAsync(new List<long>());
-
+                _api.UserId = user[0].Id;
                 IsAuth = true;
 
                 logger.Info($"User '{user[0].Id}' successful sign in");
@@ -94,6 +96,7 @@ namespace MusicX.Core.Services
                 try
                 {
                     var user = await vkApi.Users.GetAsync(new List<long>());
+                    _api.UserId = user[0].Id;
                     logger.Info($"User '{user[0].Id}' successful sign in");
                 }
                 catch (VkApiMethodInvokeException e) when (e.ErrorCode == 1117) // token has expired
@@ -1066,6 +1069,46 @@ namespace MusicX.Core.Services
 
                 var result = await vkApi.Audio.EditPlaylistAsync(ownerId, playlistId, title, description, audios);
 
+            }
+            catch (Exception ex)
+            {
+                logger.Error("VK API ERROR:");
+                logger.Error(ex, ex.Message);
+                throw;
+            }
+        }
+
+        public async Task<BoomToken> GetBoomToken()
+        {
+            var uuid = Guid.NewGuid();
+
+            try
+            {
+                var parameters = new VkParameters
+                {
+
+                    {"device_id", deviceId},
+                    {"app_id", 6767438 },
+                    {"app_id", 6767438 },
+                    {"timestamp", (int)DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalSeconds },
+                    {"app_secret", "ppBOmwQYYOMGulmaiPyK" },
+                    {"package", "com.uma.musicvk" },
+                    {"uuid", uuid.ToString() },
+                    {"digest_hash", "2D0D1nXbs2cX1/Q8wFkyv93NHts="}
+                };
+
+                var json = await apiInvoke.InvokeAsync("auth.getCredentialsForService", parameters);
+
+                var result = JsonConvert.DeserializeObject<List<BoomToken>>(json);
+
+                var model = result.FirstOrDefault();
+
+                if(model != null)
+                {
+                    model.Uuid = uuid.ToString();
+                }
+
+                return model;
             }
             catch (Exception ex)
             {

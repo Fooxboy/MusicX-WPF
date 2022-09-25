@@ -15,6 +15,7 @@ using System.Windows.Media.Animation;
 using AsyncAwaitBestPractices;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Controls;
+using MusicX.Services.Player;
 using MusicX.ViewModels;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
@@ -164,7 +165,7 @@ namespace MusicX
                 var item = new NavigationBarItem() { Tag = "test", Icon = Wpf.Ui.Common.SymbolRegular.AppFolder24, Content = "TEST", PageType = typeof(TestPage) };
                 navigationBar.Items.Add(item);
 #endif
-
+                navigationBar.Items.Add(new NavigationBarItem() { Tag = "vkmix", PageDataContext = StaticService.Container.GetRequiredService<VKMixViewModel>(), Icon = Wpf.Ui.Common.SymbolRegular.Stream24, Content = "Микс", PageType = typeof(VKMixView) });
                 navigationBar.Items.Add(new NavigationBarItem() { Tag = "downloads", PageDataContext = StaticService.Container.GetRequiredService<DownloaderViewModel>(), Icon = Wpf.Ui.Common.SymbolRegular.ArrowDownload48, Content = "Загрузки", PageType = typeof(DownloadsView) });
                 var item2 = new NavigationBarItem() { Tag = "settings", Icon = Wpf.Ui.Common.SymbolRegular.Settings24, Content = "Настройки", PageType = typeof(SettingsView) };
 

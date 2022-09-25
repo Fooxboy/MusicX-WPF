@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 
 namespace MusicX.Models
 {
@@ -30,5 +31,14 @@ namespace MusicX.Models
         
         [JsonProperty("download_directory")]
         public string? DownloadDirectory { get; set; }
+
+        [JsonProperty("boom_token")]
+        public string BoomToken { get; set; }
+        
+        [JsonProperty("boom_token_ttl")]
+        public DateTimeOffset BoomTokenTtl { get; set; }
+
+        [JsonProperty("boom_uuid")]
+        public string BoomUuid { get; set; }
     }
 }

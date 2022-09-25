@@ -29,8 +29,8 @@ namespace MusicX.Core.Services
             {
                 client.SetPresence(new RichPresence()
                 {
-                    Details = "Сейчас слушает",
-                    State = artist + " - " + name,
+                    Details = artist,
+                    State = name,
                     Assets = new Assets()
                     {
                         LargeImageKey = cover,

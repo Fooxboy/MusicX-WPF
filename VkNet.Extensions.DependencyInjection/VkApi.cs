@@ -22,20 +22,8 @@ public class VkApi : IVkApi
     private readonly INeedValidationHandler _needValidationHandler;
     private readonly IVkApiVersionManager _vkApiVersion;
 
-    public VkApi(IVkApiAuthAsync auth, IVkApiInvoke invoke, ILanguageService languageService, IUsersCategory users,
-                 IFriendsCategory friends, IStatusCategory status, IMessagesCategory messages, IGroupsCategory groups,
-                 IAudioCategory audio, IDatabaseCategory database, IUtilsCategory utils, IWallCategory wall,
-                 IBoardCategory board, IFaveCategory fave, IVideoCategory video, IAccountCategory account,
-                 IPhotoCategory photo, IDocsCategory docs, ILikesCategory likes, IPagesCategory pages,
-                 IAppsCategory apps, INewsFeedCategory newsFeed, IStatsCategory stats, IGiftsCategory gifts,
-                 IMarketsCategory markets, IAuthCategory authCategory, IExecuteCategory execute,
-                 IPollsCategory pollsCategory,
-                 ISearchCategory search, IStorageCategory storage, IAdsCategory ads,
-                 INotificationsCategory notifications, IWidgetsCategory widgets, ILeadsCategory leads,
-                 IStreamingCategory streaming, IPlacesCategory places, INotesCategory notes,
-                 IAppWidgetsCategory appWidgets, IOrdersCategory orders, ISecureCategory secure,
-                 IStoriesCategory stories, ILeadFormsCategory leadForms, IPrettyCardsCategory prettyCards,
-                 IPodcastsCategory podcasts, IDonutCategory donut, IDownloadedGamesCategory downloadedGames,
+    public VkApi(IVkApiAuthAsync auth, IVkApiInvoke invoke, ILanguageService languageService,
+                 IVkApiCategories categories,
                  IAuthorizationFlow authorizationFlow,
                  INeedValidationHandler needValidationHandler, IVkApiVersionManager vkApiVersion,
                  IVkTokenStore tokenStore, ICaptchaHandler captchaHandler,
@@ -44,49 +32,49 @@ public class VkApi : IVkApi
         _auth = auth;
         _invoke = invoke;
         _languageService = languageService;
-        Users = users;
-        Friends = friends;
-        Status = status;
-        Messages = messages;
-        Groups = groups;
-        Audio = audio;
-        Database = database;
-        Utils = utils;
-        Wall = wall;
-        Board = board;
-        Fave = fave;
-        Video = video;
-        Account = account;
-        Photo = photo;
-        Docs = docs;
-        Likes = likes;
-        Pages = pages;
-        Apps = apps;
-        NewsFeed = newsFeed;
-        Stats = stats;
-        Gifts = gifts;
-        Markets = markets;
-        Auth = authCategory;
-        Execute = execute;
-        PollsCategory = pollsCategory;
-        Search = search;
-        Storage = storage;
-        Ads = ads;
-        Notifications = notifications;
-        Widgets = widgets;
-        Leads = leads;
-        Streaming = streaming;
-        Places = places;
-        Notes = notes;
-        AppWidgets = appWidgets;
-        Orders = orders;
-        Secure = secure;
-        Stories = stories;
-        LeadForms = leadForms;
-        PrettyCards = prettyCards;
-        Podcasts = podcasts;
-        Donut = donut;
-        DownloadedGames = downloadedGames;
+        // Users = categories.Users;
+        // Friends = categories.Friends;
+        // Status = categories.Status;
+        // Messages = categories.Messages;
+        // Groups = categories.Groups;
+        // Audio = categories.Audio;
+        // Database = categories.Database;
+        // Utils = categories.Utils;
+        // Wall = categories.Wall;
+        // Board = categories.Board;
+        // Fave = categories.Fave;
+        // Video = categories.Video;
+        // Account = categories.Account;
+        // Photo = categories.Photo;
+        // Docs = categories.Docs;
+        // Likes = categories.Likes;
+        // Pages = categories.Pages;
+        // Apps = categories.Apps;
+        // NewsFeed = categories.NewsFeed;
+        // Stats = categories.Stats;
+        // Gifts = categories.Gifts;
+        // Markets = categories.Markets;
+        // Auth = categories.Auth;
+        // Execute = categories.Execute;
+        // PollsCategory = categories.PollsCategory;
+        // Search = categories.Search;
+        // Storage = categories.Storage;
+        // Ads = categories.Ads;
+        // Notifications = categories.Notifications;
+        // Widgets = categories.Widgets;
+        // Leads = categories.Leads;
+        // Streaming = categories.Streaming;
+        // Places = categories.Places;
+        // Notes = categories.Notes;
+        // AppWidgets = categories.AppWidgets;
+        // Orders = categories.Orders;
+        // Secure = categories.Secure;
+        // Stories = categories.Stories;
+        // LeadForms = categories.LeadForms;
+        // PrettyCards = categories.PrettyCards;
+        // Podcasts = categories.Podcasts;
+        // Donut = categories.Donut;
+        // DownloadedGames = categories.DownloadedGames;
         CaptchaSolver = captchaSolver;
         _authorizationFlow = authorizationFlow;
         _needValidationHandler = needValidationHandler;

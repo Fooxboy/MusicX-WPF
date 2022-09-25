@@ -10,6 +10,8 @@ using MusicX.Controls;
 using MusicX.ViewModels;
 using Xabe.FFmpeg;
 using Xabe.FFmpeg.Downloader;
+using System.Collections.Generic;
+using Microsoft.AppCenter.Analytics;
 
 namespace MusicX.Views;
 
@@ -30,9 +32,18 @@ public partial class DownloadsView : Page, IMenuPage
 
     private void DownloadsView_Loaded(object sender, RoutedEventArgs e)
     {
-        if(!File.Exists(Path.Combine(ffmpegPath, "version.json")))
+        var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+        Analytics.TrackEvent("OpenDownloads", properties);
+
+        if (!File.Exists(Path.Combine(ffmpegPath, "version.json")))
         {
-            NoAvalible.Visibility = Visibility.Visible;
+            NoAvailable.Visibility = Visibility.Visible;
 
             return;
         }
@@ -41,7 +52,7 @@ public partial class DownloadsView : Page, IMenuPage
     }
     private async void DownloadButton_Click(object sender, RoutedEventArgs e)
     {
-        NoAvalible.Visibility = Visibility.Collapsed;
+        NoAvailable.Visibility = Visibility.Collapsed;
         DownloadFfmpeg.Visibility = Visibility.Visible;
 
         await DownloadFfmpegAsync();

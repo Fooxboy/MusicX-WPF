@@ -1,7 +1,9 @@
-﻿using MusicX.Core.Models;
+﻿using Microsoft.AppCenter.Crashes;
+using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Services;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -94,7 +96,14 @@ namespace MusicX.ViewModels.Modals
 
             }catch(Exception ex)
             {
-                
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
             }
            
         }

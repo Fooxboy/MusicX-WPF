@@ -27,6 +27,7 @@
             <FontFamily x:Key="VKSansRegular">pack://application:,,,/;component/Fonts/VKSansDisplay-Regular.ttf#VK Sans Display Regular</FontFamily>
 
             <convertes:ListToVisibilityConverter x:Key="ListToVisibilityConverter" />
+            <convertes:InversionBooleanToVisibilityConverter x:Key="InversionBooleanToVisibilityConverter" />
 
         </ResourceDictionary>
     </Application.Resources>

@@ -85,7 +85,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controls\Lists\" />
     <Folder Include="Resources\" />
   </ItemGroup>
 
@@ -110,9 +109,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\play.gif">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

@@ -6,6 +6,8 @@ using System;
 using System.Threading.Tasks;
 using System.Windows;
 using MusicX.Helpers;
+using Microsoft.AppCenter.Crashes;
+using System.Collections.Generic;
 
 namespace MusicX.ViewModels
 {
@@ -188,6 +190,16 @@ namespace MusicX.ViewModels
             }
             catch (Exception ex)
             {
+
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 logger.Error("Fatal error in load playlist");
                 logger.Error(ex, ex.Message);
 
@@ -212,6 +224,16 @@ namespace MusicX.ViewModels
 
             }catch (Exception ex)
             {
+
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 logger.Error("Fatal error in load playlist from data");
                 logger.Error(ex, ex.Message);
 
@@ -234,6 +256,16 @@ namespace MusicX.ViewModels
                 return true;
             }catch(Exception ex)
             {
+
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 logger.Error("Error in add playlist");
                 logger.Error(ex, ex.Message);
                 notificationsService.Show("Произошла ошибка", "MusicX не смог добавить плейлист");
@@ -251,6 +283,16 @@ namespace MusicX.ViewModels
             }
             catch (Exception ex)
             {
+
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 logger.Error("Error in remove playlist");
                 logger.Error(ex, ex.Message);
                 notificationsService.Show("Произошла ошибка", "MusicX не смог удалить плейлист");
