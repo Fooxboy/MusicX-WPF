@@ -1,4 +1,5 @@
-﻿using MusicX.Core.Models;
+﻿using Microsoft.AppCenter.Crashes;
+using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Services;
 using NLog;
@@ -83,6 +84,16 @@ namespace MusicX.ViewModels.Modals
                 Changed(nameof(Tracks));
             }catch(Exception ex)
             {
+
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 logger.Error(ex, ex.Message);
 
                 notificationsService.Show("Ошибка", "Music X не смог загрузить список Ваших треков. Попробуйте ещё раз");

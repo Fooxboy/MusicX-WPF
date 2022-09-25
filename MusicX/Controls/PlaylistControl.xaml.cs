@@ -14,6 +14,9 @@ using Microsoft.Extensions.DependencyInjection;
 using MusicX.Helpers;
 using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
+using System.Collections.Generic;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 
 namespace MusicX.Controls
 {
@@ -236,6 +239,15 @@ namespace MusicX.Controls
 
         private async void CardAction_Click(object sender, RoutedEventArgs e)
         {
+            var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+            Analytics.TrackEvent("OpenPlaylist", properties);
+
             await Task.Delay(200);
             if (nowLoad) return;
             var notificationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
@@ -269,6 +281,15 @@ namespace MusicX.Controls
         {
             try
             {
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Analytics.TrackEvent("PlayPlaylistWithButton", properties);
+
                 nowLoad = true;
 
                 var playerService = StaticService.Container.GetRequiredService<PlayerService>();
@@ -302,6 +323,15 @@ namespace MusicX.Controls
                 }
             }catch (Exception ex)
             {
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 nowLoad = false;
             }
         }

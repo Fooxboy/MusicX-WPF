@@ -42,7 +42,20 @@
                         <TextBlock Text="Динамический плейлист, который подстраивается под Ваш вкус" FontSize="17" FontFamily="{StaticResource VKSansRegular}"/>
                     </StackPanel>
 
-                    <wpfui:Button HorizontalAlignment="Right" Command="{Binding PlayPersonalMixCommand}" VerticalAlignment="Bottom" Icon="Play16" Content="Слушать" Width="200" BorderBrush="White" BorderThickness="1" Appearance="Secondary"  Margin="0 0 30 30"/>
+                    <wpfui:Button HorizontalAlignment="Right" Command="{Binding PlayPersonalMixCommand}" VerticalAlignment="Bottom" Width="200" BorderBrush="White" BorderThickness="1" Appearance="Secondary"  Margin="0 0 30 30">
+                        <Grid>
+                            <StackPanel Visibility="{Binding PlayingPersonalMix, Converter={StaticResource InversionBooleanToVisibilityConverter}}" Orientation="Horizontal">
+                                <wpfui:SymbolIcon Symbol="Play12"/>
+                                <TextBlock Margin="10,0,0,0" Text="Слушать мой микс"/>
+                            </StackPanel>
+
+                            <StackPanel Visibility="{Binding PlayingPersonalMix, Converter={StaticResource BooleanToVisibilityConverter}}" Orientation="Horizontal">
+                                <wpfui:SymbolIcon Symbol="Pause20"/>
+                                <TextBlock Margin="10,0,0,0" Text="Остановить мой микс"/>
+                            </StackPanel>
+                        </Grid>
+                        
+                    </wpfui:Button>
                 </Grid>
 
                 <TextBlock Text="Микс по артистам" FontSize="20" Margin="0,15,0,0" FontFamily="{StaticResource VKSansMedium}" />
@@ -81,9 +94,11 @@
                 <ScrollViewer VerticalScrollBarVisibility="Disabled" Margin="0,0,0,120" HorizontalScrollBarVisibility="Auto">
                     <ListView Margin="0,20,0,0" SelectedItem="{Binding SelectedTag}" ItemsSource="{Binding Tags}">
 
+                        
                         <ListView.ItemContainerStyle>
                             <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource {x:Type ListViewItem}}">
                                 <Setter Property="Margin" Value="0,1,10,1" />
+                                <EventSetter Event="PreviewMouseLeftButtonDown" Handler="TagSelected" />
                             </Style>
                         </ListView.ItemContainerStyle>
 

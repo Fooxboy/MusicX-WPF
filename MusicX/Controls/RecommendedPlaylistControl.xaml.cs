@@ -14,6 +14,8 @@ using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Services;
 using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
+using System.Collections.Generic;
+using Microsoft.AppCenter.Analytics;
 
 namespace MusicX.Controls
 {
@@ -121,6 +123,14 @@ namespace MusicX.Controls
 
         private void TitleCard_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+            Analytics.TrackEvent("OpenReccomendedPlaylist", properties);
             var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
 
             navigationService.OpenExternalPage(new PlaylistView(Playlist.Playlist.Id,Playlist.Playlist.OwnerId , Playlist.Playlist.AccessKey));

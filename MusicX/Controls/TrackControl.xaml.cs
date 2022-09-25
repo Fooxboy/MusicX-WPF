@@ -20,6 +20,8 @@ using MusicX.Services.Player.Playlists;
 using MusicX.ViewModels;
 using WpfAnimatedGif;
 using MusicX.ViewModels.Modals;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 
 namespace MusicX.Controls
 {
@@ -105,9 +107,6 @@ namespace MusicX.Controls
                 {
                     Card.Opacity = 0;
                 }
-
-
-
 
                 this.IconPlay.Visibility = Visibility.Visible;
                 this.IconPlay.Symbol = Wpf.Ui.Common.SymbolRegular.Play24;
@@ -466,6 +465,15 @@ namespace MusicX.Controls
         {
             try
             {
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Analytics.TrackEvent("PlayTrack", properties);
+
                 if (e.Source is TextBlock)
                     return;
                 
@@ -487,6 +495,15 @@ namespace MusicX.Controls
                     await player.PlayAsync(new VkBlockPlaylist(vkService, Audio.ParentBlockId, LoadOtherTracks), Audio.ToTrack());
             }catch(Exception ex)
             {
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 logger.Error(ex, ex.Message);
             }
            

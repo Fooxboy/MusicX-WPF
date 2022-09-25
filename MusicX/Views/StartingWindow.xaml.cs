@@ -16,6 +16,8 @@ using VkNet.AudioBypassService.Extensions;
 using VkNet.Extensions.DependencyInjection;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
+using System.Collections.Generic;
+using Microsoft.AppCenter.Analytics;
 
 namespace MusicX.Views
 {
@@ -33,6 +35,15 @@ namespace MusicX.Views
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
+
+            var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+            Analytics.TrackEvent("StartApp", properties);
 
             await Task.Run(async () =>
             {

@@ -21,6 +21,7 @@ using MusicX.Services.Player.Playlists;
 using MusicX.Services.Player.TrackStats;
 using MusicX.ViewModels;
 using NLog;
+using Microsoft.AppCenter.Crashes;
 
 namespace MusicX.Services.Player;
 
@@ -208,6 +209,14 @@ public class PlayerService
         }
         catch (Exception e)
         {
+            var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+            Crashes.TrackError(e, properties);
             logger.Error(e);
             notificationsService.Show("Ошибка", "Произошла ошибка при воспроизведении");
         }
@@ -798,6 +807,16 @@ public class PlayerService
             player.SystemMediaTransportControls.DisplayUpdater.Update();
         }catch(Exception ex)
         {
+
+            var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+            Crashes.TrackError(ex, properties);
+
             logger.Error(ex, ex.Message);
         }
            
@@ -841,6 +860,14 @@ public class PlayerService
                 _statsListeners.Select(b => b.TrackChangedAsync(previousTrack, nextTrack, ChangeReason.NextButton)));
         }catch(Exception ex)
         {
+            var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+            Crashes.TrackError(ex, properties);
             logger.Error("Error in playerService => NextTrack");
             logger.Error(ex, ex.Message);
 
@@ -928,6 +955,15 @@ public class PlayerService
         }
         catch (Exception e)
         {
+            var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+            Crashes.TrackError(e, properties);
+
             logger.Error("Error in playerService => PreviousTrack");
             logger.Error(e, e.Message);
 
@@ -954,6 +990,16 @@ public class PlayerService
         }
         catch (Exception e)
         {
+
+            var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+            Crashes.TrackError(e, properties);
+
             logger.Error(e, e.Message);
 
             notificationsService.Show("Ошибка", "Произошла ошибка при воспроизведении");
@@ -977,6 +1023,16 @@ public class PlayerService
         }
         catch (Exception e)
         {
+
+            var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+            Crashes.TrackError(e, properties);
+
             notificationsService.Show("Ошибка", "Произошла ошибка при воспроизведении");
 
             logger.Error(e, e.Message);

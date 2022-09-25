@@ -27,11 +27,6 @@
                     </Rectangle.Effect>
                 </Rectangle>
 
-                <Grid HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 5 5" Width="40" Height="40">
-                    <Rectangle Fill="White" RadiusX="99" RadiusY="99" />
-                    <wpfui:SymbolIcon Symbol="Play12" Foreground="Black"/>
-                </Grid>
-
             </Grid>
 
             <ScrollViewer behaviors:AutoScrollBehavior.AutoScroll="True"

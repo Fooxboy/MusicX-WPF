@@ -54,5 +54,14 @@ namespace MusicX.Views
         }
 
         public string MenuTag { get; set; }
+
+        private async void TagSelected(object sender, MouseButtonEventArgs e)
+        {
+            await Task.Delay(500);
+            if (this.DataContext is VKMixViewModel model)
+            {
+                await model.TagSelected();
+            }
+        }
     }
 }

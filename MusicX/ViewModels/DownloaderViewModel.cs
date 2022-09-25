@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
+using Microsoft.AppCenter.Analytics;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Helpers;
@@ -128,6 +129,16 @@ public class DownloaderViewModel : BaseViewModel
 
     private async void StartDownloading()
     {
+
+        var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+        Analytics.TrackEvent("Download Track", properties);
+
         if (IsDownloading)
             return;
         tokenSource = new();

@@ -26,11 +26,6 @@
                     </Rectangle.Effect>
                 </Rectangle>
 
-                <Grid HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 5 5" Width="40" Height="40">
-                    <Rectangle Fill="White" RadiusX="10" RadiusY="10" />
-                    <wpfui:SymbolIcon Symbol="Play12" Foreground="Black"/>
-                </Grid>
-
             </Grid>
 
             <TextBlock Margin="0 5 0 0" x:Name="Name" HorizontalAlignment="Center" FontSize="18" FontFamily="{StaticResource VKSansBold}" />

@@ -37,19 +37,28 @@ namespace MusicX.Core.Services
 
         public async Task<AuthToken> AuthByTokenAsync(string slientToken, string uuid)
         {
-            var parameters = new Dictionary<string, string>()
+            try
             {
-                {"device_id", deviceId },
-                { "device_os", "android"},
-                { "silent_token", slientToken},
-                {"uuid", uuid }
-            };
+                var parameters = new Dictionary<string, string>()
+                {
+                    {"device_id", deviceId },
+                    { "device_os", "android"},
+                    { "silent_token", slientToken},
+                    {"uuid", uuid }
+                };
 
-            var result = await RequestAsync("oauth/vkconnect/vk/token", parameters);
+                var result = await RequestAsync("oauth/vkconnect/vk/token", parameters);
 
-            var model = JsonConvert.DeserializeObject<AuthToken>(result);
+                var model = JsonConvert.DeserializeObject<AuthToken>(result);
 
-            return model;
+                return model;
+            }catch(Exception ex)
+            {
+                logger.Error("BOOM API ERROR:");
+                logger.Error(ex, ex.Message);
+                throw;
+            }
+           
         }
 
         public void SetToken(string token)
@@ -153,7 +162,7 @@ namespace MusicX.Core.Services
         {
             try
             {
-                var result = await RequestAsync($"radio/artist/{artistId}/");
+                var result = await RequestAsync($"radio/tag/{artistId}/");
 
                 var model = JsonConvert.DeserializeObject<Response>(result);
 
@@ -191,6 +200,8 @@ namespace MusicX.Core.Services
             {
                 throw new UnauthorizedException();
             }
+
+            response.EnsureSuccessStatusCode();
 
             var result = await response.Content.ReadAsStringAsync();
             return result;

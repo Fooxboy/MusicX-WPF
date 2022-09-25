@@ -6,6 +6,8 @@ using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
+using System.Collections.Generic;
+using Microsoft.AppCenter.Analytics;
 
 namespace MusicX.Views
 {
@@ -48,6 +50,14 @@ namespace MusicX.Views
 
         private void FullScreenWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+            Analytics.TrackEvent("OpenFullScreen", properties);
             this.SetData();
         }
 

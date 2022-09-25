@@ -1,4 +1,5 @@
 ﻿using AsyncAwaitBestPractices.MVVM;
+using Microsoft.AppCenter.Crashes;
 using Microsoft.Win32;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
@@ -6,6 +7,7 @@ using MusicX.Models;
 using MusicX.Services;
 using MusicX.Views.Modals;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -154,6 +156,16 @@ namespace MusicX.ViewModels.Modals
             }
             catch(Exception ex)
             {
+
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 CreateIsEnable = true;
                 Changed(nameof(CreateIsEnable));
 
@@ -187,6 +199,16 @@ namespace MusicX.ViewModels.Modals
             }
             catch(Exception ex)
             {
+
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 CreateIsEnable = true;
                 Changed(nameof(CreateIsEnable));
 

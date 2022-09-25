@@ -12,6 +12,9 @@ using System.Windows.Media.Imaging;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Controls;
 using Ookii.Dialogs.Wpf;
+using System.Collections.Generic;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 
 namespace MusicX.Views
 {
@@ -39,6 +42,15 @@ namespace MusicX.Views
         {
             try
             {
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Analytics.TrackEvent("OpenSettings", properties);
+
                 this.config = await configService.GetConfig();
 
                 if (config.ShowRPC == null)
@@ -121,6 +133,15 @@ namespace MusicX.Views
                 this.BuildDate.Text = StaticService.BuildDate;
             }catch (Exception ex)
             {
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 var logger = StaticService.Container.GetRequiredService<Logger>();
                 logger.Error(ex, ex.Message);
             }
