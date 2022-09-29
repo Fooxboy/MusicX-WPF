@@ -25,7 +25,8 @@
                 <controls:RecommendedPlaylistControl Margin="0,5" Width="300" Playlist="{Binding}" />
             </DataTemplate>
             <DataTemplate DataType="{x:Type models:RecommendedPlaylist}" x:Key="RecommendedPlaylistTemplate">
-                <controls:RecommendedPlaylistControl Margin="5,0" Width="300" Playlist="{Binding}" />
+                <controls:RecommendedPlaylistControl Margin="5,0" Width="300" Playlist="{Binding}"
+                                                     VerticalAlignment="Top"/>
             </DataTemplate>
 
             <ItemsPanelTemplate x:Key="FullRecommendedPlaylistPanelTemplate">
