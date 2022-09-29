@@ -26,7 +26,8 @@ public class DiscordTrackStats : ITrackStatsListener
 
     private void SetTrack(PlaylistTrack track, TimeSpan? position = null)
     {
-        _discordService.SetTrackPlay(track.GetArtistsString(), track.Title, track.Data.Duration - position ?? TimeSpan.Zero,
+        _discordService.SetTrackPlay(track.GetArtistsString(), track.Title, track.Data.Duration -
+                                                                            (position ?? TimeSpan.Zero),
                                      track.AlbumId?.CoverUrl ?? string.Empty);
     }
 
