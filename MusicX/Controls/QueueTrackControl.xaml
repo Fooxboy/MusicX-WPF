@@ -10,7 +10,8 @@
              xmlns:converters="clr-namespace:MusicX.Converters"
              mc:Ignorable="d"
              d:DesignHeight="80" d:DesignWidth="300"
-             d:DataContext="{d:DesignInstance Type={x:Type playlists:PlaylistTrack}}">
+             d:DataContext="{d:DesignInstance Type={x:Type playlists:PlaylistTrack}}"
+             DataContextChanged="QueueTrackControl_OnDataContextChanged">
     <UserControl.Resources>
         <converters:TrackArtistsToStringConverter x:Key="ArtistsToStringConverter" />
         <converters:EmptyStringToVisibilityConverter x:Key="StringToVisibilityConverter" />
@@ -31,21 +32,12 @@
         </Storyboard>
     </UserControl.Resources>
 
-    <Grid MouseLeftButtonUp="Track_OnClick">
+    <Grid MouseLeftButtonUp="Track_OnClick" MouseEnter="OnMouseEnter" MouseLeave="OnMouseLeave">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-
-        <Grid.Triggers>
-            <EventTrigger RoutedEvent="MouseEnter">
-                <BeginStoryboard Storyboard="{StaticResource PlayBorderFadeIn}" />
-            </EventTrigger>
-            <EventTrigger RoutedEvent="MouseLeave">
-                <BeginStoryboard Storyboard="{StaticResource PlayBorderFadeOut}" />
-            </EventTrigger>
-        </Grid.Triggers>
 
         <ui:SymbolIcon Symbol="MusicNote124"
                        HorizontalContentAlignment="Center"
@@ -80,12 +72,6 @@
                            VerticalContentAlignment="Center"
                            FontSize="20" />
         </Grid>
-        
-        <Image Grid.Column="0" x:Name="PanelAnim"
-               Visibility="Collapsed"
-               Margin="10,0,0,0"
-               Width="45"
-               Height="45"/>
 
         <StackPanel Grid.Column="1" Margin="10,0,0,0">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">

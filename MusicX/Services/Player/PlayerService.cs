@@ -110,6 +110,13 @@ public class PlayerService
         if (CurrentTrack is null) return;
         
         await PlayTrackAsync(CurrentTrack);
+        
+        if (Application.Current.Dispatcher.CheckAccess())
+            PlayStateChangedEvent?.Invoke(this, EventArgs.Empty);
+        else
+            await Application.Current.Dispatcher.InvokeAsync(
+                () => PlayStateChangedEvent?.Invoke(this, EventArgs.Empty));
+        
         await Task.WhenAll(
             _statsListeners.Select(b => b.TrackPlayStateChangedAsync(CurrentTrack!, player.Position, false)));
     }
@@ -139,8 +146,9 @@ public class PlayerService
 
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            TrackChangedEvent.Invoke(this, EventArgs.Empty);
+            TrackChangedEvent?.Invoke(this, EventArgs.Empty);
             NextTrackChanged?.Invoke(this, EventArgs.Empty);
+            PlayStateChangedEvent?.Invoke(this, EventArgs.Empty);
         });
         
         var sources = await Task.WhenAll(_mediaSources.Select(b => b.CreateMediaSourceAsync(track)));
@@ -906,6 +914,13 @@ public class PlayerService
         try
         {
             player.Pause();
+            
+            if (Application.Current.Dispatcher.CheckAccess())
+                PlayStateChangedEvent?.Invoke(this, EventArgs.Empty);
+            else
+                await Application.Current.Dispatcher.InvokeAsync(
+                    () => PlayStateChangedEvent?.Invoke(this, EventArgs.Empty));
+            
             await Task.WhenAll(
                 _statsListeners.Select(b => b.TrackPlayStateChangedAsync(CurrentTrack!, player.Position, true)));
         }catch (Exception ex)

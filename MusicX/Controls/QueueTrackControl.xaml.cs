@@ -2,13 +2,12 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
+using System.Windows.Media.Animation;
 using AsyncAwaitBestPractices;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Services;
 using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
-using WpfAnimatedGif;
 
 namespace MusicX.Controls;
 
@@ -16,63 +15,73 @@ public partial class QueueTrackControl : UserControl
 {
     private readonly PlayerService _player;
 
+    public static readonly DependencyProperty IsCurrentlyPlayingProperty = DependencyProperty.Register(
+        nameof(IsCurrentlyPlaying), typeof(bool), typeof(QueueTrackControl), new(PropertyChangedCallback));
+
+    private static void PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is not QueueTrackControl control) return;
+
+        var sb = (Storyboard)control.FindResource(control._player.CurrentTrack == (PlaylistTrack?)control.DataContext ? "PlayBorderFadeIn" : "PlayBorderFadeOut");
+        sb.Begin();
+    }
+
+    public bool IsCurrentlyPlaying
+    {
+        get => (bool)GetValue(IsCurrentlyPlayingProperty);
+        set => SetValue(IsCurrentlyPlayingProperty, value);
+    }
+
     public QueueTrackControl()
     {
         InitializeComponent();
         _player = StaticService.Container.GetRequiredService<PlayerService>();
         _player.PlayStateChangedEvent += PlayerOnPlayStateChangedEvent;
-        _player.TrackChangedEvent += PlayerOnTrackChangedEvent;
-    }
-
-    private void PlayerOnTrackChangedEvent(object? sender, EventArgs e)
-    {
-        if (DataContext is PlaylistTrack track && _player.CurrentTrack == track)
-        {
-            IconPlay.Visibility = Visibility.Collapsed;
-
-            UpdatePlayingAnimation(true);
-            PanelAnim.Visibility = Visibility.Visible;
-        }
-        else
-        {
-            IconPlay.Visibility = Visibility.Visible;
-
-            UpdatePlayingAnimation(false);
-            PanelAnim.Visibility = Visibility.Collapsed;
-        }
     }
 
     private void PlayerOnPlayStateChangedEvent(object? sender, EventArgs e)
     {
-        if (DataContext is not PlaylistTrack track || _player.CurrentTrack != track) return;
-        
-        IconPlay.Symbol = _player.IsPlaying ? Wpf.Ui.Common.SymbolRegular.Pause24 : Wpf.Ui.Common.SymbolRegular.Play24;
-        UpdatePlayingAnimation(_player.IsPlaying);
+        if (DataContext is not PlaylistTrack track) return;
+
+        IsCurrentlyPlaying = _player.CurrentTrack == track;
+        IconPlay.Symbol = _player.IsPlaying && IsCurrentlyPlaying ? Wpf.Ui.Common.SymbolRegular.Pause24 : Wpf.Ui.Common.SymbolRegular.Play24;
     }
 
     private void Track_OnClick(object sender, MouseButtonEventArgs e)
     {
-        if (DataContext is PlaylistTrack track && _player.CurrentTrack != track)
-            _player.PlayTrackFromQueueAsync(_player.Tracks.IndexOf(track)).SafeFireAndForget();
-    }
-    
-    private void UpdatePlayingAnimation(bool autoStart)
-    {
-        if (ImageBehavior.GetAnimationController(PanelAnim) is { } controller)
+        if (DataContext is not PlaylistTrack track) return;
+        
+        if (IsCurrentlyPlaying)
         {
-            if (autoStart)
-            {
-                controller.Play();
-            }
+            if (_player.IsPlaying)
+                _player.Pause();
             else
-            {
-                controller.Pause();
-                controller.GotoFrame(0);
-            }
-            return;
+                _player.Play();
         }
-            
-        ImageBehavior.SetAutoStart(PanelAnim, autoStart);
-        ImageBehavior.SetAnimatedSource(PanelAnim, new BitmapImage(new("../Assets/play.gif", UriKind.Relative)));
+        else
+        {
+            _player.PlayTrackFromQueueAsync(_player.Tracks.IndexOf(track)).SafeFireAndForget();
+        }
+    }
+
+    private void OnMouseEnter(object sender, MouseEventArgs e)
+    {
+        if (IsCurrentlyPlaying) return;
+        
+        var sb = (Storyboard)FindResource("PlayBorderFadeIn");
+        sb.Begin();
+    }
+
+    private void OnMouseLeave(object sender, MouseEventArgs e)
+    {
+        if (IsCurrentlyPlaying) return;
+        
+        var sb = (Storyboard)FindResource("PlayBorderFadeOut");
+        sb.Begin();
+    }
+
+    private void QueueTrackControl_OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+        PlayerOnPlayStateChangedEvent(_player, EventArgs.Empty);
     }
 }
