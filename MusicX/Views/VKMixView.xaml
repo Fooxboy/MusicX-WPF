@@ -137,6 +137,9 @@
             <Rectangle Fill="Black" Opacity="0.7"/>
 
             <wpfui:Card HorizontalAlignment="Center">
+                <wpfui:Card.Background>
+                    <SolidColorBrush Color="{DynamicResource SystemFillColorSolidNeutralBackground}" />
+                </wpfui:Card.Background>
                 <StackPanel Margin="20">
                     <wpfui:ProgressRing  IsIndeterminate="True"/>
                     <TextBlock Margin="0, 20,0,0" Text="Подождите, мы получаем Ваш микс"/>
