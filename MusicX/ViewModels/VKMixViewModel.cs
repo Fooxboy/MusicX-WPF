@@ -16,6 +16,7 @@ using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.AppCenter.Analytics;
+using MusicX.Helpers;
 
 namespace MusicX.ViewModels
 {
@@ -45,9 +46,9 @@ namespace MusicX.ViewModels
 
         public bool IsLoadingMix { get; set; }
 
-        public ObservableCollection<Artist> Artists { get; set; } = new ObservableCollection<Artist>();
+        public ObservableRangeCollection<Artist> Artists { get; set; } = new();
 
-        public ObservableCollection<Tag> Tags { get; set; } = new ObservableCollection<Tag>();
+        public ObservableRangeCollection<Tag> Tags { get; set; } = new();
 
         public Artist SelectedArtist { get; set; }
 
@@ -180,9 +181,9 @@ namespace MusicX.ViewModels
 
                 var artists = await boomSerivce.GetArtistsAsync();
                 var tags = await boomSerivce.GetTagsAsync();
-
-                foreach (var artist in artists) Artists.Add(artist);
-                foreach (var tag in tags) Tags.Add(tag);
+                
+                Artists.ReplaceRange(artists);
+                Tags.ReplaceRange(tags);
 
                 IsLoaded = true;
 
