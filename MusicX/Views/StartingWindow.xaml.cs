@@ -64,6 +64,7 @@ namespace MusicX.Views
 
                 collection.AddSingleton<ITrackStatsListener, DiscordTrackStats>();
                 collection.AddSingleton<ITrackStatsListener, VkTrackBroadcastStats>();
+                collection.AddSingleton<ITrackStatsListener, VkTrackStats>();
 
                 collection.AddTransient<SectionViewModel>();
                 collection.AddTransient<PlaylistViewModel>();

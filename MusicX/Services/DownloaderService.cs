@@ -132,7 +132,7 @@ public class DownloaderService
         tfile.Tag.Comment = "Загружено с помощью Music X. https://t.me/MusicXPlayer";
         tfile.Tag.Copyright = "Music X Player - https://t.me/MusicXPlayer";
         if (audio.Data is VkTrackData data)
-            tfile.Tag.MusicIpId = data.OwnerId + "_" + data.Id + "_" + data.OwnerId;
+            tfile.Tag.MusicIpId = data.Info.OwnerId + "_" + data.Info.Id + "_" + data.Info.OwnerId;
 
         tfile.Tag.Conductor = "Music X Player";
 

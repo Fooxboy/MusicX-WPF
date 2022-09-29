@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Helpers;
 using MusicX.ViewModels;
@@ -23,10 +24,17 @@ public class VkPlaylistPlaylist : PlaylistBase<PlaylistData>
         
         var (id, ownerId, accessKey) = Data;
         var playlist = await _vkService.LoadFullPlaylistAsync(id, ownerId, accessKey);
+
+        var trackPlaylist = new Playlist
+        {
+            Id = Data.PlaylistId,
+            OwnerId = Data.OwnerId,
+            AccessKey = Data.AccessKey
+        };
         
         foreach (var audio in playlist.Audios)
         {
-            yield return audio.ToTrack();
+            yield return audio.ToTrack(trackPlaylist);
         }
     }
 

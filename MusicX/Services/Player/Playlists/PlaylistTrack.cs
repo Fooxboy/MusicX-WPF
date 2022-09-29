@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using MusicX.Core.Models;
 using MusicX.ViewModels;
 
 namespace MusicX.Services.Player.Playlists;
@@ -29,8 +30,14 @@ public sealed record BoomTrackData(string Url, bool IsLiked, bool IsExplicit, Ti
     public override int GetHashCode() => Id.GetHashCode();
 }
 
+public record IdInfo(long Id, long OwnerId, string AccessKey)
+{
+    public string ToOwnerIdString() => $"{OwnerId}_{Id}";
+}
+
 public sealed record VkTrackData(string Url, bool IsLiked, bool IsExplicit, TimeSpan Duration,
-                          long Id, long OwnerId, string AccessKey) : TrackData(Url, IsLiked, IsExplicit, Duration)
+                                 IdInfo Info, string TrackCode, string? ParentBlockId,
+                                 IdInfo? Playlist) : TrackData(Url, IsLiked, IsExplicit, Duration)
 {
     public bool Equals(VkTrackData? other)
     {
@@ -39,10 +46,9 @@ public sealed record VkTrackData(string Url, bool IsLiked, bool IsExplicit, Time
         if (ReferenceEquals(this, other))
             return true;
         
-        return Id == other.Id && OwnerId == other.OwnerId && AccessKey == other.AccessKey;
+        return Info == other.Info;
     }
-    public override int GetHashCode() => 
-        HashCode.Combine(Id.GetHashCode(), OwnerId.GetHashCode(), AccessKey.GetHashCode());
+    public override int GetHashCode() => Info.GetHashCode();
 }
                           
 public record DownloaderData

@@ -69,7 +69,7 @@ namespace MusicX.Controls
 
         private void Player_PlayStateChangedEvent(object? sender, EventArgs e)
         {
-            if (player.CurrentTrack is { Data: VkTrackData data } && data.Id == this.Audio.Id)
+            if (player.CurrentTrack is { Data: VkTrackData data } && data.Info.Id == this.Audio.Id)
             {
                 this.IconPlay.Symbol = player.IsPlaying ? Wpf.Ui.Common.SymbolRegular.Pause24 : Wpf.Ui.Common.SymbolRegular.Play24;
                 UpdatePlayingAnimation(player.IsPlaying);
@@ -78,7 +78,7 @@ namespace MusicX.Controls
 
         private void Player_TrackChangedEvent(object? sender, EventArgs e)
         {
-            if (player.CurrentTrack is { Data: VkTrackData data } && data.Id == this.Audio.Id)
+            if (player.CurrentTrack is { Data: VkTrackData data } && data.Info.Id == this.Audio.Id)
             {
 
                 if(!ShowCard)
@@ -290,7 +290,7 @@ namespace MusicX.Controls
                 }
 
 
-                if (player.CurrentTrack is { Data: VkTrackData data } && data.Id == this.Audio.Id)
+                if (player.CurrentTrack is { Data: VkTrackData data } && data.Info.Id == this.Audio.Id)
                 {
                     PlayButtons.Visibility = Visibility.Visible;
                     IconPlay.Visibility = Visibility.Collapsed;
@@ -386,7 +386,7 @@ namespace MusicX.Controls
 
 
 
-                if (player.CurrentTrack is { Data: VkTrackData data } && data.Id != this.Audio.Id)
+                if (player.CurrentTrack is not { Data: VkTrackData data } || data.Info.Id != this.Audio.Id)
                 {
                     PlayButtons.Visibility = Visibility.Visible;
                 }
@@ -408,7 +408,7 @@ namespace MusicX.Controls
              
                 if (!ShowCard)
                 {
-                    if (player.CurrentTrack is { Data: VkTrackData data1 } && data1.Id != this.Audio.Id)
+                    if (player.CurrentTrack is not { Data: VkTrackData data1 } || data1.Info.Id != this.Audio.Id)
                     {
                         Card.Opacity = 1;
 
@@ -434,7 +434,7 @@ namespace MusicX.Controls
 
                
 
-                if (player.CurrentTrack is { Data: VkTrackData data } && data.Id != this.Audio.Id)
+                if (player.CurrentTrack is not { Data: VkTrackData data } || data.Info.Id != this.Audio.Id)
                 {
                     PlayButtons.Visibility = Visibility.Collapsed;
                 }
@@ -450,9 +450,13 @@ namespace MusicX.Controls
                     Card.Opacity = 1;
                 }
                 
-                if (player.CurrentTrack is { Data: VkTrackData data1 } && data1.Id != this.Audio.Id)
+                if (player.CurrentTrack is not { Data: VkTrackData data1 } || data1.Info.Id != this.Audio.Id)
                 {
                     Card.Opacity = ShowCard ? 1 : 0;
+                } 
+                else if (data1.Info.Id == Audio.Id)
+                {
+                    Card.Opacity = 1;
                 }
             }catch(Exception ex)
             {

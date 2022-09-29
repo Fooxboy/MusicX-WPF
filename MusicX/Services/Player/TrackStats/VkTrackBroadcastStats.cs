@@ -21,9 +21,9 @@ public class VkTrackBroadcastStats : ITrackStatsListener
         if (newTrack.Data is VkTrackData data && _configService.Config.BroadcastVK == true)
             return _vkService.SetBroadcastAsync(new()
             {
-                Id = data.Id,
-                OwnerId = data.OwnerId,
-                AccessKey = data.AccessKey
+                Id = data.Info.Id,
+                OwnerId = data.Info.OwnerId,
+                AccessKey = data.Info.AccessKey
             });
         return Task.CompletedTask;
     }
@@ -33,9 +33,9 @@ public class VkTrackBroadcastStats : ITrackStatsListener
         if (track.Data is VkTrackData data && _configService.Config.BroadcastVK == true)
             return _vkService.SetBroadcastAsync(paused ? null : new()
             {
-                Id = data.Id,
-                OwnerId = data.OwnerId,
-                AccessKey = data.AccessKey
+                Id = data.Info.Id,
+                OwnerId = data.Info.OwnerId,
+                AccessKey = data.Info.AccessKey
             });
         return Task.CompletedTask;
     }

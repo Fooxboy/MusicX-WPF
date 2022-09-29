@@ -642,7 +642,7 @@ namespace MusicX.Core.Services
             }
         }
 
-        public async Task StatsTrackEvents(List<object> obj)
+        public async Task StatsTrackEvents(List<TrackEvent> obj)
         {
             try
             {
