@@ -42,6 +42,11 @@
                 </DoubleAnimation>
             </Storyboard>
             
+            <Style TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource {x:Type ToggleButton}}"
+                   x:Key="TransparentToggleButtonStyle">
+                <Setter Property="Background" Value="Transparent" />
+            </Style>
+            
             <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" /> 
         </ResourceDictionary>
 
@@ -329,11 +334,10 @@
                             Height="40"
                             Margin="0,0,10,0"
                             Padding="0"
-                            Background="Transparent"
                             HorizontalContentAlignment="Center"
+                            Style="{StaticResource TransparentToggleButtonStyle}"
                             Click="RepeatButton_Click">
                             <wpfui:SymbolIcon Symbol="ArrowRepeatAll16" />
-
                             <ToggleButton.ToolTip>
                                 <ToolTip Content="Повтор трека" />
                             </ToggleButton.ToolTip>
@@ -377,9 +381,8 @@
                                           Height="40"
                                           Margin="0,0,20,0"
                                           Padding="0"
-                                          BorderBrush="#292929"
                                           HorizontalContentAlignment="Center"
-                                          Background="Transparent">
+                                          Style="{StaticResource TransparentToggleButtonStyle}">
                                 <ToggleButton.ToolTip>
                                     <ToolTip Content="Очередь" />
                                 </ToggleButton.ToolTip>
