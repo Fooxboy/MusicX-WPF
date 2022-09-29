@@ -80,8 +80,6 @@ namespace MusicX.ViewModels.Modals
                 }
 
                 IsLoading = false;
-                Changed(nameof(IsLoading));
-                Changed(nameof(Tracks));
             }catch(Exception ex)
             {
 

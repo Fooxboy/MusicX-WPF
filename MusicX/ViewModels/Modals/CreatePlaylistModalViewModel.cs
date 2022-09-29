@@ -117,7 +117,6 @@ namespace MusicX.ViewModels.Modals
                 }
 
                 CreateIsEnable = false;
-                Changed(nameof(CreateIsEnable));
 
                 var config = await configService.GetConfig();
 
@@ -167,7 +166,6 @@ namespace MusicX.ViewModels.Modals
                 Crashes.TrackError(ex, properties);
 
                 CreateIsEnable = true;
-                Changed(nameof(CreateIsEnable));
 
                 notificationsService.Show("Ошибка", $"MusicX не смог создать плейлист :(");
 
@@ -210,7 +208,6 @@ namespace MusicX.ViewModels.Modals
                 Crashes.TrackError(ex, properties);
 
                 CreateIsEnable = true;
-                Changed(nameof(CreateIsEnable));
 
                 notificationsService.Show("Ошибка", $"MusicX не смог изменить плейлист :(");
                 throw ex;
@@ -224,14 +221,12 @@ namespace MusicX.ViewModels.Modals
             if (openFileDialog.ShowDialog() == true)
             {
                 CoverPath = openFileDialog.FileName;
-                Changed("CoverPath");
             }
         }
 
         private void AddSelectedTracks(System.Collections.IList selectedTracks)
         {
             CreateIsEnable = true;
-            Changed(nameof(CreateIsEnable));
 
             navigationService.OpenModal<CreatePlaylistModal>(this);
 
@@ -241,8 +236,6 @@ namespace MusicX.ViewModels.Modals
                 {
                     Tracks.Add(track as Audio);
                 }
-
-                Changed("Tracks");
             }
         }
 

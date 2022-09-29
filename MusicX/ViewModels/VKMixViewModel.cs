@@ -88,17 +88,13 @@ namespace MusicX.ViewModels
             try
             {
                 PlayingPersonalMix = false;
-                Changed("PlayingPersonalMix");
                 if (SelectedArtist == null) return;
                 IsLoadingMix = true;
-                Changed("IsLoadingMix");
                 var radioByArtist = await boomSerivce.GetArtistMixAsync(SelectedArtist.ApiId);
 
                 await playerService.PlayAsync(new RadioPlaylist(boomSerivce, radioByArtist, BoomRadioType.Artist), radioByArtist.Tracks[0].ToTrack());
 
                 IsLoadingMix = false;
-
-                Changed("IsLoadingMix");
             }catch(UnauthorizedException ex)
             {
                 logger.Error("Boom unauthorizedException");
@@ -132,17 +128,13 @@ namespace MusicX.ViewModels
                 if (SelectedTag == null) return;
 
                 PlayingPersonalMix = false;
-                Changed("PlayingPersonalMix");
                 IsLoadingMix = true;
-                Changed("IsLoadingMix");
 
                 var radio = await boomSerivce.GetTagMixAsync(SelectedTag.ApiId);
 
                 await playerService.PlayAsync(new RadioPlaylist(boomSerivce, radio, BoomRadioType.Tag), radio.Tracks[0].ToTrack());
 
                 IsLoadingMix = false;
-
-                Changed("IsLoadingMix");
             }
             catch (UnauthorizedException)
             {
@@ -186,9 +178,7 @@ namespace MusicX.ViewModels
                 Tags.ReplaceRange(tags);
 
                 IsLoaded = true;
-
-                Changed("Artists");
-                Changed("IsLoaded");
+                
             }catch(UnauthorizedException)
             {
                 logger.Error("Boom unauthorizedException");
@@ -213,8 +203,6 @@ namespace MusicX.ViewModels
                 notificationsService.Show("Ошибка загрузки микса", "Мы не смогли загрузить микс, попробуйте ещё раз");
 
                 IsLoaded = true;
-
-                Changed("IsLoaded");
 
                 logger.Error(ex, ex.Message);
             }
@@ -253,8 +241,6 @@ namespace MusicX.ViewModels
 
                 IsLoaded = true;
 
-                Changed("IsLoaded");
-
                 logger.Error(ex, ex.Message);
 
             }
@@ -271,17 +257,13 @@ namespace MusicX.ViewModels
                 }
 
                 PlayingPersonalMix = true;
-                Changed("PlayingPersonalMix");
                 IsLoadingMix = true;
-                Changed("IsLoadingMix");
                 var personalMix =  await boomSerivce.GetPersonalMixAsync();
 
                 await playerService.PlayAsync(new RadioPlaylist(boomSerivce, personalMix, BoomRadioType.Personal), personalMix.Tracks[0].ToTrack());
 
 
                 IsLoadingMix = false;
-                Changed("IsLoadingMix");
-
             }
             catch (UnauthorizedException)
             {
