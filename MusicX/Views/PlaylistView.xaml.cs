@@ -195,7 +195,9 @@ namespace MusicX.Views
                     PlayPlaylist.Content = "Остановить воспроизведение";
                     PlayPlaylist.Icon = Wpf.Ui.Common.SymbolRegular.Pause20;
 
-                    await player.PlayAsync(new VkPlaylistPlaylist(StaticService.Container.GetRequiredService<VkService>(), ViewModel.PlaylistData));
+                    await player.PlayAsync(
+                        new VkPlaylistPlaylist(StaticService.Container.GetRequiredService<VkService>(),
+                                               ViewModel.PlaylistData), ViewModel.Playlist.Audios[0].ToTrack());
                 }
             }catch (Exception ex)
             {
