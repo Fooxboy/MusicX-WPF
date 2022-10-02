@@ -19,7 +19,6 @@
     <None Remove="Assets\icons\playlists_white.png" />
     <None Remove="Assets\icons\recent_white.png" />
     <None Remove="Assets\lottie\play.json" />
-    <None Remove="Assets\play.gif" />
     <None Remove="Fonts\VKSansDisplay-Bold.ttf" />
     <None Remove="Fonts\VKSansDisplay-DemiBold.ttf" />
     <None Remove="Fonts\VKSansDisplay-Medium.ttf" />
@@ -81,7 +80,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MusicX.Core\MusicX.Core.csproj" />
-    <ProjectReference Include="..\WpfAnimatedGif\WpfAnimatedGif.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -106,9 +104,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\lottie\play.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Assets\play.gif">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

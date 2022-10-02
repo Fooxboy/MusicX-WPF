@@ -18,10 +18,10 @@ using MusicX.Helpers;
 using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
 using MusicX.ViewModels;
-using WpfAnimatedGif;
 using MusicX.ViewModels.Modals;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
+using Wpf.Ui.Common;
 
 namespace MusicX.Controls
 {
@@ -47,38 +47,17 @@ namespace MusicX.Controls
 
         }
 
-        private void UpdatePlayingAnimation(bool autoStart)
-        {
-            if (ImageBehavior.GetAnimationController(PanelAnim) is { } controller)
-            {
-                if (autoStart)
-                {
-                    controller.Play();
-                }
-                else
-                {
-                    controller.Pause();
-                    controller.GotoFrame(0);
-                }
-                return;
-            }
-            
-            ImageBehavior.SetAutoStart(PanelAnim, autoStart);
-            ImageBehavior.SetAnimatedSource(PanelAnim, new BitmapImage(new("../Assets/play.gif", UriKind.Relative)));
-        }
-
         private void Player_PlayStateChangedEvent(object? sender, EventArgs e)
         {
-            if (player.CurrentTrack is { Data: VkTrackData data } && data.Info.Id == this.Audio.Id)
+            if (player.CurrentTrack is { Data: VkTrackData data } && data.Info.Id == Audio.Id)
             {
-                this.IconPlay.Symbol = player.IsPlaying ? Wpf.Ui.Common.SymbolRegular.Pause24 : Wpf.Ui.Common.SymbolRegular.Play24;
-                UpdatePlayingAnimation(player.IsPlaying);
+                IconPlay.Symbol = player.IsPlaying ? SymbolRegular.Pause24 : SymbolRegular.Play24;
             }
         }
 
         private void Player_TrackChangedEvent(object? sender, EventArgs e)
         {
-            if (player.CurrentTrack is { Data: VkTrackData data } && data.Info.Id == this.Audio.Id)
+            if (player.CurrentTrack is { Data: VkTrackData data } && data.Info.Id == Audio.Id)
             {
 
                 if(!ShowCard)
@@ -88,28 +67,17 @@ namespace MusicX.Controls
 
 
                 PlayButtons.Visibility = Visibility.Visible;
-                IconPlay.Visibility = Visibility.Collapsed;
-
-                this.IconPlay.Visibility = Visibility.Collapsed;
-
-                UpdatePlayingAnimation(player.IsPlaying);
-                PanelAnim.Visibility = Visibility.Visible;
             }
             else
             {
                 PlayButtons.Visibility = Visibility.Collapsed;
-
-                IconPlay.Visibility = Visibility.Visible;
-                ImageBehavior.GetAnimationController(PanelAnim)?.Pause();
-                PanelAnim.Visibility = Visibility.Collapsed;
 
                 if (!ShowCard)
                 {
                     Card.Opacity = 0;
                 }
 
-                this.IconPlay.Visibility = Visibility.Visible;
-                this.IconPlay.Symbol = Wpf.Ui.Common.SymbolRegular.Play24;
+                IconPlay.Symbol = SymbolRegular.Play24;
             }
         }
 
@@ -163,16 +131,16 @@ namespace MusicX.Controls
             try
             {
 
-                this.IconPlay.Symbol = Wpf.Ui.Common.SymbolRegular.Play24;
+                IconPlay.Symbol = SymbolRegular.Play24;
 
                 if (ShowCard)
                 {
-                    this.Card.Opacity = 1;
+                    Card.Opacity = 1;
                 }
                 else
                 {
                     TextsPanel.MaxWidth = double.PositiveInfinity;
-                    this.Card.Opacity = 0;
+                    Card.Opacity = 0;
                 }
 
                 Subtitle.Visibility = string.IsNullOrEmpty(Audio.Subtitle) ? Visibility.Collapsed : Visibility.Visible;
@@ -190,7 +158,7 @@ namespace MusicX.Controls
                     Title.Text = Audio.Title;
                     Subtitle.Text = Audio.Subtitle;
                     Artists.Text = Audio.Artist;
-                    this.Opacity = 0.3;
+                    Opacity = 0.3;
                     return;
                 }
 
@@ -244,19 +212,19 @@ namespace MusicX.Controls
                 
 
 
-                var configService = StaticService.Container.GetRequiredService<Services.ConfigService>();
+                var configService = StaticService.Container.GetRequiredService<ConfigService>();
 
 
                 var config = await configService.GetConfig();
 
                 if (Audio.OwnerId == config.UserId)
                 {
-                    AddRemoveIcon.Symbol = Wpf.Ui.Common.SymbolRegular.Delete20;
+                    AddRemoveIcon.Symbol = SymbolRegular.Delete20;
                     AddRemoveText.Text = "Удалить";
                 }
                 else
                 {
-                    AddRemoveIcon.Symbol = Wpf.Ui.Common.SymbolRegular.Add24;
+                    AddRemoveIcon.Symbol = SymbolRegular.Add24;
                     AddRemoveText.Text = "Добавить к себе";
 
                 }
@@ -272,9 +240,9 @@ namespace MusicX.Controls
                 }
 
                
-                if(this.ActualWidth > 110)
+                if(ActualWidth > 110)
                 {
-                    NamePanel.MaxWidth = this.ActualWidth - 110;
+                    NamePanel.MaxWidth = ActualWidth - 110;
 
                     if (Audio.IsExplicit)
                     {
@@ -286,18 +254,14 @@ namespace MusicX.Controls
                         Title.MaxWidth = (NamePanel.MaxWidth);
                     }
 
-                    Artists.MaxWidth = this.ActualWidth;
+                    Artists.MaxWidth = ActualWidth;
                 }
 
 
-                if (player.CurrentTrack is { Data: VkTrackData data } && data.Info.Id == this.Audio.Id)
+                if (player.CurrentTrack is { Data: VkTrackData data } && data.Info.Id == Audio.Id)
                 {
                     PlayButtons.Visibility = Visibility.Visible;
-                    IconPlay.Visibility = Visibility.Collapsed;
-
-                    this.IconPlay.Visibility = Visibility.Collapsed;
-                    UpdatePlayingAnimation(player.IsPlaying);
-                    PanelAnim.Visibility = Visibility.Visible;
+                    IconPlay.Symbol = SymbolRegular.Pause24;
 
                     if (!ShowCard)
                     {
@@ -366,7 +330,7 @@ namespace MusicX.Controls
         {
             try
             {
-                var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
+                var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
 
                 if (Audio.MainArtists == null)
                 {
@@ -405,7 +369,7 @@ namespace MusicX.Controls
 
 
 
-                if (player.CurrentTrack is not { Data: VkTrackData data } || data.Info.Id != this.Audio.Id)
+                if (player.CurrentTrack is not { Data: VkTrackData data } || data.Info.Id != Audio.Id)
                 {
                     PlayButtons.Visibility = Visibility.Visible;
                 }
@@ -427,7 +391,7 @@ namespace MusicX.Controls
              
                 if (!ShowCard)
                 {
-                    if (player.CurrentTrack is not { Data: VkTrackData data1 } || data1.Info.Id != this.Audio.Id)
+                    if (player.CurrentTrack is not { Data: VkTrackData data1 } || data1.Info.Id != Audio.Id)
                     {
                         Card.Opacity = 1;
 
@@ -463,7 +427,7 @@ namespace MusicX.Controls
 
                
 
-                if (player.CurrentTrack is not { Data: VkTrackData data } || data.Info.Id != this.Audio.Id)
+                if (player.CurrentTrack is not { Data: VkTrackData data } || data.Info.Id != Audio.Id)
                 {
                     PlayButtons.Visibility = Visibility.Collapsed;
                 }
@@ -479,7 +443,7 @@ namespace MusicX.Controls
                     Card.Opacity = 1;
                 }
                 
-                if (player.CurrentTrack is not { Data: VkTrackData data1 } || data1.Info.Id != this.Audio.Id)
+                if (player.CurrentTrack is not { Data: VkTrackData data1 } || data1.Info.Id != Audio.Id)
                 {
                     Card.Opacity = ShowCard ? 1 : 0;
                 } 
@@ -522,7 +486,7 @@ namespace MusicX.Controls
                 
                 if (Audio.Url == String.Empty)
                 {
-                    var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
+                    var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
                     var modalViewModel = StaticService.Container.GetRequiredService<TrackNotAvalibleModalViewModel>();
                     await modalViewModel.LoadAsync(Audio.TrackCode, Audio.OwnerId + "_" + Audio.Id + "_" + Audio.AccessKey);
                     
@@ -559,7 +523,7 @@ namespace MusicX.Controls
                 if (sender is not TextBlock block)
                     return;
                 block.TextDecorations.Add(TextDecorations.Underline);
-                this.Cursor = Cursors.Hand;
+                Cursor = Cursors.Hand;
             }catch (Exception ex)
             {
 
@@ -588,7 +552,7 @@ namespace MusicX.Controls
                 {
                     block.TextDecorations.Remove(dec);
                 }
-                this.Cursor = Cursors.Arrow;
+                Cursor = Cursors.Arrow;
             }catch (Exception ex)
             {
                 var properties = new Dictionary<string, string>
@@ -609,7 +573,7 @@ namespace MusicX.Controls
         {
             try
             {
-                var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
+                var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
 
                 if (Audio.MainArtists == null)
                 {
@@ -639,7 +603,7 @@ namespace MusicX.Controls
 
         private async void AddRemove_MouseDown(object sender, MouseButtonEventArgs e)
         {
-           var configService = StaticService.Container.GetRequiredService<Services.ConfigService>();
+           var configService = StaticService.Container.GetRequiredService<ConfigService>();
             var vkService = StaticService.Container.GetRequiredService<VkService>();
 
 
@@ -668,7 +632,7 @@ namespace MusicX.Controls
 
 
 
-                var navigation = StaticService.Container.GetRequiredService<Services.NavigationService>();
+                var navigation = StaticService.Container.GetRequiredService<NavigationService>();
                 navigation.OpenMenuSection("downloads");
             }
         }
@@ -678,7 +642,7 @@ namespace MusicX.Controls
             if (Audio.Album != null)
             {
                 Title.TextDecorations.Add(TextDecorations.Underline);
-                this.Cursor = Cursors.Hand;
+                Cursor = Cursors.Hand;
             }
         }
 
@@ -688,7 +652,7 @@ namespace MusicX.Controls
             {
                 Title.TextDecorations.Remove(dec);
             }
-            this.Cursor = Cursors.Arrow;
+            Cursor = Cursors.Arrow;
         }
 
         private async void Title_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -697,7 +661,7 @@ namespace MusicX.Controls
             {
                 if (Audio.Album != null)
                 {
-                    var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
+                    var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
                     navigationService.OpenExternalPage(new PlaylistView(Audio.Album.Id, Audio.Album.OwnerId, Audio.Album.AccessKey));
                 }
 
@@ -723,7 +687,7 @@ namespace MusicX.Controls
         {
             try
             {
-                var notifications = StaticService.Container.GetRequiredService<Services.NotificationsService>();
+                var notifications = StaticService.Container.GetRequiredService<NotificationsService>();
 
                 notifications.Show("Уже ищем", "Сейчас мы найдем похожие треки, подождите");
 
@@ -731,7 +695,7 @@ namespace MusicX.Controls
 
                 var items = await vk.GetRecommendationsAudio(Audio.OwnerId + "_" + Audio.Id);
 
-                var navigation = StaticService.Container.GetRequiredService<Services.NavigationService>();
+                var navigation = StaticService.Container.GetRequiredService<NavigationService>();
 
                 var ids = new List<string>();
 
@@ -740,10 +704,10 @@ namespace MusicX.Controls
                     ids.Add(audio.OwnerId + "_" + audio.Id + "_" + audio.AccessKey);
                 }
 
-                var block = new MusicX.Core.Models.Block { Audios = items.Items, AudiosIds = ids, DataType = "music_audios", Layout = new Layout() { Name = "list" } };
-                var title = new MusicX.Core.Models.Block { DataType = "none", Layout = new Layout() { Name = "header", Title = $"Треки похожие на \"{Audio.Title}\"" } };
+                var block = new Block { Audios = items.Items, AudiosIds = ids, DataType = "music_audios", Layout = new Layout() { Name = "list" } };
+                var title = new Block { DataType = "none", Layout = new Layout() { Name = "header", Title = $"Треки похожие на \"{Audio.Title}\"" } };
 
-                var blocks = new List<Core.Models.Block>();
+                var blocks = new List<Block>();
                 blocks.Add(title);
                 blocks.Add(block);
 
@@ -762,7 +726,7 @@ namespace MusicX.Controls
                 Crashes.TrackError(ex, properties);
 
                 logger.Error(ex, ex.Message);
-                var notifications = StaticService.Container.GetRequiredService<Services.NotificationsService>();
+                var notifications = StaticService.Container.GetRequiredService<NotificationsService>();
 
                 notifications.Show("Ошибка", "Мы не смогли найти подходящие треки");
 
@@ -816,7 +780,7 @@ namespace MusicX.Controls
         private void AddToPlaylist_MouseDown(object sender, MouseButtonEventArgs e)
         {
             var viewModel = StaticService.Container.GetRequiredService<PlaylistSelectorModalViewModel>();
-            var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
+            var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
 
             viewModel.PlaylistSelected += ViewModel_PlaylistSelected;
 
@@ -830,9 +794,9 @@ namespace MusicX.Controls
 
             try
             {
-                await vk.AddToPlaylistAsync(this.Audio, playlist.OwnerId, playlist.Id);
+                await vk.AddToPlaylistAsync(Audio, playlist.OwnerId, playlist.Id);
 
-                notificationsService.Show("Трек добавлен", $"Трек '{this.Audio.Title}' добавлен в плейлист '{playlist.Title}'");
+                notificationsService.Show("Трек добавлен", $"Трек '{Audio.Title}' добавлен в плейлист '{playlist.Title}'");
 
 
             }
