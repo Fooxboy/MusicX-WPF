@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.ViewModels.Controls;
 using Wpf.Ui.Controls;
+using Microsoft.AppCenter.Crashes;
 
 namespace MusicX.Controls
 {
@@ -417,6 +418,15 @@ namespace MusicX.Controls
             }
             catch (Exception ex)
             {
+
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
 
                 logger.Error("Fatal error show block content:");
                 logger.Error(ex);

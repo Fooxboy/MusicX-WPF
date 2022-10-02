@@ -1,4 +1,6 @@
-﻿using MusicX.Core.Models.Boom;
+﻿using Microsoft.AppCenter.Crashes;
+using MusicX.Core.Models.Boom;
+using MusicX.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,16 +40,32 @@ namespace MusicX.Controls.Boom
 
         private void TagControl_Loaded(object sender, RoutedEventArgs e)
         {
-            this.CoverTag.ImageSource = new BitmapImage(new Uri(TagBoom.Cover.Url));
-            this.Name.Text = TagBoom.Name;
+            try
+            {
+                this.CoverTag.ImageSource = new BitmapImage(new Uri(TagBoom.Cover.Url));
+                this.Name.Text = TagBoom.Name;
 
-            var descr = string.Empty;
+                var descr = string.Empty;
 
-            foreach (var artist in TagBoom.RelevantArtistsNames) descr += artist + ", ";
+                foreach (var artist in TagBoom.RelevantArtistsNames) descr += artist + ", ";
 
-            Description.Text = descr;
+                Description.Text = descr;
 
-            CoverBackground.Fill = (SolidColorBrush)new BrushConverter().ConvertFrom(TagBoom.Cover.AccentColor);
+                CoverBackground.Fill = (SolidColorBrush)new BrushConverter().ConvertFrom(TagBoom.Cover.AccentColor);
+
+            }
+            catch(Exception ex)
+            {
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+            }
+           
         }
 
         private void Grid_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)

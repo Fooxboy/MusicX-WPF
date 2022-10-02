@@ -7,6 +7,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AppCenter.Crashes;
 
 namespace MusicX.Controls
 {
@@ -84,6 +85,15 @@ namespace MusicX.Controls
                 }
             }catch (Exception ex)
             {
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 logger.Error("Fail load list tracks");
                 logger.Error(ex, ex.Message);
             }

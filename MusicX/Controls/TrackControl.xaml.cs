@@ -310,6 +310,16 @@ namespace MusicX.Controls
             }
             catch (Exception ex)
             {
+
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 logger.Error("Failed load track control");
                 logger.Error(ex, ex.Message);
 
@@ -368,6 +378,15 @@ namespace MusicX.Controls
                 }
             }catch(Exception ex)
             {
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 logger.Error(ex, ex.Message);
                 StaticService.Container.GetRequiredService<NotificationsService>().Show("Ошибка", "Нам не удалось перейти на эту секцию");
             }
@@ -420,6 +439,16 @@ namespace MusicX.Controls
                 Card.Opacity = 0.5;
             }catch(Exception ex)
             {
+
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 logger.Error(ex, ex.Message);
 
             }
@@ -460,6 +489,16 @@ namespace MusicX.Controls
                 }
             }catch(Exception ex)
             {
+
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 logger.Error(ex, ex.Message);
 
             }
@@ -523,6 +562,16 @@ namespace MusicX.Controls
                 this.Cursor = Cursors.Hand;
             }catch (Exception ex)
             {
+
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 logger.Error(ex, ex.Message);
 
             }
@@ -542,6 +591,15 @@ namespace MusicX.Controls
                 this.Cursor = Cursors.Arrow;
             }catch (Exception ex)
             {
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 logger.Error(ex, ex.Message);
             }
 
@@ -564,6 +622,16 @@ namespace MusicX.Controls
             }
             catch (Exception ex)
             {
+
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 logger.Error(ex, ex.Message);
                 StaticService.Container.GetRequiredService<NotificationsService>().Show("Ошибка", "Нам не удалось перейти на эту секцию");
             }
@@ -597,6 +665,9 @@ namespace MusicX.Controls
                 downloader.StartDownloadingCommand.Execute(null);
             }catch(FileNotFoundException)
             {
+
+
+
                 var navigation = StaticService.Container.GetRequiredService<Services.NavigationService>();
                 navigation.OpenMenuSection("downloads");
             }
@@ -633,6 +704,16 @@ namespace MusicX.Controls
             }
             catch (Exception ex)
             {
+
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 logger.Error(ex, ex.Message);
             }
             
@@ -670,6 +751,16 @@ namespace MusicX.Controls
             }
             catch (Exception ex)
             {
+
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 logger.Error(ex, ex.Message);
                 var notifications = StaticService.Container.GetRequiredService<Services.NotificationsService>();
 
@@ -687,6 +778,16 @@ namespace MusicX.Controls
             }
             catch (Exception ex)
             {
+
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 logger.Error(ex);
             }
         }
@@ -698,6 +799,16 @@ namespace MusicX.Controls
             }
             catch (Exception ex)
             {
+
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 logger.Error(ex);
             }
         }
@@ -727,6 +838,16 @@ namespace MusicX.Controls
             }
             catch (Exception ex)
             {
+
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 logger.Error(ex, ex.Message);
 
                 notificationsService.Show("Ошибка", "Произошла ошибка при добавлении трека в плейлист");

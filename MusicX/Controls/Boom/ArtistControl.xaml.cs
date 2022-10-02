@@ -1,5 +1,8 @@
-﻿using MusicX.Core.Models.Boom;
+﻿using Microsoft.AppCenter.Crashes;
+using MusicX.Core.Models.Boom;
+using MusicX.Services;
 using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -30,16 +33,31 @@ namespace MusicX.Controls.Boom
 
         private void ArtistControl_Loaded(object sender, RoutedEventArgs e)
         {
-            this.CoverArtist.ImageSource = new BitmapImage(new Uri(Artist.Avatar.Url));
-            this.Name.Text = Artist.Name;
+            try
+            {
+                this.CoverArtist.ImageSource = new BitmapImage(new Uri(Artist.Avatar.Url));
+                this.Name.Text = Artist.Name;
 
-            var descr = string.Empty;
+                var descr = string.Empty;
 
-            foreach (var artist in Artist.RelevantArtistsNames) descr += artist + ", ";
+                foreach (var artist in Artist.RelevantArtistsNames) descr += artist + ", ";
 
-            Description.Text = descr;
+                Description.Text = descr;
 
-            CoverBackground.Fill = (SolidColorBrush)new BrushConverter().ConvertFrom(Artist.Avatar.AccentColor);
+                CoverBackground.Fill = (SolidColorBrush)new BrushConverter().ConvertFrom(Artist.Avatar.AccentColor);
+            }
+            catch(Exception ex)
+            {
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+            }
+          
         }
 
         private void Grid_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)

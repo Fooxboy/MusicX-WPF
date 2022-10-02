@@ -87,6 +87,16 @@ namespace MusicX.ViewModels
         {
             try
             {
+
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Analytics.TrackEvent("Play Artist Mix", properties);
+
                 PlayingPersonalMix = false;
                 if (SelectedArtist == null) return;
                 IsLoadingMix = true;
@@ -125,6 +135,15 @@ namespace MusicX.ViewModels
         {
             try
             {
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Analytics.TrackEvent("Play Tag Mix", properties);
+
                 if (SelectedTag == null) return;
 
                 PlayingPersonalMix = false;
@@ -250,6 +269,16 @@ namespace MusicX.ViewModels
         {
             try
             {
+
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Analytics.TrackEvent("Play Personal Mix", properties);
+
                 if (PlayingPersonalMix)
                 {
                     playerService.Pause();

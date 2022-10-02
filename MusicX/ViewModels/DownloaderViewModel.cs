@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
 using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Helpers;
@@ -181,6 +182,15 @@ public class DownloaderViewModel : BaseViewModel
             }
             catch (Exception e)
             {
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(e, properties);
+
                 logger.Error(e);
                 notificationsService.Show("Ошибка загрузки", "Мы не смогли загрузить трек");
             }

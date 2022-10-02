@@ -21,6 +21,7 @@ using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
 using Wpf.Ui.Extensions;
 using NavigationService = MusicX.Services.NavigationService;
+using Microsoft.AppCenter.Crashes;
 
 namespace MusicX
 {
@@ -178,6 +179,14 @@ namespace MusicX
             }
             catch (Exception ex)
             {
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
                 logger.Error(ex, ex.Message);
                 notificationsService.Show("Ошибка запуска", "Попробуйте перезапустить приложение, если ошибка повторяется, напишите об этом разработчику");
             }
@@ -273,6 +282,16 @@ namespace MusicX
 
             }catch (Exception ex)
             {
+
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 logger.Error(ex, ex.Message);
 
                 notificationsService.Show("Ошибка открытия поиска", "Мы не смогли открыть подсказки поиска");
@@ -295,6 +314,15 @@ namespace MusicX
                     navigationService.OpenModal<AvalibleNewUpdateModal>(release);
             }catch(Exception ex)
             {
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 logger.Error(ex, ex.Message);
 
                 notificationsService.Show("Ошибка проверки обновлений", "Мы не смогли проверить доступные обновления");
