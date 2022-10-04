@@ -11,6 +11,7 @@
              mc:Ignorable="d"
              d:DesignHeight="80" d:DesignWidth="300"
              d:DataContext="{d:DesignInstance Type={x:Type playlists:PlaylistTrack}}"
+             x:Name="Control"
              DataContextChanged="QueueTrackControl_OnDataContextChanged">
     <UserControl.Resources>
         <converters:TrackArtistsToStringConverter x:Key="ArtistsToStringConverter" />
@@ -30,86 +31,104 @@
                              From="1"
                              To="0" />
         </Storyboard>
+
+        <Style x:Key="CurrentlyPlayingCardBackgroundStyle"
+               TargetType="{x:Type ui:Card}"
+               BasedOn="{StaticResource {x:Type ui:Card}}">
+            <Setter Property="Background" Value="Transparent" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsCurrentlyPlaying, ElementName=Control}"
+                             Value="True">
+                    <Setter Property="Background" Value="{DynamicResource ControlElevationBorderBrush}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
     </UserControl.Resources>
 
-    <Grid MouseLeftButtonUp="Track_OnClick" MouseEnter="OnMouseEnter" MouseLeave="OnMouseLeave">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
+    <ui:Card MouseLeftButtonUp="Track_OnClick" MouseEnter="OnMouseEnter" MouseLeave="OnMouseLeave"
+             Style="{StaticResource CurrentlyPlayingCardBackgroundStyle}"
+             Padding="0,5"
+             Margin="5,0"
+             BorderBrush="Transparent">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
 
-        <ui:SymbolIcon Symbol="MusicNote124"
-                       HorizontalContentAlignment="Center"
-                       VerticalContentAlignment="Center"
-                       FontSize="20"
-                       Margin="10,0,0,0" />
-        <Border Grid.Column="0" CornerRadius="5" Width="45" Height="45"
-                Margin="10,0,0,0">
-            <Border.Style>
-                <Style TargetType="{x:Type Border}">
-                    <Setter Property="Background">
-                        <Setter.Value>
-                            <ImageBrush ImageSource="{Binding AlbumId.CoverUrl, FallbackValue={x:Null}}" />
-                        </Setter.Value>
-                    </Setter>
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding AlbumId.CoverUrl, FallbackValue={x:Null}}" Value="{x:Null}">
-                            <Setter Property="Background" Value="{DynamicResource ControlElevationBorderBrush}" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Border.Style>
-        </Border>
-
-        <Grid Grid.Column="0" Width="45" Height="45"
-              Margin="10,0,0,0"
-              x:Name="PlayBorder" Opacity="0">
-            <Rectangle Fill="Black" RadiusX="5" RadiusY="5" Opacity="0.6" />
-            <ui:SymbolIcon Symbol="Play24"
-                           x:Name="IconPlay"
+            <ui:SymbolIcon Symbol="MusicNote124"
                            HorizontalContentAlignment="Center"
                            VerticalContentAlignment="Center"
-                           FontSize="20" />
-        </Grid>
+                           FontSize="20"
+                           Margin="10,0,0,0" />
+            <Border Grid.Column="0" CornerRadius="5" Width="45" Height="45"
+                    Margin="10,0,0,0">
+                <Border.Style>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="Background">
+                            <Setter.Value>
+                                <ImageBrush ImageSource="{Binding AlbumId.CoverUrl, FallbackValue={x:Null}}" />
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding AlbumId.CoverUrl, FallbackValue={x:Null}}" Value="{x:Null}">
+                                <Setter Property="Background" Value="{DynamicResource ControlElevationBorderBrush}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+            </Border>
 
-        <StackPanel Grid.Column="1" Margin="10,0,0,0">
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                <TextBlock Text="{Binding Title}"
-                           FontSize="16"
-                           FontWeight="DemiBold"
-                           TextTrimming="CharacterEllipsis" />
-                <TextBlock Text="{Binding Subtitle}"
-                           Margin="5,3,0,0"
-                           Opacity="0.3"
-                           Visibility="{Binding Subtitle, Converter={StaticResource StringToVisibilityConverter}}"
-                           TextTrimming="CharacterEllipsis" />
-                <Border
-                    Width="16"
-                    Height="16"
-                    Margin="5,0,0,0"
-                    BorderBrush="White"
-                    BorderThickness="1"
-                    CornerRadius="2"
-                    Opacity="0.4"
-                    Visibility="{Binding Data.IsExplicit, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <TextBlock
-                        Margin="0,0,0,1"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontFamily="{StaticResource VKSansBold}"
-                        FontSize="12"
-                        Text="E" />
-                </Border>
+            <Grid Grid.Column="0" Width="45" Height="45"
+                  Margin="10,0,0,0"
+                  x:Name="PlayBorder" Opacity="0">
+                <Rectangle Fill="Black" RadiusX="5" RadiusY="5" Opacity="0.6" />
+                <ui:SymbolIcon Symbol="Play24"
+                               x:Name="IconPlay"
+                               HorizontalContentAlignment="Center"
+                               VerticalContentAlignment="Center"
+                               FontSize="20" />
+            </Grid>
+
+            <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding Title}"
+                               FontSize="16"
+                               FontWeight="DemiBold"
+                               TextTrimming="CharacterEllipsis" />
+                    <TextBlock Text="{Binding Subtitle}"
+                               Margin="5,3,0,0"
+                               Opacity="0.3"
+                               Visibility="{Binding Subtitle, Converter={StaticResource StringToVisibilityConverter}}"
+                               TextTrimming="CharacterEllipsis" />
+                    <Border
+                        Width="16"
+                        Height="16"
+                        Margin="5,0,0,0"
+                        BorderBrush="White"
+                        BorderThickness="1"
+                        CornerRadius="2"
+                        Opacity="0.4"
+                        Visibility="{Binding Data.IsExplicit, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <TextBlock
+                            Margin="0,0,0,1"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontFamily="{StaticResource VKSansBold}"
+                            FontSize="12"
+                            Text="E" />
+                    </Border>
+                </StackPanel>
+
+                <TextBlock VerticalAlignment="Center"
+                           Opacity="0.7"
+                           Text="{Binding Converter={StaticResource ArtistsToStringConverter}}" />
             </StackPanel>
 
-            <TextBlock VerticalAlignment="Center"
-                       Opacity="0.7"
-                       Text="{Binding Converter={StaticResource ArtistsToStringConverter}}" />
-        </StackPanel>
-
-        <TextBlock Grid.Column="2" Margin="0,0,10,0"
-                   VerticalAlignment="Center"
-                   Text="{Binding Data.Duration, StringFormat=m\\:ss}" />
-    </Grid>
+            <TextBlock Grid.Column="2" Margin="0,0,10,0"
+                       VerticalAlignment="Center"
+                       Text="{Binding Data.Duration, StringFormat=m\\:ss}" />
+        </Grid>
+    </ui:Card>
 </UserControl>

@@ -247,7 +247,7 @@ namespace MusicX.Controls
             PlayPlaylistGrid.Visibility = Visibility.Collapsed;
         }
 
-        private async void CardAction_Click(object sender, RoutedEventArgs e)
+        private void CardAction_Click(object sender, RoutedEventArgs e)
         {
             var properties = new Dictionary<string, string>
                 {
@@ -257,9 +257,7 @@ namespace MusicX.Controls
                     {"Version", StaticService.Version }
                 };
             Analytics.TrackEvent("OpenPlaylist", properties);
-
-            await Task.Delay(200);
-            if (nowLoad) return;
+            
             var notificationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
 
             notificationService.OpenExternalPage(new PlaylistView(Playlist));
@@ -285,10 +283,10 @@ namespace MusicX.Controls
 
         }
 
-        bool nowLoad = false;
         bool nowPlay = false;
         private async void PlayPlaylistGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            e.Handled = true;
             try
             {
                 var properties = new Dictionary<string, string>
@@ -300,8 +298,6 @@ namespace MusicX.Controls
                 };
                 Analytics.TrackEvent("PlayPlaylistWithButton", properties);
 
-                nowLoad = true;
-
                 var playerService = StaticService.Container.GetRequiredService<PlayerService>();
 
                 if (!nowPlay)
@@ -312,24 +308,16 @@ namespace MusicX.Controls
                     var vkService = StaticService.Container.GetRequiredService<VkService>();
 
                     await playerService.PlayAsync(
-                        new VkPlaylistPlaylist(vkService, new(Playlist.Id, Playlist.OwnerId, Playlist.AccessKey)),
-                        Playlist.Audios[0].ToTrack());
+                        new VkPlaylistPlaylist(vkService, new(Playlist.Id, Playlist.OwnerId, Playlist.AccessKey)));
 
                     iconPlay.Symbol = Wpf.Ui.Common.SymbolRegular.Pause24;
-
-                    nowLoad = false;
-
                 }
                 else
                 {
                     playerService.Pause();
                     iconPlay.Symbol = Wpf.Ui.Common.SymbolRegular.Play24;
 
-                    await Task.Delay(400);
-                    nowLoad = false;
-
                     nowPlay = false;
-
                 }
             }catch (Exception ex)
             {
@@ -342,8 +330,6 @@ namespace MusicX.Controls
                     {"Version", StaticService.Version }
                 };
                 Crashes.TrackError(ex, properties);
-
-                nowLoad = false;
             }
         }
 

@@ -60,7 +60,11 @@
 
                 <TextBlock Text="Микс по артистам" FontSize="20" Margin="0,15,0,0" FontFamily="{StaticResource VKSansMedium}" />
                 
-                <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
+                <hc:ScrollViewer VerticalScrollBarVisibility="Disabled"
+                                 CanMouseWheel="False"
+                                 HorizontalScrollBarVisibility="Auto"
+                                 IsInertiaEnabled="True"
+                                 hc:ScrollViewerAttach.AutoHide="True">
                     <ListView Margin="0,20,0,0" MouseLeftButtonDown="ArtistSelected" SelectedItem="{Binding SelectedArtist, Mode=TwoWay}" ItemsSource="{Binding Artists}">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource {x:Type ListViewItem}}">
@@ -87,11 +91,16 @@
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
-                </ScrollViewer>
+                </hc:ScrollViewer>
                 
                 <TextBlock Text="Микс по жанрам" FontSize="20" Margin="0,25,0,0" FontFamily="{StaticResource VKSansMedium}" />
 
-                <ScrollViewer VerticalScrollBarVisibility="Disabled" Margin="0,0,0,120" HorizontalScrollBarVisibility="Auto">
+                <hc:ScrollViewer Margin="0,0,0,120"
+                              VerticalScrollBarVisibility="Disabled"
+                              CanMouseWheel="False"
+                              HorizontalScrollBarVisibility="Auto"
+                              IsInertiaEnabled="True"
+                              hc:ScrollViewerAttach.AutoHide="True">
                     <ListView Margin="0,20,0,0" SelectedItem="{Binding SelectedTag}" ItemsSource="{Binding Tags}">
 
                         
@@ -119,7 +128,7 @@
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
-                </ScrollViewer>
+                </hc:ScrollViewer>
                 
             </StackPanel>
         </hc:ScrollViewer>
