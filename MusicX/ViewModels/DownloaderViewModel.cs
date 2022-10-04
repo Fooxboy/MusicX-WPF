@@ -83,13 +83,13 @@ public class DownloaderViewModel : BaseViewModel
     private async Task OpenMusicFolder()
     {
         var config = await configService.GetConfig();
-        
-        if (string.IsNullOrEmpty(config.DownloadDirectory) || !Directory.Exists(config.DownloadDirectory))
-            return;
+
+        var directory = config.DownloadDirectory  ??
+                       Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyMusic), "MusicX");
         
         Process.Start(new ProcessStartInfo
         {
-            FileName = config.DownloadDirectory,
+            FileName = directory,
             UseShellExecute = true
         });
     }
