@@ -1057,21 +1057,41 @@ public class PlayerService
 
     public async void SetShuffle(bool shuffle)
     {
-        logger.Info($"SET SHUFFLE: {shuffle}");
-        this.IsShuffle = shuffle;
-        if (!shuffle)
-            return;
-
-        var list = Tracks.ToList();
-        for (var i = list.Count - 1; i >= 0; i--)
+        try
         {
-            var k = Random.Shared.Next(i + 1);
-            (list[k], list[i]) = (list[i], list[k]);
-        }
-        Tracks.ReplaceRange(list);
+            logger.Info($"SET SHUFFLE: {shuffle}");
+            this.IsShuffle = shuffle;
+            if (!shuffle)
+                return;
 
-        if (CurrentTrack != Tracks[0])
-            await PlayTrackAsync(Tracks[0]).ConfigureAwait(false);
+            var list = Tracks.ToList();
+            for (var i = list.Count - 1; i >= 0; i--)
+            {
+                var k = Random.Shared.Next(i + 1);
+                (list[k], list[i]) = (list[i], list[k]);
+            }
+            Tracks.ReplaceRange(list);
+
+            if (CurrentTrack != Tracks[0])
+                await PlayTrackAsync(Tracks[0]).ConfigureAwait(false);
+
+        }
+        catch(Exception ex)
+        {
+            var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+            Crashes.TrackError(ex, properties);
+
+            notificationsService.Show("Ошибка", "Произошла ошибка при перемешивании");
+
+            logger.Error(ex, ex.Message);
+        }
+        
     }
 
     public void SetRepeat(bool repeat)

@@ -7,6 +7,8 @@ using System.Windows.Media.Imaging;
 using MusicX.Core.Services;
 using MusicX.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AppCenter.Crashes;
+using System.Collections.Generic;
 
 namespace MusicX.Controls.Blocks
 {
@@ -60,11 +62,30 @@ namespace MusicX.Controls.Blocks
 
         private async void ActionButton_Click(object sender, RoutedEventArgs e)
         {
-            var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
-            var vkService = StaticService.Container.GetRequiredService<VkService>();
+            try
+            {
+                var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
+                var vkService = StaticService.Container.GetRequiredService<VkService>();
 
-            var music = await vkService.GetAudioCatalogAsync(buttonAction.Action.Url);
-            navigationService.OpenSection(music.Catalog.DefaultSection);
+                var music = await vkService.GetAudioCatalogAsync(buttonAction.Action.Url);
+                navigationService.OpenSection(music.Catalog.DefaultSection);
+            }catch(Exception ex)
+            {
+
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
+                var notificationService = StaticService.Container.GetRequiredService<Services.NotificationsService>();
+
+                notificationService.Show("Ошибка", "Music X не смог открыть контент");
+            }
+
         }
     }
 }

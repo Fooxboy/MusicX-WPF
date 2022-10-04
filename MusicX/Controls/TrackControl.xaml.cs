@@ -639,20 +639,36 @@ namespace MusicX.Controls
 
         private async void AddRemove_MouseDown(object sender, MouseButtonEventArgs e)
         {
-           var configService = StaticService.Container.GetRequiredService<Services.ConfigService>();
-            var vkService = StaticService.Container.GetRequiredService<VkService>();
-
-
-            var config = await configService.GetConfig();
-
-            if (Audio.OwnerId == config.UserId)
+            try
             {
-                await vkService.AudioDeleteAsync(Audio.Id, Audio.OwnerId);
-            }else
-            {
-                await vkService.AudioAddAsync(Audio.Id, Audio.OwnerId);
+                var configService = StaticService.Container.GetRequiredService<Services.ConfigService>();
+                var vkService = StaticService.Container.GetRequiredService<VkService>();
 
+
+                var config = await configService.GetConfig();
+
+                if (Audio.OwnerId == config.UserId)
+                {
+                    await vkService.AudioDeleteAsync(Audio.Id, Audio.OwnerId);
+                }
+                else
+                {
+                    await vkService.AudioAddAsync(Audio.Id, Audio.OwnerId);
+
+                } 
+            }catch(Exception ex)
+            {
+                logger.Error(ex, ex.Message);
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
             }
+           
         }
 
         private void Download_MouseDown(object sender, MouseButtonEventArgs e)
