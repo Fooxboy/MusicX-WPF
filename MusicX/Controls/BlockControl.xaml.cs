@@ -1,5 +1,4 @@
-﻿using DryIoc;
-using MusicX.Controls.Blocks;
+﻿using MusicX.Controls.Blocks;
 using MusicX.Core.Models;
 using MusicX.Services;
 using NLog;
@@ -12,8 +11,10 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using Microsoft.Extensions.DependencyInjection;
 using MusicX.ViewModels.Controls;
 using Wpf.Ui.Controls;
+using Microsoft.AppCenter.Crashes;
 
 namespace MusicX.Controls
 {
@@ -27,7 +28,7 @@ namespace MusicX.Controls
         {
             InitializeComponent();
 
-            navigationService = StaticService.Container.Resolve<Services.NavigationService>();
+            navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
             this.Unloaded += BlockControl_Unloaded;
         }
 
@@ -59,7 +60,7 @@ namespace MusicX.Controls
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            var logger = StaticService.Container.Resolve<Logger>();
+            var logger = StaticService.Container.GetRequiredService<Logger>();
 
             try
             {
@@ -418,10 +419,19 @@ namespace MusicX.Controls
             catch (Exception ex)
             {
 
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 logger.Error("Fatal error show block content:");
                 logger.Error(ex);
 
-                var notificationService = StaticService.Container.Resolve<Services.NotificationsService>();
+                var notificationService = StaticService.Container.GetRequiredService<Services.NotificationsService>();
 
                 notificationService.Show("Произошла ошибка", $"Music X не смог показать блок {Block.DataType}");
 

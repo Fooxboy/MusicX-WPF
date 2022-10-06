@@ -1,13 +1,12 @@
-﻿using MusicX.Core.Models;
+﻿using Microsoft.AppCenter.Crashes;
+using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Services;
-using MusicX.Views.Modals;
 using NLog;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Wpf.Ui.Common;
@@ -81,10 +80,18 @@ namespace MusicX.ViewModels.Modals
                 }
 
                 IsLoading = false;
-                Changed(nameof(IsLoading));
-                Changed(nameof(Tracks));
             }catch(Exception ex)
             {
+
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 logger.Error(ex, ex.Message);
 
                 notificationsService.Show("Ошибка", "Music X не смог загрузить список Ваших треков. Попробуйте ещё раз");

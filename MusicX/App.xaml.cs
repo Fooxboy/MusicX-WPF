@@ -1,12 +1,8 @@
-﻿
-using DryIoc;
-using Microsoft.AppCenter;
+﻿using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
-using MusicX.Core.Services;
 using MusicX.Services;
-using MusicX.ViewModels;
-using NLog;
+using System.Collections.Generic;
 using System.Windows;
 
 namespace MusicX
@@ -21,6 +17,15 @@ namespace MusicX
             base.OnStartup(e);
             AppCenter.Start("02130c6d-0a3b-4aa2-b46c-8aeb66c3fd71",
                    typeof(Analytics), typeof(Crashes));
+
+            var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+            Analytics.TrackEvent("StartApp", properties);
 
         }
     }

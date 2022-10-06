@@ -1,18 +1,13 @@
 ﻿using MusicX.Services;
 using NLog;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using MusicX.Services.Player;
+using MusicX.Services.Player.Playlists;
+using System.Collections.Generic;
+using Microsoft.AppCenter.Analytics;
 
 namespace MusicX.Views
 {
@@ -48,13 +43,21 @@ namespace MusicX.Views
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 this.SetData();
-                PositionSlider.Maximum = playerService.CurrentTrack.Duration;
+                PositionSlider.Maximum = playerService.CurrentTrack!.Data.Duration.TotalSeconds;
 
             });
         }
 
         private void FullScreenWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+            Analytics.TrackEvent("OpenFullScreen", properties);
             this.SetData();
         }
 
@@ -63,13 +66,13 @@ namespace MusicX.Views
 
             try
             {
-                PositionSlider.Maximum = playerService.CurrentTrack.Duration;
+                PositionSlider.Maximum = playerService.CurrentTrack!.Data.Duration.TotalSeconds;
 
 
-                if (playerService.CurrentTrack.Album != null)
+                if (playerService.CurrentTrack.AlbumId != null)
                 {
 
-                    var bitmapImage = new BitmapImage(new Uri(playerService.CurrentTrack.Album.Thumb.Photo600));
+                    var bitmapImage = new BitmapImage(new Uri(playerService.CurrentTrack.AlbumId.CoverUrl));
                     BackgroundImage.Source = bitmapImage;
                     CoverImage.ImageSource = bitmapImage;
                     CoverNote.Visibility = Visibility.Collapsed;
@@ -83,9 +86,9 @@ namespace MusicX.Views
 
                 if (playerService.NextPlayTrack != null)
                 {
-                    if (playerService.NextPlayTrack.Album != null)
+                    if (playerService.NextPlayTrack.AlbumId != null)
                     {
-                        NextTrackCover.ImageSource = new BitmapImage(new Uri(playerService.NextPlayTrack.Album.Cover));
+                        NextTrackCover.ImageSource = new BitmapImage(new Uri(playerService.NextPlayTrack.AlbumId.CoverUrl));
                         NextTrackNote.Visibility = Visibility.Collapsed;
                     }
                     else
@@ -109,7 +112,7 @@ namespace MusicX.Views
                     }
                     else
                     {
-                        NextTrackArtist.Text = playerService.NextPlayTrack.Artist;
+                        NextTrackArtist.Text = playerService.NextPlayTrack.GetArtistsString();
                     }
                 }
 
@@ -129,7 +132,7 @@ namespace MusicX.Views
                 }
                 else
                 {
-                    ArtistName.Text = playerService.CurrentTrack.Artist;
+                    ArtistName.Text = playerService.CurrentTrack.GetArtistsString();
                 }
             }catch (Exception ex)
             {

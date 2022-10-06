@@ -1,15 +1,17 @@
-﻿using DryIoc;
-using MusicX.Services;
+﻿using MusicX.Services;
 using NLog;
 using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using Microsoft.Extensions.DependencyInjection;
 using MusicX.Controls;
 using MusicX.ViewModels;
 using Xabe.FFmpeg;
 using Xabe.FFmpeg.Downloader;
+using System.Collections.Generic;
+using Microsoft.AppCenter.Analytics;
 
 namespace MusicX.Views;
 
@@ -24,15 +26,24 @@ public partial class DownloadsView : Page, IMenuPage
     public DownloadsView()
     {
         InitializeComponent();
-        DataContext = StaticService.Container.Resolve<DownloaderViewModel>();
+        DataContext = StaticService.Container.GetRequiredService<DownloaderViewModel>();
         this.Loaded += DownloadsView_Loaded;
     }
 
     private void DownloadsView_Loaded(object sender, RoutedEventArgs e)
     {
-        if(!File.Exists(Path.Combine(ffmpegPath, "version.json")))
+        var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+        Analytics.TrackEvent("OpenDownloads", properties);
+
+        if (!File.Exists(Path.Combine(ffmpegPath, "version.json")))
         {
-            NoAvalible.Visibility = Visibility.Visible;
+            NoAvailable.Visibility = Visibility.Visible;
 
             return;
         }
@@ -41,7 +52,7 @@ public partial class DownloadsView : Page, IMenuPage
     }
     private async void DownloadButton_Click(object sender, RoutedEventArgs e)
     {
-        NoAvalible.Visibility = Visibility.Collapsed;
+        NoAvailable.Visibility = Visibility.Collapsed;
         DownloadFfmpeg.Visibility = Visibility.Visible;
 
         await DownloadFfmpegAsync();
@@ -63,7 +74,7 @@ public partial class DownloadsView : Page, IMenuPage
 
         await FFmpegDownloader.GetLatestVersion(FFmpegVersion.Official, ffmpegPath, new Progress<ProgressInfo>(Client_DownloadProgressChanged));
             
-        var notifications = StaticService.Container.Resolve<Services.NotificationsService>();
+        var notifications = StaticService.Container.GetRequiredService<Services.NotificationsService>();
         notifications.Show("Загрузка завершена", "Дополнительный компонент был загружен. Теперь Вы можете скачивать музыку!");
 
         ContentGrid.Visibility = Visibility.Visible;
@@ -104,10 +115,10 @@ public partial class DownloadsView : Page, IMenuPage
         }
         catch (Exception ex)
         {
-            var notifications = StaticService.Container.Resolve<Services.NotificationsService>();
+            var notifications = StaticService.Container.GetRequiredService<Services.NotificationsService>();
             notifications.Show("Произошла ошибка", "Мы не смогли скачать дополнительный компонент, попробуйте перезапустить приложение.");
 
-            var logger = StaticService.Container.Resolve<Logger>();
+            var logger = StaticService.Container.GetRequiredService<Logger>();
 
             logger.Error(ex, ex.Message);
 

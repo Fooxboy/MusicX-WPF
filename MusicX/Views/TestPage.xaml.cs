@@ -1,23 +1,11 @@
-﻿using DryIoc;
-using MusicX.Core.Models;
+﻿using MusicX.Core.Models;
 using MusicX.Services;
 using MusicX.Views.Modals;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Interop;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Microsoft.Extensions.DependencyInjection;
 using MusicX.Controls;
+using MusicX.Services.Player.Playlists;
 using MusicX.ViewModels;
 using MusicX.ViewModels.Modals;
 
@@ -52,26 +40,26 @@ namespace MusicX.Views
 
             await brr.ShowAsync();*/
 
-            var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
+            var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
 
             navigationService.OpenModal<TestModal>();
         }
 
         private void OpenSectionButton_Click(object sender, RoutedEventArgs e)
         {
-            var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
+            var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
             navigationService.OpenSection(section.Text);
         }
 
         private void openArtist_Click(object sender, RoutedEventArgs e)
         {
-            var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
+            var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
             navigationService.OpenSection(artist.Text, SectionType.Artist);
         }
 
         private void showNotification_Click(object sender, RoutedEventArgs e)
         {
-            var notificationsService = StaticService.Container.Resolve<Services.NotificationsService>();
+            var notificationsService = StaticService.Container.GetRequiredService<Services.NotificationsService>();
 
             notificationsService.Show("Заголовок", "Сообщение");
 
@@ -79,7 +67,7 @@ namespace MusicX.Views
 
         private void download_Click(object sender, RoutedEventArgs e)
         {
-            var downloader = StaticService.Container.Resolve<DownloaderViewModel>();
+            var downloader = StaticService.Container.GetRequiredService<DownloaderViewModel>();
 
             var audio = new Audio()
             {
@@ -88,21 +76,21 @@ namespace MusicX.Views
                 Url = url.Text
             };
             
-            downloader.DownloadQueue.Add(audio);
+            downloader.DownloadQueue.Add(audio.ToTrack());
         }   
 
         private void OpenPlaylistSelector_Click(object sender, RoutedEventArgs e)
         {
-            var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
-            var viewModel = StaticService.Container.Resolve<PlaylistSelectorModalViewModel>();
+            var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
+            var viewModel = StaticService.Container.GetRequiredService<PlaylistSelectorModalViewModel>();
 
             navigationService.OpenModal<PlaylistSelectorModal>(viewModel);
         }
 
         private void OpenPlaylistModal_Click(object sender, RoutedEventArgs e)
         {
-            var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
-            var viewModel = StaticService.Container.Resolve<CreatePlaylistModalViewModel>();
+            var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
+            var viewModel = StaticService.Container.GetRequiredService<CreatePlaylistModalViewModel>();
 
             navigationService.OpenModal<CreatePlaylistModal>(viewModel);
         }

@@ -4,17 +4,15 @@ using MusicX.Services;
 using NLog;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Media;
 using AsyncAwaitBestPractices;
 using MusicX.Controls;
 using MusicX.Helpers;
 using VkNet.Exception;
+using Microsoft.AppCenter.Crashes;
 
 namespace MusicX.ViewModels
 {
@@ -94,6 +92,15 @@ namespace MusicX.ViewModels
             }
             catch (Exception ex)
             {
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 logger.Error(ex, ex.Message);
 
                 notificationsService.Show("Произошла ошибка", "MusicX не смог подргрузить контент");
@@ -128,6 +135,14 @@ namespace MusicX.ViewModels
             }
             catch (Exception ex)
             {
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
                 logger.Error(ex, ex.Message);
                 notificationsService.Show("Произошла ошибка", "MusicX не смог заменить блоки");
             }
@@ -159,6 +174,14 @@ namespace MusicX.ViewModels
             }
             catch (Exception ex)
             {
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
                 logger.Error(ex, ex.Message);
 
                 notificationsService.Show("Произошла ошибка", "MusicX не смог загрузить контент");
@@ -191,6 +214,15 @@ namespace MusicX.ViewModels
             }
             catch (Exception ex)
             {
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 logger.Error("Fatal error in Section View Model:");
 
                 logger.Error(ex, ex.Message);
@@ -208,6 +240,14 @@ namespace MusicX.ViewModels
             }
             catch (Exception ex)
             {
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
                 logger.Error($"Fatal error in Load artist section with artistId = {artistId}");
                 logger.Error(ex, ex.Message);
 
@@ -247,6 +287,14 @@ namespace MusicX.ViewModels
             }
             catch (Exception ex)
             {
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
                 logger.Error($"Fatal error in load search section with query = {query}");
 
                 logger.Error(ex, ex.Message);

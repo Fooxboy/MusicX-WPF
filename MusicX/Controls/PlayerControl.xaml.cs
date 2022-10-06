@@ -1,5 +1,4 @@
-﻿using DryIoc;
-using MusicX.Core.Services;
+﻿using MusicX.Core.Services;
 using MusicX.Models;
 using MusicX.Services;
 using MusicX.Views;
@@ -13,11 +12,15 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
+using Microsoft.Extensions.DependencyInjection;
 using MusicX.Behaviors;
 using MusicX.Core.Models;
+using MusicX.Services.Player;
+using MusicX.Services.Player.Playlists;
 using MusicX.ViewModels;
 using Wpf.Ui.Common;
+using System.Collections.Generic;
+using Microsoft.AppCenter.Crashes;
 
 namespace MusicX.Controls
 {
@@ -34,8 +37,8 @@ namespace MusicX.Controls
         {
             InitializeComponent();
 
-            this.playerService = StaticService.Container.Resolve<PlayerService>();
-            this.logger = StaticService.Container.Resolve<Logger>();
+            this.playerService = StaticService.Container.GetRequiredService<PlayerService>();
+            this.logger = StaticService.Container.GetRequiredService<Logger>();
             playerService.PlayStateChangedEvent += PlayerService_PlayStateChangedEvent;
             playerService.PositionTrackChangedEvent += PlayerService_PositionTrackChangedEvent;
             playerService.TrackChangedEvent += PlayerService_TrackChangedEvent;
@@ -66,8 +69,8 @@ namespace MusicX.Controls
             {
 
                 if (playerService == null) return;
-
-                if (playerService.CurrentTrack.IsExplicit)
+                DataContext = playerService.CurrentTrack;
+                if (playerService.CurrentTrack!.Data.IsExplicit)
                 {
                     explicitBadge.Visibility = Visibility.Visible;
 
@@ -78,70 +81,68 @@ namespace MusicX.Controls
 
                 }
 
-                await Application.Current.Dispatcher.BeginInvoke(() =>
+                TrackTitle.Text = playerService.CurrentTrack.Title;
+                string s = string.Empty;
+                if (playerService.CurrentTrack!.MainArtists.Any())
                 {
-                    TrackTitle.Text = playerService.CurrentTrack.Title;
-                    string s = string.Empty;
-                    if (playerService.CurrentTrack.MainArtists != null)
+                    foreach (var trackArtist in playerService.CurrentTrack.MainArtists)
                     {
-                        foreach (var trackArtist in playerService.CurrentTrack.MainArtists)
-                        {
-                            s += trackArtist.Name + ", ";
-                        }
-
-                        var artists = s.Remove(s.Length - 2);
-
-                        ArtistName.Text = artists;
-                    }
-                    else
-                    {
-                        ArtistName.Text = playerService.CurrentTrack.Artist;
+                        s += trackArtist.Name + ", ";
                     }
 
+                    var artists = s.Remove(s.Length - 2);
 
-                    TimeSpan t = playerService.Position;
-                    if (t.Hours > 0)
-                        CurrentPosition.Text = t.ToString("h\\:mm\\:ss");
-                    CurrentPosition.Text = t.ToString("m\\:ss");
-
-                    PositionSlider.Maximum = playerService.CurrentTrack.Duration;
-
-                    MaxPosition.Text = playerService.CurrentTrack.DurationString;
-
+                    ArtistName.Text = artists;
+                }
+                else
+                {
+                    ArtistName.Text = playerService.CurrentTrack.GetArtistsString();
+                }
 
 
-                    if (playerService.CurrentTrack.Album != null)
-                    {
-                        var amim = (Storyboard)(this.Resources["BackgroundAmimate"]);
-                        amim.Begin();
-                        var bitmapImage = new BitmapImage(new Uri(playerService.CurrentTrack.Album.Cover));
-                        TrackCover.ImageSource = bitmapImage;
-                        BackgroundCard.ImageSource = bitmapImage;
-                    }else
-                    {
-                        TrackCover.ImageSource = null;
-                        BackgroundCard.ImageSource = null;
-                    }
+                TimeSpan t = playerService.Position;
+                if (t.Hours > 0)
+                    CurrentPosition.Text = t.ToString("h\\:mm\\:ss");
+                CurrentPosition.Text = t.ToString("m\\:ss");
 
-                    if (playerService.CurrentTrack.OwnerId == config.UserId)
-                    {
-                        LikeIcon.Filled = true;
+                PositionSlider.Maximum = playerService.CurrentTrack.Data.Duration.TotalSeconds;
 
-                    }
-                    else
-                    {
-                        LikeIcon.Filled = false;
+                MaxPosition.Text = playerService.CurrentTrack.Data.Duration.ToString("m\\:ss");
 
-                    }
-                    DownloadButton.IsEnabled = true;
-                    Queue.ScrollIntoView(playerService.CurrentTrack);
-                });
+
+
+                if (playerService.CurrentTrack.AlbumId != null)
+                {
+                    var amim = (Storyboard)(this.Resources["BackgroundAmimate"]);
+                    amim.Begin();
+                    var bitmapImage = new BitmapImage(new Uri(playerService.CurrentTrack.AlbumId.CoverUrl));
+                    TrackCover.ImageSource = bitmapImage;
+                    BackgroundCard.ImageSource = bitmapImage;
+                }else
+                {
+                    TrackCover.ImageSource = null;
+                    BackgroundCard.ImageSource = null;
+                }
+
+                LikeIcon.Filled = playerService.CurrentTrack.Data.IsLiked;
+                DownloadButton.IsEnabled = true;
+                Queue.ScrollIntoView(playerService.CurrentTrack);
 
 
                 await SaveVolume();
             }
             catch (Exception ex)
             {
+
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 logger.Error("Error in track changed event");
                 logger.Error(ex, ex.Message);
                 
@@ -168,6 +169,15 @@ namespace MusicX.Controls
             }
             catch (Exception ex)
             {
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 logger.Error(ex, ex.Message);
             }
             
@@ -195,6 +205,16 @@ namespace MusicX.Controls
             }
             catch (Exception ex)
             {
+
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 logger.Error(ex, ex.Message);
             }
             
@@ -283,7 +303,7 @@ namespace MusicX.Controls
         private async Task SaveVolume()
         {
             var value = Volume.Value * 100;
-            var configService = StaticService.Container.Resolve<ConfigService>();
+            var configService = StaticService.Container.GetRequiredService<ConfigService>();
 
             var conf = await configService.GetConfig();
             conf.Volume = (int)value;
@@ -297,19 +317,30 @@ namespace MusicX.Controls
         {
             try
             {
-                var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
+                var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
 
-                if (playerService.CurrentTrack.MainArtists == null)
+                if (playerService.CurrentTrack?.MainArtists.First().Id is {Type: ArtistIdType.Vk} artistId)
                 {
-                    navigationService.OpenSection(playerService.CurrentTrack.Artist, SectionType.Search);
-                }else
+                    navigationService.OpenSection(artistId.Id, SectionType.Artist);
+                }
+                else
                 {
-                    navigationService.OpenSection(playerService.CurrentTrack.MainArtists[0].Id, SectionType.Artist);
+                    navigationService.OpenSection(playerService.CurrentTrack!.GetArtistsString(), SectionType.Search);
                 }
 
             }
             catch (Exception ex)
             {
+
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 logger.Error(ex, ex.Message);
             }
 
@@ -319,31 +350,40 @@ namespace MusicX.Controls
         {
             try
             {
-                var vkService = StaticService.Container.Resolve<VkService>();
-                var notificationService = StaticService.Container.Resolve<Services.NotificationsService>();
+                var vkService = StaticService.Container.GetRequiredService<VkService>();
+                var notificationService = StaticService.Container.GetRequiredService<Services.NotificationsService>();
 
-                if (playerService.CurrentTrack.OwnerId == config.UserId)
+                switch (playerService.CurrentTrack?.Data)
                 {
+                    case VkTrackData {IsLiked: true} data:
+                        LikeIcon.Filled = false;
+                        await vkService.AudioDeleteAsync(data.Info.Id, data.Info.OwnerId);
+                        notificationService.Show("Удалено из вашей библиотеки", $"Трек {this.ArtistName.Text} - {this.TrackTitle.Text} теперь удален из вашей музыки");
+                        break;
+                    case VkTrackData data:
+                        LikeIcon.Filled = true;
+                        await vkService.AudioAddAsync(data.Info.Id, data.Info.OwnerId);
 
-                    LikeIcon.Filled = false;
-                    await vkService.AudioDeleteAsync(playerService.CurrentTrack.Id, playerService.CurrentTrack.OwnerId);
-                    notificationService.Show("Удалено из вашей библиотеки", $"Трек {this.ArtistName.Text} - {this.TrackTitle.Text} теперь удален из вашей музыки");
-                    playerService.CurrentTrack.OwnerId = 0;
-                }
-                else
-                {
-                    LikeIcon.Filled = true;
-                    await vkService.AudioAddAsync(playerService.CurrentTrack.Id, playerService.CurrentTrack.OwnerId);
-
-                    notificationService.Show("Добавлено в вашу библиотеку", $"Трек {this.ArtistName.Text} - {this.TrackTitle.Text} теперь находится в Вашей музыке!");
+                        notificationService.Show("Добавлено в вашу библиотеку", $"Трек {this.ArtistName.Text} - {this.TrackTitle.Text} теперь находится в Вашей музыке!");
+                        break;
                 }
             }
             catch(Exception ex)
             {
+
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 logger.Error("Error in like track");
                 logger.Error(ex, ex.Message);
 
-                var notificationService = StaticService.Container.Resolve<NotificationsService>();
+                var notificationService = StaticService.Container.GetRequiredService<NotificationsService>();
 
                 notificationService.Show("Ошибка", $"Мы не смогли добавить этот трек :с");
             }
@@ -351,7 +391,7 @@ namespace MusicX.Controls
 
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            var configService = StaticService.Container.Resolve<ConfigService>();
+            var configService = StaticService.Container.GetRequiredService<ConfigService>();
 
             this.config = await configService.GetConfig();
             
@@ -391,7 +431,7 @@ namespace MusicX.Controls
 
         private async void OpenFullScreen_Click(object sender, RoutedEventArgs e)
         {
-            var notificationService = StaticService.Container.Resolve<Services.NotificationsService>();
+            var notificationService = StaticService.Container.GetRequiredService<Services.NotificationsService>();
             var mainWindow = Window.GetWindow(this);
 
             if (fullScreenWindow is not null || mainWindow is null)
@@ -428,14 +468,23 @@ namespace MusicX.Controls
             try
             {
                 DownloadButton.IsEnabled = false;
-                var downloader = StaticService.Container.Resolve<DownloaderViewModel>();
+                var downloader = StaticService.Container.GetRequiredService<DownloaderViewModel>();
 
-                downloader.DownloadQueue.Add(playerService.CurrentTrack);
+                downloader.DownloadQueue.Add(playerService.CurrentTrack!);
                 downloader.StartDownloadingCommand.Execute(null);
             }catch(FileNotFoundException ex)
             {
 
-                var navigation = StaticService.Container.Resolve<Services.NavigationService>();
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
+                var navigation = StaticService.Container.GetRequiredService<Services.NavigationService>();
 
                 navigation.OpenMenuSection("downloads");
                 //go to download page
@@ -456,7 +505,7 @@ namespace MusicX.Controls
             else
                 AutoScrollBehavior.SetAutoScroll(TitleScroll, true);
             
-            if (playerService.CurrentTrack.Album != null)
+            if (playerService.CurrentTrack!.AlbumId != null)
             {
                 TrackTitle.TextDecorations.Add(TextDecorations.Underline);
                 this.Cursor = Cursors.Hand;
@@ -477,10 +526,11 @@ namespace MusicX.Controls
 
         private void TrackTitle_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (playerService.CurrentTrack.Album != null)
+            if (playerService.CurrentTrack?.AlbumId is VkAlbumId albumId)
             {
-                var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
-                navigationService.OpenExternalPage(new PlaylistView(playerService.CurrentTrack.Album.Id, playerService.CurrentTrack.Album.OwnerId, playerService.CurrentTrack.Album.AccessKey));
+                var (id, ownerId, accessKey, _, _) = albumId;
+                var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
+                navigationService.OpenExternalPage(new PlaylistView(id, ownerId, accessKey));
             }
         }
 
@@ -503,7 +553,7 @@ namespace MusicX.Controls
         }
         private void DeleteFromQueue_OnClick(object sender, RoutedEventArgs e)
         {
-            if (sender is FrameworkElement {DataContext: Audio audio})
+            if (sender is FrameworkElement {DataContext: PlaylistTrack audio})
                 playerService.RemoveFromQueue(audio);
         }
         private void ReorderButton_OnMouseDown(object sender, MouseButtonEventArgs e)
@@ -513,8 +563,8 @@ namespace MusicX.Controls
         }
         private void ListBoxItem_OnDrop(object sender, DragEventArgs e)
         {
-            var source = (Audio)e.Data.GetData(typeof(Audio))!;
-            var target = (Audio)((ListBoxItem)sender).DataContext;
+            var source = (PlaylistTrack)e.Data.GetData(typeof(PlaylistTrack))!;
+            var target = (PlaylistTrack)((ListBoxItem)sender).DataContext;
 
             var list = playerService.Tracks;
             

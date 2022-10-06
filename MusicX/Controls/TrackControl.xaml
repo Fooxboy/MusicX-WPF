@@ -238,12 +238,6 @@
                             Symbol="Play24" />
 
                     </Grid>
-                    
-                    <Image x:Name="PanelAnim"
-                           Visibility="Collapsed"
-                           Width="45"
-                           Height="45"/>
-
                 </Grid>
                 <Grid x:Name="ChartGrid" Visibility="Collapsed">
                     <Rectangle

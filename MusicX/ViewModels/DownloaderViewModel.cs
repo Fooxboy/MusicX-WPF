@@ -3,15 +3,19 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Helpers;
 using MusicX.Services;
+using MusicX.Services.Player.Playlists;
 using NLog;
 using Wpf.Ui.Common;
 using Xabe.FFmpeg.Events;
@@ -19,8 +23,8 @@ namespace MusicX.ViewModels;
 
 public class DownloaderViewModel : BaseViewModel
 {
-    public ObservableRangeCollection<Audio> DownloadQueue { get; } = new();
-    public Audio? CurrentDownloadingAudio { get; set; }
+    public ObservableRangeCollection<PlaylistTrack> DownloadQueue { get; } = new();
+    public PlaylistTrack? CurrentDownloadingAudio { get; set; }
     public int DownloadProgress { get; set; }
     public bool IsDownloading { get; set; }
     
@@ -56,12 +60,14 @@ public class DownloaderViewModel : BaseViewModel
         OpenMusicFolderCommand = new AsyncCommand(OpenMusicFolder);
     }
 
-    public async ValueTask AddPlaylistToQueueAsync(IEnumerable<Audio> tracks, string title)
+    public async ValueTask AddPlaylistToQueueAsync(IEnumerable<PlaylistTrack> tracks, string title)
     {
-        foreach (var track in tracks)
-        {
-            track.DownloadPlaylistName = title;
-        }
+        tracks = tracks.Select(b => b with { Data = new DownloaderData(b.Data.Url, 
+                                                                       b.Data.IsLiked, 
+                                                                       b.Data.IsExplicit, 
+                                                                       b.Data.Duration,
+                                                                       title)});
+        
         if (Application.Current.Dispatcher.CheckAccess())
             DownloadQueue.AddRange(tracks, NotifyCollectionChangedAction.Reset);
         else
@@ -71,19 +77,19 @@ public class DownloaderViewModel : BaseViewModel
     public async Task AddPlaylistToQueueAsync(long playlistId, long ownerId, string accessKey)
     {
         var playlist = await vkService.LoadFullPlaylistAsync(playlistId, ownerId, accessKey);
-        await AddPlaylistToQueueAsync(playlist.Audios, playlist.Playlist.Title!);
+        await AddPlaylistToQueueAsync(playlist.Audios.Select(TrackExtensions.ToTrack), playlist.Playlist.Title!);
     }
 
     private async Task OpenMusicFolder()
     {
         var config = await configService.GetConfig();
-        
-        if (string.IsNullOrEmpty(config.DownloadDirectory) || !Directory.Exists(config.DownloadDirectory))
-            return;
+
+        var directory = config.DownloadDirectory  ??
+                       Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyMusic), "MusicX");
         
         Process.Start(new ProcessStartInfo
         {
-            FileName = config.DownloadDirectory,
+            FileName = directory,
             UseShellExecute = true
         });
     }
@@ -102,7 +108,7 @@ public class DownloaderViewModel : BaseViewModel
             if (tr.Items.Count < 100) break;
         }
 
-        await AddPlaylistToQueueAsync(tracks, "Музыка ВКонтакте");
+        await AddPlaylistToQueueAsync(tracks.Select(TrackExtensions.ToTrack), "Музыка ВКонтакте");
         StartDownloading();
     }
 
@@ -116,7 +122,7 @@ public class DownloaderViewModel : BaseViewModel
         {
             var tracks = await vkService.LoadFullPlaylistAsync(playlist.Id, playlist.OwnerId, playlist.AccessKey);
 
-            await AddPlaylistToQueueAsync(tracks.Items, playlist.Title!);
+            await AddPlaylistToQueueAsync(tracks.Items.Select(TrackExtensions.ToTrack), playlist.Title!);
         }
         
         StartDownloading();
@@ -124,6 +130,16 @@ public class DownloaderViewModel : BaseViewModel
 
     private async void StartDownloading()
     {
+
+        var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+        Analytics.TrackEvent("Download Track", properties);
+
         if (IsDownloading)
             return;
         tokenSource = new();
@@ -166,6 +182,15 @@ public class DownloaderViewModel : BaseViewModel
             }
             catch (Exception e)
             {
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(e, properties);
+
                 logger.Error(e);
                 notificationsService.Show("Ошибка загрузки", "Мы не смогли загрузить трек");
             }

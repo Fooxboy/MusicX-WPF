@@ -1,32 +1,23 @@
-﻿using DryIoc;
-using MusicX.Controls.Blocks;
-using MusicX.Core.Models;
+﻿using MusicX.Core.Models;
 using MusicX.Services;
 using MusicX.ViewModels;
 using NLog;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 using AsyncAwaitBestPractices;
 using Microsoft.Extensions.DependencyInjection;
 using NavigationService = System.Windows.Navigation.NavigationService;
 using MusicX.ViewModels.Modals;
 using MusicX.Views.Modals;
 using System.Diagnostics;
+using MusicX.Core.Services;
+using MusicX.Services.Player;
+using MusicX.Services.Player.Playlists;
 
 namespace MusicX.Views
 {
@@ -48,11 +39,11 @@ namespace MusicX.Views
 
         public PlaylistView(PlaylistViewModel? viewModel = null)
         {
-            ViewModel = viewModel ?? StaticService.Container.Resolve<PlaylistViewModel>();;
+            ViewModel = viewModel ?? StaticService.Container.GetRequiredService<PlaylistViewModel>();;
             InitializeComponent();
             ViewModel.PlaylistLoaded += ViewModel_PlaylistLoaded;
             ViewModel.PlaylistNotLoaded += ViewModel_PlaylistNotLoaded;
-            logger = StaticService.Container.Resolve<Logger>();
+            logger = StaticService.Container.GetRequiredService<Logger>();
             DataContext = ViewModel;
         }
 
@@ -186,7 +177,7 @@ namespace MusicX.Views
         {
             try
             {
-                var player = StaticService.Container.Resolve<PlayerService>();
+                var player = StaticService.Container.GetRequiredService<PlayerService>();
                 if (_nowPlay)
                 {
                     _nowPlay = false;
@@ -204,12 +195,13 @@ namespace MusicX.Views
                     PlayPlaylist.Content = "Остановить воспроизведение";
                     PlayPlaylist.Icon = Wpf.Ui.Common.SymbolRegular.Pause20;
 
-                    player.CurrentPlaylist = ViewModel.PlaylistData;
-                    await player.PlayTrack(ViewModel.Tracks[0]);
+                    await player.PlayAsync(
+                        new VkPlaylistPlaylist(StaticService.Container.GetRequiredService<VkService>(),
+                                               ViewModel.PlaylistData), ViewModel.Playlist.Audios[0].ToTrack());
                 }
             }catch (Exception ex)
             {
-                var logger = StaticService.Container.Resolve<Logger>();
+                var logger = StaticService.Container.GetRequiredService<Logger>();
                 logger.Error(ex, ex.Message);
             }
         }
@@ -219,7 +211,7 @@ namespace MusicX.Views
             try
             {
                 this.DownloadPlaylist.IsEnabled = false;
-                var downloader = StaticService.Container.Resolve<DownloaderViewModel>();
+                var downloader = StaticService.Container.GetRequiredService<DownloaderViewModel>();
 
                 downloader.AddPlaylistToQueueAsync(ViewModel.Playlist.Id, ViewModel.Playlist.OwnerId, ViewModel.Playlist.AccessKey)
                     .ContinueWith(_ => downloader.StartDownloadingCommand.Execute(null))
@@ -230,7 +222,7 @@ namespace MusicX.Views
 
                 //go to download page
 
-                var navigation = StaticService.Container.Resolve<Services.NavigationService>();
+                var navigation = StaticService.Container.GetRequiredService<Services.NavigationService>();
 
                 navigation.OpenMenuSection("downloads");
             }
@@ -263,7 +255,7 @@ namespace MusicX.Views
 
             public PlaylistState(SerializationInfo info, StreamingContext context)
             {
-                _viewModel = StaticService.Container.Resolve<PlaylistViewModel>();
+                _viewModel = StaticService.Container.GetRequiredService<PlaylistViewModel>();
 
                 var data = new PlaylistData(info.GetInt64(IdKey), info.GetInt64(OwnerIdKey), info.GetString(AccessKey)!);
                 _viewModel.LoadPlaylistFromData(data)
@@ -286,9 +278,9 @@ namespace MusicX.Views
 
         private void EditPlaylist_Click(object sender, RoutedEventArgs e)
         {
-            var viewModel = StaticService.Container.Resolve<CreatePlaylistModalViewModel>();
+            var viewModel = StaticService.Container.GetRequiredService<CreatePlaylistModalViewModel>();
             viewModel.EndEvent += ViewModel_EndEvent;
-            var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
+            var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
             viewModel.LoadDataFromPlaylist(this.playlist);
             navigationService.OpenModal<CreatePlaylistModal>(viewModel);
         }

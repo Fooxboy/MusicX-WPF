@@ -1,16 +1,14 @@
-﻿using DryIoc;
-using MusicX.Core.Models;
+﻿using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Services;
 using NLog;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Generic;
+using Microsoft.AppCenter.Crashes;
 
 namespace MusicX.Controls.Blocks
 {
@@ -60,7 +58,7 @@ namespace MusicX.Controls.Blocks
         {
             try
             {
-                var vkService = StaticService.Container.Resolve<VkService>();
+                var vkService = StaticService.Container.GetRequiredService<VkService>();
                 if (Block.Curators[0].IsFollowed)
                 {
                     ActionCuratorButton.IsEnabled = false;
@@ -90,7 +88,17 @@ namespace MusicX.Controls.Blocks
                 }
             }catch (Exception ex)
             {
-                var logger = StaticService.Container.Resolve<Logger>();
+
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
+                var logger = StaticService.Container.GetRequiredService<Logger>();
 
                 logger.Error(ex, ex.Message);
 

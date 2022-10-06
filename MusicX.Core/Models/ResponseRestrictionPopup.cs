@@ -7,12 +7,6 @@ using System.Threading.Tasks;
 
 namespace MusicX.Core.Models
 {
-    public class ResponseRestrictionPopup
-    {
-        [JsonProperty("response")]
-        public RestrictionPopupData Response { get; set; }
-    }
-
     public class Icon
     {
         [JsonProperty("url")]

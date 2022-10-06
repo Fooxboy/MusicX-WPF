@@ -1,11 +1,11 @@
-﻿using MusicX.Core.Services;
+﻿using Microsoft.AppCenter.Crashes;
+using MusicX.Core.Services;
 using MusicX.Services;
 using NLog;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Interop;
-using System.Windows.Media;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
 
@@ -81,7 +81,7 @@ namespace MusicX.Views
                 var login = Login.Text;
                 var password = Password.Password;
 
-                var token = await vkService.AuthAsync(login, password, TwoAuthDelegate, null);
+                var token = await vkService.AuthAsync(login, password, TwoAuthDelegate);
                 var currentUser = await vkService.GetCurrentUserAsync();
 
                 var config = await configService.GetConfig();
@@ -101,6 +101,16 @@ namespace MusicX.Views
             }
             catch (VkNet.AudioBypassService.Exceptions.VkAuthException ex)
             {
+
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 logger.Error("ERROR IN LOGIN VIEW");
                 logger.Error(ex, ex.Message);
 
@@ -111,6 +121,16 @@ namespace MusicX.Views
             }
             catch (Exception ex)
             {
+
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 logger.Error("FATAL ERROR IN LOGIN VIEW");
                 logger.Error(ex, ex.Message);
 

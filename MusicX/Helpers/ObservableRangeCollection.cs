@@ -30,6 +30,30 @@ namespace MusicX.Helpers;
 		{
 		}
 
+		public void AddRangeSequential(IEnumerable<T> collection)
+		{
+			if (collection == null)
+				throw new ArgumentNullException(nameof(collection));
+
+			CheckReentrancy();
+
+			var enumerable = collection as ICollection<T> ?? collection.ToArray();
+			
+			var itemsAdded = AddArrangeCore(enumerable);
+
+			if (!itemsAdded)
+				return;
+			
+			var temp = new List<T>(1);
+			
+			foreach (var item in enumerable)
+			{
+				temp.Add(item);
+				RaiseChangeNotificationEvents(NotifyCollectionChangedAction.Add, temp);
+				temp.Clear();
+			}
+		}
+
 		/// <summary> 
 		/// Adds the elements of the specified collection to the end of the ObservableCollection(Of T). 
 		/// </summary> 

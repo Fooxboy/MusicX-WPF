@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Runtime.Serialization;
-using DryIoc;
 using MusicX.Services;
 using MusicX.ViewModels;
-using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Navigation;
 using AsyncAwaitBestPractices;
 using Microsoft.Extensions.DependencyInjection;
@@ -88,4 +87,10 @@ public partial class SectionView : Page, IProvideCustomContentState, IMenuPage
     }
     private string? _menuTag;
     private bool _loading;
+
+    private void SectionView_OnKeyUp(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.F5)
+            ((SectionViewModel)DataContext).LoadAsync().SafeFireAndForget();
+    }
 }

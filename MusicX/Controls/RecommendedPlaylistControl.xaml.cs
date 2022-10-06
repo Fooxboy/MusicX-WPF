@@ -1,25 +1,22 @@
-﻿using DryIoc;
-using MusicX.Core.Models;
-using MusicX.Core.Services;
+﻿using MusicX.Core.Models;
 using MusicX.Services;
 using MusicX.Views;
 using NLog;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using MusicX.Helpers;
+using Microsoft.Extensions.DependencyInjection;
+using MusicX.Core.Services;
+using MusicX.Services.Player;
+using MusicX.Services.Player.Playlists;
+using System.Collections.Generic;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 
 namespace MusicX.Controls
 {
@@ -92,17 +89,26 @@ namespace MusicX.Controls
                     MainStackPanel.Children.Add(new TrackControl() { Audio = audio, Width = 284, Margin = new Thickness(0, 5, 0, 0) });
                 }
                 
-                var player = StaticService.Container.Resolve<PlayerService>();
+                var player = StaticService.Container.GetRequiredService<PlayerService>();
                 player.CurrentPlaylistChanged += PlayerOnCurrentPlaylistChanged;
 
-                if (player.CurrentPlaylistId == Playlist.Id)
+                if (player.CurrentPlaylist is VkPlaylistPlaylist {Data: {} data} && data.PlaylistId == Playlist.Id)
                 {
                     nowPlay = true;
                     Icons.Symbol = Wpf.Ui.Common.SymbolRegular.Pause24;
                 }
             }catch (Exception ex)
             {
-                var logger = StaticService.Container.Resolve<Logger>();
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
+                var logger = StaticService.Container.GetRequiredService<Logger>();
 
                 logger.Error(ex, ex.Message);
             }
@@ -114,7 +120,7 @@ namespace MusicX.Controls
             if (sender is not PlayerService service)
                 return;
 
-            if (service.CurrentPlaylistId == Playlist?.Id)
+            if (service.CurrentPlaylist is VkPlaylistPlaylist {Data: {} data} && data.PlaylistId == Playlist.Id)
             {
                 nowPlay = true;
                 Icons.Symbol = Wpf.Ui.Common.SymbolRegular.Pause24;
@@ -127,7 +133,15 @@ namespace MusicX.Controls
 
         private void TitleCard_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
+            var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+            Analytics.TrackEvent("OpenReccomendedPlaylist", properties);
+            var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
 
             navigationService.OpenExternalPage(new PlaylistView(Playlist.Playlist.Id,Playlist.Playlist.OwnerId , Playlist.Playlist.AccessKey));
         }
@@ -152,16 +166,19 @@ namespace MusicX.Controls
             {
                 nowLoad = true;
 
-                var playerService = StaticService.Container.Resolve<PlayerService>();
+                var playerService = StaticService.Container.GetRequiredService<PlayerService>();
+                var vkService = StaticService.Container.GetRequiredService<VkService>();
 
                 if (!nowPlay)
                 {
                     nowPlay = true;
 
                     Icons.Symbol = Wpf.Ui.Common.SymbolRegular.Timer20;
-
-                    playerService.CurrentPlaylist = new(Playlist.Playlist.Id, Playlist.Playlist.OwnerId, Playlist.Playlist.AccessKey);
-                    await playerService.PlayTrack(Playlist.Audios[0], false);
+                    
+                    await playerService.PlayAsync(new VkPlaylistPlaylist(
+                                                      vkService,
+                                                      new(Playlist.Playlist.Id, Playlist.Playlist.OwnerId,
+                                                          Playlist.Playlist.AccessKey)), Playlist.Audios[0].ToTrack(Playlist.Playlist));
 
                     Icons.Symbol = Wpf.Ui.Common.SymbolRegular.Pause24;
 
@@ -182,6 +199,16 @@ namespace MusicX.Controls
             }
             catch (Exception ex)
             {
+
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 Debug.WriteLine(ex.Message);
                 nowLoad = false;
             }

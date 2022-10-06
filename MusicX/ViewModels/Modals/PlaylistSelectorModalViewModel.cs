@@ -1,7 +1,9 @@
-﻿using MusicX.Core.Models;
+﻿using Microsoft.AppCenter.Crashes;
+using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Services;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -27,8 +29,6 @@ namespace MusicX.ViewModels.Modals
                 if(value != null)
                 {
                     CreateIsEnable = true;
-                    Changed("CreateIsEnable");
-
                 }
 
                 selectedPlaylist = value;
@@ -74,7 +74,6 @@ namespace MusicX.ViewModels.Modals
             try
             {
                 IsLoading = true;
-                Changed(nameof(IsLoading));
 
                 var config = await this.configService.GetConfig();
 
@@ -87,14 +86,17 @@ namespace MusicX.ViewModels.Modals
                     Playlists.Add(plist);
                 }
 
-                Changed(nameof(Playlists));
-
                 IsLoading = false;
-                Changed(nameof(IsLoading));
-
             }catch(Exception ex)
             {
-                
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
             }
            
         }

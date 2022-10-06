@@ -2,9 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.IO;
-using System.Reflection;
 using System.Threading.Tasks;
-using System.Windows;
 
 namespace MusicX.Services
 {
@@ -13,14 +11,17 @@ namespace MusicX.Services
         private readonly string path = $"{AppDomain.CurrentDomain.BaseDirectory}";
         private readonly string name = "config.json";
 
+        public ConfigModel Config { get; private set; } = null!;
+
         public async Task<ConfigModel> GetConfig()
         {
             if(File.Exists(path + name))
             {
                 var file = await File.ReadAllTextAsync(path + name);
 
-                var model = JsonConvert.DeserializeObject<ConfigModel>(file);
+                var model = JsonConvert.DeserializeObject<ConfigModel>(file)!;
 
+                Config = model;
                 return model;
 
             }else
@@ -29,12 +30,14 @@ namespace MusicX.Services
 
                 await SetConfig(config);
 
+                Config = config;
                 return config;
             }
         }
 
         public async Task SetConfig(ConfigModel config)
         {
+            Config = config;
             var json= JsonConvert.SerializeObject(config);
 
             await File.WriteAllTextAsync(path + name, json);

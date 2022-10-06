@@ -1,5 +1,4 @@
-﻿using DryIoc;
-using MusicX.Core.Models;
+﻿using MusicX.Core.Models;
 using MusicX.Services;
 using MusicX.Views;
 using NLog;
@@ -8,6 +7,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Generic;
+using Microsoft.AppCenter.Crashes;
 
 namespace MusicX.Controls
 {
@@ -52,7 +54,7 @@ namespace MusicX.Controls
                 BannerCover.ImageSource = new BitmapImage(new Uri(Banner.Images.Last().Url)) { DecodePixelHeight = 200, DecodePixelWidth = 500, CacheOption = BitmapCacheOption.None };
             }catch (Exception ex)
             {
-                var logger = StaticService.Container.Resolve<Logger>();
+                var logger = StaticService.Container.GetRequiredService<Logger>();
 
                 logger.Error(ex, ex.Message);
             }
@@ -70,12 +72,22 @@ namespace MusicX.Controls
                 var playlistId = long.Parse(data[1]);
                 var accessKey = data[2];
 
-                var notificationService = StaticService.Container.Resolve<Services.NavigationService>();
+                var notificationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
 
                 notificationService.OpenExternalPage(new PlaylistView(playlistId, ownerId, accessKey));
             }catch (Exception ex)
             {
-                var logger = StaticService.Container.Resolve<Logger>();
+
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
+                var logger = StaticService.Container.GetRequiredService<Logger>();
 
                 logger.Error(ex, ex.Message);
             }

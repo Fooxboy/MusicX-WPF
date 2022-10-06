@@ -1,25 +1,17 @@
-﻿using DryIoc;
-using MusicX.Core.Models;
+﻿using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Services;
-using MusicX.Views;
 using NLog;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Generic;
+using Microsoft.AppCenter.Crashes;
 
 namespace MusicX.Controls
 {
@@ -35,9 +27,9 @@ namespace MusicX.Controls
         public LinkControl()
         {
             InitializeComponent();
-            vkService = StaticService.Container.Resolve<VkService>();
-            navigationService = StaticService.Container.Resolve<Services.NavigationService>();
-            logger = StaticService.Container.Resolve<Logger>();
+            vkService = StaticService.Container.GetRequiredService<VkService>();
+            navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
+            logger = StaticService.Container.GetRequiredService<Logger>();
 
         }
 
@@ -101,6 +93,15 @@ namespace MusicX.Controls
                 }
             }catch (Exception ex)
             {
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 logger.Error("Fail load link control");
                 logger.Error(ex, ex.Message);
             }
@@ -166,6 +167,16 @@ namespace MusicX.Controls
                 }
             }catch(Exception ex)
             {
+
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 logger.Error("Fail click action in link control");
                 logger.Error(ex, ex.Message);
             }

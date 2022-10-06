@@ -1,24 +1,15 @@
-﻿using DryIoc;
-using MusicX.Core.Models;
+﻿using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Services;
-using MusicX.Views;
 using NLog;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Generic;
+using Microsoft.AppCenter.Crashes;
 
 namespace MusicX.Controls
 {
@@ -35,9 +26,9 @@ namespace MusicX.Controls
         public SuggestionControl()
         {
             InitializeComponent();
-            navigationService = StaticService.Container.Resolve<Services.NavigationService>();
-            vkService = StaticService.Container.Resolve<VkService>();
-            logger = StaticService.Container.Resolve<Logger>();
+            navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
+            vkService = StaticService.Container.GetRequiredService<VkService>();
+            logger = StaticService.Container.GetRequiredService<Logger>();
 
         }
 
@@ -51,6 +42,16 @@ namespace MusicX.Controls
                 Subtitle.Text = Suggestion.Subtitle;
             }catch (Exception ex)
             {
+
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 logger.Error("Failed load suggestion control");
                 logger.Error(ex, ex.Message);
 
@@ -70,6 +71,16 @@ namespace MusicX.Controls
                 navigationService.OpenSection(result.Catalog.DefaultSection);
             }catch(Exception ex)
             {
+
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
                 logger.Error(ex, ex.Message);
             }
         }

@@ -8,8 +8,11 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wpfui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
     xmlns:models="clr-namespace:MusicX.Core.Models;assembly=MusicX.Core"
+    xmlns:playlists="clr-namespace:MusicX.Services.Player.Playlists"
+    xmlns:converters="clr-namespace:MusicX.Converters"
     Loaded="UserControl_Loaded"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance playlists:PlaylistTrack}">
     <UserControl.Resources>
         <ResourceDictionary>
             <Storyboard x:Key="BackgroundAmimate">
@@ -38,6 +41,13 @@
                     </DoubleAnimation.EasingFunction>
                 </DoubleAnimation>
             </Storyboard>
+            
+            <Style TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource {x:Type ToggleButton}}"
+                   x:Key="TransparentToggleButtonStyle">
+                <Setter Property="Background" Value="Transparent" />
+            </Style>
+            
+            <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" /> 
         </ResourceDictionary>
 
     </UserControl.Resources>
@@ -162,7 +172,27 @@
                                         MouseLeftButtonDown="TrackTitle_MouseLeftButtonDown"
                                         Text="Track name">
                                         <TextBlock.ToolTip>
-                                            <ToolTip Content="Перейти к альбому" />
+                                            <ToolTip>
+                                                <Grid>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="Auto" />
+                                                    </Grid.RowDefinitions>
+                                                    <TextBlock HorizontalAlignment="Center"
+                                                               Text="Перейти к альбому"/>
+                                                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="10,10,10,3"
+                                                                Visibility="{Binding AlbumId, Converter={StaticResource NullToVisibilityConverter}}">
+                                                        <Border CornerRadius="5" Width="45" Height="45">
+                                                            <Border.Background>
+                                                                <ImageBrush ImageSource="{Binding AlbumId.CoverUrl}"/>
+                                                            </Border.Background>
+                                                        </Border>
+                                                        <TextBlock VerticalAlignment="Center" Margin="10,0,0,0"
+                                                                   FontFamily="{StaticResource VKSansDemiBold}"
+                                                                   Text="{Binding AlbumId.Name}"/>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </ToolTip>
                                         </TextBlock.ToolTip>
                                     </TextBlock>
 
@@ -304,11 +334,10 @@
                             Height="40"
                             Margin="0,0,10,0"
                             Padding="0"
-                            Background="Transparent"
                             HorizontalContentAlignment="Center"
+                            Style="{StaticResource TransparentToggleButtonStyle}"
                             Click="RepeatButton_Click">
                             <wpfui:SymbolIcon Symbol="ArrowRepeatAll16" />
-
                             <ToggleButton.ToolTip>
                                 <ToolTip Content="Повтор трека" />
                             </ToggleButton.ToolTip>
@@ -352,9 +381,8 @@
                                           Height="40"
                                           Margin="0,0,20,0"
                                           Padding="0"
-                                          BorderBrush="#292929"
                                           HorizontalContentAlignment="Center"
-                                          Background="Transparent">
+                                          Style="{StaticResource TransparentToggleButtonStyle}">
                                 <ToggleButton.ToolTip>
                                     <ToolTip Content="Очередь" />
                                 </ToggleButton.ToolTip>
@@ -420,7 +448,7 @@
                         </ItemsPanelTemplate>
                     </ListBox.ItemsPanel>
                     <ListBox.ItemTemplate>
-                        <DataTemplate DataType="{x:Type models:Audio}">
+                        <DataTemplate DataType="{x:Type playlists:PlaylistTrack}">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
@@ -428,8 +456,7 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <wpfui:SymbolIcon Symbol="ReOrderDotsVertical24" MouseDown="ReorderButton_OnMouseDown" />
-                                <local:TrackControl Grid.Column="1" Audio="{Binding}" ShowCard="False"
-                                                    LoadOtherTracks="False" />
+                                <local:QueueTrackControl Grid.Column="1" />
                                 <wpfui:Button Grid.Column="2"
                                               Icon="Dismiss24"
                                               Appearance="Transparent"

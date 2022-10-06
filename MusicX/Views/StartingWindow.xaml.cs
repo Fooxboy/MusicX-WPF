@@ -1,25 +1,23 @@
-﻿using DryIoc;
-using MusicX.Core.Services;
+﻿using MusicX.Core.Services;
 using MusicX.Services;
 using MusicX.ViewModels;
 using MusicX.ViewModels.Modals;
 using NLog;
 using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using Microsoft.Extensions.DependencyInjection;
+using MusicX.Services.Player;
+using MusicX.Services.Player.Sources;
+using MusicX.Services.Player.TrackStats;
+using VkNet.AudioBypassService.Extensions;
+using VkNet.Extensions.DependencyInjection;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
+using System.Collections.Generic;
+using Microsoft.AppCenter.Analytics;
 
 namespace MusicX.Views
 {
@@ -35,37 +33,58 @@ namespace MusicX.Views
            Accent.Apply(Accent.GetColorizationColor(), ThemeType.Dark);
         }
 
-        private Container container;
-
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
 
+            var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+            Analytics.TrackEvent("StartApp", properties);
+
             await Task.Run(async () =>
             {
-                container = new Container();
-                container.Register<VkService>(Reuse.Singleton);
-                container.Register<ServerService>(Reuse.Singleton);
-                container.Register<GithubService>(Reuse.Singleton);
-                container.Register<DiscordService>(Reuse.Singleton);
-                container.RegisterInstance<Logger>(LogManager.Setup().GetLogger("Common"));
+                var collection = new ServiceCollection();
 
-                container.Register<SectionViewModel>(Reuse.Transient);
-                container.Register<PlaylistViewModel>(Reuse.Transient);
-                container.Register<DownloaderViewModel>(Reuse.Singleton);
-                container.Register<PlaylistSelectorModalViewModel>(Reuse.Transient);
-                container.Register<CreatePlaylistModalViewModel>(Reuse.Transient);
-                container.Register<TracksSelectorModalViewModel>(Reuse.Transient);
+                collection.AddAudioBypass();
+                collection.AddVkNet();
 
-                container.Register<NavigationService>(Reuse.Singleton);
-                container.Register<ConfigService>(Reuse.Singleton);
-                container.Register<PlayerService>(Reuse.Singleton);
-                container.Register<NotificationsService>(Reuse.Singleton);
-                container.Register<DownloaderService>(Reuse.Singleton);
-                container.Register<BannerService>(Reuse.Singleton);
-                StaticService.Container = container;
+                collection.AddSingleton<VkService>();
+                collection.AddSingleton<ServerService>();
+                collection.AddSingleton<GithubService>();
+                collection.AddSingleton<DiscordService>();
+                collection.AddSingleton<BoomService>();
+                collection.AddSingleton(LogManager.Setup().GetLogger("Common"));
 
-                var vkService = container.Resolve<VkService>();
-                var logger = container.Resolve<Logger>();
+                collection.AddSingleton<ITrackMediaSource, BoomMediaSource>();
+                collection.AddSingleton<ITrackMediaSource, VkMediaSource>();
+
+                collection.AddSingleton<ITrackStatsListener, DiscordTrackStats>();
+                collection.AddSingleton<ITrackStatsListener, VkTrackBroadcastStats>();
+                collection.AddSingleton<ITrackStatsListener, VkTrackStats>();
+
+                collection.AddTransient<SectionViewModel>();
+                collection.AddTransient<PlaylistViewModel>();
+                collection.AddTransient<PlaylistSelectorModalViewModel>();
+                collection.AddTransient<CreatePlaylistModalViewModel>();
+                collection.AddTransient<TracksSelectorModalViewModel>();
+                collection.AddSingleton<DownloaderViewModel>();
+                collection.AddSingleton<VKMixViewModel>();
+
+                collection.AddSingleton<NavigationService>();
+                collection.AddSingleton<ConfigService>();
+                collection.AddSingleton<PlayerService>();
+                collection.AddSingleton<NotificationsService>();
+                collection.AddSingleton<DownloaderService>();
+                collection.AddSingleton<BannerService>();
+                
+                var container = StaticService.Container = collection.BuildServiceProvider();
+
+                var vkService = container.GetRequiredService<VkService>();
+                var logger = container.GetRequiredService<Logger>();
                 logger.Info("");
                 logger.Info("");
                 logger.Info("");
@@ -77,9 +96,9 @@ namespace MusicX.Views
 
 
 
-                var navigationService = container.Resolve<NavigationService>();
-                var configService = container.Resolve<ConfigService>();
-                var notificationsService = container.Resolve<NotificationsService>();
+                var navigationService = container.GetRequiredService<NavigationService>();
+                var configService = container.GetRequiredService<ConfigService>();
+                var notificationsService = container.GetRequiredService<NotificationsService>();
 
                 var config = await configService.GetConfig();
 
@@ -105,7 +124,7 @@ namespace MusicX.Views
                 {
                     try
                     {
-                        if (config.AccessToken is null)
+                        if (string.IsNullOrEmpty(config.AccessToken))
                         {
                             var login = new LoginWindow(vkService, configService, logger, navigationService, notificationsService);
                             login.Show();
@@ -116,7 +135,7 @@ namespace MusicX.Views
                             try
                             {
 
-                                await vkService.SetTokenAsync(config.AccessToken, null);
+                                await vkService.SetTokenAsync(config.AccessToken);
                                 var rootWindow = new RootWindow(navigationService, vkService, logger, configService, notificationsService);
                                 rootWindow.Show();
                                 this.Close();
@@ -129,9 +148,9 @@ namespace MusicX.Views
 
                                 await configService.SetConfig(config);
 
-                                var logger = StaticService.Container.Resolve<Logger>();
-                                var navigation = StaticService.Container.Resolve<Services.NavigationService>();
-                                var notifications = StaticService.Container.Resolve<Services.NotificationsService>();
+                                var logger = StaticService.Container.GetRequiredService<Logger>();
+                                var navigation = StaticService.Container.GetRequiredService<Services.NavigationService>();
+                                var notifications = StaticService.Container.GetRequiredService<Services.NotificationsService>();
 
                                 new LoginWindow(vkService, configService, logger, navigation, notifications, true).Show();
 

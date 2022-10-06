@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-	  <Version>0.30</Version>
+	  <Version>0.33</Version>
 
   </PropertyGroup>
 
@@ -14,15 +14,15 @@
 
   <ItemGroup>
     <PackageReference Include="NLog" Version="4.7.14" />
-    <PackageReference Include="NLog.Config" Version="4.7.14" />
     <PackageReference Include="NLog.Schema" Version="5.0.0-rc2" />
-    <PackageReference Include="VkNet" Version="1.68.0" />
+    <PackageReference Include="VkNet" Version="1.70.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\DiscordRPC\DiscordRPC.csproj" />
     <ProjectReference Include="..\MusicX.Shared\MusicX.Shared.csproj" />
     <ProjectReference Include="..\VkNet.AudioBypassService\VkNet.AudioBypassService.csproj" />
+    <ProjectReference Include="..\VkNet.Extensions.DependencyInjection\VkNet.Extensions.DependencyInjection.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,37 @@
+﻿<UserControl x:Class="MusicX.Controls.Boom.TagControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MusicX.Controls.Boom" xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid MouseEnter="Grid_MouseEnter" MouseLeave="Grid_MouseLeave">
+        
+        <wpfui:Card x:Name="CardBackground" Opacity="1">
+            <Rectangle Height="200" Width="130"  Fill="Transparent"/>
+        </wpfui:Card>
+
+        <StackPanel Height="200" Width="130">
+            <Grid Height="130" Width="130">
+                <Rectangle x:Name="CoverBackground" RadiusX="99" RadiusY="99" Fill="White"/>
+
+                <Rectangle RadiusX="10" RadiusY="10" Height="110" Width="110">
+                    <Rectangle.Fill>
+                        <ImageBrush Stretch="UniformToFill"  x:Name="CoverTag"/>
+                    </Rectangle.Fill>
+
+                    <Rectangle.Effect>
+                        <DropShadowEffect BlurRadius="15" ShadowDepth="0" Opacity="1" Color="Black"/>
+                    </Rectangle.Effect>
+                </Rectangle>
+
+            </Grid>
+
+            <TextBlock Margin="0 5 0 0" x:Name="Name" HorizontalAlignment="Center" FontSize="18" FontFamily="{StaticResource VKSansBold}" />
+            <TextBlock Margin="0 5 0 0" x:Name="Description" HorizontalAlignment="Center" Foreground="#929292" TextWrapping="Wrap" FontFamily="{StaticResource VKSansRegular}"/>
+
+        </StackPanel>
+
+    </Grid>
+</UserControl>

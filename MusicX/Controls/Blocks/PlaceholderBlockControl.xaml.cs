@@ -1,20 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using MusicX.Core.Models;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using MusicX.Core.Services;
 using MusicX.Services;
-using DryIoc;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AppCenter.Crashes;
+using System.Collections.Generic;
 
 namespace MusicX.Controls.Blocks
 {
@@ -68,11 +62,30 @@ namespace MusicX.Controls.Blocks
 
         private async void ActionButton_Click(object sender, RoutedEventArgs e)
         {
-            var navigationService = StaticService.Container.Resolve<Services.NavigationService>();
-            var vkService = StaticService.Container.Resolve<VkService>();
+            try
+            {
+                var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
+                var vkService = StaticService.Container.GetRequiredService<VkService>();
 
-            var music = await vkService.GetAudioCatalogAsync(buttonAction.Action.Url);
-            navigationService.OpenSection(music.Catalog.DefaultSection);
+                var music = await vkService.GetAudioCatalogAsync(buttonAction.Action.Url);
+                navigationService.OpenSection(music.Catalog.DefaultSection);
+            }catch(Exception ex)
+            {
+
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
+                var notificationService = StaticService.Container.GetRequiredService<Services.NotificationsService>();
+
+                notificationService.Show("Ошибка", "Music X не смог открыть контент");
+            }
+
         }
     }
 }

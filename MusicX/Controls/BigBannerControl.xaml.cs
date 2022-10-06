@@ -1,24 +1,17 @@
-﻿using DryIoc;
-using MusicX.Core.Models;
+﻿using MusicX.Core.Models;
 using MusicX.Services;
 using MusicX.Views;
 using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AppCenter.Crashes;
 
 namespace MusicX.Controls
 {
@@ -42,7 +35,7 @@ namespace MusicX.Controls
         private void BigBannerControl_Loaded(object sender, RoutedEventArgs e)
         {
 
-            var bannerService = StaticService.Container.Resolve<BannerService>();
+            var bannerService = StaticService.Container.GetRequiredService<BannerService>();
 
             CurrentBanner = Banners[0];
 
@@ -95,13 +88,23 @@ namespace MusicX.Controls
                 var playlistId = long.Parse(data[1]);
                 var accessKey = data[2];
 
-                var notificationService = StaticService.Container.Resolve<Services.NavigationService>();
+                var notificationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
 
                 notificationService.OpenExternalPage(new PlaylistView(playlistId, ownerId, accessKey));
             }
             catch (Exception ex)
             {
-                var logger = StaticService.Container.Resolve<Logger>();
+
+                var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
+                var logger = StaticService.Container.GetRequiredService<Logger>();
 
                 logger.Error(ex, ex.Message);
             }
@@ -134,7 +137,7 @@ namespace MusicX.Controls
                 {
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        var bannerService = StaticService.Container.Resolve<BannerService>();
+                        var bannerService = StaticService.Container.GetRequiredService<BannerService>();
 
                         var currentIndex = Banners.IndexOf(CurrentBanner);
 

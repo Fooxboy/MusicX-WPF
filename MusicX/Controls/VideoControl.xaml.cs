@@ -1,20 +1,12 @@
 ﻿using MusicX.Core.Models;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using DryIoc;
+using Microsoft.Extensions.DependencyInjection;
 using MusicX.Services;
 using NavigationService = MusicX.Services.NavigationService;
 
@@ -86,7 +78,7 @@ namespace MusicX.Controls
 
         private void AuthorVideo_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var navigationService = StaticService.Container.Resolve<NavigationService>();
+            var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
             
             navigationService.OpenSection(Video.MainArtists[0].Id, SectionType.Artist);
         }
