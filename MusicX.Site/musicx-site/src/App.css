@@ -44,14 +44,14 @@ body {
 
 .left-image {
   height: 70vh;
-  margin-left: -105px;
+  margin-left: -160px;
   margin-right: 10px;
   overflow: hidden;
 }
 
 .right-image {
   height: 70vh;
-  margin-right: -105px;
+  margin-right: -160px;
   margin-left: 10px;
   overflow:hidden;
 }
@@ -75,11 +75,44 @@ body {
   font-family: VkSansDemiBold;
 }
 
-.download-button {
+.telegram-button {
+  font-family: VkSansRegular;
+  font-size: 60px;
+  color: #ffffff;
+  background-color: #2D2D2D;
+  font-size: 16px;
+  border: 0px solid #ffffff;
+  border-radius: 40px;
+  padding: 15px 50px;
+  cursor: pointer;
+  text-decoration: none;
+  margin-left: 15px;
+}
 
+.download-button  {
   font-family: VkSansMedium;
   font-size: 20px;
- 
+  color: #ffffff;
+  background-color: #454545;
+  font-size: 19px;
+  border: 1px solid #ffffff;
+  border-radius: 40px;
+  padding: 15px 50px;
+  cursor: pointer
+}
+
+.telegram-button:hover {
+  color: #000000;
+  text-decoration: none;
+
+  background-color: #adadad;
+}
+
+.download-button:hover {
+  color: #000000;
+  text-decoration: none;
+
+  background-color: #adadad;
 }
 
 .download-div {
