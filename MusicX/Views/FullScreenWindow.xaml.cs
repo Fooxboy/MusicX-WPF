@@ -176,7 +176,7 @@ namespace MusicX.Views
        
         private void PositionSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (playerService == null) return;
+            if (playerService == null || !PositionSlider.IsMouseOver) return;
 
             playerService.Seek(TimeSpan.FromSeconds(e.NewValue));
         }
