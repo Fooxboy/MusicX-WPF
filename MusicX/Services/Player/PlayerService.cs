@@ -395,12 +395,14 @@ public class PlayerService
         Volume = volume;
     }
 
-    public void Seek(TimeSpan position)
+    public async void Seek(TimeSpan position)
     {
         try
         {
             player.PlaybackSession.Position = position;
 
+            await Task.WhenAll(
+                _statsListeners.Select(b => b.TrackPlayStateChangedAsync(CurrentTrack!, position, !IsPlaying)));
         }
         catch (Exception e)
         {
