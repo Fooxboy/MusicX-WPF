@@ -367,8 +367,6 @@ namespace MusicX.Controls
             {
                 RecommendedAudio.Visibility = Visibility.Visible;
 
-
-
                 if (player.CurrentTrack is not { Data: VkTrackData data } || data.Info.Id != Audio.Id)
                 {
                     PlayButtons.Visibility = Visibility.Visible;
@@ -385,9 +383,6 @@ namespace MusicX.Controls
                     explicitBadge.Margin = new Thickness(7, 0, 0, 0);
 
                 }
-
-              
-
              
                 if (!ShowCard)
                 {
@@ -398,7 +393,6 @@ namespace MusicX.Controls
                     }
 
                 }
-
 
                 Card.Opacity = 0.5;
             }catch(Exception ex)
@@ -424,8 +418,6 @@ namespace MusicX.Controls
             try
             {
                 RecommendedAudio.Visibility = Visibility.Collapsed;
-
-               
 
                 if (player.CurrentTrack is not { Data: VkTrackData data } || data.Info.Id != Audio.Id)
                 {
@@ -483,19 +475,28 @@ namespace MusicX.Controls
 
                 if (e.Source is TextBlock)
                     return;
-                
+
                 if (Audio.Url == String.Empty)
                 {
                     var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
                     var modalViewModel = StaticService.Container.GetRequiredService<TrackNotAvalibleModalViewModel>();
                     await modalViewModel.LoadAsync(Audio.TrackCode, Audio.OwnerId + "_" + Audio.Id + "_" + Audio.AccessKey);
-                    
+
                     navigationService.OpenModal<TrackNotAvalibleModal>(modalViewModel);
                     return;
                 }
 
+                //костыль для бума, да мне лень править.
+                if (Audio.Url.EndsWith(".mp3"))
+                {
+                    var boomService = StaticService.Container.GetRequiredService<BoomService>();
+
+                    await player.PlayAsync(new SinglePlaylist(this.Audio), Audio.ToTrack());
+                }
+
                 var vkService = StaticService.Container.GetRequiredService<VkService>();
-                
+
+
                 if (this.FindAncestor<PlaylistView>() is { DataContext: PlaylistViewModel viewModel })
                     await player.PlayAsync(new VkPlaylistPlaylist(vkService, viewModel.PlaylistData), Audio.ToTrack());
                 else

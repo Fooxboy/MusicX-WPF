@@ -20,5 +20,9 @@ namespace MusicX.Core.Models.Boom
 
         [JsonProperty("radio")]
         public Radio Radio { get; set; }
+
+        [JsonProperty("tracks")]
+        public List<Track> Tracks { get; set; }
+
     }
 }

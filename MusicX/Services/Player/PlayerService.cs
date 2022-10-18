@@ -22,6 +22,8 @@ using MusicX.Services.Player.TrackStats;
 using MusicX.ViewModels;
 using NLog;
 using Microsoft.AppCenter.Crashes;
+using MusicX.Core.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace MusicX.Services.Player;
 
@@ -150,9 +152,17 @@ public class PlayerService
             NextTrackChanged?.Invoke(this, EventArgs.Empty);
             PlayStateChangedEvent?.Invoke(this, EventArgs.Empty);
         });
-        
-        var sources = await Task.WhenAll(_mediaSources.Select(b => b.CreateMediaSourceAsync(track)));
 
+        if (CurrentTrack.Data.Url is null) await NextTrack();
+
+        var sources = new List<MediaSource>();
+        foreach(var source in _mediaSources)
+        {
+            var item = await source.CreateMediaSourceAsync(track);
+            sources.Add(item);
+        }
+
+        if (sources.All(m => m is null)) await NextTrack();
         player.Source = sources.First(b => b is not null);
         player.Play();
         UpdateWindowsData().SafeFireAndForget();
@@ -1104,22 +1114,54 @@ public class PlayerService
 
     private async void MediaPlayerOnMediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
     {
-
-
-
-        //if (args.Error == MediaPlayerError.SourceNotSupported)
-        //{
-
-        //}
-
-        //Ошибка при загрузке
-
         if (args.Error == MediaPlayerError.SourceNotSupported)
         {
             logger.Error("Error SourceNotSupported player");
 
             notificationsService.Show("Ошибка", "Произошла ошибкба SourceNotSupported");
 
+            if(CurrentTrack is not null && CurrentTrack.Data.Url.EndsWith(".mp3"))
+            {
+                try
+                {
+                    //Какая же это все грязь, пиздец.
+
+                    var vkService = StaticService.Container.GetRequiredService<VkService>();
+
+                    var boomService = StaticService.Container.GetRequiredService<BoomService>();
+                    var configService = StaticService.Container.GetRequiredService<ConfigService>();
+
+                    var config = await configService.GetConfig();
+                    var boomVkToken = await vkService.GetBoomToken();
+
+                    var boomToken = await boomService.AuthByTokenAsync(boomVkToken.Token, boomVkToken.Uuid);
+
+                    config.BoomToken = boomToken.AccessToken;
+                    config.BoomTokenTtl = DateTimeOffset.Now + TimeSpan.FromSeconds(boomToken.ExpiresIn);
+                    config.BoomUuid = boomVkToken.Uuid;
+
+                    await configService.SetConfig(config);
+
+                    boomService.SetToken(boomToken.AccessToken);
+
+                    await PlayTrackAsync(CurrentTrack);
+
+                }
+                catch (Exception ex)
+                {
+                    var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                    Crashes.TrackError(ex, properties);
+
+                }
+
+                return;
+            }
 
             if (CurrentTrack is not null)
                 //audio source url may expire
