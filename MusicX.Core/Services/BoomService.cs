@@ -176,6 +176,61 @@ namespace MusicX.Core.Services
             }
         }
 
+        public async Task<List<Track>> GetUserTopTracks()
+        {
+            try
+            {
+                var result = await RequestAsync("user/top/tracks/");
+
+                var model = JsonConvert.DeserializeObject<Response>(result);
+
+                return model.Data.Tracks;
+            }
+            catch (Exception ex)
+            {
+                logger.Error("BOOM API ERROR:");
+                logger.Error(ex, ex.Message);
+                throw;
+            }
+        }
+
+        [Obsolete("ВК тут ничего не возвращает, твари.")]
+        public async Task GetUserTopPlaylists()
+        {
+            try
+            {
+                var result = await RequestAsync("user/top/playlists/");
+
+                var model = JsonConvert.DeserializeObject<Response>(result);
+
+                //return new List<Track>();
+            }
+            catch (Exception ex)
+            {
+                logger.Error("BOOM API ERROR:");
+                logger.Error(ex, ex.Message);
+                throw;
+            }
+        }
+
+        public async Task<List<Artist>> GetUserTopArtists()
+        {
+            try
+            {
+                var result = await RequestAsync("user/top/artists/");
+
+                var model = JsonConvert.DeserializeObject<Response>(result);
+
+                return model.Data.Artists;
+            }
+            catch (Exception ex)
+            {
+                logger.Error("BOOM API ERROR:");
+                logger.Error(ex, ex.Message);
+                throw;
+            }
+        }
+
         private async Task<string> RequestAsync(string method, Dictionary<string, string> arguments = null)
         {
             if(isAuth)
