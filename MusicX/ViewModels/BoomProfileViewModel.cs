@@ -74,6 +74,10 @@ namespace MusicX.ViewModels
             {
                 IsLoaded = false;
 
+                Tags = new ObservableCollection<Tag>();
+                Artists = new ObservableCollection<Artist>();
+                Tracks = new ObservableCollection<Audio>();
+
                 var properties = new Dictionary<string, string>
                 {
 #if DEBUG
