@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Caching.Memory;
+using MusicX.Server.Services;
+using MusicX.Shared.ListenTogether;
 using MusicX.Shared.Player;
 
 namespace MusicX.Server.Hubs;
@@ -7,57 +10,122 @@ namespace MusicX.Server.Hubs;
 public class ListenTogetherHub : Hub
 {
     private readonly ILogger<ListenTogetherHub> _logger;
+    private readonly ListenTogetherService _listenTogetherService;
     private readonly IMemoryCache _cache;
 
-    public ListenTogetherHub(ILogger<ListenTogetherHub> logger, IMemoryCache cache)
+    public ListenTogetherHub(ILogger<ListenTogetherHub> logger, IMemoryCache cache, ListenTogetherService listenTogetherService)
     {
         _logger = logger;
         _cache = cache;
+        _listenTogetherService = listenTogetherService;
     }
 
-    public Task ChangeTrack(PlaylistTrack track)
+    /// <summary>
+    /// Смена трека
+    /// </summary>
+    /// <param name="track">Трек</param>
+    /// <returns>Успешность результата</returns>
+    public async Task<bool> ChangeTrack(Track track)
     {
-        _cache.Set(Context.UserIdentifier!, track);
-        return Clients.OthersInGroup(Context.UserIdentifier!).SendAsync("TrackChanged", track);
+        try
+        {
+            var owner = Context.ConnectionId;
+            return await _listenTogetherService.ChangeTrackAsync(track, Context.ConnectionId);
+        }catch(Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            throw new HubException(ex.Message, ex);
+        }
     }
 
-    public Task ChangePlayState(TimeSpan position, bool pause)
+    /// <summary>
+    /// Изменилось состояние трека
+    /// </summary>
+    /// <param name="position">Позиция</param>
+    /// <param name="pause">Флаг паузы</param>
+    /// <returns>Успешность операции</returns>
+    public async Task<bool> ChangePlayState(TimeSpan position, bool pause)
     {
-        return Clients.OthersInGroup(Context.UserIdentifier!).SendAsync("PlayStateChanged", position, pause);
-    }
-
-    public Task StartPlaySession()
-    {
-        _logger.LogDebug("Started play session with id {SessionId} for {User}", Context.UserIdentifier,
-                         Context.User?.Identity?.Name ?? Context.UserIdentifier);
-        
-        return Groups.AddToGroupAsync(Context.ConnectionId, Context.UserIdentifier!);
-    }
-
-    public Task StopPlaySession()
-    {
-        _logger.LogDebug("Stopped play session with id {SessionId} for {User}", Context.UserIdentifier,
-                         Context.User?.Identity?.Name ?? Context.UserIdentifier);
-        
-        return Groups.RemoveFromGroupAsync(Context.ConnectionId, Context.UserIdentifier!);
+        try
+        {
+            var owner = Context.ConnectionId;
+            return await _listenTogetherService.ChangePlayStateAsync(owner, position, pause);
+        }catch(Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            throw new HubException(ex.Message, ex);
+        }
     }
     
-    public async Task JoinPlaySession(string sessionId)
+    /// <summary>
+    /// Создать сессию "Слушать вместе"
+    /// </summary>
+    /// <returns>Успешность операции</returns>
+    public async Task<string?> StartPlaySession()
     {
-        _logger.LogDebug("User {User} joined play session with id {SessionId}",
-                         Context.User?.Identity?.Name ?? Context.UserIdentifier, sessionId);
-        
-        await Groups.AddToGroupAsync(Context.ConnectionId, sessionId);
-
-        if (_cache.TryGetValue(sessionId, out PlaylistTrack track))
-            await Clients.Client(Context.ConnectionId).SendAsync("TrackChanged", track);
+        try
+        {
+            var owner = Context.ConnectionId;
+            return await _listenTogetherService.StartSessionAsync(owner);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            throw new HubException(ex.Message, ex);
+        }
     }
 
-    public Task LeavePlaySession(string sessionId)
+    /// <summary>
+    /// Остановить сессию "Слушать вместе"
+    /// </summary>
+    /// <returns>Успешность операции</returns>
+    public async Task<bool> StopPlaySession()
     {
-        _logger.LogDebug("User {User} left play session with id {SessionId}",
-                         Context.User?.Identity?.Name ?? Context.UserIdentifier, sessionId);
-        
-        return Groups.RemoveFromGroupAsync(Context.ConnectionId, sessionId);
+        try
+        {
+            var owner = Context.ConnectionId;
+            return await _listenTogetherService.StopSessionAsync(owner);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            throw new HubException(ex.Message, ex);
+        }
+    }
+    
+    /// <summary>
+    /// Присоединиться к сессии
+    /// </summary>
+    /// <param name="sessionId">ИД сессии</param>
+    /// <returns>Успешность операции</returns>
+    public async Task<bool> JoinPlaySession(string sessionId)
+    {
+        try
+        {
+            var owner = Context.ConnectionId;
+            return await _listenTogetherService.JoinToSessionAsync(owner, sessionId);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            throw new HubException(ex.Message, ex);
+        }
+    }
+
+    /// <summary>
+    /// Покинуть сессию
+    /// </summary>
+    public async Task<bool> LeavePlaySession(string sessionId)
+    {
+        try
+        {
+            var owner = Context.ConnectionId;
+            return await _listenTogetherService.LeaveSessionAsync(sessionId);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            throw new HubException(ex.Message, ex);
+        }
     }
 }

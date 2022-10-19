@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using MusicX.Server.Hubs;
+using MusicX.Server.Managers;
+using MusicX.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +20,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR(options => options.EnableDetailedErrors = true);
 builder.Services.AddMemoryCache();
 builder.Services.AddAuthorization();
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -36,6 +39,9 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true
     };
 });
+
+builder.Services.AddTransient<SessionManager>();
+builder.Services.AddTransient<ListenTogetherService>();
 
 var app = builder.Build();
 
@@ -82,5 +88,8 @@ app.MapPost("/token",
                 
                 return Results.Ok(stringToken);
             });
+
+
+
 
 app.Run();
