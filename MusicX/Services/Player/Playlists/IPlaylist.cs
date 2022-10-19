@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using MusicX.Shared.Player;
 
 namespace MusicX.Services.Player.Playlists;
 

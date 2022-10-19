@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
+using MusicX.Shared.Player;
 using MusicX.ViewModels;
 using VkNet.Abstractions;
 

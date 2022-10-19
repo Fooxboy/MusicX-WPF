@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 using MusicX.Services.Player.Playlists;
+using MusicX.Shared.Player;
 
 namespace MusicX.Converters;
 

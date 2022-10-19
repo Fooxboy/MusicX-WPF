@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Windows.Media.Core;
 using MusicX.Services.Player.Playlists;
+using MusicX.Shared.Player;
 
 namespace MusicX.Services.Player;
 

@@ -146,6 +146,20 @@
                     Appearance="Secondary"
                     Click="download_Click"
                     Content="Скачать" />
+                
+                <TextBox
+                    x:Name="UserId"
+                    Width="400"
+                    Margin="0,10,0,0"
+                    HorizontalAlignment="Left" />
+                <wpfui:Button
+                    x:Name="ListenTogether"
+                    Width="300"
+                    Margin="0,10,0,0"
+                    HorizontalAlignment="Left"
+                    Appearance="Secondary"
+                    Click="ListenTogether_OnClick"
+                    Content="Слушать вместе" />
 
             </StackPanel>
         </StackPanel>

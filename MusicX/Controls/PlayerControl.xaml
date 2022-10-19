@@ -8,12 +8,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wpfui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
     xmlns:models="clr-namespace:MusicX.Core.Models;assembly=MusicX.Core"
-    xmlns:playlists="clr-namespace:MusicX.Services.Player.Playlists"
     xmlns:converters="clr-namespace:MusicX.Converters"
+    xmlns:player="clr-namespace:MusicX.Shared.Player;assembly=MusicX.Shared"
     Loaded="UserControl_Loaded"
     mc:Ignorable="d"
-    x:Name="Control"
-    d:DataContext="{d:DesignInstance playlists:PlaylistTrack}">
+    d:DataContext="{d:DesignInstance player:PlaylistTrack}"
+    x:Name="Control">
     <UserControl.Resources>
         <ResourceDictionary>
             <Storyboard x:Key="BackgroundAmimate">
@@ -505,7 +505,7 @@
                         </ItemsPanelTemplate>
                     </ListBox.ItemsPanel>
                     <ListBox.ItemTemplate>
-                        <DataTemplate DataType="{x:Type playlists:PlaylistTrack}">
+                        <DataTemplate DataType="{x:Type player:PlaylistTrack}">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
