@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Controls;
+using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
 using MusicX.ViewModels;
 using MusicX.ViewModels.Modals;
@@ -95,5 +96,12 @@ namespace MusicX.Views
             navigationService.OpenModal<CreatePlaylistModal>(viewModel);
         }
         public string MenuTag { get; set; }
+
+        private async void ListenTogether_OnClick(object sender, RoutedEventArgs e)
+        {
+            var playerService = StaticService.Container.GetRequiredService<PlayerService>();
+            if (long.TryParse(UserId.Text, out var userId))
+                await playerService.PlayFromAsync(userId).ConfigureAwait(false);
+        }
     }
 }

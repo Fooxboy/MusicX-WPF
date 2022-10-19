@@ -18,6 +18,7 @@ using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
 using System.Collections.Generic;
 using Microsoft.AppCenter.Analytics;
+using Microsoft.AspNetCore.SignalR.Client;
 
 namespace MusicX.Views
 {
@@ -65,6 +66,7 @@ namespace MusicX.Views
                 collection.AddSingleton<ITrackStatsListener, DiscordTrackStats>();
                 collection.AddSingleton<ITrackStatsListener, VkTrackBroadcastStats>();
                 collection.AddSingleton<ITrackStatsListener, VkTrackStats>();
+                collection.AddSingleton<ITrackStatsListener, ServerTrackStats>();
 
                 collection.AddTransient<SectionViewModel>();
                 collection.AddTransient<PlaylistViewModel>();
@@ -100,6 +102,7 @@ namespace MusicX.Views
                 var navigationService = container.GetRequiredService<NavigationService>();
                 var configService = container.GetRequiredService<ConfigService>();
                 var notificationsService = container.GetRequiredService<NotificationsService>();
+                var serverService = container.GetRequiredService<ServerService>();
 
                 var config = await configService.GetConfig();
 
@@ -137,6 +140,7 @@ namespace MusicX.Views
                             {
 
                                 await vkService.SetTokenAsync(config.AccessToken);
+                                await serverService.StartAsync(config.UserId);
                                 var rootWindow = new RootWindow(navigationService, vkService, logger, configService, notificationsService);
                                 rootWindow.Show();
                                 this.Close();

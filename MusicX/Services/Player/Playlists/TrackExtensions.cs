@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Text;
+using MusicX.Shared.Player;
 
 namespace MusicX.Services.Player.Playlists;
 

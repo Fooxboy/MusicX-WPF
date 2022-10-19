@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Services.Player.Playlists;
+using MusicX.Shared.Player;
 
 namespace MusicX.Services.Player.TrackStats;
 

@@ -9,6 +9,7 @@ using MusicX.Core.Services;
 using MusicX.Services;
 using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
+using MusicX.Shared.Player;
 
 namespace MusicX.Controls;
 

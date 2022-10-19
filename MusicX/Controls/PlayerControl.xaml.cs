@@ -21,6 +21,7 @@ using MusicX.ViewModels;
 using Wpf.Ui.Common;
 using System.Collections.Generic;
 using Microsoft.AppCenter.Crashes;
+using MusicX.Shared.Player;
 
 namespace MusicX.Controls
 {

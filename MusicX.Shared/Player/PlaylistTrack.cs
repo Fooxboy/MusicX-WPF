@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using MusicX.Core.Models;
-using MusicX.ViewModels;
+﻿using System.Text.Json.Serialization;
 
-namespace MusicX.Services.Player.Playlists;
+namespace MusicX.Shared.Player;
 
 public sealed record PlaylistTrack(string Title, string Subtitle, AlbumId? AlbumId,
                                    ICollection<TrackArtist> MainArtists,
@@ -21,6 +18,8 @@ public sealed record PlaylistTrack(string Title, string Subtitle, AlbumId? Album
     public override int GetHashCode() => HashCode.Combine(AlbumId?.GetHashCode(), Data.GetHashCode());
 }
 
+[JsonDerivedType(typeof(VkTrackData), "vk")]
+[JsonDerivedType(typeof(BoomTrackData), "boom")]
 public abstract record TrackData(string Url, bool IsLiked, bool IsExplicit, TimeSpan Duration);
 
 public sealed record BoomTrackData(string Url, bool IsLiked, bool IsExplicit, TimeSpan Duration, string Id) : TrackData(

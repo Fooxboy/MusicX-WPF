@@ -22,10 +22,19 @@ using MusicX.Services.Player.TrackStats;
 using MusicX.ViewModels;
 using NLog;
 using Microsoft.AppCenter.Crashes;
+using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
+using MusicX.Shared.Player;
 
 namespace MusicX.Services.Player;
+
+public enum PlayerMode
+{
+    None,
+    Master,
+    Slave
+}
 
 public class PlayerService
 {
@@ -48,6 +57,9 @@ public class PlayerService
     public bool IsShuffle { get; set; }
     public bool IsRepeat { get; set; }
 
+    public PlayerMode Mode { get; private set; } = PlayerMode.None;
+    public string? SlaveSessionId {get; private set; }
+
     public event EventHandler? NextTrackChanged;
     public event EventHandler? PlayStateChangedEvent;
     public event EventHandler<TimeSpan>? PositionTrackChangedEvent;
@@ -61,13 +73,14 @@ public class PlayerService
     private readonly NotificationsService notificationsService;
     private readonly IEnumerable<ITrackMediaSource> _mediaSources;
     private readonly IEnumerable<ITrackStatsListener> _statsListeners;
+    private readonly ServerService _serverService;
 
     private PlaylistTrack? _nextPlayTrack;
 
     public IPlaylist? CurrentPlaylist { get; set; }
 
     public PlayerService(Logger logger, NotificationsService notificationsService,
-                         IEnumerable<ITrackMediaSource> mediaSources, IEnumerable<ITrackStatsListener> statsListeners)
+                         IEnumerable<ITrackMediaSource> mediaSources, IEnumerable<ITrackStatsListener> statsListeners, ServerService serverService)
     {
         this.logger = logger;
         player = new MediaPlayer();
@@ -106,6 +119,47 @@ public class PlayerService
         this.notificationsService = notificationsService;
         _mediaSources = mediaSources;
         _statsListeners = statsListeners;
+        _serverService = serverService;
+        
+        _serverService.PlayStateChanged += ServerOnPlayStateChanged;
+    }
+
+    private Task ServerOnPlayStateChanged(TimeSpan position, bool pause)
+    {
+        if (Mode is not PlayerMode.Slave)
+            return Task.CompletedTask;
+
+        if (Math.Abs(position.TotalSeconds - Position.TotalSeconds) > 2)
+            Seek(position);
+
+        if (pause == !IsPlaying) return Task.CompletedTask;
+        
+        if (pause)
+            Pause();
+        else
+            Play();
+
+        return Task.CompletedTask;
+    }
+
+    public async Task PlayFromAsync(long userId)
+    {
+        switch (Mode)
+        {
+            case PlayerMode.Master:
+                await _serverService.StopSessionAsync();
+                break;
+            case PlayerMode.Slave when SlaveSessionId is not null:
+                await _serverService.LeaveSessionAsync(SlaveSessionId);
+                break;
+        }
+
+        Mode = PlayerMode.Slave;
+        SlaveSessionId = userId.ToString();
+        
+        var playlist = await _serverService.JoinSessionAsync(SlaveSessionId);
+
+        await PlayAsync(playlist);
     }
 
     public async void Play()
@@ -120,16 +174,18 @@ public class PlayerService
             await Application.Current.Dispatcher.InvokeAsync(
                 () => PlayStateChangedEvent?.Invoke(this, EventArgs.Empty));
         
-        await Task.WhenAll(
-            _statsListeners.Select(b => b.TrackPlayStateChangedAsync(CurrentTrack!, player.Position, false)));
+        if (Mode is PlayerMode.Master)
+            await Task.WhenAll(
+                _statsListeners.Select(b => b.TrackPlayStateChangedAsync(CurrentTrack!, player.Position, false)));
     }
 
     public async Task PlayTrackFromQueueAsync(int index)
     {
         var previousTrack = CurrentTrack!;
         await PlayTrackAsync(Tracks[index]);
-        await Task.WhenAll(
-            _statsListeners.Select(b => b.TrackChangedAsync(previousTrack, CurrentTrack!, ChangeReason.TrackChange)));
+        if (Mode is PlayerMode.Master)
+            await Task.WhenAll(
+                _statsListeners.Select(b => b.TrackChangedAsync(previousTrack, CurrentTrack!, ChangeReason.TrackChange)));
     }
     
     private async Task PlayTrackAsync(PlaylistTrack track)
@@ -157,7 +213,16 @@ public class PlayerService
 
         if (CurrentTrack.Data.Url is null) await NextTrack();
 
-        var sources = new List<MediaSource>();
+        if (Mode is PlayerMode.Slave && SlaveSessionId is not null)
+            await _serverService.LeaveSessionAsync(SlaveSessionId);
+
+        if (Mode is not PlayerMode.Master)
+        {
+            Mode = PlayerMode.Master;
+            await _serverService.StartSessionAsync();
+        }
+
+        var sources = new List<MediaSource?>();
         foreach(var source in _mediaSources)
         {
             var item = await source.CreateMediaSourceAsync(track);
@@ -206,8 +271,9 @@ public class PlayerService
                 }
                 
                 firstTrackTask = PlayTrackAsync(firstTrack);
-                await Task.WhenAll(
-                    _statsListeners.Select(b => b.TrackChangedAsync(CurrentTrack, firstTrack, ChangeReason.PlaylistChange)));
+                if (Mode is PlayerMode.Master)
+                    await Task.WhenAll(
+                        _statsListeners.Select(b => b.TrackChangedAsync(CurrentTrack, firstTrack, ChangeReason.PlaylistChange)));
             }
 
             QueueLoadingStateChanged?.Invoke(this, new(PlayerLoadingState.Started));
@@ -226,8 +292,9 @@ public class PlayerService
             {
                 var previousTrack = CurrentTrack;
                 await PlayTrackAsync(Tracks[0]);
-                await Task.WhenAll(
-                    _statsListeners.Select(b => b.TrackChangedAsync(previousTrack, CurrentTrack!, ChangeReason.PlaylistChange)));
+                if (Mode is PlayerMode.Master)
+                    await Task.WhenAll(
+                        _statsListeners.Select(b => b.TrackChangedAsync(previousTrack, CurrentTrack!, ChangeReason.PlaylistChange)));
             }
         }
         catch (Exception e)
@@ -325,8 +392,9 @@ public class PlayerService
             var previousTrack = CurrentTrack!;
 
             await PlayTrackAsync(nextTrack);
-            await Task.WhenAll(
-                _statsListeners.Select(b => b.TrackChangedAsync(previousTrack, nextTrack, ChangeReason.NextButton)));
+            if (Mode is PlayerMode.Master)
+                await Task.WhenAll(
+                    _statsListeners.Select(b => b.TrackChangedAsync(previousTrack, nextTrack, ChangeReason.NextButton)));
         }catch(Exception ex)
         {
             var properties = new Dictionary<string, string>
@@ -382,8 +450,9 @@ public class PlayerService
                 await Application.Current.Dispatcher.InvokeAsync(
                     () => PlayStateChangedEvent?.Invoke(this, EventArgs.Empty));
             
-            await Task.WhenAll(
-                _statsListeners.Select(b => b.TrackPlayStateChangedAsync(CurrentTrack!, player.Position, true)));
+            if (Mode is PlayerMode.Master)
+                await Task.WhenAll(
+                    _statsListeners.Select(b => b.TrackPlayStateChangedAsync(CurrentTrack!, player.Position, true)));
         }catch (Exception ex)
         {
             logger.Error(ex, ex.Message);
@@ -401,8 +470,9 @@ public class PlayerService
         {
             player.PlaybackSession.Position = position;
 
-            await Task.WhenAll(
-                _statsListeners.Select(b => b.TrackPlayStateChangedAsync(CurrentTrack!, position, !IsPlaying)));
+            if (Mode is PlayerMode.Master)
+                await Task.WhenAll(
+                    _statsListeners.Select(b => b.TrackPlayStateChangedAsync(CurrentTrack!, position, !IsPlaying)));
         }
         catch (Exception e)
         {
@@ -427,8 +497,9 @@ public class PlayerService
                 
                 await PlayTrackAsync(previousTrack);
                 
-                await Task.WhenAll(
-                    _statsListeners.Select(b => b.TrackChangedAsync(prevCurrentTrack, previousTrack!, ChangeReason.PrevButton)));
+                if (Mode is PlayerMode.Master)
+                    await Task.WhenAll(
+                        _statsListeners.Select(b => b.TrackChangedAsync(prevCurrentTrack, previousTrack!, ChangeReason.PrevButton)));
             }
         }
         catch (Exception e)
