@@ -87,7 +87,6 @@ namespace MusicX.ViewModels
         {
             try
             {
-
                 var properties = new Dictionary<string, string>
                 {
 #if DEBUG
