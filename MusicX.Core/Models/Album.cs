@@ -34,8 +34,6 @@ namespace MusicX.Core.Models
                 if (Thumb.Photo600 != null) return Thumb.Photo600;
                 if (Thumb.Photo1200 != null) return Thumb.Photo1200;
                 return null;
-
-
             }
         }
     }

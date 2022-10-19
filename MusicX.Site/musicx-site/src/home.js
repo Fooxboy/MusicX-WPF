@@ -2,8 +2,9 @@ import React from "react";
 import home from './images/home.png';
 import explore from './images/explore.png';
 import playlists from './images/playlists.png';
-import podcasts from './images/podcasts.png';
+import vkmix from './images/vkmix.png';
 import search from './images/search.png';
+import downloads from './images/downloads.png';
 
 class Home extends React.Component {
     render() {
@@ -31,17 +32,15 @@ class Home extends React.Component {
                         </p>
 
                         <p className="subtitle-app">
-                            Музыкальный плеер ВКонтакте для Windows 11 и Windows 10
+                            Музыкальный плеер <b>ВКонтакте</b> для Windows 11 и Windows 10
                         </p>
 
                         <div>
-                               <a className="uk-button uk-button-secondary" target="_blank" href="https://fooxboy.blob.core.windows.net/musicx/MusicXSetup.exe">
-                                    <div>
-                                        <p className="download-button">Скачать</p>
-                                    </div>
+                               <a className="download-button" target="_blank" href="https://fooxboy.blob.core.windows.net/musicx/MusicXSetup.exe">
+                                    Скачать
                                 </a>
                           
-                            <a className="uk-button uk-button-secondary telegram-button" href="https://t.me/MusicXPlayer">Телеграм</a>
+                            <a className="telegram-button" href="https://t.me/MusicXPlayer">Телеграм</a>
                         </div>
                     </div>
                 </div>
@@ -86,10 +85,18 @@ class Home extends React.Component {
 
 
                 <div className="uk-panel">
-                    <img src={podcasts} className="left-image uk-align-left uk-margin-remove-adjacent uk-border-rounded uk-box-shadow-xlarge" alt="image one"/>
+                    <img src={vkmix} className="left-image uk-align-left uk-margin-remove-adjacent uk-border-rounded uk-box-shadow-xlarge" alt="image one"/>
                     <div >
-                        <p className="desc-title">Подкасты</p>
-                        <p className="desc-subtitle">Если Вам надоела музыка, Вы всегда сможете послушать прекрасных дикторов с их интереснешими историями!</p>
+                        <p className="desc-title">VK Mix</p>
+                        <p className="desc-subtitle">Бесконечное радио по Вашим любимым исполнителям, жарнам или любимым трекам</p>
+                    </div>
+                </div>
+
+                <div className="uk-panel  hiden">
+                    <img src={downloads} className="right-image uk-align-right uk-margin-remove-adjacent uk-border-rounded uk-box-shadow-xlarge" alt="image one"/>
+                    <div >
+                        <p className="desc-title">Загрузка музыки</p>
+                        <p className="desc-subtitle">Если Вам необходимо скачать свою библиотку музыки ВКонтакте на компьютер в формате .mp3, то Music X поможет вам в этом!</p>
                     </div>
                 </div>
 
@@ -106,12 +113,8 @@ class Home extends React.Component {
                             Попробуйте сами все возможности загрузив Music X для Windows 11, 10
                         </p>
 
-
-                        <a className="uk-button uk-button-secondary" target="_blank" href="https://fooxboy.blob.core.windows.net/musicx/MusicXSetup.exe">
-
-                            <div>
-                                <p className="download-button">Скачать</p>
-                            </div>
+                        <a className="download-button" target="_blank" href="https://fooxboy.blob.core.windows.net/musicx/MusicXSetup.exe">
+                            Скачать
                         </a>
                     </div>
                 </div>

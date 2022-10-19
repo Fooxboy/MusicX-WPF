@@ -55,7 +55,7 @@ namespace MusicX.Core.Models.Boom
         public bool HasFeed { get; set; }
 
         [JsonProperty("cover")]
-        public Cover Cover { get; set; }
+        public Avatar Cover { get; set; }
 
         [JsonProperty("abExperiments")]
         public List<AbExperiment> AbExperiments { get; set; }

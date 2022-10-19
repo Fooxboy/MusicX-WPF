@@ -10,8 +10,24 @@ public class VkMediaSource : ITrackMediaSource
 {
     public async Task<MediaSource?> CreateMediaSourceAsync(PlaylistTrack track)
     {
-        return track.Data is VkTrackData { Url: { } url }
-            ? MediaSource.CreateFromAdaptiveMediaSource((await AdaptiveMediaSource.CreateFromUriAsync(new(url))).MediaSource)
-            : null;
+        try
+        {
+            if (track.Data is VkTrackData vkData)
+            {
+                var source = await AdaptiveMediaSource.CreateFromUriAsync(new(vkData.Url));
+                if(source.Status != AdaptiveMediaSourceCreationStatus.Success)
+                {
+                    return await this.CreateMediaSourceAsync(track);
+                }
+                var mediaSource = MediaSource.CreateFromAdaptiveMediaSource(source.MediaSource);
+                return mediaSource;
+            }
+
+            return null;
+        }catch(Exception ex)
+        {
+            return null;
+        }
+       
     }
 }

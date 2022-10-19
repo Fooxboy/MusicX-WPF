@@ -120,6 +120,14 @@ namespace MusicX.Controls
                         return;
                     }
 
+                    if (Block.Layout.Name == "music_chart_list")
+                    {
+                        BlocksPanel.Children.Add(new ListPlaylists() { Content = Block.Playlists, ShowFull = true });
+                        logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
+
+                        return;
+                    }
+
                     if (Block.Layout.Name == "large_slider")
                     {
                         BlocksPanel.Children.Add(new ListPlaylists() { Content = Block.Playlists, ShowFull = false });

@@ -40,7 +40,7 @@ namespace MusicX.Controls.Boom
 
                 var descr = string.Empty;
 
-                foreach (var artist in Artist.RelevantArtistsNames) descr += artist + ", ";
+                if(Artist.RelevantArtistsNames != null) foreach(var artist in Artist.RelevantArtistsNames) descr += artist + ", ";
 
                 Description.Text = descr;
 

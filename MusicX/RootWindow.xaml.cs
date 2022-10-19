@@ -167,6 +167,7 @@ namespace MusicX
                 navigationBar.Items.Add(item);
 #endif
                 navigationBar.Items.Add(new NavigationBarItem() { Tag = "vkmix", PageDataContext = StaticService.Container.GetRequiredService<VKMixViewModel>(), Icon = Wpf.Ui.Common.SymbolRegular.Stream24, Content = "Микс", PageType = typeof(VKMixView) });
+                navigationBar.Items.Add(new NavigationBarItem() { Tag = "boomprofile", PageDataContext = StaticService.Container.GetRequiredService<BoomProfileViewModel>(), Icon = Wpf.Ui.Common.SymbolRegular.Person16, Content = "Профиль", PageType = typeof(BoomProfileView) });
                 navigationBar.Items.Add(new NavigationBarItem() { Tag = "downloads", PageDataContext = StaticService.Container.GetRequiredService<DownloaderViewModel>(), Icon = Wpf.Ui.Common.SymbolRegular.ArrowDownload48, Content = "Загрузки", PageType = typeof(DownloadsView) });
                 var item2 = new NavigationBarItem() { Tag = "settings", Icon = Wpf.Ui.Common.SymbolRegular.Settings24, Content = "Настройки", PageType = typeof(SettingsView) };
 

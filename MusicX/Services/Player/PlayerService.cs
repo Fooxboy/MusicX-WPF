@@ -22,6 +22,8 @@ using MusicX.Services.Player.TrackStats;
 using MusicX.ViewModels;
 using NLog;
 using Microsoft.AppCenter.Crashes;
+using MusicX.Core.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace MusicX.Services.Player;
 
@@ -150,9 +152,17 @@ public class PlayerService
             NextTrackChanged?.Invoke(this, EventArgs.Empty);
             PlayStateChangedEvent?.Invoke(this, EventArgs.Empty);
         });
-        
-        var sources = await Task.WhenAll(_mediaSources.Select(b => b.CreateMediaSourceAsync(track)));
 
+        if (CurrentTrack.Data.Url is null) await NextTrack();
+
+        var sources = new List<MediaSource>();
+        foreach(var source in _mediaSources)
+        {
+            var item = await source.CreateMediaSourceAsync(track);
+            sources.Add(item);
+        }
+
+        if (sources.All(m => m is null)) await NextTrack();
         player.Source = sources.First(b => b is not null);
         player.Play();
         UpdateWindowsData().SafeFireAndForget();
@@ -233,560 +243,6 @@ public class PlayerService
             QueueLoadingStateChanged.Invoke(this, new(QueueLoadingState.Finished));
         }
     }
-
-    /*public async Task PlayTrack(Audio track, bool loadParentToQueue = true)
-    {
-        try
-        {
-            if (CurrentTrack?.Id == track.Id)
-            {
-                if(IsPlaying) this.Pause();
-                else this.Play();
-                return;
-            }
-            var list = new List<object>();
-
-            var startPlayModel = new PlayTrackEvent()
-            {
-                Event = "music_start_playback",
-                AudioId = track.OwnerId + "_" +track.Id,
-                Uuid = Guid.NewGuid().GetHashCode(),
-                StartTime = "0",
-                Shuffle = "false",
-                Reason = "auto",
-                PlaybackStartedAt = "0",
-                TrackCode = track.TrackCode,
-                Repeat = "all",
-                State = "app",
-                Source = track.ParentBlockId,
-            };
-
-
-            if(CurrentTrack != null)
-            {
-                startPlayModel.PrevAudioId = CurrentTrack.OwnerId + "_" + CurrentTrack.Id;
-                var stopTrackModel = new StopTrackEvent()
-                {
-                    Event = "music_stop_playback",
-                    Uuid = Guid.NewGuid().GetHashCode(),
-                    Shuffle = "false",
-                    Reason = "new",
-
-                    AudioId = CurrentTrack.OwnerId + "_" + CurrentTrack.Id,
-                    StartTime = "0",
-                    PlaybackStartedAt = CurrentTrack.Duration.ToString(),
-                    TrackCode = CurrentTrack.TrackCode,
-                    StreamingType = "online",
-                    Duration = CurrentTrack.Duration.ToString(),
-                    Repeat = "all",
-                    State = "app",
-                    Source = CurrentTrack.ParentBlockId,
-
-                };
-
-                list.Add(stopTrackModel);
-            }
-
-            list.Add(startPlayModel);
-            logger.Info($"play track {track.Id}");
-               
-            CurrentTrack = track;
-               
-            player.PlaybackSession.Position = TimeSpan.Zero;
-
-            player.Pause();
-
-            var result = await AdaptiveMediaSource.CreateFromUriAsync(new Uri(CurrentTrack.Url));
-            var ams = result.MediaSource;
-
-            player.Source = MediaSource.CreateFromAdaptiveMediaSource(ams);
-
-            player.Play();
-
-
-            new Thread(UpdateWindowsData).Start();
-            //player.SystemMediaTransportControls.DisplayUpdater.ClearAll();
-
-
-            string artist;
-
-
-            config = await configService.GetConfig();
-
-            if (config.ShowRPC == null)
-            {
-                config.ShowRPC = true;
-
-                await configService.SetConfig(config);
-            }
-
-            if(config.BroadcastVK == null)
-            {
-                config.BroadcastVK = false;
-
-                await configService.SetConfig(config);
-            }
-
-
-            if(config.BroadcastVK.Value)
-            {
-                await vkService.SetBroadcastAsync(track);
-            }
-
-            if (config.ShowRPC.Value)
-            {
-                if (CurrentTrack.MainArtists?.Count > 0)
-                {
-                    string s = string.Empty;
-                    foreach (var trackArtist in CurrentTrack.MainArtists)
-                    {
-                        s += trackArtist.Name + ", ";
-                    }
-
-                    var artists = s.Remove(s.Length - 2);
-
-                    artist = artists;
-
-                }
-                else
-                {
-                    artist = CurrentTrack.Artist;
-                }
-
-                TimeSpan t = TimeSpan.FromSeconds(CurrentTrack.Duration);
-
-                string cover = "";
-                if(track.Album == null)
-                {
-                    cover = "album";
-                }else
-                {
-                    cover = track.Album.Cover;
-                }
-
-                discordService.RemoveTrackPlay();
-                discordService.SetTrackPlay(artist, CurrentTrack.Title, t, cover);
-            }
-
-
-            TrackChangedEvent?.Invoke(this, EventArgs.Empty);
-
-            PositionTrackChangedEvent?.Invoke(this, TimeSpan.Zero);
-
-            logger.Info($"played track {track.Id}");
-
-            await vkService.StatsTrackEvents(list);
-
-            if (track.ParentBlockId != null && loadParentToQueue)
-            {
-                Debug.WriteLine("track.ParentBlockId != null");
-                CurrentPlaylist = null;
-
-                if (track.ParentBlockId == this.CurrentBlockId)
-                {
-                    CurrentIndex = Tracks.IndexOf(Tracks.Single(a => a.Id == CurrentTrack.Id));
-
-
-                    if (CurrentIndex + 1 > Tracks.Count - 1)
-                    {
-                        NextPlayTrack = CurrentTrack;
-                    }
-                    else
-                    {
-                        NextPlayTrack = Tracks[CurrentIndex + 1];
-
-                    }
-                    return;
-                }
-
-                Debug.WriteLine($"track.ParentBlockId = {track.ParentBlockId} | this.blockId = {this.CurrentBlockId} ");
-
-                Debug.WriteLine("track.ParentBlockId != this.blockId");
-
-                await Task.Run(async () =>
-                {
-                    try
-                    {
-                        Debug.WriteLine($"LOAD TRACKS BY BLOCK");
-
-                        logger.Info("Get current track block info");
-                        this.CurrentBlockId = track.ParentBlockId;
-                        CurrentPlaylistId = -1;
-                        var items = await vkService.LoadFullAudiosAsync(CurrentBlockId).ToListAsync();
-
-                        await Application.Current.Dispatcher.InvokeAsync(() => Tracks.ReplaceRange(items));
-
-                        int c = 0;
-                        foreach (var trackDebug in Tracks)
-                        {
-                            Debug.WriteLine($"[{c}]{trackDebug.Artist} - {trackDebug.Title}");
-                            c++;
-                        }
-
-                        CurrentIndex = Tracks.IndexOf(Tracks.Single(a => a.Id == track.Id));
-
-                        Debug.WriteLine($"Played track with index: {CurrentIndex}");
-
-                    }
-                    catch (Exception ex)
-                    {
-                        logger.Error("Error in player service, playTrack => get block items");
-                        logger.Error(ex, ex.Message);
-
-                        notificationsService.Show("Ошибка", "Мы не смогли загрузить очередь воспроизведения");
-                    }
-
-                });
-            }
-            else
-            {
-                Debug.WriteLine("LOAD FROM PLAYLIST");
-
-                if (CurrentPlaylistId == CurrentPlaylist?.PlaylistId)
-                {
-                    CurrentIndex = Tracks.IndexOf(Tracks.Single(a => a.Id == track.Id));
-
-                    if (CurrentIndex + 1 > Tracks.Count - 1)
-                    {
-                        NextPlayTrack = CurrentTrack;
-                    }
-                    else
-                    {
-                        NextPlayTrack = Tracks[CurrentIndex + 1];
-
-                    }
-                    return;
-                }
-
-                if (CurrentPlaylist is null)
-                    return;
-
-                var (playlistId, ownerId, accessKey) = CurrentPlaylist;
-
-                Debug.WriteLine($"loadedPlaylistIdTracks = {CurrentPlaylistId} |  plViewModel.Playlist.Id = {playlistId}");
-
-                logger.Info($"Load tracks with playlist id {playlistId}");
-
-                var fullPlaylist = await vkService.LoadFullPlaylistAsync(playlistId, ownerId, accessKey);
-                await Application.Current.Dispatcher.InvokeAsync(() => Tracks.ReplaceRange(fullPlaylist.Audios));
-
-                Debug.WriteLine("Now play queue:");
-
-                int c = 0;
-                foreach (var trackDebug in Tracks)
-                {
-                    Debug.WriteLine($"[{c}]{trackDebug.Artist} - {trackDebug.Title}");
-                    c++;
-                }
-
-                CurrentPlaylistId = playlistId;
-                CurrentIndex = Tracks.IndexOf(Tracks.Single(a => a.Id == track.Id));
-
-                Debug.WriteLine($"Played track with index: {CurrentIndex}");
-
-                if (CurrentIndex + 1 > Tracks.Count - 1)
-                {
-                    NextPlayTrack = CurrentTrack;
-                }
-                else
-                {
-                    NextPlayTrack = Tracks[CurrentIndex + 1];
-
-                }
-                return;
-            }
-
-            CurrentIndex = Tracks.IndexOf(Tracks.Single(a => a.Id == CurrentTrack.Id));
-
-
-            if (CurrentIndex + 1 > Tracks.Count - 1)
-            {
-                NextPlayTrack = CurrentTrack;
-            }
-            else
-            {
-                NextPlayTrack = Tracks[CurrentIndex + 1];
-
-            }
-        }
-        catch (Exception ex)
-        {
-            logger.Error("Error in playerService in PlayTrack:");
-            logger.Error(ex, ex.Message);
-
-            notificationsService.Show("Ошибка", "Произошла ошибка при воспроизведении");
-
-        }
-        finally
-        {
-            await Application.Current.Dispatcher.InvokeAsync(() => QueueLoadingStateChanged.Invoke(this, new(QueueLoadingState.Finished)));
-        }
-    }
-
-    public async Task PlayBoomTrack(Track track, List<Track> tracks)
-    {
-        try
-        {
-            if(boomClient == null)
-            {
-                var config = await configService.GetConfig();
-                var client = new HttpClient();
-                client.DefaultRequestHeaders.Add("User-Agent", "okhttp/5.0.0-alpha.10");
-                client.DefaultRequestHeaders.Add("X-App-Id", "6767438");
-                client.DefaultRequestHeaders.Add("X-Client-Version", "10265");
-
-                client.DefaultRequestHeaders.Authorization = new ("Bearer", config.BoomToken);
-
-                boomClient = client;
-
-            }
-            player.PlaybackSession.Position = TimeSpan.Zero;
-            player.Pause();
-
-
-            //var result = await AdaptiveMediaSource.CreateFromUriAsync(new Uri(track.File), boomClient);
-
-            //var mediaSource = result.MediaSource;
-            //var source = MediaSource.CreateFromAdaptiveMediaSource(mediaSource);
-            //player.Source = source;
-
-            var response = await boomClient.GetAsync(track.File);
-
-            response.EnsureSuccessStatusCode();
-
-            var stream = await response.Content.ReadAsStreamAsync();
-
-            player.Source = MediaSource.CreateFromStream(stream.AsRandomAccessStream(),
-                                                         response.Content.Headers.ContentType?.MediaType ??
-                                                         "audio/mpeg");
-            player.Play();
-
-            //new Thread(UpdateWindowsData).Start();
-        }
-        catch (Exception ex)
-        {
-
-        }
-    }*/
-
-    /*public async Task Play(int index, List<Audio> tracks = null)
-    {
-        try
-        {
-            logger.Info($"Play track with index = {index}");
-            Audio track = null;
-
-            if (tracks != null) track = tracks[index];
-            else track = Tracks[index];
-
-
-            var list = new List<object>();
-
-            var startPlayModel = new PlayTrackEvent()
-            {
-                Event = "music_start_playback",
-                AudioId = track.OwnerId + "_" + track.Id,
-                Uuid = Guid.NewGuid().GetHashCode(),
-                StartTime = "0",
-                Shuffle = "false",
-                Reason = "auto",
-                PlaybackStartedAt = "0",
-                TrackCode = track.TrackCode,
-                Repeat = "all",
-                State = "app",
-                Source = track.ParentBlockId,
-            };
-
-
-            if (CurrentTrack != null)
-            {
-                startPlayModel.PrevAudioId = CurrentTrack.OwnerId + "_" + CurrentTrack.Id;
-                var stopTrackModel = new StopTrackEvent()
-                {
-                    Event = "music_stop_playback",
-                    Uuid = Guid.NewGuid().GetHashCode(),
-                    Shuffle = "false",
-                    Reason = "new",
-                    AudioId = CurrentTrack.OwnerId + "_" + CurrentTrack.Id,
-                    StartTime = "0",
-                    PlaybackStartedAt = CurrentTrack.Duration.ToString(),
-                    TrackCode = CurrentTrack.TrackCode,
-                    StreamingType = "online",
-                    Duration = Position.TotalSeconds.ToString(),
-                    Repeat = "all",
-                    State = "app",
-                    Source = CurrentTrack.ParentBlockId,
-
-                };
-
-                list.Add(stopTrackModel);
-            }
-
-            list.Add(startPlayModel);
-
-            logger.Info($"play track with index = {index}");
-            CurrentIndex = index;
-            player.PlaybackSession.Position = TimeSpan.Zero;
-
-            player.Pause();
-            if (tracks != null)
-            {
-                if (!Application.Current.Dispatcher.CheckAccess())
-                    await Application.Current.Dispatcher.InvokeAsync(() => Tracks.ReplaceRange(tracks));
-                else
-                    Tracks.ReplaceRange(tracks);
-
-                int c = 0;
-                foreach (var trackDebug in Tracks)
-                {
-                    Debug.WriteLine($"[{c}]{trackDebug.Artist} - {trackDebug.Title}");
-                    c++;
-                }
-
-                Debug.WriteLine($"Now play track with index: {index}");
-
-            }
-            Debug.WriteLine($"Now play track with index: {index}");
-
-            CurrentTrack = Tracks[index];
-
-            if (CurrentIndex + 1 > Tracks.Count - 1)
-            {
-                NextPlayTrack = CurrentTrack;
-            }
-            else
-            {
-                NextPlayTrack = Tracks[CurrentIndex + 1];
-
-            }
-
-            if (string.IsNullOrEmpty(CurrentTrack.Url))
-            {
-                await NextTrack();
-                logger.Info("Track url in empty. Next track...");
-                return;
-            }
-
-            await Application.Current.Dispatcher.BeginInvoke(() =>
-            {
-                TrackChangedEvent?.Invoke(this, EventArgs.Empty);
-
-            });
-
-            AdaptiveMediaSourceCreationResult result = await AdaptiveMediaSource.CreateFromUriAsync(new Uri(CurrentTrack.Url));
-            var ams = result.MediaSource;
-
-            player.Source = MediaSource.CreateFromAdaptiveMediaSource(ams);
-
-                
-            player.Play();
-
-
-            await vkService.SetBroadcastAsync(track);
-
-
-            new Thread(UpdateWindowsData).Start();
-
-
-            config = await configService.GetConfig();
-
-            if (config.ShowRPC == null)
-            {
-                config.ShowRPC = true;
-
-                await configService.SetConfig(config);
-            }
-
-            if (config.BroadcastVK == null)
-            {
-                config.BroadcastVK = false;
-
-                await configService.SetConfig(config);
-            }
-
-
-            if (config.BroadcastVK.Value)
-            {
-                await vkService.SetBroadcastAsync(track);
-            }
-
-
-            if (config.ShowRPC.Value)
-            {
-                await SetDiscordTrack();
-
-            }
-
-            await Application.Current.Dispatcher.BeginInvoke(() =>
-            {
-                PositionTrackChangedEvent?.Invoke(this, TimeSpan.Zero);
-
-            });
-
-            await vkService.StatsTrackEvents(list);
-
-
-        }
-        catch (Exception ex)
-        {
-            logger.Error("Error in playerService, Play(index)");
-            logger.Error(ex, ex.Message);
-
-            notificationsService.Show("Ошибка", "Произошла ошибка при воспроизведении");
-
-        }
-
-    }*/
-    
-    /*public async Task TryPlay()
-    {
-        try
-        {
-            logger.Info("Try play track");
-            player.PlaybackSession.Position = TimeSpan.Zero;
-            player.Pause();
-
-            AdaptiveMediaSourceCreationResult result = await AdaptiveMediaSource.CreateFromUriAsync(new Uri(CurrentTrack.Url));
-            var ams = result.MediaSource;
-            player.Source = MediaSource.CreateFromAdaptiveMediaSource(ams);
-            player.Play();
-            new Thread(UpdateWindowsData).Start();
-
-            PositionTrackChangedEvent?.Invoke(this, TimeSpan.Zero);
-        }
-        catch (Exception ex)
-        {
-            logger.Error("Error in try play track");
-            logger.Error(ex, ex.Message);
-            await NextTrack();
-
-            notificationsService.Show("Ошибка", "Произошла ошибка при воспроизведении");
-
-        }
-
-    }*/
-    
-    /*public async void Play()
-    {
-        try
-        {
-            if (CurrentTrack is null) return;
-            player.Play();
-
-            if(config.ShowRPC.Value)
-            {
-                await SetDiscordTrack();
-            }
-        }catch(Exception ex)
-        {
-            logger.Error("Error in play");
-            logger.Error(ex, ex.Message);
-
-            notificationsService.Show("Ошибка", "Произошла ошибка при воспроизведении");
-
-        }
-
-    }*/
 
     private async Task UpdateWindowsData()
     {
@@ -1104,22 +560,54 @@ public class PlayerService
 
     private async void MediaPlayerOnMediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
     {
-
-
-
-        //if (args.Error == MediaPlayerError.SourceNotSupported)
-        //{
-
-        //}
-
-        //Ошибка при загрузке
-
         if (args.Error == MediaPlayerError.SourceNotSupported)
         {
             logger.Error("Error SourceNotSupported player");
 
             notificationsService.Show("Ошибка", "Произошла ошибкба SourceNotSupported");
 
+            if(CurrentTrack is not null && CurrentTrack.Data.Url.EndsWith(".mp3"))
+            {
+                try
+                {
+                    //Какая же это все грязь, пиздец.
+
+                    var vkService = StaticService.Container.GetRequiredService<VkService>();
+
+                    var boomService = StaticService.Container.GetRequiredService<BoomService>();
+                    var configService = StaticService.Container.GetRequiredService<ConfigService>();
+
+                    var config = await configService.GetConfig();
+                    var boomVkToken = await vkService.GetBoomToken();
+
+                    var boomToken = await boomService.AuthByTokenAsync(boomVkToken.Token, boomVkToken.Uuid);
+
+                    config.BoomToken = boomToken.AccessToken;
+                    config.BoomTokenTtl = DateTimeOffset.Now + TimeSpan.FromSeconds(boomToken.ExpiresIn);
+                    config.BoomUuid = boomVkToken.Uuid;
+
+                    await configService.SetConfig(config);
+
+                    boomService.SetToken(boomToken.AccessToken);
+
+                    await PlayTrackAsync(CurrentTrack);
+
+                }
+                catch (Exception ex)
+                {
+                    var properties = new Dictionary<string, string>
+                {
+#if DEBUG
+                    { "IsDebug", "True" },
+#endif
+                    {"Version", StaticService.Version }
+                };
+                    Crashes.TrackError(ex, properties);
+
+                }
+
+                return;
+            }
 
             if (CurrentTrack is not null)
                 //audio source url may expire
