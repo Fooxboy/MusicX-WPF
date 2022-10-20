@@ -12,6 +12,7 @@
     xmlns:converters="clr-namespace:MusicX.Converters"
     Loaded="UserControl_Loaded"
     mc:Ignorable="d"
+    x:Name="Control"
     d:DataContext="{d:DesignInstance playlists:PlaylistTrack}">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -45,6 +46,20 @@
             <Style TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource {x:Type ToggleButton}}"
                    x:Key="TransparentToggleButtonStyle">
                 <Setter Property="Background" Value="Transparent" />
+            </Style>
+            
+            <Style TargetType="{x:Type Border}"
+                   x:Key="TransparentBorderStyle">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderBrush" Value="{DynamicResource ControlElevationBorderBrush}" />
+                <Setter Property="BorderThickness" Value="{StaticResource ButtonBorderThemeThickness}" />
+                <Setter Property="CornerRadius" Value="5" />
+                <Setter Property="SnapsToDevicePixels" Value="True" />
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource ControlElevationBorderBrush}" />
+                    </Trigger>
+                </Style.Triggers>
             </Style>
             
             <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" /> 
@@ -299,10 +314,52 @@
                             Appearance="Transparent"
                             Click="PlayPauseButton_Click">
 
-                            <wpfui:SymbolIcon
-                                x:Name="PlayIcon"
-                                FontSize="20"
-                                Symbol="Play32" />
+                            <wpfui:Button.Style>
+                                <Style TargetType="{x:Type wpfui:Button}"
+                                       BasedOn="{StaticResource {x:Type wpfui:Button}}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate>
+                                                <Border Style="{StaticResource TransparentBorderStyle}">
+                                                    <wpfui:SymbolIcon
+                                                        FontSize="20"
+                                                        Symbol="Play32" />
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPlaying, ElementName=Control}"
+                                                     Value="True">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate>
+                                                        <Border Style="{StaticResource TransparentBorderStyle}">
+                                                            <wpfui:SymbolIcon
+                                                                FontSize="20"
+                                                                Symbol="Pause32" />
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsTrackLoading, ElementName=Control}"
+                                                     Value="True">
+                                            <Setter Property="IsHitTestVisible" Value="False" />
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate>
+                                                        <wpfui:ProgressRing
+                                                            Width="40"
+                                                            Height="40"
+                                                            IsIndeterminate="True" />
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </wpfui:Button.Style>
 
                             <wpfui:Button.ToolTip>
                                 <ToolTip Content="Пауза/Воспроизвести" />

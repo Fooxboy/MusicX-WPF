@@ -54,7 +54,8 @@ public class PlayerService
     public event EventHandler? TrackChangedEvent;
     public event EventHandler? CurrentPlaylistChanged;
 
-    public event EventHandler<QueueLoadingEventArgs>? QueueLoadingStateChanged;
+    public event EventHandler<PlayerLoadingEventArgs>? QueueLoadingStateChanged;
+    public event EventHandler<PlayerLoadingEventArgs>? TrackLoadingStateChanged;
 
     private readonly Logger logger;
     private readonly NotificationsService notificationsService;
@@ -151,6 +152,7 @@ public class PlayerService
             TrackChangedEvent?.Invoke(this, EventArgs.Empty);
             NextTrackChanged?.Invoke(this, EventArgs.Empty);
             PlayStateChangedEvent?.Invoke(this, EventArgs.Empty);
+            TrackLoadingStateChanged?.Invoke(this, new(PlayerLoadingState.Started));
         });
 
         if (CurrentTrack.Data.Url is null) await NextTrack();
@@ -166,6 +168,9 @@ public class PlayerService
         player.Source = sources.First(b => b is not null);
         player.Play();
         UpdateWindowsData().SafeFireAndForget();
+        
+        Application.Current.Dispatcher.BeginInvoke(
+            () => TrackLoadingStateChanged?.Invoke(this, new(PlayerLoadingState.Finished)));
     }
 
     public async Task PlayAsync(IPlaylist playlist, PlaylistTrack? firstTrack = null)
@@ -205,7 +210,7 @@ public class PlayerService
                     _statsListeners.Select(b => b.TrackChangedAsync(CurrentTrack, firstTrack, ChangeReason.PlaylistChange)));
             }
 
-            QueueLoadingStateChanged?.Invoke(this, new(QueueLoadingState.Started));
+            QueueLoadingStateChanged?.Invoke(this, new(PlayerLoadingState.Started));
 
             var loadTask = playlist.LoadAsync().ToArrayAsync().AsTask();
 
@@ -240,7 +245,7 @@ public class PlayerService
         }
         finally
         {
-            QueueLoadingStateChanged.Invoke(this, new(QueueLoadingState.Finished));
+            QueueLoadingStateChanged.Invoke(this, new(PlayerLoadingState.Finished));
         }
     }
 

@@ -29,6 +29,23 @@ namespace MusicX.Controls
     /// </summary>
     public partial class PlayerControl : UserControl
     {
+        public static readonly DependencyProperty IsTrackLoadingProperty = DependencyProperty.Register(
+            nameof(IsTrackLoading), typeof(bool), typeof(PlayerControl));
+
+        public bool IsTrackLoading
+        {
+            get => (bool)GetValue(IsTrackLoadingProperty);
+            set => SetValue(IsTrackLoadingProperty, value);
+        }
+
+        public static readonly DependencyProperty IsPlayingProperty = DependencyProperty.Register(
+            nameof(IsPlaying), typeof(bool), typeof(PlayerControl));
+
+        public bool IsPlaying
+        {
+            get => (bool)GetValue(IsPlayingProperty);
+            set => SetValue(IsPlayingProperty, value);
+        }
 
         private readonly PlayerService playerService;
         private readonly Logger logger;
@@ -43,14 +60,21 @@ namespace MusicX.Controls
             playerService.PositionTrackChangedEvent += PlayerService_PositionTrackChangedEvent;
             playerService.TrackChangedEvent += PlayerService_TrackChangedEvent;
             playerService.QueueLoadingStateChanged += PlayerService_QueueLoadingStateChanged;
+            playerService.TrackLoadingStateChanged += PlayerService_TrackLoadingStateChanged;
 
             this.MouseWheel += PlayerControl_MouseWheel;
             
             Queue.ItemsSource = playerService.Tracks;
         }
-        private void PlayerService_QueueLoadingStateChanged(object? sender, QueueLoadingEventArgs e)
+
+        private void PlayerService_TrackLoadingStateChanged(object? sender, PlayerLoadingEventArgs e)
         {
-            QueueLoadingRing.Visibility = e.State == QueueLoadingState.Started ? Visibility.Visible : Visibility.Collapsed;
+            IsTrackLoading = e.State is PlayerLoadingState.Started;
+        }
+
+        private void PlayerService_QueueLoadingStateChanged(object? sender, PlayerLoadingEventArgs e)
+        {
+            QueueLoadingRing.Visibility = e.State == PlayerLoadingState.Started ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void PlayerControl_MouseWheel(object sender, MouseWheelEventArgs e)
@@ -185,39 +209,7 @@ namespace MusicX.Controls
 
         private void PlayerService_PlayStateChangedEvent(object? sender, EventArgs e)
         {
-            try
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    if (playerService == null) return;
-
-                    if (playerService.IsPlaying)
-                    {
-                        PlayIcon.Symbol = Wpf.Ui.Common.SymbolRegular.Pause24;
-                    }
-                    else
-                    {
-                        PlayIcon.Symbol = Wpf.Ui.Common.SymbolRegular.Play32;
-
-                    }
-                });
-                
-            }
-            catch (Exception ex)
-            {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error(ex, ex.Message);
-            }
-            
+            IsPlaying = playerService.IsPlaying;
         }
 
         Rect rect = new Rect(0, 0, 0, 100);

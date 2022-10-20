@@ -1,6 +1,6 @@
 ﻿namespace MusicX.Services.Player;
 
-public enum QueueLoadingState
+public enum PlayerLoadingState
 {
     Started,
     Finished
