@@ -456,7 +456,7 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <wpfui:SymbolIcon Symbol="ReOrderDotsVertical24" MouseDown="ReorderButton_OnMouseDown" />
-                                <local:QueueTrackControl Grid.Column="1" />
+                                <local:QueueTrackControl Grid.Column="1" IsInPlayer="True" />
                                 <wpfui:Button Grid.Column="2"
                                               Icon="Dismiss24"
                                               Appearance="Transparent"

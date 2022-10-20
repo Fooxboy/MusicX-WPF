@@ -491,7 +491,7 @@ namespace MusicX.Controls
                 {
                     var boomService = StaticService.Container.GetRequiredService<BoomService>();
 
-                    await player.PlayAsync(new SinglePlaylist(this.Audio), Audio.ToTrack());
+                    await player.PlayAsync(new SinglePlaylist(this.Audio.ToTrack()), Audio.ToTrack());
                 }
 
                 var vkService = StaticService.Container.GetRequiredService<VkService>();

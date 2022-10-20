@@ -7,20 +7,23 @@ using System.Threading.Tasks;
 
 namespace MusicX.Services.Player.Playlists
 {
-    public class SinglePlaylist : PlaylistBase<Audio>
+    public class SinglePlaylist : PlaylistBase<PlaylistTrack>
     {
-        public override bool CanLoad => true;
+        private bool _canLoad = true;
 
-        public override Audio Data { get; }
+        public override bool CanLoad => _canLoad;
 
-        public SinglePlaylist(Audio data)
+        public override PlaylistTrack Data { get; }
+
+        public SinglePlaylist(PlaylistTrack data)
         {
             Data = data;
         }
 
         public override IAsyncEnumerable<PlaylistTrack> LoadAsync()
         {
-            return new List<PlaylistTrack>() { Data.ToTrack()}.ToAsyncEnumerable();
+            _canLoad = false;
+            return new List<PlaylistTrack> { Data }.ToAsyncEnumerable();
         }
     }
 }

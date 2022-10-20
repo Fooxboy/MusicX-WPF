@@ -9,11 +9,15 @@ public static partial class TrackExtensions
     public static PlaylistTrack ToTrack(this Track track)
     {
         var mainArtists = track.Artists?.Any() == false
-            ? new[] { track.Artist.ToTrackArtist() }
+            ? new[]
+            {
+                track.Artist?.ToTrackArtist() ??
+                new(track.ArtistDisplayName, new(track.ArtistDisplayName, ArtistIdType.None))
+            }
             : track.Artists!.Select(ToTrackArtist).ToArray();
 
         return new(track.Name, string.Empty, track.Album?.ToAlbumId(), mainArtists, Array.Empty<TrackArtist>(),
-            new BoomTrackData(track.File, track.IsLiked, track.IsExplicit, TimeSpan.FromSeconds(track.Duration), track.ApiId));
+                   new BoomTrackData(track.File, track.IsLiked, track.IsExplicit, TimeSpan.FromSeconds(track.Duration), track.ApiId));
     }
 
     public static TrackArtist ToTrackArtist(this Artist artist)

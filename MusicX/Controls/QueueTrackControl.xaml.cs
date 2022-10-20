@@ -5,6 +5,7 @@ using System.Windows.Input;
 using System.Windows.Media.Animation;
 using AsyncAwaitBestPractices;
 using Microsoft.Extensions.DependencyInjection;
+using MusicX.Core.Services;
 using MusicX.Services;
 using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
@@ -14,6 +15,15 @@ namespace MusicX.Controls;
 public partial class QueueTrackControl : UserControl
 {
     private readonly PlayerService _player;
+
+    public static readonly DependencyProperty IsInPlayerProperty = DependencyProperty.Register(
+        nameof(IsInPlayer), typeof(bool), typeof(QueueTrackControl));
+
+    public bool IsInPlayer
+    {
+        get => (bool)GetValue(IsInPlayerProperty);
+        set => SetValue(IsInPlayerProperty, value);
+    }
 
     public static readonly DependencyProperty IsCurrentlyPlayingProperty = DependencyProperty.Register(
         nameof(IsCurrentlyPlaying), typeof(bool), typeof(QueueTrackControl), new(PropertyChangedCallback));
@@ -60,7 +70,23 @@ public partial class QueueTrackControl : UserControl
         }
         else
         {
-            _player.PlayTrackFromQueueAsync(_player.Tracks.IndexOf(track)).SafeFireAndForget();
+            if (IsInPlayer)
+                _player.PlayTrackFromQueueAsync(_player.Tracks.IndexOf(track)).SafeFireAndForget();
+            else
+            {
+                var vkService = StaticService.Container.GetRequiredService<VkService>();
+                _player.PlayAsync(track.Data switch
+                {
+                    VkTrackData vkData => vkData switch
+                    {
+                        { ParentBlockId: { } blockId } => new VkBlockPlaylist(vkService, blockId),
+                        { Playlist: { } vkPlaylist } => new VkPlaylistPlaylist(vkService, new(vkPlaylist.Id, vkPlaylist.OwnerId, vkPlaylist.AccessKey)),
+                        _ => new SinglePlaylist(track)
+                    },
+                    BoomTrackData => new SinglePlaylist(track),
+                    _ => throw new ArgumentOutOfRangeException()
+                }).SafeFireAndForget();
+            }
         }
     }
 

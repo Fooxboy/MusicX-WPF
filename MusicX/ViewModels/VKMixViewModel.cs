@@ -1,13 +1,8 @@
-﻿using MusicX.Core.Models.Boom;
-using MusicX.Core.Services;
-using MusicX.Models;
+﻿using MusicX.Core.Services;
 using MusicX.Services;
 using NLog;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
@@ -16,43 +11,17 @@ using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.AppCenter.Analytics;
-using MusicX.Helpers;
 
 namespace MusicX.ViewModels
 {
-    public class VKMixViewModel : BaseViewModel
+    public class VKMixViewModel : BoomViewModelBase
     {
-        private readonly BoomService boomSerivce;
-        private readonly ConfigService configService;
-        private readonly VkService vkService;
-        private readonly Logger logger;
-        private readonly PlayerService playerService;
-        private readonly NotificationsService notificationsService;
-
-        public VKMixViewModel(BoomService boomSerivce, VkService vkService, ConfigService configService, Logger logger, PlayerService playerService, NotificationsService notificationsService)
+        public VKMixViewModel(BoomService boomService, ConfigService configService, VkService vkService, Logger logger,
+                              NotificationsService notificationsService, PlayerService playerService) : 
+            base(boomService, configService, vkService, logger, notificationsService, playerService)
         {
-            this.boomSerivce = boomSerivce;
-            IsLoaded = false;
-            this.vkService = vkService;
-            this.configService = configService;
-            this.logger = logger;
-            this.playerService = playerService;
-
-            this.PlayPersonalMixCommand = new AsyncCommand(PlayPersonalMixAsync);
-            this.notificationsService = notificationsService;
+            PlayPersonalMixCommand = new AsyncCommand(PlayPersonalMixAsync);
         }
-
-        public bool IsLoaded { get; set; }
-
-        public bool IsLoadingMix { get; set; }
-
-        public ObservableRangeCollection<Artist> Artists { get; set; } = new();
-
-        public ObservableRangeCollection<Tag> Tags { get; set; } = new();
-
-        public Artist SelectedArtist { get; set; }
-
-        public Tag SelectedTag { get; set; }
 
         public ICommand PlayPersonalMixCommand { get; set; }
 
@@ -69,128 +38,39 @@ namespace MusicX.ViewModels
                 };
             Analytics.TrackEvent("Open VK Mix", properties);
 
-            logger.Info("Открытие страницы VK Mix");
-            var config = await configService.GetConfig();
+            Logger.Info("Открытие страницы VK Mix");
+            var config = await ConfigService.GetConfig();
 
-            if(!string.IsNullOrEmpty(config.BoomToken) && config.BoomTokenTtl > DateTimeOffset.Now)
-            {
-                logger.Info("Авторизация VK Mix уже была пройдена, загрузка...");
-                boomSerivce.SetToken(config.BoomToken);
-                await LoadMixesAsync();
-            }else
+            if (string.IsNullOrEmpty(config.BoomToken) || config.BoomTokenTtl <= DateTimeOffset.Now)
             {
                 await AuthBoomAsync(config);
             }
+            
+            Logger.Info("Авторизация VK Mix уже была пройдена, загрузка...");
+            BoomService.SetToken(config.BoomToken);
+            await LoadMixesAsync();
         }
 
-        public async Task ArtistSelected()
+        public override Task ArtistSelected()
         {
-            try
-            {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Analytics.TrackEvent("Play Artist Mix", properties);
-
-                PlayingPersonalMix = false;
-                if (SelectedArtist == null) return;
-                IsLoadingMix = true;
-                var radioByArtist = await boomSerivce.GetArtistMixAsync(SelectedArtist.ApiId);
-
-                await playerService.PlayAsync(new RadioPlaylist(boomSerivce, radioByArtist, BoomRadioType.Artist), radioByArtist.Tracks[0].ToTrack());
-
-                IsLoadingMix = false;
-            }catch(UnauthorizedException ex)
-            {
-                logger.Error("Boom unauthorizedException");
-                logger.Info("Попытка заново получить токен...");
-
-                var config = await configService.GetConfig();
-                await this.AuthBoomAsync(config);
-
-                await ArtistSelected();
-            }catch(Exception ex)
-            {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                notificationsService.Show("Ошибка загрузки микса", "Мы не смогли загрузить микс, попробуйте ещё раз");
-                this.logger.Error(ex, ex.Message);
-            }
+            PlayingPersonalMix = false;
+            return base.ArtistSelected();
         }
 
-        public async Task TagSelected()
+        public override Task TagSelected()
         {
-            try
-            {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Analytics.TrackEvent("Play Tag Mix", properties);
-
-                if (SelectedTag == null) return;
-
-                PlayingPersonalMix = false;
-                IsLoadingMix = true;
-
-                var radio = await boomSerivce.GetTagMixAsync(SelectedTag.ApiId);
-
-                await playerService.PlayAsync(new RadioPlaylist(boomSerivce, radio, BoomRadioType.Tag), radio.Tracks[0].ToTrack());
-
-                IsLoadingMix = false;
-            }
-            catch (UnauthorizedException)
-            {
-                logger.Error("Boom unauthorizedException");
-                logger.Info("Попытка заново получить токен...");
-
-                var config = await configService.GetConfig();
-                await this.AuthBoomAsync(config);
-
-                await TagSelected();
-            }
-            catch (Exception ex)
-            {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                notificationsService.Show("Ошибка загрузки микса", "Мы не смогли загрузить микс, попробуйте ещё раз");
-
-                logger.Error(ex, ex.Message);
-            }
-           
+            PlayingPersonalMix = false;
+            return base.TagSelected();
         }
 
         private async Task LoadMixesAsync()
         {
             try
             {
-                logger.Info("Загрузка VK Mix...");
+                Logger.Info("Загрузка VK Mix...");
 
-                var artists = await boomSerivce.GetArtistsAsync();
-                var tags = await boomSerivce.GetTagsAsync();
+                var artists = await BoomService.GetArtistsAsync();
+                var tags = await BoomService.GetTagsAsync();
                 
                 Artists.ReplaceRange(artists);
                 Tags.ReplaceRange(tags);
@@ -199,48 +79,11 @@ namespace MusicX.ViewModels
                 
             }catch(UnauthorizedException)
             {
-                logger.Error("Boom unauthorizedException");
-                logger.Info("Попытка заново получить токен...");
+                Logger.Error("Boom unauthorizedException");
+                Logger.Info("Попытка заново получить токен...");
 
-                var config = await configService.GetConfig();
-                await this.AuthBoomAsync(config);
-
-                await LoadMixesAsync();
-            }
-            catch (Exception ex)
-            {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                notificationsService.Show("Ошибка загрузки микса", "Мы не смогли загрузить микс, попробуйте ещё раз");
-
-                IsLoaded = true;
-
-                logger.Error(ex, ex.Message);
-            }
-        }
-
-        private async Task AuthBoomAsync(ConfigModel config)
-        {
-            try
-            {
-                var boomVkToken = await vkService.GetBoomToken();
-
-                var boomToken = await boomSerivce.AuthByTokenAsync(boomVkToken.Token, boomVkToken.Uuid);
-
-                config.BoomToken = boomToken.AccessToken;
-                config.BoomTokenTtl = DateTimeOffset.Now + TimeSpan.FromSeconds(boomToken.ExpiresIn);
-                config.BoomUuid = boomVkToken.Uuid;
-
-                await configService.SetConfig(config);
-
-                boomSerivce.SetToken(boomToken.AccessToken);
+                var config = await ConfigService.GetConfig();
+                await AuthBoomAsync(config);
 
                 await LoadMixesAsync();
             }
@@ -255,12 +98,11 @@ namespace MusicX.ViewModels
                 };
                 Crashes.TrackError(ex, properties);
 
-                notificationsService.Show("Ошибка загрузки", "Мы не смогли авторизоваться в ВК Музыке, попробуйте ещё раз");
+                NotificationsService.Show("Ошибка загрузки микса", "Мы не смогли загрузить микс, попробуйте ещё раз");
 
                 IsLoaded = true;
 
-                logger.Error(ex, ex.Message);
-
+                Logger.Error(ex, ex.Message);
             }
         }
 
@@ -280,15 +122,15 @@ namespace MusicX.ViewModels
 
                 if (PlayingPersonalMix)
                 {
-                    playerService.Pause();
+                    PlayerService.Pause();
                     return;
                 }
 
                 PlayingPersonalMix = true;
                 IsLoadingMix = true;
-                var personalMix =  await boomSerivce.GetPersonalMixAsync();
+                var personalMix =  await BoomService.GetPersonalMixAsync();
 
-                await playerService.PlayAsync(new RadioPlaylist(boomSerivce, personalMix, BoomRadioType.Personal), personalMix.Tracks[0].ToTrack());
+                await PlayerService.PlayAsync(new RadioPlaylist(BoomService, personalMix, BoomRadioType.Personal), personalMix.Tracks[0].ToTrack());
 
 
                 IsLoadingMix = false;
@@ -297,11 +139,11 @@ namespace MusicX.ViewModels
             {
 
                
-                logger.Error("Boom UnauthorizedException");
-                logger.Info("Попытка заново получить токен...");
+                Logger.Error("Boom UnauthorizedException");
+                Logger.Info("Попытка заново получить токен...");
 
-                var config = await configService.GetConfig();
-                await this.AuthBoomAsync(config);
+                var config = await ConfigService.GetConfig();
+                await AuthBoomAsync(config);
 
                 await PlayPersonalMixAsync();
             }catch(Exception ex)
@@ -316,9 +158,9 @@ namespace MusicX.ViewModels
                 Crashes.TrackError(ex, properties);
 
 
-                notificationsService.Show("Ошибка загрузки микса", "Мы не смогли загрузить микс, попробуйте ещё раз");
+                NotificationsService.Show("Ошибка загрузки микса", "Мы не смогли загрузить микс, попробуйте ещё раз");
 
-                logger.Error(ex, ex.Message);
+                Logger.Error(ex, ex.Message);
             }
         }
     }

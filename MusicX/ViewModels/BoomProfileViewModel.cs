@@ -1,35 +1,23 @@
 ﻿using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using MusicX.Core.Exceptions.Boom;
-using MusicX.Core.Models;
 using MusicX.Core.Models.Boom;
 using MusicX.Core.Services;
-using MusicX.Models;
 using MusicX.Services;
 using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
 using NLog;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using MusicX.Helpers;
 using Artist = MusicX.Core.Models.Boom.Artist;
 
 namespace MusicX.ViewModels
 {
-    public class BoomProfileViewModel : BaseViewModel
+    public class BoomProfileViewModel : BoomViewModelBase
     {
-        private readonly BoomService boomService;
-
-        private readonly ConfigService configService;
-        private readonly VkService vkService;
-        private readonly Logger logger;
-        private readonly PlayerService playerService;
-        private readonly NotificationsService notificationsService;
-        public bool IsLoaded { get; set; }
-
         public string ProfileBackground { get; set; }
 
         public string ProfileAvatar { get; set; }
@@ -48,35 +36,27 @@ namespace MusicX.ViewModels
 
         public int CountArtists { get; set; }
 
-        public Artist SelectedArtist { get; set; }
+        public ObservableRangeCollection<Tag> Tags { get; set; } = new();
 
-        public bool IsLoadingMix { get; set; }
+        public ObservableRangeCollection<Artist> Artists { get; set; } = new();
+        public ObservableRangeCollection<PlaylistTrack> Tracks { get; set; } = new();
 
-        public ObservableCollection<Tag> Tags { get; set; } = new ObservableCollection<Tag>();
-
-        public ObservableCollection<Artist> Artists { get; set; } = new ObservableCollection<Artist>();
-        public ObservableCollection<Audio> Tracks { get; set; } = new ObservableCollection<Audio>();
-
-        public BoomProfileViewModel(BoomService boomService, VkService vkService, ConfigService configService, Logger logger, PlayerService playerService, NotificationsService notificationsService)
+        public BoomProfileViewModel(BoomService boomService, ConfigService configService, VkService vkService,
+                                    Logger logger, NotificationsService notificationsService,
+                                    PlayerService playerService) : 
+            base(boomService, configService, vkService, logger, notificationsService, playerService)
         {
-            this.vkService = vkService;
-            this.configService = configService;
-            this.logger = logger;
-            this.playerService = playerService;
-            this.notificationsService = notificationsService;
-            this.boomService = boomService;
         }
-
-
+        
         public async Task OpenProfile()
         {
             try
             {
                 IsLoaded = false;
 
-                Tags = new ObservableCollection<Tag>();
-                Artists = new ObservableCollection<Artist>();
-                Tracks = new ObservableCollection<Audio>();
+                Tags.Clear();
+                Artists.Clear();
+                Tracks.Clear();
 
                 var properties = new Dictionary<string, string>
                 {
@@ -87,13 +67,13 @@ namespace MusicX.ViewModels
                 };
                 Analytics.TrackEvent("Open Boom profile", properties);
 
-                logger.Info("Открытие страницы Boom profile");
-                var config = await configService.GetConfig();
+                Logger.Info("Открытие страницы Boom profile");
+                var config = await ConfigService.GetConfig();
 
                 if (!string.IsNullOrEmpty(config.BoomToken) && config.BoomTokenTtl > DateTimeOffset.Now)
                 {
-                    logger.Info("Авторизация Boom уже была пройдена, загрузка...");
-                    boomService.SetToken(config.BoomToken);
+                    Logger.Info("Авторизация Boom уже была пройдена, загрузка...");
+                    BoomService.SetToken(config.BoomToken);
                     try
                     {
                         await LoadProfile();
@@ -124,11 +104,11 @@ namespace MusicX.ViewModels
                 };
                 Crashes.TrackError(ex, properties);
 
-                notificationsService.Show("Ошибка загрузки", "Мы не смогли открыть Ваш профиль  в ВК музыке");
+                NotificationsService.Show("Ошибка загрузки", "Мы не смогли открыть Ваш профиль  в ВК музыке");
 
                 IsLoaded = true;
 
-                logger.Error(ex, ex.Message);
+                Logger.Error(ex, ex.Message);
             }
         }
 
@@ -136,11 +116,11 @@ namespace MusicX.ViewModels
         {
             try
             {
-                var profile = await boomService.GetUserInfoAsync();
+                var profile = await BoomService.GetUserInfoAsync();
 
-                var topTracks = await boomService.GetUserTopTracks();
+                var topTracks = await BoomService.GetUserTopTracks();
 
-                var topArtists = await boomService.GetUserTopArtists();
+                var topArtists = await BoomService.GetUserTopArtists();
 
                 topArtists = topArtists.Take(15).ToList();
 
@@ -162,35 +142,14 @@ namespace MusicX.ViewModels
                 {
                     Tags.Add(tag);
                 }
-
-                foreach (var artist in topArtists)
-                {
-                    Artists.Add(artist);
-                }
-
-                foreach(var track in topTracks)
-                {
-                    var audio = new Audio();
-
-                    audio.Title = track.Name;
-                    audio.Artist = track.Artist.Name;
-                    audio.Url = track.File;
-                    audio.Duration = track.Duration;
-                    audio.IsAvailable = true;
-                    audio.AccessKey = track.GetHashCode().ToString();
-                    audio.Id = new Random().Next(0,100);
-                    audio.OwnerId = new Random().Next(0, 100);
-                    audio.Album = new Core.Models.Album() { Thumb = new Photo() { Photo68 = track.Cover.Url }, 
-                        OwnerId = new Random().Next(0, 100), 
-                        AccessKey = this.GetHashCode().ToString(), Id = new Random().Next(0,100), Title = "bruh" };
-
-                    Tracks.Add(audio);
-                }
-
+                
+                Tags.ReplaceRange(profile.Tags);
+                Artists.ReplaceRange(topArtists);
+                Tracks.ReplaceRange(topTracks.Select(TrackExtensions.ToTrack));
             }
             catch (UnauthorizedException)
             {
-                var config = await configService.GetConfig();
+                var config = await ConfigService.GetConfig();
 
                 await AuthBoomAsync(config);
                 await LoadProfile();
@@ -206,98 +165,13 @@ namespace MusicX.ViewModels
                 };
                 Crashes.TrackError(ex, properties);
 
-                notificationsService.Show("Ошибка загрузки", "Мы не смогли открыть Ваш профиль в ВК музыке");
+                NotificationsService.Show("Ошибка загрузки", "Мы не смогли открыть Ваш профиль в ВК музыке");
 
                 IsLoaded = true;
 
-                logger.Error(ex, ex.Message);
+                Logger.Error(ex, ex.Message);
             }
             
-        }
-
-        private async Task AuthBoomAsync(ConfigModel config)
-        {
-            try
-            {
-                var boomVkToken = await vkService.GetBoomToken();
-
-                var boomToken = await boomService.AuthByTokenAsync(boomVkToken.Token, boomVkToken.Uuid);
-
-                config.BoomToken = boomToken.AccessToken;
-                config.BoomTokenTtl = DateTimeOffset.Now + TimeSpan.FromSeconds(boomToken.ExpiresIn);
-                config.BoomUuid = boomVkToken.Uuid;
-
-                await configService.SetConfig(config);
-
-                boomService.SetToken(boomToken.AccessToken);
-
-            }
-            catch (Exception ex)
-            {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                notificationsService.Show("Ошибка загрузки", "Мы не смогли авторизоваться в ВК Музыке, попробуйте ещё раз");
-
-                IsLoaded = true;
-
-                logger.Error(ex, ex.Message);
-
-            }
-        }
-
-        public async Task ArtistSelected()
-        {
-            try
-            {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Analytics.TrackEvent("Play Artist Mix", properties);
-
-                if (SelectedArtist == null) return;
-                IsLoadingMix = true;
-                var radioByArtist = await boomService.GetArtistMixAsync(SelectedArtist.ApiId);
-
-                await playerService.PlayAsync(new RadioPlaylist(boomService, radioByArtist, BoomRadioType.Artist), radioByArtist.Tracks[0].ToTrack());
-
-                IsLoadingMix = false;
-            }
-            catch (UnauthorizedException ex)
-            {
-                logger.Error("Boom unauthorizedException");
-                logger.Info("Попытка заново получить токен...");
-
-                var config = await configService.GetConfig();
-                await this.AuthBoomAsync(config);
-
-                await ArtistSelected();
-            }
-            catch (Exception ex)
-            {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                notificationsService.Show("Ошибка загрузки микса", "Мы не смогли загрузить микс, попробуйте ещё раз");
-                this.logger.Error(ex, ex.Message);
-            }
         }
     }
 }

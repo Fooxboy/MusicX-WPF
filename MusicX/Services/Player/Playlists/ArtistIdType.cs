@@ -2,6 +2,7 @@
 
 public enum ArtistIdType
 {
+    None,
     Vk,
     Boom
 }
