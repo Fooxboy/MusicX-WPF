@@ -269,6 +269,8 @@
 
 
                     <StackPanel
+                        Visibility="Collapsed"
+                        x:Name="ButtonsStackPanel"
                         Grid.Column="1"
                         HorizontalAlignment="Center"
                         Orientation="Horizontal">
@@ -435,6 +437,7 @@
                             </wpfui:Button>
 
                             <ToggleButton Width="40"
+                                          x:Name="QueueButton"
                                           Height="40"
                                           Margin="0,0,20,0"
                                           Padding="0"
