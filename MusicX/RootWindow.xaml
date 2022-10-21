@@ -15,6 +15,7 @@
     KeyDown="Window_KeyDown"
     Loaded="Window_Loaded"
     Title="MusicX"
+    WindowStartupLocation="CenterScreen"
     Background="#202020"
     ExtendsContentIntoTitleBar="True"
     WindowBackdropType="Mica"
