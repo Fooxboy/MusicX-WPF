@@ -108,7 +108,7 @@ public class DownloaderService
         var tfile = TagLib.File.Create(filePath);
 
         tfile.Tag.Title = audio.Title;
-        tfile.Tag.Performers = audio.MainArtists.Concat(audio.FeaturedArtists).Select(b => b.Name).ToArray();
+        tfile.Tag.Performers = audio.MainArtists.Concat(audio.FeaturedArtists ?? Enumerable.Empty<TrackArtist>()).Select(b => b.Name).ToArray();
         tfile.Tag.AlbumArtists = audio.MainArtists.Select(b => b.Name).ToArray();
 
         if (audio.AlbumId != null)

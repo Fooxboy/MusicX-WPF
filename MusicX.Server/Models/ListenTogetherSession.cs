@@ -1,4 +1,5 @@
 ﻿using MusicX.Shared.ListenTogether;
+using MusicX.Shared.Player;
 
 namespace MusicX.Server.Models
 {
@@ -8,6 +9,6 @@ namespace MusicX.Server.Models
 
         public List<string> Listeners { get; set; }
 
-        public Track CurrentTrack { get; set; }
+        public PlaylistTrack CurrentTrack { get; set; }
     }
 }

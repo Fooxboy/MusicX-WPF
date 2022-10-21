@@ -1,6 +1,6 @@
 ﻿using ProtoBuf;
 
-namespace MusicX.Shared.Player;
+namespace MusicX.Shared.ListenTogether;
 
 [ProtoContract(ImplicitFields = ImplicitFields.AllPublic, SkipConstructor = true)]
-public record ArtistId(string Id, ArtistIdType Type);
+public record SessionId(string Id);

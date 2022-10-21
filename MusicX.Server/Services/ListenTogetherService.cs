@@ -3,6 +3,7 @@ using MusicX.Server.Hubs;
 using MusicX.Server.Managers;
 using MusicX.Server.Models;
 using MusicX.Shared.ListenTogether;
+using MusicX.Shared.Player;
 
 namespace MusicX.Server.Services
 {
@@ -94,7 +95,7 @@ namespace MusicX.Server.Services
             return true;
         }
 
-        public async Task<bool> ChangeTrackAsync(Track track, string owner)
+        public async Task<bool> ChangeTrackAsync(PlaylistTrack track, string owner)
         {
             _logger.LogInformation($"Пользователь {owner} сменил трек.");
             var session = _sessionManager.GetSessionByOwner(owner);
@@ -112,12 +113,12 @@ namespace MusicX.Server.Services
 
             if (session is null) return false;
 
-            await _hub.Clients.Group(owner).SendAsync(Callbacks.PlayStateChanged, position, pause);
+            await _hub.Clients.Group(owner).SendAsync(Callbacks.PlayStateChanged, new PlayState(position, pause));
 
             return true;
         }
 
-        public async Task<Track> GetCurrentSessionTrack(string connectionId)
+        public async Task<PlaylistTrack> GetCurrentSessionTrack(string connectionId)
         {
             var session = _sessionManager.GetSessionByListener(connectionId);
 

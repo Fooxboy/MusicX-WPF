@@ -36,6 +36,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VkNet.Extensions.Dependency
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicX.Server.Tests", "MusicX.Server.Tests\MusicX.Server.Tests.csproj", "{52E65E39-5947-48FA-B7D4-CEEEFBE33470}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignalR.Protobuf", "SignalR.Protobuf\SignalR.Protobuf.csproj", "{6A511BD3-95E2-4087-9F68-A17DBC237B71}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -98,6 +100,10 @@ Global
 		{52E65E39-5947-48FA-B7D4-CEEEFBE33470}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{52E65E39-5947-48FA-B7D4-CEEEFBE33470}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{52E65E39-5947-48FA-B7D4-CEEEFBE33470}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A511BD3-95E2-4087-9F68-A17DBC237B71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A511BD3-95E2-4087-9F68-A17DBC237B71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A511BD3-95E2-4087-9F68-A17DBC237B71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A511BD3-95E2-4087-9F68-A17DBC237B71}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

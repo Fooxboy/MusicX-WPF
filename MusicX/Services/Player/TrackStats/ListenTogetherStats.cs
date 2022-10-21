@@ -18,9 +18,7 @@ namespace MusicX.Services.Player.TrackStats
         {
             if (_listenTogetherService.PlayerMode != PlayerMode.Owner) return;
 
-            var track = newTrack.ToRemoteTrack();
-
-            await _listenTogetherService.ChangeTrackAsync(track);
+            await _listenTogetherService.ChangeTrackAsync(newTrack);
 
         }
 
