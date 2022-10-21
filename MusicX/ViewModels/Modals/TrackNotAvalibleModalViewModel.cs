@@ -10,6 +10,7 @@ public class TrackNotAvalibleModalViewModel : BaseViewModel
 
     public string Url { get; set; } = string.Empty;
     public string Title { get; set; } = "Трек недоступен";
+    public string Subtitle { get; set; } = string.Empty;
     public string Description { get; set; } = "Хуй его знает почему.";
     
     private readonly VkService _vkService;
@@ -27,7 +28,7 @@ public class TrackNotAvalibleModalViewModel : BaseViewModel
         if (res.Icons.FirstOrDefault() is { } icon)
             Url = icon.Url;
         
-        Title = res.Title;
+        Subtitle = res.Title;
         Description = res.Text;
         
         IsLoaded = true;
