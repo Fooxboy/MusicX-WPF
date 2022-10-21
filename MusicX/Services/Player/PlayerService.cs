@@ -1,40 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using Windows.Media.Core;
 using Windows.Media.Playback;
-using Windows.Media.Streaming.Adaptive;
 using Windows.Storage.Streams;
 using AsyncAwaitBestPractices;
-using MusicX.Core.Models;
-using MusicX.Core.Models.Boom;
 using MusicX.Helpers;
-using MusicX.Models;
 using MusicX.Services.Player.Playlists;
 using MusicX.Services.Player.TrackStats;
-using MusicX.ViewModels;
 using NLog;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Services;
-using Microsoft.Extensions.DependencyInjection;
 using MusicX.Shared.Player;
+using MusicX.Models.Enums;
 
 namespace MusicX.Services.Player;
-
-public enum PlayerMode
-{
-    None,
-    Master,
-    Slave
-}
 
 public class PlayerService
 {
@@ -57,9 +41,6 @@ public class PlayerService
     public bool IsShuffle { get; set; }
     public bool IsRepeat { get; set; }
 
-    public PlayerMode Mode { get; private set; } = PlayerMode.None;
-    public string? SlaveSessionId {get; private set; }
-
     public event EventHandler? NextTrackChanged;
     public event EventHandler? PlayStateChangedEvent;
     public event EventHandler<TimeSpan>? PositionTrackChangedEvent;
@@ -73,45 +54,19 @@ public class PlayerService
     private readonly NotificationsService notificationsService;
     private readonly IEnumerable<ITrackMediaSource> _mediaSources;
     private readonly IEnumerable<ITrackStatsListener> _statsListeners;
-    private readonly ServerService _serverService;
+    private readonly ListenTogetherService _listenTogetherService;
 
     private PlaylistTrack? _nextPlayTrack;
 
     public IPlaylist? CurrentPlaylist { get; set; }
 
     public PlayerService(Logger logger, NotificationsService notificationsService,
-                         IEnumerable<ITrackMediaSource> mediaSources, IEnumerable<ITrackStatsListener> statsListeners, ServerService serverService)
+                         IEnumerable<ITrackMediaSource> mediaSources, IEnumerable<ITrackStatsListener> statsListeners, ListenTogetherService listenTogetherService)
     {
         this.logger = logger;
         player = new MediaPlayer();
 
-        player.AudioCategory = MediaPlayerAudioCategory.Media;
-        player.Play();
-
-
-        try
-        {
-            player.PlaybackSession.PlaybackStateChanged += MediaPlayerOnCurrentStateChanged;
-            player.MediaEnded += MediaPlayerOnMediaEnded;
-            player.MediaFailed += MediaPlayerOnMediaFailed;
-
-            player.CommandManager.NextBehavior.EnablingRule = MediaCommandEnablingRule.Always;
-            player.CommandManager.PreviousBehavior.EnablingRule = MediaCommandEnablingRule.Always;
-            //player.CommandManager.ShuffleBehavior.EnablingRule = MediaCommandEnablingRule.Always;
-            //player.CommandManager.AutoRepeatModeBehavior.EnablingRule = MediaCommandEnablingRule.Always;
-
-            player.SystemMediaTransportControls.DisplayUpdater.Type = Windows.Media.MediaPlaybackType.Music;
-
-
-            player.CommandManager.NextReceived += async (c, e) => await NextTrack();
-            player.CommandManager.PreviousReceived += async (c, e) => await PreviousTrack();
-            player.CommandManager.PlayReceived += (c, e) => Play();
-            player.CommandManager.PauseReceived += (c, e) => Pause();
-        }catch(Exception ex)
-        {
-            logger.Error(ex, ex.Message);
-        }
-          
+        InitWindowsComamnds();
 
         _positionTimer = new DispatcherTimer();
         _positionTimer.Interval = TimeSpan.FromMilliseconds(500);
@@ -119,47 +74,15 @@ public class PlayerService
         this.notificationsService = notificationsService;
         _mediaSources = mediaSources;
         _statsListeners = statsListeners;
-        _serverService = serverService;
-        
-        _serverService.PlayStateChanged += ServerOnPlayStateChanged;
+        this._listenTogetherService = listenTogetherService;
+
+        SubscribeToListenTogetherEvents();
     }
 
-    private Task ServerOnPlayStateChanged(TimeSpan position, bool pause)
+
+    public async Task JoinToListenTogetherSession(string sessionId)
     {
-        if (Mode is not PlayerMode.Slave)
-            return Task.CompletedTask;
-
-        if (Math.Abs(position.TotalSeconds - Position.TotalSeconds) > 2)
-            Seek(position);
-
-        if (pause == !IsPlaying) return Task.CompletedTask;
         
-        if (pause)
-            Pause();
-        else
-            Play();
-
-        return Task.CompletedTask;
-    }
-
-    public async Task PlayFromAsync(long userId)
-    {
-        switch (Mode)
-        {
-            case PlayerMode.Master:
-                await _serverService.StopSessionAsync();
-                break;
-            case PlayerMode.Slave when SlaveSessionId is not null:
-                await _serverService.LeaveSessionAsync(SlaveSessionId);
-                break;
-        }
-
-        Mode = PlayerMode.Slave;
-        SlaveSessionId = userId.ToString();
-        
-        var playlist = await _serverService.JoinSessionAsync(SlaveSessionId);
-
-        await PlayAsync(playlist);
     }
 
     public async void Play()
@@ -174,7 +97,6 @@ public class PlayerService
             await Application.Current.Dispatcher.InvokeAsync(
                 () => PlayStateChangedEvent?.Invoke(this, EventArgs.Empty));
         
-        if (Mode is PlayerMode.Master)
             await Task.WhenAll(
                 _statsListeners.Select(b => b.TrackPlayStateChangedAsync(CurrentTrack!, player.Position, false)));
     }
@@ -183,8 +105,8 @@ public class PlayerService
     {
         var previousTrack = CurrentTrack!;
         await PlayTrackAsync(Tracks[index]);
-        if (Mode is PlayerMode.Master)
-            await Task.WhenAll(
+
+        await Task.WhenAll(
                 _statsListeners.Select(b => b.TrackChangedAsync(previousTrack, CurrentTrack!, ChangeReason.TrackChange)));
     }
     
@@ -212,15 +134,6 @@ public class PlayerService
         });
 
         if (CurrentTrack.Data.Url is null) await NextTrack();
-
-        if (Mode is PlayerMode.Slave && SlaveSessionId is not null)
-            await _serverService.LeaveSessionAsync(SlaveSessionId);
-
-        if (Mode is not PlayerMode.Master)
-        {
-            Mode = PlayerMode.Master;
-            await _serverService.StartSessionAsync();
-        }
 
         var sources = new List<MediaSource?>();
         foreach(var source in _mediaSources)
@@ -271,7 +184,7 @@ public class PlayerService
                 }
                 
                 firstTrackTask = PlayTrackAsync(firstTrack);
-                if (Mode is PlayerMode.Master)
+
                     await Task.WhenAll(
                         _statsListeners.Select(b => b.TrackChangedAsync(CurrentTrack, firstTrack, ChangeReason.PlaylistChange)));
             }
@@ -292,8 +205,8 @@ public class PlayerService
             {
                 var previousTrack = CurrentTrack;
                 await PlayTrackAsync(Tracks[0]);
-                if (Mode is PlayerMode.Master)
-                    await Task.WhenAll(
+
+                await Task.WhenAll(
                         _statsListeners.Select(b => b.TrackChangedAsync(previousTrack, CurrentTrack!, ChangeReason.PlaylistChange)));
             }
         }
@@ -392,8 +305,8 @@ public class PlayerService
             var previousTrack = CurrentTrack!;
 
             await PlayTrackAsync(nextTrack);
-            if (Mode is PlayerMode.Master)
-                await Task.WhenAll(
+
+            await Task.WhenAll(
                     _statsListeners.Select(b => b.TrackChangedAsync(previousTrack, nextTrack, ChangeReason.NextButton)));
         }catch(Exception ex)
         {
@@ -435,7 +348,6 @@ public class PlayerService
     public TimeSpan Position => player.PlaybackSession.Position;
     public TimeSpan Duration => player?.NaturalDuration ?? TimeSpan.Zero;
       
-
     public bool IsPlaying => player.PlaybackSession.PlaybackState is MediaPlaybackState.Playing or MediaPlaybackState.Opening or MediaPlaybackState.Buffering;
 
     public async void Pause()
@@ -449,8 +361,7 @@ public class PlayerService
             else
                 await Application.Current.Dispatcher.InvokeAsync(
                     () => PlayStateChangedEvent?.Invoke(this, EventArgs.Empty));
-            
-            if (Mode is PlayerMode.Master)
+
                 await Task.WhenAll(
                     _statsListeners.Select(b => b.TrackPlayStateChangedAsync(CurrentTrack!, player.Position, true)));
         }catch (Exception ex)
@@ -470,8 +381,7 @@ public class PlayerService
         {
             player.PlaybackSession.Position = position;
 
-            if (Mode is PlayerMode.Master)
-                await Task.WhenAll(
+           await Task.WhenAll(
                     _statsListeners.Select(b => b.TrackPlayStateChangedAsync(CurrentTrack!, position, !IsPlaying)));
         }
         catch (Exception e)
@@ -497,8 +407,7 @@ public class PlayerService
                 
                 await PlayTrackAsync(previousTrack);
                 
-                if (Mode is PlayerMode.Master)
-                    await Task.WhenAll(
+                await Task.WhenAll(
                         _statsListeners.Select(b => b.TrackChangedAsync(prevCurrentTrack, previousTrack!, ChangeReason.PrevButton)));
             }
         }
@@ -517,8 +426,6 @@ public class PlayerService
             logger.Error(e, e.Message);
 
             notificationsService.Show("Ошибка", "Произошла ошибка при воспроизведении");
-
-
         }
 
     }
@@ -559,6 +466,7 @@ public class PlayerService
 
     private async void MediaPlayerOnMediaEnded(MediaPlayer sender, object args)
     {
+        if (_listenTogetherService.PlayerMode == PlayerMode.Listener) return;
         try
         {
             if(IsRepeat)
@@ -697,16 +605,6 @@ public class PlayerService
 
             logger.Error("Network Error player");
         }
-
-            
-
-
-        //DispatcherHelper.CheckBeginInvokeOnUI(async () =>
-        //{
-        //    await ContentDialogService.Show(new ExceptionDialog("Невозможно загрузить аудио файл", $"Невозможно загрузить файл по этой причине: {args.Error.ToString()}", new Exception(args.ErrorMessage)));
-
-        //});
-        //Log.Error("Media failed. " + args.Error + " " + args.ErrorMessage);
     }
 
     private void PositionTimerOnTick(object sender, object o)
@@ -760,5 +658,72 @@ public class PlayerService
         }
             
         await Application.Current.Dispatcher.InvokeAsync(() => NextTrackChanged?.Invoke(this, EventArgs.Empty));
+    }
+
+    private void InitWindowsComamnds()
+    {
+        try
+        {
+
+            player.AudioCategory = MediaPlayerAudioCategory.Media;
+            player.Play();
+
+            player.PlaybackSession.PlaybackStateChanged += MediaPlayerOnCurrentStateChanged;
+            player.MediaEnded += MediaPlayerOnMediaEnded;
+            player.MediaFailed += MediaPlayerOnMediaFailed;
+
+            player.CommandManager.NextBehavior.EnablingRule = MediaCommandEnablingRule.Always;
+            player.CommandManager.PreviousBehavior.EnablingRule = MediaCommandEnablingRule.Always;
+
+            player.SystemMediaTransportControls.DisplayUpdater.Type = Windows.Media.MediaPlaybackType.Music;
+            player.CommandManager.NextReceived += async (c, e) => await NextTrack();
+            player.CommandManager.PreviousReceived += async (c, e) => await PreviousTrack();
+            player.CommandManager.PlayReceived += (c, e) => Play();
+            player.CommandManager.PauseReceived += (c, e) => Pause();
+        }
+        catch (Exception ex)
+        {
+            logger.Error(ex, ex.Message);
+        }
+    }
+
+    private void SubscribeToListenTogetherEvents()
+    {
+        _listenTogetherService.PlayStateChanged += ListenTogetherPlayStateChanged;
+        _listenTogetherService.TrackChanged += ListenTogetherTrackChanged;
+        _listenTogetherService.ConnectedToSession += ListenTogetherConnectedToSession;
+        _listenTogetherService.SessionOwnerStoped += SessionStoped;
+    }
+
+    private async Task SessionStoped()
+    {
+        Pause();
+    }
+
+    private async Task ListenTogetherConnectedToSession(Shared.ListenTogether.Track track)
+    {
+        await this.PlayTrackAsync(track.ToPlaylistTrack());
+    }
+
+    private async Task ListenTogetherTrackChanged(Shared.ListenTogether.Track track)
+    {
+        await this.PlayTrackAsync(track.ToPlaylistTrack());
+    }
+
+    private async Task ListenTogetherPlayStateChanged(TimeSpan position, bool pause)
+    {
+       if(IsPlaying != !pause)
+       {
+            if (pause) Pause();
+            else
+            {
+                Play();
+            }
+       }
+
+        if((this.Position.TotalSeconds - position.TotalSeconds) > 2 || (this.Position.TotalSeconds - position.TotalSeconds) < - 2)
+        {
+            Seek(position);
+        }
     }
 }

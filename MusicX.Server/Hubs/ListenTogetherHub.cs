@@ -1,9 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Caching.Memory;
 using MusicX.Server.Services;
 using MusicX.Shared.ListenTogether;
-using MusicX.Shared.Player;
 
 namespace MusicX.Server.Hubs;
 
@@ -11,12 +9,10 @@ public class ListenTogetherHub : Hub
 {
     private readonly ILogger<ListenTogetherHub> _logger;
     private readonly ListenTogetherService _listenTogetherService;
-    private readonly IMemoryCache _cache;
 
-    public ListenTogetherHub(ILogger<ListenTogetherHub> logger, IMemoryCache cache, ListenTogetherService listenTogetherService)
+    public ListenTogetherHub(ILogger<ListenTogetherHub> logger, ListenTogetherService listenTogetherService)
     {
         _logger = logger;
-        _cache = cache;
         _listenTogetherService = listenTogetherService;
     }
 
@@ -119,8 +115,21 @@ public class ListenTogetherHub : Hub
     {
         try
         {
-            var owner = Context.ConnectionId;
             return await _listenTogetherService.LeaveSessionAsync(sessionId);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            throw new HubException(ex.Message, ex);
+        }
+    }
+
+    public async Task<Track> GetCurrentTrack()
+    {
+        try
+        {
+            var listener = Context.ConnectionId;
+            return await _listenTogetherService.GetCurrentSessionTrack(listener);
         }
         catch (Exception ex)
         {

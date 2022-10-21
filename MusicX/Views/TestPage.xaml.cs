@@ -9,6 +9,8 @@ using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
 using MusicX.ViewModels;
 using MusicX.ViewModels.Modals;
+using System;
+using System.Windows.Interop;
 
 namespace MusicX.Views
 {
@@ -99,9 +101,101 @@ namespace MusicX.Views
 
         private async void ListenTogether_OnClick(object sender, RoutedEventArgs e)
         {
-            var playerService = StaticService.Container.GetRequiredService<PlayerService>();
-            if (long.TryParse(UserId.Text, out var userId))
-                await playerService.PlayFromAsync(userId).ConfigureAwait(false);
+            try
+            {
+                var playerService = StaticService.Container.GetRequiredService<PlayerService>();
+                var listenTogetherService = StaticService.Container.GetRequiredService<ListenTogetherService>();
+                var configService = StaticService.Container.GetRequiredService<ConfigService>();
+                var config = await configService.GetConfig();
+
+
+                await listenTogetherService.ConnectToServerAsync(config.UserId);
+                await listenTogetherService.JoinToSesstionAsync(UserId.Text);
+            }catch(Exception ex)
+            {
+                var window = Application.Current.MainWindow;
+
+                IntPtr hwnd = new WindowInteropHelper(window).Handle;
+
+                var brr = new Windows.UI.Popups.MessageDialog($"{ex.Message} \n \n \n {ex.StackTrace}", "Ошибка");
+                WinRT.Interop.InitializeWithWindow.Initialize(brr, hwnd);
+
+                await brr.ShowAsync();
+            }
+        }
+
+        private async void playTogetherSessionStart_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var listenTogetherService = StaticService.Container.GetRequiredService<ListenTogetherService>();
+                var configService = StaticService.Container.GetRequiredService<ConfigService>();
+
+                var config = await configService.GetConfig();
+
+                var session = await listenTogetherService.StartSessionAsync(config.UserId);
+
+                var window = Application.Current.MainWindow;
+
+                IntPtr hwnd = new WindowInteropHelper(window).Handle;
+
+                var brr = new Windows.UI.Popups.MessageDialog($"Id сессии: {session}", "Сессия запущена!");
+                WinRT.Interop.InitializeWithWindow.Initialize(brr, hwnd);
+
+                await brr.ShowAsync();
+            }catch(Exception ex)
+            {
+                var window = Application.Current.MainWindow;
+
+                IntPtr hwnd = new WindowInteropHelper(window).Handle;
+
+                var brr = new Windows.UI.Popups.MessageDialog($"{ex.Message} \n \n \n {ex.StackTrace}", "Ошибка");
+                WinRT.Interop.InitializeWithWindow.Initialize(brr, hwnd);
+
+                await brr.ShowAsync();
+            }
+           
+        }
+
+        private async void playTogetherSessionStop_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var listenTogetherService = StaticService.Container.GetRequiredService<ListenTogetherService>();
+
+                await listenTogetherService.StopPlaySessionAsync();
+            }catch(Exception ex)
+            {
+                var window = Application.Current.MainWindow;
+
+                IntPtr hwnd = new WindowInteropHelper(window).Handle;
+
+                var brr = new Windows.UI.Popups.MessageDialog($"{ex.Message} \n \n \n {ex.StackTrace}", "Ошибка");
+                WinRT.Interop.InitializeWithWindow.Initialize(brr, hwnd);
+
+                await brr.ShowAsync();
+            }
+        }
+
+        private async void DisconnectListenTogether_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var listenTogetherService = StaticService.Container.GetRequiredService<ListenTogetherService>();
+
+                await listenTogetherService.LeavePlaySessionAsync();
+            }
+            catch (Exception ex)
+            {
+                var window = Application.Current.MainWindow;
+
+                IntPtr hwnd = new WindowInteropHelper(window).Handle;
+
+                var brr = new Windows.UI.Popups.MessageDialog($"{ex.Message} \n \n \n {ex.StackTrace}", "Ошибка");
+                WinRT.Interop.InitializeWithWindow.Initialize(brr, hwnd);
+
+                await brr.ShowAsync();
+            }
         }
     }
 }

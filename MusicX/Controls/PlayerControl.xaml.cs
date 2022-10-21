@@ -22,6 +22,7 @@ using Wpf.Ui.Common;
 using System.Collections.Generic;
 using Microsoft.AppCenter.Crashes;
 using MusicX.Shared.Player;
+using MusicX.Shared.ListenTogether;
 
 namespace MusicX.Controls
 {
@@ -49,6 +50,7 @@ namespace MusicX.Controls
         }
 
         private readonly PlayerService playerService;
+        private readonly ListenTogetherService listenTogetherService;
         private readonly Logger logger;
         private ConfigModel config;
         public PlayerControl()
@@ -56,6 +58,7 @@ namespace MusicX.Controls
             InitializeComponent();
 
             this.playerService = StaticService.Container.GetRequiredService<PlayerService>();
+            this.listenTogetherService = StaticService.Container.GetRequiredService<ListenTogetherService>();
             this.logger = StaticService.Container.GetRequiredService<Logger>();
             playerService.PlayStateChangedEvent += PlayerService_PlayStateChangedEvent;
             playerService.PositionTrackChangedEvent += PlayerService_PositionTrackChangedEvent;
@@ -63,6 +66,10 @@ namespace MusicX.Controls
             playerService.QueueLoadingStateChanged += PlayerService_QueueLoadingStateChanged;
             playerService.TrackLoadingStateChanged += PlayerService_TrackLoadingStateChanged;
 
+            listenTogetherService.ConnectedToSession += ListenTogetherConnectedToSession;
+            listenTogetherService.StartedSession += ListenTogetherStartedSession;
+            listenTogetherService.SessionOwnerStoped += ListenTogetherStopedSession;
+            listenTogetherService.SessionStoped += ListenTogetherSessionStoped;
             this.MouseWheel += PlayerControl_MouseWheel;
             
             Queue.ItemsSource = playerService.Tracks;
@@ -591,6 +598,50 @@ namespace MusicX.Controls
         {
             playerService.IsMuted = !playerService.IsMuted;
             UpdateSpeakerIcon();
+        }
+
+        /// <summary>
+        /// Пользователь подключился как слушатель
+        /// </summary>
+        /// <param name="arg"></param>
+        /// <returns></returns>
+        private async Task ListenTogetherConnectedToSession(Track track)
+        {
+            ButtonsStackPanel.Visibility = Visibility.Collapsed;
+            DownloadButton.Visibility = Visibility.Collapsed;
+            QueueButton.Visibility = Visibility.Collapsed;
+        }
+
+        /// <summary>
+        /// Пользователь оставил сессию
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        private async Task ListenTogetherStopedSession()
+        {
+            ButtonsStackPanel.Visibility = Visibility.Visible;
+            DownloadButton.Visibility = Visibility.Visible;
+            QueueButton.Visibility = Visibility.Visible;
+        }
+
+        /// <summary>
+        /// Владелец запустил сессию
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        private async Task ListenTogetherStartedSession()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Владелец остановил сессию.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        private async Task ListenTogetherSessionStoped()
+        {
+            
         }
     }
 }

@@ -10,12 +10,18 @@ namespace MusicX.Shared.ListenTogether
     {
         public string Title { get; set; }
 
-        public string Cover { get; set; }
+        public string Subtitle { get; set; }
+
+        public string? Cover { get; set; }
 
         public string Url { get; set; }
 
         public string Artist { get; set; }
 
-        public long Duration { get; set; }
+        public TimeSpan Duration { get; set; }
+
+        public bool IsExplicit { get; set; }
+        
+        public TrackType PlatformType { get; set; }
     }
 }

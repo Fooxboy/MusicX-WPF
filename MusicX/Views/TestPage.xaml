@@ -36,7 +36,9 @@
 
     </Page.Resources>
 
-    <Grid x:Name="ContentGrid">
+    <ScrollViewer>
+        
+        <Grid x:Name="ContentGrid">
 
         <StackPanel>
 
@@ -146,8 +148,27 @@
                     Appearance="Secondary"
                     Click="download_Click"
                     Content="Скачать" />
-                
-                <TextBox
+
+                <wpfui:Button
+                    x:Name="playTogetherSessionStart"
+                    Width="300"
+                    Margin="0,10,0,0"
+                    HorizontalAlignment="Left"
+                    Appearance="Secondary"
+                    Click="playTogetherSessionStart_Click"
+                    Content="Запустить сессию listen together" />
+
+                    <wpfui:Button
+                    x:Name="playTogetherSessionStop"
+                    Width="300"
+                    Margin="0,10,0,0"
+                    HorizontalAlignment="Left"
+                    Appearance="Secondary"
+                    Click="playTogetherSessionStop_Click"
+                    Content="Остановить сессию listen together" />
+
+
+                    <TextBox
                     x:Name="UserId"
                     Width="400"
                     Margin="0,10,0,0"
@@ -161,9 +182,19 @@
                     Click="ListenTogether_OnClick"
                     Content="Слушать вместе" />
 
-            </StackPanel>
+                    <wpfui:Button
+                    x:Name="DisconnectListenTogether"
+                    Width="300"
+                    Margin="0,10,0,0"
+                    HorizontalAlignment="Left"
+                    Appearance="Secondary"
+                    Click="DisconnectListenTogether_Click"
+                    Content="Отключится от прослушивания" />
+                </StackPanel>
         </StackPanel>
 
-
     </Grid>
+
+    </ScrollViewer>
+
 </Page>

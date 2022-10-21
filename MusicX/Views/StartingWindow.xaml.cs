@@ -30,7 +30,6 @@ namespace MusicX.Views
         public StartingWindow()
         {
             InitializeComponent();
-           // this.Background = Brushes.Black;
            Accent.Apply(Accent.GetColorizationColor(), ThemeType.Dark);
         }
 
@@ -54,7 +53,7 @@ namespace MusicX.Views
                 collection.AddVkNet();
 
                 collection.AddSingleton<VkService>();
-                collection.AddSingleton<ServerService>();
+                collection.AddSingleton<ListenTogetherService>();
                 collection.AddSingleton<GithubService>();
                 collection.AddSingleton<DiscordService>();
                 collection.AddSingleton<BoomService>();
@@ -66,7 +65,7 @@ namespace MusicX.Views
                 collection.AddSingleton<ITrackStatsListener, DiscordTrackStats>();
                 collection.AddSingleton<ITrackStatsListener, VkTrackBroadcastStats>();
                 collection.AddSingleton<ITrackStatsListener, VkTrackStats>();
-                collection.AddSingleton<ITrackStatsListener, ServerTrackStats>();
+                collection.AddSingleton<ITrackStatsListener, ListenTogetherStats>();
 
                 collection.AddTransient<SectionViewModel>();
                 collection.AddTransient<PlaylistViewModel>();
@@ -103,7 +102,6 @@ namespace MusicX.Views
                 var navigationService = container.GetRequiredService<NavigationService>();
                 var configService = container.GetRequiredService<ConfigService>();
                 var notificationsService = container.GetRequiredService<NotificationsService>();
-                var serverService = container.GetRequiredService<ServerService>();
 
                 var config = await configService.GetConfig();
 
@@ -141,7 +139,6 @@ namespace MusicX.Views
                             {
 
                                 await vkService.SetTokenAsync(config.AccessToken);
-                                await serverService.StartAsync(config.UserId);
                                 var rootWindow = new RootWindow(navigationService, vkService, logger, configService, notificationsService);
                                 rootWindow.Show();
                                 this.Close();
@@ -178,13 +175,6 @@ namespace MusicX.Views
 
                 
             });
-        }
-
-        private async void Button_Click(object sender, RoutedEventArgs e)
-        {
-            
-
-
         }
     }
 }

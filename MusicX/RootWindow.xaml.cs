@@ -55,23 +55,33 @@ namespace MusicX
             notificationsService.NewNotificationEvent += NotificationsService_NewNotificationEvent;
 
             Accent.Apply(Accent.GetColorizationColor(), ThemeType.Dark);
+
+            this.Closing += RootWindow_Closing;
         }
 
+        private async void RootWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
+        {
+            try
+            {
+                var listenTogetherService = StaticService.Container.GetRequiredService<ListenTogetherService>();
 
-
-        //private bool isFullScreen = false;
-        //private void WpfTitleBar_MaximizeClicked(object sender, RoutedEventArgs e)
-        //{
-        //    isFullScreen = !isFullScreen;
-        //    if(isFullScreen)
-        //    {
-        //        rootGrid.Margin = new Thickness(8,8,8,0);
-
-        //    }else
-        //    {
-        //        rootGrid.Margin = new Thickness(0, 0, 0, 0);
-        //    }
-        //}
+                if (listenTogetherService.IsConnectedToServer && listenTogetherService.PlayerMode != Models.Enums.PlayerMode.None)
+                {
+                    if (listenTogetherService.PlayerMode == Models.Enums.PlayerMode.Owner)
+                    {
+                        await listenTogetherService.StopPlaySessionAsync();
+                    }
+                    else
+                    {
+                        await listenTogetherService.LeavePlaySessionAsync();
+                    }
+                }
+            }catch(Exception ex)
+            {
+                //nothing
+            }
+           
+        }
 
         private async void NotificationsService_NewNotificationEvent(string title, string message)
         {
