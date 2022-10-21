@@ -1,5 +1,6 @@
 ﻿using MusicX.Server.Models;
 using MusicX.Shared.ListenTogether;
+using MusicX.Shared.Player;
 
 namespace MusicX.Server.Managers
 {
@@ -69,7 +70,7 @@ namespace MusicX.Server.Managers
             }
         }
 
-        public bool ChangeTrackInSession(Track track, string owner)
+        public bool ChangeTrackInSession(PlaylistTrack track, string owner)
         {
             if(Sessions.TryGetValue(owner, out var session))
             {

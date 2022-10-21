@@ -605,7 +605,7 @@ namespace MusicX.Controls
         /// </summary>
         /// <param name="arg"></param>
         /// <returns></returns>
-        private async Task ListenTogetherConnectedToSession(Track track)
+        private async Task ListenTogetherConnectedToSession(PlaylistTrack playlistTrack)
         {
             ButtonsStackPanel.Visibility = Visibility.Collapsed;
             DownloadButton.Visibility = Visibility.Collapsed;

@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using MusicX.Server.Hubs;
 using MusicX.Server.Managers;
 using MusicX.Server.Services;
+using MusicX.Shared.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +18,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddSignalR(options => options.EnableDetailedErrors = true);
+builder.Services.AddSignalR(options => options.EnableDetailedErrors = true).AddProtobufProtocol();
 builder.Services.AddMemoryCache();
 builder.Services.AddAuthorization();
 

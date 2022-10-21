@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Caching.Memory;
 using MusicX.Server.Services;
 using MusicX.Shared.ListenTogether;
+using MusicX.Shared.Player;
 
 namespace MusicX.Server.Hubs;
 
@@ -21,12 +22,12 @@ public class ListenTogetherHub : Hub
     /// </summary>
     /// <param name="track">Трек</param>
     /// <returns>Успешность результата</returns>
-    public async Task<bool> ChangeTrack(Track track)
+    public async Task<ErrorState> ChangeTrack(PlaylistTrack track)
     {
         try
         {
             var owner = Context.ConnectionId;
-            return await _listenTogetherService.ChangeTrackAsync(track, Context.ConnectionId);
+            return new(await _listenTogetherService.ChangeTrackAsync(track, owner));
         }catch(Exception ex)
         {
             _logger.LogError(ex, ex.Message);
@@ -37,15 +38,15 @@ public class ListenTogetherHub : Hub
     /// <summary>
     /// Изменилось состояние трека
     /// </summary>
-    /// <param name="position">Позиция</param>
-    /// <param name="pause">Флаг паузы</param>
+    /// <param name="state">Позиция и флаг паузы.</param>
     /// <returns>Успешность операции</returns>
-    public async Task<bool> ChangePlayState(TimeSpan position, bool pause)
+    public async Task<ErrorState> ChangePlayState(PlayState state)
     {
         try
         {
+            var (position, pause) = state;
             var owner = Context.ConnectionId;
-            return await _listenTogetherService.ChangePlayStateAsync(owner, position, pause);
+            return new(await _listenTogetherService.ChangePlayStateAsync(owner, position, pause));
         }catch(Exception ex)
         {
             _logger.LogError(ex, ex.Message);
@@ -57,12 +58,13 @@ public class ListenTogetherHub : Hub
     /// Создать сессию "Слушать вместе"
     /// </summary>
     /// <returns>Успешность операции</returns>
-    public async Task<string?> StartPlaySession()
+    public async Task<SessionId?> StartPlaySession()
     {
         try
         {
             var owner = Context.ConnectionId;
-            return await _listenTogetherService.StartSessionAsync(owner);
+            var id = await _listenTogetherService.StartSessionAsync(owner);
+            return id is null ? null : new(id);
         }
         catch (Exception ex)
         {
@@ -75,12 +77,12 @@ public class ListenTogetherHub : Hub
     /// Остановить сессию "Слушать вместе"
     /// </summary>
     /// <returns>Успешность операции</returns>
-    public async Task<bool> StopPlaySession()
+    public async Task<ErrorState> StopPlaySession()
     {
         try
         {
             var owner = Context.ConnectionId;
-            return await _listenTogetherService.StopSessionAsync(owner);
+            return new(await _listenTogetherService.StopSessionAsync(owner));
         }
         catch (Exception ex)
         {
@@ -94,12 +96,12 @@ public class ListenTogetherHub : Hub
     /// </summary>
     /// <param name="sessionId">ИД сессии</param>
     /// <returns>Успешность операции</returns>
-    public async Task<bool> JoinPlaySession(string sessionId)
+    public async Task<ErrorState> JoinPlaySession(SessionId sessionId)
     {
         try
         {
             var owner = Context.ConnectionId;
-            return await _listenTogetherService.JoinToSessionAsync(owner, sessionId);
+            return new(await _listenTogetherService.JoinToSessionAsync(owner, sessionId.Id));
         }
         catch (Exception ex)
         {
@@ -111,11 +113,11 @@ public class ListenTogetherHub : Hub
     /// <summary>
     /// Покинуть сессию
     /// </summary>
-    public async Task<bool> LeavePlaySession(string sessionId)
+    public async Task<ErrorState> LeavePlaySession(SessionId sessionId)
     {
         try
         {
-            return await _listenTogetherService.LeaveSessionAsync(sessionId);
+            return new(await _listenTogetherService.LeaveSessionAsync(sessionId.Id));
         }
         catch (Exception ex)
         {
@@ -124,7 +126,7 @@ public class ListenTogetherHub : Hub
         }
     }
 
-    public async Task<Track> GetCurrentTrack()
+    public async Task<PlaylistTrack> GetCurrentTrack()
     {
         try
         {

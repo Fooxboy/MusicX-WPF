@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using MusicX.Shared.Extensions;
+using MusicX.Shared.Player;
 
 namespace MusicX.Services
 {
@@ -29,12 +31,12 @@ namespace MusicX.Services
         /// <summary>
         /// Изменился трек
         /// </summary>
-        public event Func<Track, Task>? TrackChanged;
+        public event Func<PlaylistTrack, Task>? TrackChanged;
 
         /// <summary>
         /// Текущий пользователь подключился как слушатель
         /// </summary>
-        public event Func<Track, Task>? ConnectedToSession;
+        public event Func<PlaylistTrack, Task>? ConnectedToSession;
 
         /// <summary>
         /// Текущий пользователь запустил сессию
@@ -83,7 +85,7 @@ namespace MusicX.Services
                 await ConnectToServerAsync(userId);
             }
 
-            var result = await _connection.InvokeAsync<string>(ListenTogetherMethods.StartPlaySession);
+            var result = await _connection.InvokeAsync<SessionId>(ListenTogetherMethods.StartPlaySession);
 
             if(result is null)
             {
@@ -92,12 +94,12 @@ namespace MusicX.Services
 
             PlayerMode = PlayerMode.Owner;
 
-            SessionId = result;
+            SessionId = result.Id;
             
             _logger.Info($"Сессия {SessionId} запущена");
             StartedSession?.Invoke();
 
-            return result;
+            return result.Id;
         }
 
         public async Task JoinToSesstionAsync(string session)
@@ -108,7 +110,7 @@ namespace MusicX.Services
                 throw new Exception("Невозможно подключится к сессии без подключения к серверу.");
             }
 
-            var result = await _connection.InvokeAsync<bool>(ListenTogetherMethods.JoinPlaySession, session);
+            var (result, _) = await _connection.InvokeAsync<ErrorState>(ListenTogetherMethods.JoinPlaySession, new SessionId(session));
 
             if(!result)
             {
@@ -127,7 +129,7 @@ namespace MusicX.Services
 
         }
 
-        public async Task ChangeTrackAsync(Track track)
+        public async Task ChangeTrackAsync(PlaylistTrack track)
         {
             _logger.Info($"Переключение трека в сессии {SessionId}");
 
@@ -136,7 +138,7 @@ namespace MusicX.Services
                 throw new Exception("Невозможно выполнить запрос без подключения к серверу.");
             }
 
-            var result = await _connection.InvokeAsync<bool>(ListenTogetherMethods.ChangeTrack, track);
+            var (result, _) = await _connection.InvokeAsync<ErrorState>(ListenTogetherMethods.ChangeTrack, track);
 
             if (!result)
             {
@@ -151,7 +153,7 @@ namespace MusicX.Services
                 throw new Exception("Невозможно выполнить запрос без подключения к серверу.");
             }
 
-            var result = await _connection.InvokeAsync<bool>(ListenTogetherMethods.ChangePlayState, position, pause);
+            var (result, _) = await _connection.InvokeAsync<ErrorState>(ListenTogetherMethods.ChangePlayState, new PlayState(position, pause));
 
             if (!result)
             {
@@ -170,7 +172,7 @@ namespace MusicX.Services
                 throw new Exception("Невозможно выполнить запрос без подключения к серверу.");
             }
 
-            var result = await _connection.InvokeAsync<bool>(ListenTogetherMethods.StopPlaySession);
+            var (result, _) = await _connection.InvokeAsync<ErrorState>(ListenTogetherMethods.StopPlaySession);
 
             if (!result)
             {
@@ -191,7 +193,7 @@ namespace MusicX.Services
                 throw new Exception("Невозможно выполнить запрос без подключения к серверу.");
             }
 
-            var result = await _connection.InvokeAsync<bool>(ListenTogetherMethods.LeavePlaySession);
+            var (result, _) = await _connection.InvokeAsync<ErrorState>(ListenTogetherMethods.LeavePlaySession, new SessionId(SessionId));
 
             if (!result)
             {
@@ -212,26 +214,27 @@ namespace MusicX.Services
             this._token = token;
 
             _connection = new HubConnectionBuilder()
-                    .WithAutomaticReconnect()
-                    .WithUrl($"{_host}/hubs/listen", options =>
-                                 options.AccessTokenProvider = () => Task.FromResult(_token)!)
-            .Build();
+                          .WithAutomaticReconnect()
+                          .WithUrl($"{_host}/hubs/listen", options =>
+                                       options.AccessTokenProvider = () => Task.FromResult(_token)!)
+                          .AddProtobufProtocol()
+                          .Build();
 
             _subscriptions = new[]
             {
-                _connection.On<TimeSpan, bool>(Callbacks.PlayStateChanged,
-                                               (pos, pause) => PlayStateChanged?.Invoke(pos, pause) ?? Task.CompletedTask),
+                _connection.On<PlayState>(Callbacks.PlayStateChanged,
+                                               (state) => PlayStateChanged?.Invoke(state.Position, state.Pause) ?? Task.CompletedTask),
 
-                _connection.On<Track>(Callbacks.TrackChanged,
-                                               (track) => TrackChanged?.Invoke(track) ?? Task.CompletedTask),
+                _connection.On<PlaylistTrack>(Callbacks.TrackChanged,
+                                              (track) => TrackChanged?.Invoke(track) ?? Task.CompletedTask),
 
-                _connection.On<string>(Callbacks.ListenerConnected,
-                                               (user) => ListenerConnected?.Invoke(user) ?? Task.CompletedTask),
+                _connection.On<SessionId>(Callbacks.ListenerConnected,
+                                               (user) => ListenerConnected?.Invoke(user.Id) ?? Task.CompletedTask),
 
                 _connection.On(Callbacks.SessionStoped, ()=> SessionOwnerStoped?.Invoke() ?? Task.CompletedTask),
 
-                _connection.On<string>(Callbacks.ListenerDisconnected,
-                                               (user) => ListenerDisconnected?.Invoke(user) ?? Task.CompletedTask),
+                _connection.On<SessionId>(Callbacks.ListenerDisconnected,
+                                               (user) => ListenerDisconnected?.Invoke(user.Id) ?? Task.CompletedTask),
             };
 
             await _connection.StartAsync();
@@ -240,13 +243,13 @@ namespace MusicX.Services
 
         }
 
-        public async Task<Track> GetCurrentTrackInSession()
+        public async Task<PlaylistTrack> GetCurrentTrackInSession()
         {
             _logger.Info("Получение текущего трека в сессии");
 
             if (_connection is null) throw new Exception("Сначала необходимо подключится к серверу");
 
-            var result = await _connection.InvokeAsync<Track>(ListenTogetherMethods.GetCurrentTrack);
+            var result = await _connection.InvokeAsync<PlaylistTrack>(ListenTogetherMethods.GetCurrentTrack);
 
             return result;
         }
@@ -270,7 +273,9 @@ namespace MusicX.Services
 
         private async Task<string> GetListenTogetherHostAsync()
         {
-            //return "https://localhost:5001";
+#if DEBUG
+            return "https://localhost:5001";
+#endif
             try
             {
                 _logger.Info("Получение адресса сервера Послушать вместе");

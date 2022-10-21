@@ -700,14 +700,14 @@ public class PlayerService
         Pause();
     }
 
-    private async Task ListenTogetherConnectedToSession(Shared.ListenTogether.Track track)
+    private async Task ListenTogetherConnectedToSession(PlaylistTrack playlistTrack)
     {
-        await this.PlayTrackAsync(track.ToPlaylistTrack());
+        await this.PlayTrackAsync(playlistTrack);
     }
 
-    private async Task ListenTogetherTrackChanged(Shared.ListenTogether.Track track)
+    private async Task ListenTogetherTrackChanged(PlaylistTrack playlistTrack)
     {
-        await this.PlayTrackAsync(track.ToPlaylistTrack());
+        await this.PlayTrackAsync(playlistTrack);
     }
 
     private async Task ListenTogetherPlayStateChanged(TimeSpan position, bool pause)

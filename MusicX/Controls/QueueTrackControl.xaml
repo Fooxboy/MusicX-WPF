@@ -8,9 +8,10 @@
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              xmlns:cache="clr-namespace:System.Net.Cache;assembly=System.Net.Requests"
              xmlns:converters="clr-namespace:MusicX.Converters"
+             xmlns:player="clr-namespace:MusicX.Shared.Player;assembly=MusicX.Shared"
              mc:Ignorable="d"
              d:DesignHeight="80" d:DesignWidth="300"
-             d:DataContext="{d:DesignInstance Type={x:Type playlists:PlaylistTrack}}"
+             d:DataContext="{d:DesignInstance Type={x:Type player:PlaylistTrack}}"
              x:Name="Control"
              DataContextChanged="QueueTrackControl_OnDataContextChanged">
     <UserControl.Resources>

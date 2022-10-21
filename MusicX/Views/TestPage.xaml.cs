@@ -32,7 +32,7 @@ namespace MusicX.Views
         private async void OpenModal_Click(object sender, RoutedEventArgs e)
         {
 
-            /*var window = Application.Current.MainWindow;
+            /*var window = Window.GetWindow(this);
             // ...
             IntPtr hwnd = new WindowInteropHelper(window).Handle;
 
@@ -101,60 +101,23 @@ namespace MusicX.Views
 
         private async void ListenTogether_OnClick(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                var playerService = StaticService.Container.GetRequiredService<PlayerService>();
-                var listenTogetherService = StaticService.Container.GetRequiredService<ListenTogetherService>();
-                var configService = StaticService.Container.GetRequiredService<ConfigService>();
-                var config = await configService.GetConfig();
+            var listenTogetherService = StaticService.Container.GetRequiredService<ListenTogetherService>();
+            var configService = StaticService.Container.GetRequiredService<ConfigService>();
+            var config = await configService.GetConfig();
 
 
-                await listenTogetherService.ConnectToServerAsync(config.UserId);
-                await listenTogetherService.JoinToSesstionAsync(UserId.Text);
-            }catch(Exception ex)
-            {
-                var window = Application.Current.MainWindow;
-
-                IntPtr hwnd = new WindowInteropHelper(window).Handle;
-
-                var brr = new Windows.UI.Popups.MessageDialog($"{ex.Message} \n \n \n {ex.StackTrace}", "Ошибка");
-                WinRT.Interop.InitializeWithWindow.Initialize(brr, hwnd);
-
-                await brr.ShowAsync();
-            }
+            await listenTogetherService.ConnectToServerAsync(config.UserId);
+            await listenTogetherService.JoinToSesstionAsync(UserId.Text);
         }
 
         private async void playTogetherSessionStart_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                var listenTogetherService = StaticService.Container.GetRequiredService<ListenTogetherService>();
-                var configService = StaticService.Container.GetRequiredService<ConfigService>();
+            var listenTogetherService = StaticService.Container.GetRequiredService<ListenTogetherService>();
+            var configService = StaticService.Container.GetRequiredService<ConfigService>();
 
-                var config = await configService.GetConfig();
+            var config = await configService.GetConfig();
 
-                var session = await listenTogetherService.StartSessionAsync(config.UserId);
-
-                var window = Application.Current.MainWindow;
-
-                IntPtr hwnd = new WindowInteropHelper(window).Handle;
-
-                var brr = new Windows.UI.Popups.MessageDialog($"Id сессии: {session}", "Сессия запущена!");
-                WinRT.Interop.InitializeWithWindow.Initialize(brr, hwnd);
-
-                await brr.ShowAsync();
-            }catch(Exception ex)
-            {
-                var window = Application.Current.MainWindow;
-
-                IntPtr hwnd = new WindowInteropHelper(window).Handle;
-
-                var brr = new Windows.UI.Popups.MessageDialog($"{ex.Message} \n \n \n {ex.StackTrace}", "Ошибка");
-                WinRT.Interop.InitializeWithWindow.Initialize(brr, hwnd);
-
-                await brr.ShowAsync();
-            }
-           
+            await listenTogetherService.StartSessionAsync(config.UserId);
         }
 
         private async void playTogetherSessionStop_Click(object sender, RoutedEventArgs e)
@@ -166,7 +129,7 @@ namespace MusicX.Views
                 await listenTogetherService.StopPlaySessionAsync();
             }catch(Exception ex)
             {
-                var window = Application.Current.MainWindow;
+                var window = Window.GetWindow(this);
 
                 IntPtr hwnd = new WindowInteropHelper(window).Handle;
 
@@ -187,7 +150,7 @@ namespace MusicX.Views
             }
             catch (Exception ex)
             {
-                var window = Application.Current.MainWindow;
+                var window = Window.GetWindow(this);
 
                 IntPtr hwnd = new WindowInteropHelper(window).Handle;
 
