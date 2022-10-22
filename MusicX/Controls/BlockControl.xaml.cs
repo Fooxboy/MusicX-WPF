@@ -426,6 +426,21 @@ namespace MusicX.Controls
                     }
                 }
 
+                if (Block.DataType == "audio_followings_update_info")
+                {
+                    if (Block.Layout.Name == "list" && Block.FollowingsUpdateInfos.Count > 0)
+                    {
+                        BlocksPanel.Children.Add(new FollowingsUpdateInfoListBlockControl
+                        {
+                            Block = Block,
+                            DataContext = new BlockButtonViewModel(
+                                Block.Actions.First(b => b.RefDataType == "audio_followings_update_info"),
+                                parentBlock: Block)
+                        });
+                        return;
+                    }
+                }
+
 
                 NotFoundBlock.Visibility = Visibility.Visible;
                 DataTypeName.Text = Block.DataType;

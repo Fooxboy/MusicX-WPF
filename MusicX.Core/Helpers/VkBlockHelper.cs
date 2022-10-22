@@ -207,6 +207,18 @@ namespace MusicX.Core.Helpers
                                 block.MusicOwners.Add(owner);
                             }
                         }
+
+                        if (block.FollowingUpdateInfoIds.Count > 0)
+                        {
+                            foreach (var updateInfoId in block.FollowingUpdateInfoIds)
+                            {
+                                var updateInfo = response.FollowingsUpdateInfos.SingleOrDefault(b => b.Id == updateInfoId);
+                        
+                                if (updateInfo == null) continue;
+
+                                block.FollowingsUpdateInfos.Add(updateInfo);
+                            }
+                        }
                     }
                 }
             }
@@ -367,6 +379,18 @@ namespace MusicX.Core.Helpers
                         if (owner == null) continue;
                         
                         response.Block.MusicOwners.Add(owner);
+                    }
+                }
+                
+                if (response.Block.FollowingUpdateInfoIds.Count > 0)
+                {
+                    foreach (var updateInfoId in response.Block.FollowingUpdateInfoIds)
+                    {
+                        var updateInfo = response.FollowingsUpdateInfos.SingleOrDefault(b => b.Id == updateInfoId);
+                        
+                        if (updateInfo == null) continue;
+
+                        response.Block.FollowingsUpdateInfos.Add(updateInfo);
                     }
                 }
 
@@ -635,6 +659,18 @@ namespace MusicX.Core.Helpers
                         if (owner == null) continue;
                         
                         block.MusicOwners.Add(owner);
+                    }
+                }
+                
+                if (block.FollowingUpdateInfoIds.Count > 0)
+                {
+                    foreach (var updateInfoId in block.FollowingUpdateInfoIds)
+                    {
+                        var updateInfo = response.FollowingsUpdateInfos.SingleOrDefault(b => b.Id == updateInfoId);
+                        
+                        if (updateInfo == null) continue;
+
+                        block.FollowingsUpdateInfos.Add(updateInfo);
                     }
                 }
             }

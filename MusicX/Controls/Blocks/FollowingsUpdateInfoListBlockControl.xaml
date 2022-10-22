@@ -1,0 +1,46 @@
+﻿<UserControl x:Class="MusicX.Controls.Blocks.FollowingsUpdateInfoListBlockControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:MusicX.Controls.Blocks"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:models="clr-namespace:MusicX.Core.Models;assembly=MusicX.Core"
+             xmlns:model="clr-namespace:VkNet.Model;assembly=VkNet"
+             xmlns:controls="clr-namespace:MusicX.ViewModels.Controls"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300"
+             d:DataContext="{d:DesignInstance {x:Type controls:BlockButtonViewModel}}"
+             x:Name="Control">
+    <ui:Card>
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+            <ItemsControl ItemsSource="{Binding Block.FollowingsUpdateInfos[0].Covers, ElementName=Control}" HorizontalAlignment="Center">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" IsItemsHost="True" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type model:AudioCover}">
+                        <Rectangle Width="110" Height="110"
+                                   Margin="-25,0,0,0"
+                                   RadiusX="10" RadiusY="10">
+                            <Rectangle.Fill>
+                                <ImageBrush ImageSource="{Binding Photo270}" />
+                            </Rectangle.Fill>
+                        </Rectangle>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <TextBlock FontSize="16" Margin="0,20,0,0"
+                       Foreground="#AAAAAA"
+                       Text="{Binding Block.FollowingsUpdateInfos[0].Title, ElementName=Control, FallbackValue=Title}"/>
+            <ui:Button Appearance="Secondary"
+                       HorizontalAlignment="Center"
+                       Margin="0,20,0,0"
+                       Icon="{Binding Icon}"
+                       Content="{Binding Text}"
+                       Command="{Binding InvokeCommand}"/>
+        </StackPanel>
+    </ui:Card>
+</UserControl>
