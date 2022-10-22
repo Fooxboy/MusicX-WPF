@@ -153,6 +153,11 @@ public class PlayerService
 
     public async Task PlayAsync(IPlaylist playlist, PlaylistTrack? firstTrack = null)
     {
+        if(_listenTogetherService.PlayerMode == PlayerMode.Listener)
+        {
+            await _listenTogetherService.LeavePlaySessionAsync();
+        }
+
         if (!playlist.CanLoad)
             throw new InvalidOperationException("Playlist should be loadable for first play");
 
@@ -273,6 +278,8 @@ public class PlayerService
 
     public async Task NextTrack()
     {
+        if (_listenTogetherService.PlayerMode == PlayerMode.Listener) return;
+
         try
         {
             logger.Info("Next track");
@@ -375,10 +382,11 @@ public class PlayerService
         Volume = volume;
     }
 
-    public async void Seek(TimeSpan position)
+    public async void Seek(TimeSpan position, bool sync = false)
     {
         try
         {
+            if (_listenTogetherService.PlayerMode == PlayerMode.Listener && !sync) return;
             player.PlaybackSession.Position = position;
 
            await Task.WhenAll(
@@ -392,6 +400,8 @@ public class PlayerService
     
     public async Task PreviousTrack()
     {
+        if (_listenTogetherService.PlayerMode == PlayerMode.Listener) return;
+
         try
         {
             logger.Info("Go to prev track");
@@ -607,12 +617,25 @@ public class PlayerService
         }
     }
 
-    private void PositionTimerOnTick(object sender, object o)
+    private int positionTimerListenTogetherCouter = 0;
+    private async void PositionTimerOnTick(object sender, object o)
     {
         Application.Current.Dispatcher.Invoke((() =>
         {
             PositionTrackChangedEvent?.Invoke(this, Position);
         }));
+
+        if (_listenTogetherService.PlayerMode == PlayerMode.Owner)
+        {
+            if (positionTimerListenTogetherCouter == 3)
+            {
+                positionTimerListenTogetherCouter = 0;
+            }
+
+            positionTimerListenTogetherCouter++;
+
+            await _listenTogetherService.ChangePlayStateAsync(this.Position, !IsPlaying);
+        }
     }
     public async void RemoveFromQueue(PlaylistTrack audio)
     {
@@ -723,7 +746,7 @@ public class PlayerService
 
         if((this.Position.TotalSeconds - position.TotalSeconds) > 2 || (this.Position.TotalSeconds - position.TotalSeconds) < - 2)
         {
-            Seek(position);
+            Seek(position, true);
         }
     }
 }

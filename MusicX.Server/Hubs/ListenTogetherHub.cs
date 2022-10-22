@@ -62,8 +62,12 @@ public class ListenTogetherHub : Hub
     {
         try
         {
-            var owner = Context.ConnectionId;
-            var id = await _listenTogetherService.StartSessionAsync(owner);
+            var ownerConnectionId = Context.ConnectionId;
+
+            var ownerVkId = long.Parse(Context.UserIdentifier);
+
+            var id = await _listenTogetherService.StartSessionAsync(ownerConnectionId, ownerVkId);
+
             return id is null ? null : new(id);
         }
         catch (Exception ex)
@@ -100,8 +104,11 @@ public class ListenTogetherHub : Hub
     {
         try
         {
-            var owner = Context.ConnectionId;
-            return new(await _listenTogetherService.JoinToSessionAsync(owner, sessionId.Id));
+            var listenerConnectionId = Context.ConnectionId;
+
+            var listenerVkId = long.Parse(Context.UserIdentifier);
+
+            return new(await _listenTogetherService.JoinToSessionAsync(listenerConnectionId, listenerVkId, sessionId.Id));
         }
         catch (Exception ex)
         {
@@ -113,11 +120,17 @@ public class ListenTogetherHub : Hub
     /// <summary>
     /// Покинуть сессию
     /// </summary>
-    public async Task<ErrorState> LeavePlaySession(SessionId sessionId)
+    public async Task<ErrorState> LeavePlaySession()
     {
         try
         {
-            return new(await _listenTogetherService.LeaveSessionAsync(sessionId.Id));
+            var listenerConnectionId = Context.ConnectionId;
+
+            var listenerVkId = long.Parse(Context.UserIdentifier);
+
+            var result = await _listenTogetherService.LeaveSessionAsync(listenerConnectionId, listenerVkId);
+
+            return new(result);
         }
         catch (Exception ex)
         {
@@ -131,7 +144,45 @@ public class ListenTogetherHub : Hub
         try
         {
             var listener = Context.ConnectionId;
-            return await _listenTogetherService.GetCurrentSessionTrack(listener);
+            var listenerVkId = long.Parse(Context.UserIdentifier);
+
+            return await _listenTogetherService.GetCurrentSessionTrack(listenerVkId);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            throw new HubException(ex.Message, ex);
+        }
+    }
+
+    public async Task<User> GetSessionOwnerInfo()
+    {
+        try
+        {
+            var listenerVkId = long.Parse(Context.UserIdentifier);
+
+            var res = await _listenTogetherService.GetOwnerSessionInfoAsync(listenerVkId);
+
+            return res;
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            throw new HubException(ex.Message, ex);
+        }
+    }
+
+    public async Task<UsersList> GetListenersInSession()
+    {
+        try
+        {
+            var ownerConnectionid = Context.ConnectionId;
+
+            var res = await _listenTogetherService.GetListenersInSessionAsync(ownerConnectionid);
+
+            return res;
+
         }
         catch (Exception ex)
         {

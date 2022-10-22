@@ -21,5 +21,9 @@ namespace MusicX.Models
         public const string LeavePlaySession = "LeavePlaySession";
 
         public const string GetCurrentTrack = "GetCurrentTrack";
+
+        public const string GetOwnerSessionInfoAsync = "GetOwnerSessionInfoAsync";
+
+        public const string GetListenersInSession = "GetListenersInSession";
     }
 }

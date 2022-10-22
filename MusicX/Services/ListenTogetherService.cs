@@ -46,7 +46,7 @@ namespace MusicX.Services
         /// <summary>
         /// К сессии подключился слушатель
         /// </summary>
-        public event Func<string, Task>? ListenerConnected;
+        public event Func<User, Task>? ListenerConnected;
 
         /// <summary>
         /// От сесси отключился слушатель
@@ -62,6 +62,11 @@ namespace MusicX.Services
         /// Текущий пользователь закрыл сессию.
         /// </summary>
         public event Func<Task>? SessionStoped;
+
+        /// <summary>
+        /// Текущий пользователь отключился от сесиии.
+        /// </summary>
+        public event Func<Task>? LeaveSession;
 
         public bool IsConnectedToServer => _connection is not null;
 
@@ -193,12 +198,14 @@ namespace MusicX.Services
                 throw new Exception("Невозможно выполнить запрос без подключения к серверу.");
             }
 
-            var (result, _) = await _connection.InvokeAsync<ErrorState>(ListenTogetherMethods.LeavePlaySession, new SessionId(SessionId));
+            var r = await _connection.InvokeAsync<ErrorState>(ListenTogetherMethods.LeavePlaySession);
 
-            if (!result)
+            if (!r.Success)
             {
                 throw new Exception("Ошибка при выполнении запроса.");
             }
+
+            LeaveSession?.Invoke();
         }
 
         public async Task ConnectToServerAsync(long userId)
@@ -220,28 +227,15 @@ namespace MusicX.Services
                           .AddProtobufProtocol()
                           .Build();
 
-            _subscriptions = new[]
-            {
-                _connection.On<PlayState>(Callbacks.PlayStateChanged,
-                                               (state) => PlayStateChanged?.Invoke(state.Position, state.Pause) ?? Task.CompletedTask),
-
-                _connection.On<PlaylistTrack>(Callbacks.TrackChanged,
-                                              (track) => TrackChanged?.Invoke(track) ?? Task.CompletedTask),
-
-                _connection.On<SessionId>(Callbacks.ListenerConnected,
-                                               (user) => ListenerConnected?.Invoke(user.Id) ?? Task.CompletedTask),
-
-                _connection.On(Callbacks.SessionStoped, ()=> SessionOwnerStoped?.Invoke() ?? Task.CompletedTask),
-
-                _connection.On<SessionId>(Callbacks.ListenerDisconnected,
-                                               (user) => ListenerDisconnected?.Invoke(user.Id) ?? Task.CompletedTask),
-            };
+            SubsribeToCallbacks();
 
             await _connection.StartAsync();
 
             _logger.Info("Успешное подключение");
 
         }
+
+        
 
         public async Task<PlaylistTrack> GetCurrentTrackInSession()
         {
@@ -250,6 +244,28 @@ namespace MusicX.Services
             if (_connection is null) throw new Exception("Сначала необходимо подключится к серверу");
 
             var result = await _connection.InvokeAsync<PlaylistTrack>(ListenTogetherMethods.GetCurrentTrack);
+
+            return result;
+        }
+
+        public async Task<User> GetOwnerSessionInfoAsync()
+        {
+            _logger.Info("Получение получение информации о владельце сессии.");
+
+            if (_connection is null) throw new Exception("Сначала необходимо подключится к серверу");
+
+            var result = await _connection.InvokeAsync<User>(ListenTogetherMethods.GetOwnerSessionInfoAsync);
+
+            return result;
+        }
+
+        public async Task<UsersList> GetListenersInSession()
+        {
+            _logger.Info("Получение получение информации о списке слушателей.");
+
+            if (_connection is null) throw new Exception("Сначала необходимо подключится к серверу");
+
+            var result = await _connection.InvokeAsync<UsersList>(ListenTogetherMethods.GetListenersInSession);
 
             return result;
         }
@@ -273,9 +289,9 @@ namespace MusicX.Services
 
         private async Task<string> GetListenTogetherHostAsync()
         {
-#if DEBUG
-            return "https://localhost:5001";
-#endif
+//#if DEBUG
+//            return "https://localhost:5001";
+//#endif
             try
             {
                 _logger.Info("Получение адресса сервера Послушать вместе");
@@ -309,6 +325,26 @@ namespace MusicX.Services
             PlayerMode = PlayerMode.None;
             SessionId = null;
             _connection = null;
+        }
+
+        private void SubsribeToCallbacks()
+        {
+            _subscriptions = new[]
+            {
+                _connection.On<PlayState>(Callbacks.PlayStateChanged,
+                                               (state) => PlayStateChanged?.Invoke(state.Position, state.Pause) ?? Task.CompletedTask),
+
+                _connection.On<PlaylistTrack>(Callbacks.TrackChanged,
+                                              (track) => TrackChanged?.Invoke(track) ?? Task.CompletedTask),
+
+                _connection.On<User>(Callbacks.ListenerConnected,
+                                               (user) => ListenerConnected?.Invoke(user) ?? Task.CompletedTask),
+
+                _connection.On(Callbacks.SessionStoped, ()=> SessionOwnerStoped?.Invoke() ?? Task.CompletedTask),
+
+                _connection.On<SessionId>(Callbacks.ListenerDisconnected,
+                                               (user) => ListenerDisconnected?.Invoke(user.Id) ?? Task.CompletedTask),
+            };
         }
 
         public void Dispose()

@@ -5,9 +5,9 @@ namespace MusicX.Server.Models
 {
     public class ListenTogetherSession
     {
-        public string Owner { get; set; }
+        public User Owner { get; set; }
 
-        public List<string> Listeners { get; set; }
+        public List<User> Listeners { get; set; }
 
         public PlaylistTrack CurrentTrack { get; set; }
     }

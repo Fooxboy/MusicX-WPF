@@ -70,6 +70,7 @@ namespace MusicX.Controls
             listenTogetherService.StartedSession += ListenTogetherStartedSession;
             listenTogetherService.SessionOwnerStoped += ListenTogetherStopedSession;
             listenTogetherService.SessionStoped += ListenTogetherSessionStoped;
+            listenTogetherService.LeaveSession += ListenTogetherStopedSession;
             this.MouseWheel += PlayerControl_MouseWheel;
             
             Queue.ItemsSource = playerService.Tracks;
