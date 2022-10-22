@@ -1118,5 +1118,56 @@ namespace MusicX.Core.Services
             }
         }
 
+        public async Task FollowOwner(long ownerId)
+        {
+            try
+            {
+                logger.Info($"Invoke 'audio.followOwner' with ownerId ");
+                var parameters = new VkParameters
+                {
+                    
+                    {"device_id", deviceId},
+                    
+                    {"owner_id", ownerId},
+                };
+
+                var json = await apiInvoke.InvokeAsync("audio.followOwner", parameters);
+                logger.Debug("RESULT OF 'audio.followOwner'" + json);
+                
+                logger.Info("Successful invoke 'audio.followOwner' ");
+            }
+            catch(Exception ex)
+            {
+                logger.Error("VK API ERROR:");
+                logger.Error(ex, ex.Message);
+                throw;
+            }   
+        }
+        
+        public async Task UnfollowOwner(long ownerId)
+        {
+            try
+            {
+                logger.Info($"Invoke 'audio.unfollowOwner' with ownerId ");
+                var parameters = new VkParameters
+                {
+                    
+                    {"device_id", deviceId},
+                    
+                    {"owner_id", ownerId},
+                };
+
+                var json = await apiInvoke.InvokeAsync("audio.unfollowOwner", parameters);
+                logger.Debug("RESULT OF 'audio.unfollowOwner'" + json);
+                
+                logger.Info("Successful invoke 'audio.unfollowOwner' ");
+            }
+            catch(Exception ex)
+            {
+                logger.Error("VK API ERROR:");
+                logger.Error(ex, ex.Message);
+                throw;
+            }   
+        }
     }
 }

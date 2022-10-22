@@ -16,6 +16,7 @@ public class BlockButtonViewModel : BaseViewModel
 {
     private readonly Artist? _artist;
     private readonly Block? _parentBlock;
+
     public BlockButtonViewModel(Button action, Artist? artist = null, Block? parentBlock = null)
     {
         _artist = artist;
@@ -48,6 +49,10 @@ public class BlockButtonViewModel : BaseViewModel
             case "open_section":
                 Icon = SymbolRegular.Open24;
                 Text = Action.Title ?? "Открыть";
+                break;
+            case "music_follow_owner":
+                Icon = Action.IsFollowing ? SymbolRegular.Checkmark24 : SymbolRegular.Add24;
+                Text = Action.IsFollowing ? "Вы подписаны на музыку" : "Подписаться на музыку";
                 break;
             default:
                 Icon = SymbolRegular.AlertOn24;
@@ -106,6 +111,19 @@ public class BlockButtonViewModel : BaseViewModel
                     var navigation = StaticService.Container.GetRequiredService<NavigationService>();
 
                     navigation.OpenSection(Action.SectionId);
+                    break;
+                }
+                case "music_follow_owner":
+                {
+                    var vkService = StaticService.Container.GetRequiredService<VkService>();
+
+                    if (Action.IsFollowing)
+                        await vkService.UnfollowOwner(Action.OwnerId);
+                    else
+                        await vkService.FollowOwner(Action.OwnerId);
+
+                    Action.IsFollowing = !Action.IsFollowing;
+                    Refresh();
                     break;
                 }
             }

@@ -33,5 +33,11 @@ namespace MusicX.Core.Models
         
         [JsonProperty("artist_id")]
         public string ArtistId { get; set; }
+        
+        [JsonProperty("is_following")]
+        public bool IsFollowing { get; set; }
+        
+        [JsonProperty("owner_id")]
+        public long OwnerId { get; set; }
     }
 }
