@@ -71,6 +71,7 @@ namespace MusicX.Views
                 collection.AddTransient<PlaylistSelectorModalViewModel>();
                 collection.AddTransient<CreatePlaylistModalViewModel>();
                 collection.AddTransient<TracksSelectorModalViewModel>();
+                collection.AddTransient<TrackNotAvalibleModalViewModel>();
                 collection.AddSingleton<DownloaderViewModel>();
                 collection.AddSingleton<VKMixViewModel>();
                 collection.AddSingleton<BoomProfileViewModel>();

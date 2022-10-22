@@ -11,12 +11,13 @@
     Title="{Binding Title}"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    Width="280" Height="550"
+    Width="480" Height="550"
     d:DataContext="{d:DesignInstance modals:TrackNotAvalibleModalViewModel}"
     mc:Ignorable="d">
 
     <Grid>
-        <Grid x:Name="LoadingGrid" Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <Grid x:Name="LoadingGrid"
+              Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}">
             <wpfui:ProgressRing
                 Width="60"
                 Height="60"
@@ -26,19 +27,27 @@
                 IsIndeterminate="True" />
         </Grid>
 
-        <Grid x:Name="ContentGrid" Visibility="{Binding IsLoaded, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                <Image
-                    Source="{Binding Url}"
-                    Width="60"
-                    Height="60" />
-                <TextBlock
-                    Margin="0,10,0,0"
-                    HorizontalAlignment="Center"
-                    FontSize="15"
-                    Opacity="0.6"
-                    Text="{Binding Description}" />
-            </StackPanel>
-        </Grid>
+        <TextBlock FontFamily="{StaticResource VKSansDemiBold}"
+                   FontSize="20"
+                   VerticalAlignment="Top"
+                   HorizontalAlignment="Center"
+                   TextWrapping="Wrap"
+                   TextAlignment="Center"
+                   Text="{Binding Subtitle}" />
+
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Visibility="{Binding IsLoaded, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Image
+                Source="{Binding Url}"
+                Width="60"
+                Height="60" />
+            <TextBlock
+                Margin="0,10,0,0"
+                HorizontalAlignment="Center"
+                FontSize="15"
+                Opacity="0.6"
+                TextWrapping="Wrap"
+                Text="{Binding Description}" />
+        </StackPanel>
     </Grid>
 </Page>
