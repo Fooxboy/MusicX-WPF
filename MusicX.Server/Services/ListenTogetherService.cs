@@ -22,11 +22,10 @@ namespace MusicX.Server.Services
 
         public async Task<string?> StartSessionAsync(string ownerConnectionId, long ownerVkId)
         {
-            _logger.LogInformation($"Пользователь {ownerConnectionId} создал сессию совместного прослушивания");
 
             var session = _sessionManager.GetSessionByOwner(ownerConnectionId);
 
-            if (session is not null) return null;
+            if (session is not null) throw new Exception("Уже существует сессия.");
 
             var owner = new User(ownerConnectionId, ownerVkId);
 
@@ -41,17 +40,12 @@ namespace MusicX.Server.Services
 
         public async Task<bool> JoinToSessionAsync(string listenerConnectionId, long listenerVkId,  string ownerConnectionId)
         {
-            _logger.LogInformation($"Пользователь {listenerConnectionId} подключился к сессии совместного прослушивания {ownerConnectionId}");
 
             //todo: на будущее можем сделать у сессий разные id, сейчас их id равен owner. Поэтому в названиях противоречие
 
-            var currentSession = _sessionManager.GetSessionByListener(listenerVkId);
-
-            if (currentSession != null) return false;
-
             var session = _sessionManager.GetSessionByOwner(ownerConnectionId);
 
-            if(session is null) return false;
+            if(session is null) throw new Exception("Не найдена сессия.");
 
             await _hub.Groups.AddToGroupAsync(listenerConnectionId, session.Owner.ConnectionId);
 
@@ -68,7 +62,6 @@ namespace MusicX.Server.Services
 
         public async Task<bool> LeaveSessionAsync(string connectionId, long vkId)
         {
-            _logger.LogInformation($"Пользователь {connectionId} покинул сессию");
 
             var session = _sessionManager.GetSessionByListener(vkId);
 
@@ -138,7 +131,7 @@ namespace MusicX.Server.Services
         {
             var session = _sessionManager.GetSessionByListener(vkId);
 
-            if (session is null) return null;
+            if (session is null) throw new Exception("сессия не найдена");
 
             return session.CurrentTrack;
         }

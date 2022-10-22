@@ -14,7 +14,6 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Behaviors;
-using MusicX.Core.Models;
 using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
 using MusicX.ViewModels;
@@ -23,6 +22,7 @@ using System.Collections.Generic;
 using Microsoft.AppCenter.Crashes;
 using MusicX.Shared.Player;
 using MusicX.Shared.ListenTogether;
+using System.Windows.Media;
 
 namespace MusicX.Controls
 {
@@ -49,10 +49,15 @@ namespace MusicX.Controls
             set => SetValue(IsPlayingProperty, value);
         }
 
+
+        private List<Listener> connectedListeners;
         private readonly PlayerService playerService;
         private readonly ListenTogetherService listenTogetherService;
         private readonly Logger logger;
         private ConfigModel config;
+        private Dictionary<int, Border> UserBorderAvatars;
+        private Dictionary<int, ImageBrush> UserAvatars;
+
         public PlayerControl()
         {
             InitializeComponent();
@@ -71,9 +76,26 @@ namespace MusicX.Controls
             listenTogetherService.SessionOwnerStoped += ListenTogetherStopedSession;
             listenTogetherService.SessionStoped += ListenTogetherSessionStoped;
             listenTogetherService.LeaveSession += ListenTogetherStopedSession;
+            listenTogetherService.ListenerConnected += ListenTogetherListenerConnected;
+            listenTogetherService.ListenerDisconnected += ListenTogetherServiceListenerDisconnected;
             this.MouseWheel += PlayerControl_MouseWheel;
             
             Queue.ItemsSource = playerService.Tracks;
+
+            UserBorderAvatars = new Dictionary<int, Border>()
+            {
+                {1, UserBorderAvatar1},
+                {2, UserBorderAvatar2},
+                {3, UserBorderAvatar3},
+            };
+
+            UserAvatars = new Dictionary<int, ImageBrush>()
+            {
+                {1, UserAvatar1 },
+                {2, UserAvatar2 },
+                {3, UserAvatar3 },
+            };
+
         }
 
         private void PlayerService_TrackLoadingStateChanged(object? sender, PlayerLoadingEventArgs e)
@@ -611,6 +633,21 @@ namespace MusicX.Controls
             ButtonsStackPanel.Visibility = Visibility.Collapsed;
             DownloadButton.Visibility = Visibility.Collapsed;
             QueueButton.Visibility = Visibility.Collapsed;
+
+            ListenTogether.Visibility = Visibility.Visible;
+            Owner.Visibility = Visibility.Collapsed;
+            Listener.Visibility = Visibility.Visible;
+
+            ListenTogetherBar.Width = new GridLength(340);
+            var vkService = StaticService.Container.GetRequiredService<VkService>();
+
+            var ownerInfo = await listenTogetherService.GetOwnerSessionInfoAsync();
+
+            var owner = await vkService.GetUserAsync(ownerInfo.VkId);
+
+            OwnerAvatar.ImageSource = new BitmapImage(owner.Photo100);
+            OwnerName.Text = $"{owner.FirstName} {owner.LastName}";
+
         }
 
         /// <summary>
@@ -623,7 +660,14 @@ namespace MusicX.Controls
             ButtonsStackPanel.Visibility = Visibility.Visible;
             DownloadButton.Visibility = Visibility.Visible;
             QueueButton.Visibility = Visibility.Visible;
+
+            ListenTogetherBar.Width = new GridLength(0);
+            connectedListeners.Clear();
+            ListenTogether.Visibility = Visibility.Collapsed;
+            Owner.Visibility = Visibility.Collapsed;
+            Listener.Visibility = Visibility.Collapsed;
         }
+
 
         /// <summary>
         /// Владелец запустил сессию
@@ -632,7 +676,11 @@ namespace MusicX.Controls
         /// <exception cref="NotImplementedException"></exception>
         private async Task ListenTogetherStartedSession()
         {
-            throw new NotImplementedException();
+            ListenTogetherBar.Width = new GridLength(240);
+            connectedListeners = new List<Listener>();
+            ListenTogether.Visibility = Visibility.Visible;
+            Owner.Visibility = Visibility.Visible;
+            CountListeners.Text = connectedListeners.Count.ToString();
         }
 
         /// <summary>
@@ -642,7 +690,86 @@ namespace MusicX.Controls
         /// <exception cref="NotImplementedException"></exception>
         private async Task ListenTogetherSessionStoped()
         {
-            
+            ListenTogetherBar.Width = new GridLength(0);
+            connectedListeners.Clear();
+            ListenTogether.Visibility = Visibility.Collapsed;
+            Owner.Visibility = Visibility.Collapsed;
+        }
+
+
+        private async Task ListenTogetherListenerConnected(Shared.ListenTogether.User listener)
+        {
+            var vkService = StaticService.Container.GetRequiredService<VkService>();
+
+            var user = await vkService.GetUserAsync(listener.VkId);
+
+            connectedListeners.Add(new Listener() { Ids = listener, Name = user.FirstName + " " + user.LastName, Photo = user.Photo100.ToString() });
+            CountListeners.Text = connectedListeners.Count.ToString();
+
+            if(UserBorderAvatars.TryGetValue(connectedListeners.Count, out var border))
+            {
+                border.Visibility = Visibility.Visible;
+            }
+
+            if(UserAvatars.TryGetValue(connectedListeners.Count, out var avatar))
+            {
+                avatar.ImageSource = new BitmapImage(user.Photo100);
+            }
+        }
+
+        private async Task ListenTogetherServiceListenerDisconnected(string connectionId)
+        {
+            var listener = connectedListeners.SingleOrDefault(l => l.Ids.ConnectionId == connectionId);
+
+            if (listener is null) return;
+            var position = connectedListeners.IndexOf(listener);
+            connectedListeners.Remove(listener);
+            CountListeners.Text = connectedListeners.Count.ToString();
+
+            for(var i = 0; i < connectedListeners.Count; i++)
+            {
+                var usr = connectedListeners[i];
+                if (UserBorderAvatars.TryGetValue(i+1, out var border))
+                {
+                    border.Visibility = Visibility.Visible;
+                }
+
+                if (UserAvatars.TryGetValue(i+1, out var avatar))
+                {
+                    avatar.ImageSource = new BitmapImage(new(usr.Photo));
+                }
+            }
+
+            if(connectedListeners.Count < 3)
+            {
+                if (UserBorderAvatars.TryGetValue(connectedListeners.Count + 1, out var border))
+                {
+                    border.Visibility = Visibility.Collapsed;
+                }
+            }
+        }
+
+        private async void ListenTogetherStart_Click(object sender, RoutedEventArgs e)
+        {
+            this.ListenTogetherStart.Visibility = Visibility.Collapsed;
+
+            var configService = StaticService.Container.GetRequiredService<ConfigService>();
+
+            var config = await configService.GetConfig();
+
+            await listenTogetherService.StartSessionAsync(config.UserId);
+
+            await listenTogetherService.ChangeTrackAsync(this.playerService.CurrentTrack);
+        }
+
+        private async void StopSession(object sender, RoutedEventArgs e)
+        {
+            await listenTogetherService.StopPlaySessionAsync();
+        }
+
+        private async void DisconnectSession(object sender, RoutedEventArgs e)
+        {
+            await listenTogetherService.LeavePlaySessionAsync();
         }
     }
 }

@@ -67,6 +67,12 @@
 
     </UserControl.Resources>
     <Grid>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition x:Name="ListenTogetherBar" Width="0"/>
+        </Grid.ColumnDefinitions>
+        
         <Rectangle x:Name="ShadowShape" Fill="Black" RadiusX="5" RadiusY="5">
             <Rectangle.Effect>
                 <DropShadowEffect BlurRadius="8" ShadowDepth="0" Opacity="0.2" />
@@ -82,6 +88,91 @@
                 </Rectangle.Effect>
             </Rectangle>
         </Border>
+
+        <Grid Grid.Column="1" Visibility="Collapsed" Margin="10,0,0,0" Name="ListenTogether">
+
+            <Rectangle Fill="Black" RadiusX="5" RadiusY="5">
+                <Rectangle.Effect>
+                    <DropShadowEffect BlurRadius="8" ShadowDepth="0" Opacity="0.2" />
+                </Rectangle.Effect>
+            </Rectangle>
+            <Border ClipToBounds="True">
+                <Rectangle  RadiusX="5" RadiusY="5" Margin="7">
+                    <Rectangle.Fill>
+                        <ImageBrush ImageSource="{Binding ElementName=BackgroundCard, Path=ImageSource}" Stretch="UniformToFill" Opacity="0.4" />
+                    </Rectangle.Fill>
+                    <Rectangle.Effect>
+                        <BlurEffect KernelType="Gaussian" Radius="32" />
+                    </Rectangle.Effect>
+                </Rectangle>
+            </Border>
+
+            <Grid Visibility="Collapsed" Name="Owner" Margin="15">
+                <StackPanel>
+                    <TextBlock Text="С вами слушают"  FontFamily="{StaticResource VKSansMedium}"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                        <Grid>
+                            <Border Visibility="Collapsed" Name="UserBorderAvatar1" HorizontalAlignment="Left" Height="35" Width="35" BorderBrush="White" BorderThickness="2" CornerRadius="999">
+                                <Rectangle RadiusX="100" RadiusY="100">
+                                    <Rectangle.Fill>
+                                        <ImageBrush x:Name="UserAvatar1"/>
+                                    </Rectangle.Fill>
+                                </Rectangle>
+                            </Border>
+
+                            <Border Visibility="Collapsed" Name="UserBorderAvatar2" HorizontalAlignment="Left" Height="35" Width="35" Margin="15,0,0,0" BorderBrush="White" BorderThickness="2" CornerRadius="999">
+                                <Rectangle RadiusX="100" RadiusY="100">
+                                    <Rectangle.Fill>
+                                        <ImageBrush x:Name="UserAvatar2"/>
+                                    </Rectangle.Fill>
+                                </Rectangle>
+                            </Border>
+
+                            <Border Visibility="Collapsed" Name="UserBorderAvatar3" HorizontalAlignment="Left" Height="35" Width="35" Margin="35,0,0,0" BorderBrush="White" BorderThickness="2" CornerRadius="999">
+                                <Rectangle RadiusX="100" RadiusY="100">
+                                    <Rectangle.Fill>
+                                        <ImageBrush x:Name="UserAvatar3"/>
+                                    </Rectangle.Fill>
+                                </Rectangle>
+                            </Border>
+
+                        </Grid>
+                        
+                        <TextBlock Name="CountListeners" Margin="10,0,0,0" Text="3" FontSize="19" FontFamily="{StaticResource VKSansDemiBold}"/>
+                        <TextBlock Text="Человека" Margin="5,0,0,0" FontSize="19" FontFamily="{StaticResource VKSansMedium}"/>
+
+                    </StackPanel>
+
+                    <wpfui:Button HorizontalAlignment="Stretch" Height="30" Margin="0,10,0,0" Content="Остановить" Click="StopSession"/>
+
+                </StackPanel>
+            </Grid>
+
+            <Grid Name="Listener" Visibility="Collapsed" Margin="15">
+                <StackPanel>
+                    <TextBlock Text="Вы слушаете вместе с"  FontFamily="{StaticResource VKSansMedium}"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                        <Grid>
+                            <Border HorizontalAlignment="Left" Height="35" Width="35" BorderBrush="White" BorderThickness="2" CornerRadius="999">
+                                <Rectangle RadiusX="100" RadiusY="100">
+                                    <Rectangle.Fill>
+                                        <ImageBrush x:Name="OwnerAvatar"/>
+                                    </Rectangle.Fill>
+                                </Rectangle>
+                            </Border>
+
+                        </Grid>
+
+                        <TextBlock x:Name="OwnerName" Margin="10,4,0,0" Text="" FontSize="20" FontFamily="{StaticResource VKSansDemiBold}"/>
+
+                    </StackPanel>
+
+                    <wpfui:Button HorizontalAlignment="Stretch" Height="30" Margin="0,10,0,0" Content="Отключиться" Click="DisconnectSession"/>
+
+                </StackPanel>
+            </Grid>
+
+        </Grid>
 
         <Grid Margin="18">
             <Grid.RowDefinitions>
@@ -419,6 +510,22 @@
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
+
+                            <wpfui:Button
+                                x:Name="ListenTogetherStart"
+                                Width="40"
+                                Height="40"
+                                Margin="0,0,20,0"
+                                Padding="0"
+                                HorizontalContentAlignment="Center"
+                                Appearance="Transparent"
+                                Click="ListenTogetherStart_Click">
+                                <wpfui:SymbolIcon Symbol="Cloud48" />
+
+                                <wpfui:Button.ToolTip>
+                                    <ToolTip Content="Создать сессию послушать вместе" />
+                                </wpfui:Button.ToolTip>
+                            </wpfui:Button>
 
                             <wpfui:Button
                                 x:Name="DownloadButton"
