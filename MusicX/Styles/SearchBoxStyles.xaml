@@ -135,10 +135,17 @@
                                     </Grid>
 
                                     <Grid Grid.Column="1">
-                                        <Decorator
+                                        <ScrollViewer
                                             x:Name="PART_ContentHost"
-                                            Margin="0"
-                                            VerticalAlignment="Center" />
+                                            VerticalAlignment="Center"
+                                            CanContentScroll="{TemplateBinding ScrollViewer.CanContentScroll}"
+                                            HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                                            IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
+                                            IsTabStop="{TemplateBinding ScrollViewer.IsTabStop}"
+                                            Style="{StaticResource DefaultTextBoxScrollViewerStyle}"
+                                            TextElement.Foreground="{TemplateBinding Foreground}"
+                                            VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                                            Margin="0" />
                                         <TextBlock
                                             x:Name="Placeholder"
                                             Margin="0"
