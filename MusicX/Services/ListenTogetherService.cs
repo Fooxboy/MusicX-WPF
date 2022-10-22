@@ -238,7 +238,7 @@ namespace MusicX.Services
         
 
         public async Task<PlaylistTrack> GetCurrentTrackInSession()
-        {
+            {
             _logger.Info("Получение текущего трека в сессии");
 
             if (_connection is null) throw new Exception("Сначала необходимо подключится к серверу");

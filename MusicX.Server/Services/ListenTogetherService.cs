@@ -22,6 +22,7 @@ namespace MusicX.Server.Services
 
         public async Task<string?> StartSessionAsync(string ownerConnectionId, long ownerVkId)
         {
+            _logger.LogInformation($"Пользователь {owner} создал сессию совместного прослушивания");
 
             var session = _sessionManager.GetSessionByOwner(ownerConnectionId);
 
@@ -40,6 +41,7 @@ namespace MusicX.Server.Services
 
         public async Task<bool> JoinToSessionAsync(string listenerConnectionId, long listenerVkId,  string ownerConnectionId)
         {
+            _logger.LogInformation($"Пользователь {connectionId} подключился к сессии совместного прослушивания {sessionId}");
 
             //todo: на будущее можем сделать у сессий разные id, сейчас их id равен owner. Поэтому в названиях противоречие
 
@@ -66,6 +68,7 @@ namespace MusicX.Server.Services
 
         public async Task<bool> LeaveSessionAsync(string connectionId, long vkId)
         {
+            _logger.LogInformation($"Пользователь {connectionId} покинул сессию");
 
             var session = _sessionManager.GetSessionByListener(vkId);
 
@@ -89,6 +92,8 @@ namespace MusicX.Server.Services
         public async Task<bool> StopSessionAsync(string ownerConnectionId)
         {
             var session = _sessionManager.GetSessionByOwner(ownerConnectionId);
+
+            var session = _sessionManager.GetSessionByOwner(owner);
 
             if (session is null) return true;
 

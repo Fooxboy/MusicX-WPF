@@ -304,7 +304,7 @@ namespace MusicX.Controls
                         var text = new TextBlock();
                         var card = new CardAction()
                         {
-                            Margin = new Thickness(0, 10, 15, 10), 
+                            Margin = new Thickness(0, 10, i + 1 == buttons.Count ? 0 : 15, 10), 
                             Content = text,
                             DataContext = new BlockButtonViewModel(blockButton, Artist, Block),
                         };
@@ -415,6 +415,15 @@ namespace MusicX.Controls
                         return;
                     }
 
+                }
+
+                if (Block.DataType == "music_owners")
+                {
+                    if (Block.Layout.Name == "owner_cell")
+                    {
+                        BlocksPanel.Children.Add(new MusicOwnerCellBlockControl { DataContext = Block.MusicOwners[0] });
+                        return;
+                    }
                 }
 
 

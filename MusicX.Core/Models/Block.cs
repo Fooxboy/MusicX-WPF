@@ -79,6 +79,8 @@ namespace MusicX.Core.Models
         [JsonProperty("placeholder_ids")]
         public List<string> PlaceholdersIds { get; set; } = new List<string>();
 
+        [JsonProperty("music_owners_ids")]
+        public List<string> MusicOwnerIds { get; set; } = new List<string>();
 
         public List<Curator> Curators { get; set; } = new List<Curator>();
         public List<Text> Texts { get; set; } = new List<Text>();
@@ -98,5 +100,6 @@ namespace MusicX.Core.Models
 
         public List<Placeholder> Placeholders { get; set; } = new List<Placeholder>();
 
+        public List<MusicOwner> MusicOwners { get; set; } = new List<MusicOwner>();
     }
 }

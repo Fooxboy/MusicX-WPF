@@ -4,7 +4,7 @@ using MusicX.Services;
 using NLog;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
@@ -148,11 +148,13 @@ namespace MusicX.Views
                 loading.Visibility = Visibility.Collapsed;
                 content.Visibility = Visibility.Collapsed;
                 TwoFactorAuth.Visibility = Visibility.Visible;
+                CodeAccepted = false;
+                Code.Text = string.Empty;
             });
            
             while (!CodeAccepted)
             {
-                Task.Delay(1000);
+                Thread.Sleep(1000);
             }
 
             var text = string.Empty;

@@ -195,6 +195,18 @@ namespace MusicX.Core.Helpers
 
                             }
                         }
+
+                        if (block.MusicOwnerIds.Count > 0)
+                        {
+                            foreach (var ownerId in block.MusicOwnerIds)
+                            {
+                                var owner = response.MusicOwners.SingleOrDefault(b => b.Id == ownerId);
+                        
+                                if (owner == null) continue;
+                        
+                                block.MusicOwners.Add(owner);
+                            }
+                        }
                     }
                 }
             }
@@ -343,6 +355,18 @@ namespace MusicX.Core.Helpers
 
                         response.Block.Curators.Add(curator);
 
+                    }
+                }
+
+                if (response.Block.MusicOwnerIds.Count > 0)
+                {
+                    foreach (var ownerId in response.Block.MusicOwnerIds)
+                    {
+                        var owner = response.MusicOwners.SingleOrDefault(b => b.Id == ownerId);
+                        
+                        if (owner == null) continue;
+                        
+                        response.Block.MusicOwners.Add(owner);
                     }
                 }
 
@@ -602,6 +626,17 @@ namespace MusicX.Core.Helpers
                     }
                 }
 
+                if (block.MusicOwnerIds.Count > 0)
+                {
+                    foreach (var ownerId in block.MusicOwnerIds)
+                    {
+                        var owner = response.MusicOwners.SingleOrDefault(b => b.Id == ownerId);
+                        
+                        if (owner == null) continue;
+                        
+                        block.MusicOwners.Add(owner);
+                    }
+                }
             }
 
           
