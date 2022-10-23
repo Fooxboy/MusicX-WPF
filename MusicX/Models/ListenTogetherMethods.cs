@@ -22,7 +22,7 @@ namespace MusicX.Models
 
         public const string GetCurrentTrack = "GetCurrentTrack";
 
-        public const string GetOwnerSessionInfoAsync = "GetOwnerSessionInfoAsync";
+        public const string GetSessionOwnerInfo = "GetSessionOwnerInfo";
 
         public const string GetListenersInSession = "GetListenersInSession";
     }

@@ -40,9 +40,6 @@ namespace MusicX.Server.Services
 
         public async Task<bool> JoinToSessionAsync(string listenerConnectionId, long listenerVkId,  string ownerConnectionId)
         {
-
-            //todo: на будущее можем сделать у сессий разные id, сейчас их id равен owner. Поэтому в названиях противоречие
-
             var session = _sessionManager.GetSessionByOwner(ownerConnectionId);
 
             if(session is null) throw new Exception("Не найдена сессия.");
@@ -53,7 +50,7 @@ namespace MusicX.Server.Services
 
             _sessionManager.AddListenerToSesstion(session.Owner.ConnectionId, listener);
 
-            await _hub.Clients.User(session.Owner.ConnectionId).SendAsync(Callbacks.ListenerConnected, listener);
+            await _hub.Clients.Client(session.Owner.ConnectionId).SendAsync(Callbacks.ListenerConnected, listener);
 
             _logger.LogInformation($"Пользователь {listenerConnectionId} подключился к сессии совместного прослушивания {ownerConnectionId}");
 
@@ -75,7 +72,7 @@ namespace MusicX.Server.Services
 
             _sessionManager.RemoveListener(session.Owner.ConnectionId, listener);
 
-            await _hub.Clients.User(session.Owner.ConnectionId).SendAsync(Callbacks.ListenerDisconnected, listener);
+            await _hub.Clients.Client(session.Owner.ConnectionId).SendAsync(Callbacks.ListenerDisconnected, listener);
 
             _logger.LogInformation($"Пользователь {connectionId} покинул сессию");
 
@@ -140,9 +137,11 @@ namespace MusicX.Server.Services
         {
             var session = _sessionManager.GetSessionByListener(listenerVkId);
 
-            if (session is null) return null;
+            if (session is null) throw new Exception("Сессия не найдена.") ;
 
-            return session.Owner;
+            var owner = session.Owner;
+
+            return owner;
         }
 
         public async Task<UsersList> GetListenersInSessionAsync(string ownerConnectionId)

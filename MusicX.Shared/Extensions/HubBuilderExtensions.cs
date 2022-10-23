@@ -14,7 +14,8 @@ public static class HubBuilderExtensions
             [0] = typeof(PlaylistTrack),
             [1] = typeof(SessionId),
             [2] = typeof(PlayState),
-            [3] = typeof(ErrorState)
+            [3] = typeof(ErrorState),
+            [4] = typeof(User),
         });
     }
 }

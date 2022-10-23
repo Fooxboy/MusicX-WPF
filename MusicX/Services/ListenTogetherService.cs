@@ -51,7 +51,7 @@ namespace MusicX.Services
         /// <summary>
         /// От сесси отключился слушатель
         /// </summary>
-        public event Func<string, Task>? ListenerDisconnected;
+        public event Func<User, Task>? ListenerDisconnected;
 
         /// <summary>
         /// Владелец сессии закрыл её.
@@ -254,7 +254,7 @@ namespace MusicX.Services
 
             if (_connection is null) throw new Exception("Сначала необходимо подключится к серверу");
 
-            var result = await _connection.InvokeAsync<User>(ListenTogetherMethods.GetOwnerSessionInfoAsync);
+            var result = await _connection.InvokeAsync<User>(ListenTogetherMethods.GetSessionOwnerInfo);
 
             return result;
         }
@@ -342,8 +342,8 @@ namespace MusicX.Services
 
                 _connection.On(Callbacks.SessionStoped, ()=> SessionOwnerStoped?.Invoke() ?? Task.CompletedTask),
 
-                _connection.On<SessionId>(Callbacks.ListenerDisconnected,
-                                               (user) => ListenerDisconnected?.Invoke(user.Id) ?? Task.CompletedTask),
+                _connection.On<User>(Callbacks.ListenerDisconnected,
+                                               (user) => ListenerDisconnected?.Invoke(user) ?? Task.CompletedTask),
             };
         }
 

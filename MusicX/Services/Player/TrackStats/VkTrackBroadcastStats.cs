@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using MusicX.Core.Services;
 using MusicX.Models.Enums;
-using MusicX.Services.Player.Playlists;
 using MusicX.Shared.Player;
 
 namespace MusicX.Services.Player.TrackStats;

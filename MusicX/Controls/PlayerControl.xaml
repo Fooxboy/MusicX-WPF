@@ -156,7 +156,7 @@
                             <Border HorizontalAlignment="Left" Height="35" Width="35" BorderBrush="White" BorderThickness="2" CornerRadius="999">
                                 <Rectangle RadiusX="100" RadiusY="100">
                                     <Rectangle.Fill>
-                                        <ImageBrush x:Name="OwnerAvatar"/>
+                                        <ImageBrush Stretch="Uniform" x:Name="OwnerAvatar"/>
                                     </Rectangle.Fill>
                                 </Rectangle>
                             </Border>

@@ -163,7 +163,7 @@ public class ListenTogetherHub : Hub
 
             var res = await _listenTogetherService.GetOwnerSessionInfoAsync(listenerVkId);
 
-            return res;
+            return new(res.ConnectionId, res.VkId);
 
         }
         catch (Exception ex)
