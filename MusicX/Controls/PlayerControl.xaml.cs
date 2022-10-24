@@ -722,6 +722,8 @@ namespace MusicX.Controls
                 ListenTogether.Visibility = Visibility.Visible;
                 Owner.Visibility = Visibility.Visible;
                 CountListeners.Text = connectedListeners.Count.ToString();
+                const string text = "Человек";
+                ListenersCountText.Text = connectedListeners.Count % 10 is 2 or 3 or 4 ? text + "а" : text;
             }catch(Exception ex)
             {
                 var notificationsService = StaticService.Container.GetRequiredService<NotificationsService>();
@@ -783,6 +785,8 @@ namespace MusicX.Controls
                 var user = await vkService.GetUserAsync(listener.VkId);
 
                 connectedListeners.Add(new Listener() { Ids = listener, Name = user.FirstName + " " + user.LastName, Photo = user.Photo200.ToString() });
+                const string text = "Человек";
+                ListenersCountText.Text = connectedListeners.Count % 10 is 2 or 3 or 4 ? text + "а" : text;
                 CountListeners.Text = connectedListeners.Count.ToString();
 
                 if (UserBorderAvatars.TryGetValue(connectedListeners.Count, out var border))
@@ -823,6 +827,8 @@ namespace MusicX.Controls
                 var position = connectedListeners.IndexOf(listener);
                 connectedListeners.Remove(listener);
                 CountListeners.Text = connectedListeners.Count.ToString();
+                const string text = "Человек";
+                ListenersCountText.Text = connectedListeners.Count % 10 is 2 or 3 or 4 ? text + "а" : text;
 
                 for (var i = 0; i < connectedListeners.Count; i++)
                 {

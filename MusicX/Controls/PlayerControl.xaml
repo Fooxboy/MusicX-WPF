@@ -139,7 +139,7 @@
                         </Grid>
                         
                         <TextBlock Name="CountListeners" Margin="10,0,0,0" Text="3" FontSize="19" FontFamily="{StaticResource VKSansDemiBold}"/>
-                        <TextBlock Text="Человека" Margin="5,0,0,0" FontSize="19" FontFamily="{StaticResource VKSansMedium}"/>
+                        <TextBlock Name="ListenersCountText" Text="Человека" Margin="5,0,0,0" FontSize="19" FontFamily="{StaticResource VKSansMedium}"/>
 
                     </StackPanel>
 
