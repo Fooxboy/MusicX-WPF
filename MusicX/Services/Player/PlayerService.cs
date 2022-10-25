@@ -161,15 +161,11 @@ public class PlayerService
         if (!playlist.CanLoad)
             throw new InvalidOperationException("Playlist should be loadable for first play");
 
-        if (!Application.Current.Dispatcher.CheckAccess())
-        {
-            await Application.Current.Dispatcher.InvokeAsync(() => PlayAsync(playlist).SafeFireAndForget());
-        }
-
         try
         {
             CurrentPlaylist = playlist;
-            CurrentPlaylistChanged?.Invoke(this, EventArgs.Empty);
+            Application.Current.Dispatcher.BeginInvoke(
+                () => CurrentPlaylistChanged?.Invoke(this, EventArgs.Empty));
 
             Task? firstTrackTask = null;
             if (firstTrack is not null)
@@ -194,7 +190,8 @@ public class PlayerService
                         _statsListeners.Select(b => b.TrackChangedAsync(CurrentTrack, firstTrack, ChangeReason.PlaylistChange)));
             }
 
-            QueueLoadingStateChanged?.Invoke(this, new(PlayerLoadingState.Started));
+            Application.Current.Dispatcher.BeginInvoke(
+                () => QueueLoadingStateChanged?.Invoke(this, new(PlayerLoadingState.Started)));
 
             var loadTask = playlist.LoadAsync().ToArrayAsync().AsTask();
 
@@ -230,7 +227,8 @@ public class PlayerService
         }
         finally
         {
-            QueueLoadingStateChanged.Invoke(this, new(PlayerLoadingState.Finished));
+            Application.Current.Dispatcher.BeginInvoke(
+                () => QueueLoadingStateChanged?.Invoke(this, new(PlayerLoadingState.Finished)));
         }
     }
 

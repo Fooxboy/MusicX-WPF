@@ -19,6 +19,7 @@ using Wpf.Ui.Controls;
 using System.Collections.Generic;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AspNetCore.SignalR.Client;
+using MusicX.ViewModels.Controls;
 
 namespace MusicX.Views
 {
@@ -76,6 +77,7 @@ namespace MusicX.Views
                 collection.AddSingleton<DownloaderViewModel>();
                 collection.AddSingleton<VKMixViewModel>();
                 collection.AddSingleton<BoomProfileViewModel>();
+                collection.AddTransient<ListenTogetherControlViewModel>();
 
                 collection.AddSingleton<NavigationService>();
                 collection.AddSingleton<ConfigService>();

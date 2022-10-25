@@ -197,15 +197,72 @@
                 <DropShadowEffect Color="Black" Opacity="0.2" ShadowDepth="0" BlurRadius="20"/>
             </Rectangle.Effect>
         </Rectangle>-->
-        
+
         <StackPanel Grid.Row="1" VerticalAlignment="Bottom">
-            <wpfui:Snackbar
-                x:Name="RootSnackbar"
-                MaxWidth="600"
-                Margin="0,0,0,20"
-                Icon="Info20"
-                CloseButtonEnabled="True"
-                Timeout="5000" />
+            <StackPanel.Resources>
+                <Thickness x:Key="ListenTogetherShownThickness"
+                           Right="250"
+                           Bottom="10" />
+                <Thickness x:Key="ListenTogetherHiddenThickness"
+                           Right="250"
+                           Bottom="-2000" />
+
+                <Storyboard x:Key="ListenTogetherHideAnimation">
+                    <DoubleAnimation Storyboard.Target="{Binding ElementName=ListenTogetherCard}"
+                                     Storyboard.TargetProperty="Height" From="200"
+                                     To="0" Duration="0:0:0.3">
+                        <DoubleAnimation.EasingFunction>
+                            <PowerEase EasingMode="EaseIn" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                    <ThicknessAnimationUsingKeyFrames
+                        BeginTime="00:00:00"
+                        Storyboard.Target="{Binding ElementName=ListenTogetherCard}"
+                        Storyboard.TargetProperty="Margin">
+                        <SplineThicknessKeyFrame KeyTime="00:00:00"
+                                                 Value="{StaticResource ListenTogetherShownThickness}" />
+                        <SplineThicknessKeyFrame KeyTime="00:00:.2"
+                                                 Value="{StaticResource ListenTogetherHiddenThickness}" />
+                    </ThicknessAnimationUsingKeyFrames>
+                </Storyboard>
+                <Storyboard x:Key="ListenTogetherShowAnimation">
+                    <DoubleAnimation Storyboard.Target="{Binding ElementName=ListenTogetherCard}"
+                                     Storyboard.TargetProperty="Height" From="0"
+                                     To="200" Duration="0:0:0.3">
+                        <DoubleAnimation.EasingFunction>
+                            <PowerEase EasingMode="EaseIn" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                    <ThicknessAnimationUsingKeyFrames
+                        BeginTime="00:00:00"
+                        Storyboard.Target="{Binding ElementName=ListenTogetherCard}"
+                        Storyboard.TargetProperty="Margin">
+                        <SplineThicknessKeyFrame KeyTime="00:00:00"
+                                                 Value="{StaticResource ListenTogetherHiddenThickness}" />
+                        <SplineThicknessKeyFrame KeyTime="00:00:.1"
+                                                 Value="{StaticResource ListenTogetherShownThickness}" />
+                    </ThicknessAnimationUsingKeyFrames>
+                </Storyboard>
+            </StackPanel.Resources>
+
+            <Grid>
+                <wpfui:Snackbar
+                    x:Name="RootSnackbar"
+                    MaxWidth="600"
+                    Margin="0,0,0,20"
+                    Icon="Info20"
+                    CloseButtonEnabled="True"
+                    Timeout="5000"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Bottom" />
+                <wpfui:Card Margin="{StaticResource ListenTogetherHiddenThickness}"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Bottom"
+                            Name="ListenTogetherCard"
+                            Background="#232323">
+                    <controls:ListenTogetherControl />
+                </wpfui:Card>
+            </Grid>
 
             <controls:PlayerControl
                 x:Name="playerControl"

@@ -48,22 +48,16 @@ namespace MusicX.Controls
             get => (bool)GetValue(IsPlayingProperty);
             set => SetValue(IsPlayingProperty, value);
         }
-
-
-        private List<Listener> connectedListeners;
+        
         private readonly PlayerService playerService;
-        private readonly ListenTogetherService listenTogetherService;
         private readonly Logger logger;
         private ConfigModel config;
-        private Dictionary<int, Border> UserBorderAvatars;
-        private Dictionary<int, ImageBrush> UserAvatars;
 
         public PlayerControl()
         {
             InitializeComponent();
 
             this.playerService = StaticService.Container.GetRequiredService<PlayerService>();
-            this.listenTogetherService = StaticService.Container.GetRequiredService<ListenTogetherService>();
             this.logger = StaticService.Container.GetRequiredService<Logger>();
             playerService.PlayStateChangedEvent += PlayerService_PlayStateChangedEvent;
             playerService.PositionTrackChangedEvent += PlayerService_PositionTrackChangedEvent;
@@ -71,31 +65,9 @@ namespace MusicX.Controls
             playerService.QueueLoadingStateChanged += PlayerService_QueueLoadingStateChanged;
             playerService.TrackLoadingStateChanged += PlayerService_TrackLoadingStateChanged;
 
-            listenTogetherService.ConnectedToSession += ListenTogetherConnectedToSession;
-            listenTogetherService.StartedSession += ListenTogetherStartedSession;
-            listenTogetherService.SessionOwnerStoped += ListenTogetherStopedSession;
-            listenTogetherService.SessionStoped += ListenTogetherSessionStoped;
-            listenTogetherService.LeaveSession += ListenTogetherStopedSession;
-            listenTogetherService.ListenerConnected += ListenTogetherListenerConnected;
-            listenTogetherService.ListenerDisconnected += ListenTogetherServiceListenerDisconnected;
             this.MouseWheel += PlayerControl_MouseWheel;
             
             Queue.ItemsSource = playerService.Tracks;
-
-            UserBorderAvatars = new Dictionary<int, Border>()
-            {
-                {1, UserBorderAvatar1},
-                {2, UserBorderAvatar2},
-                {3, UserBorderAvatar3},
-            };
-
-            UserAvatars = new Dictionary<int, ImageBrush>()
-            {
-                {1, UserAvatar1 },
-                {2, UserAvatar2 },
-                {3, UserAvatar3 },
-            };
-
         }
 
         private void PlayerService_TrackLoadingStateChanged(object? sender, PlayerLoadingEventArgs e)
@@ -241,12 +213,6 @@ namespace MusicX.Controls
         private void PlayerService_PlayStateChangedEvent(object? sender, EventArgs e)
         {
             IsPlaying = playerService.IsPlaying;
-        }
-
-        Rect rect = new Rect(0, 0, 0, 100);
-        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            rect.Width = this.ActualWidth;
         }
 
         private void PositionSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -516,11 +482,6 @@ namespace MusicX.Controls
 
         }
 
-        private async void UserControl_KeyDown(object sender, KeyEventArgs e)
-        {
-           
-        }
-
         private void TrackTitle_MouseEnter(object sender, MouseEventArgs e)
         {
             if (AutoScrollBehavior.GetController(TitleScroll) is { } controller)
@@ -621,334 +582,6 @@ namespace MusicX.Controls
         {
             playerService.IsMuted = !playerService.IsMuted;
             UpdateSpeakerIcon();
-        }
-
-        /// <summary>
-        /// Пользователь подключился как слушатель
-        /// </summary>
-        /// <param name="arg"></param>
-        /// <returns></returns>
-        private async Task ListenTogetherConnectedToSession(PlaylistTrack playlistTrack)
-        {
-            try
-            {
-                ButtonsStackPanel.Visibility = Visibility.Collapsed;
-                DownloadButton.Visibility = Visibility.Collapsed;
-                QueueButton.Visibility = Visibility.Collapsed;
-
-                ListenTogether.Visibility = Visibility.Visible;
-                Owner.Visibility = Visibility.Collapsed;
-                Listener.Visibility = Visibility.Visible;
-
-                ListenTogetherBar.Width = new GridLength(340);
-
-                var vkService = StaticService.Container.GetRequiredService<VkService>();
-
-                var ownerInfo = await listenTogetherService.GetOwnerSessionInfoAsync();
-
-                var owner = await vkService.GetUserAsync(ownerInfo.VkId);
-
-                OwnerAvatar.ImageSource = new BitmapImage(owner.Photo200);
-                OwnerName.Text = $"{owner.FirstName} {owner.LastName}";
-
-            }catch(Exception ex)
-            {
-                var notificationsService = StaticService.Container.GetRequiredService<NotificationsService>();
-
-                notificationsService.Show("Ошибка остановки сессии", "При остановке сессии произошла ошибка");
-
-                logger.Error(ex, ex.Message);
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-            }
-        }
-
-        /// <summary>
-        /// Пользователь оставил сессию
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        private async Task ListenTogetherStopedSession()
-        {
-            try
-            {
-                ButtonsStackPanel.Visibility = Visibility.Visible;
-                DownloadButton.Visibility = Visibility.Visible;
-                QueueButton.Visibility = Visibility.Visible;
-
-                ListenTogetherBar.Width = new GridLength(0);
-                if (connectedListeners != null) connectedListeners.Clear();
-                ListenTogether.Visibility = Visibility.Collapsed;
-                Owner.Visibility = Visibility.Collapsed;
-                Listener.Visibility = Visibility.Collapsed;
-            }catch(Exception ex)
-            {
-                var notificationsService = StaticService.Container.GetRequiredService<NotificationsService>();
-
-                notificationsService.Show("Ошибка остановки сессии", "При остановке сессии произошла ошибка");
-                logger.Error(ex, ex.Message);
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-            }
-           
-        }
-
-
-        /// <summary>
-        /// Владелец запустил сессию
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        private async Task ListenTogetherStartedSession()
-        {
-            try
-            {
-                ListenTogetherBar.Width = new GridLength(240);
-                connectedListeners = new List<Listener>();
-                ListenTogether.Visibility = Visibility.Visible;
-                Owner.Visibility = Visibility.Visible;
-                CountListeners.Text = connectedListeners.Count.ToString();
-                const string text = "Человек";
-                ListenersCountText.Text = connectedListeners.Count % 10 is 2 or 3 or 4 ? text + "а" : text;
-            }catch(Exception ex)
-            {
-                var notificationsService = StaticService.Container.GetRequiredService<NotificationsService>();
-
-                notificationsService.Show("Ошибка остановки сессии", "При остановке сессии произошла ошибка");
-                logger.Error(ex, ex.Message);
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-            }
-        }
-         
-
-        /// <summary>
-        /// Владелец остановил сессию.
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        private async Task ListenTogetherSessionStoped()
-        {
-            try
-            {
-                this.ListenTogetherStart.Visibility = Visibility.Visible;
-                ListenTogetherBar.Width = new GridLength(0);
-                connectedListeners.Clear();
-                ListenTogether.Visibility = Visibility.Collapsed;
-                Owner.Visibility = Visibility.Collapsed;
-            }catch(Exception ex)
-            {
-                var notificationsService = StaticService.Container.GetRequiredService<NotificationsService>();
-
-                notificationsService.Show("Ошибка остановки сессии", "При остановке сессии произошла ошибка");
-                logger.Error(ex, ex.Message);
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-            }
-        }
-
-
-        private async Task ListenTogetherListenerConnected(User listener)
-        {
-            try
-            {
-                var vkService = StaticService.Container.GetRequiredService<VkService>();
-
-                var user = await vkService.GetUserAsync(listener.VkId);
-
-                connectedListeners.Add(new Listener() { Ids = listener, Name = user.FirstName + " " + user.LastName, Photo = user.Photo200.ToString() });
-                const string text = "Человек";
-                ListenersCountText.Text = connectedListeners.Count % 10 is 2 or 3 or 4 ? text + "а" : text;
-                CountListeners.Text = connectedListeners.Count.ToString();
-
-                if (UserBorderAvatars.TryGetValue(connectedListeners.Count, out var border))
-                {
-                    border.Visibility = Visibility.Visible;
-                }
-
-                if (UserAvatars.TryGetValue(connectedListeners.Count, out var avatar))
-                {
-                    avatar.ImageSource = new BitmapImage(user.Photo200);
-                }
-            }catch(Exception ex)
-            {
-                var notificationsService = StaticService.Container.GetRequiredService<NotificationsService>();
-
-                notificationsService.Show("Ошибка остановки сессии", "При остановке сессии произошла ошибка");
-                logger.Error(ex, ex.Message);
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-            }
-           
-        }
-
-        private async Task ListenTogetherServiceListenerDisconnected(User listr)
-        {
-            try
-            {
-                var listener = connectedListeners.SingleOrDefault(l => l.Ids.VkId == listr.VkId);
-
-                if (listener is null) return;
-                var position = connectedListeners.IndexOf(listener);
-                connectedListeners.Remove(listener);
-                CountListeners.Text = connectedListeners.Count.ToString();
-                const string text = "Человек";
-                ListenersCountText.Text = connectedListeners.Count % 10 is 2 or 3 or 4 ? text + "а" : text;
-
-                for (var i = 0; i < connectedListeners.Count; i++)
-                {
-                    var usr = connectedListeners[i];
-                    if (UserBorderAvatars.TryGetValue(i + 1, out var border))
-                    {
-                        border.Visibility = Visibility.Visible;
-                    }
-
-                    if (UserAvatars.TryGetValue(i + 1, out var avatar))
-                    {
-                        avatar.ImageSource = new BitmapImage(new(usr.Photo));
-                    }
-                }
-
-                if (connectedListeners.Count < 3)
-                {
-                    if (UserBorderAvatars.TryGetValue(connectedListeners.Count + 1, out var border))
-                    {
-                        border.Visibility = Visibility.Collapsed;
-                    }
-                }
-            }catch(Exception ex)
-            {
-                var notificationsService = StaticService.Container.GetRequiredService<NotificationsService>();
-
-                notificationsService.Show("Ошибка остановки сессии", "При остановке сессии произошла ошибка");
-                logger.Error(ex, ex.Message);
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-            }
-            
-        }
-
-        private async void ListenTogetherStart_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                this.ListenTogetherStart.Visibility = Visibility.Collapsed;
-
-                var configService = StaticService.Container.GetRequiredService<ConfigService>();
-
-                var config = await configService.GetConfig();
-
-                await listenTogetherService.StartSessionAsync(config.UserId);
-
-                await listenTogetherService.ChangeTrackAsync(this.playerService.CurrentTrack);
-            }catch(Exception ex)
-            {
-                var notificationsService = StaticService.Container.GetRequiredService<NotificationsService>();
-
-                notificationsService.Show("Ошибка остановки сессии", "При остановке сессии произошла ошибка");
-                logger.Error(ex, ex.Message);
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-            }
-           
-        }
-
-        private async void StopSession(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                await listenTogetherService.StopPlaySessionAsync();
-
-            }catch(Exception ex)
-            {
-                var notificationsService = StaticService.Container.GetRequiredService<NotificationsService>();
-
-                notificationsService.Show("Ошибка остановки сессии", "При остановке сессии произошла ошибка");
-                logger.Error(ex, ex.Message);
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-            }
-        }
-
-        private async void DisconnectSession(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                await listenTogetherService.LeavePlaySessionAsync();
-
-            }catch(Exception ex)
-            {
-                var notificationsService = StaticService.Container.GetRequiredService<NotificationsService>();
-
-                notificationsService.Show("Ошибка отключения от сессии", "При отключении от сессии произошла ошибка");
-
-                logger.Error(ex, ex.Message);
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-            }
         }
     }
 }
