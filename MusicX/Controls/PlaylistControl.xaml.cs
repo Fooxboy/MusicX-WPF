@@ -223,7 +223,7 @@ namespace MusicX.Controls
         }
         private void PlayerOnCurrentPlaylistChanged(object? sender, EventArgs e)
         {
-            if (sender is not PlayerService service)
+            if (sender is not PlayerService service || nowLoad)
                 return;
 
             if (service.CurrentPlaylist is VkPlaylistPlaylist {Data: {} data} && data.PlaylistId == Playlist.Id)
@@ -233,6 +233,7 @@ namespace MusicX.Controls
             }
             else
             {
+                nowPlay = false;
                 iconPlay.Symbol = Wpf.Ui.Common.SymbolRegular.Play24;
             }
         }
@@ -284,6 +285,8 @@ namespace MusicX.Controls
         }
 
         bool nowPlay = false;
+        private bool nowLoad;
+
         private async void PlayPlaylistGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
@@ -303,14 +306,16 @@ namespace MusicX.Controls
                 if (!nowPlay)
                 {
                     nowPlay = true;
+                    nowLoad = true;
 
-                    iconPlay.Symbol = Wpf.Ui.Common.SymbolRegular.Timer20;
+                    iconPlay.Symbol = Wpf.Ui.Common.SymbolRegular.Timer24;
                     var vkService = StaticService.Container.GetRequiredService<VkService>();
 
                     await playerService.PlayAsync(
                         new VkPlaylistPlaylist(vkService, new(Playlist.Id, Playlist.OwnerId, Playlist.AccessKey)));
 
                     iconPlay.Symbol = Wpf.Ui.Common.SymbolRegular.Pause24;
+                    nowLoad = false;
                 }
                 else
                 {
