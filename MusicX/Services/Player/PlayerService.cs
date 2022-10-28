@@ -284,6 +284,7 @@ public class PlayerService
 
             async Task LoadMore()
             {
+                if (CurrentPlaylist is null) return;
                 var array = await CurrentPlaylist!.LoadAsync().ToArrayAsync();
                 if (Application.Current.Dispatcher.CheckAccess())
                     Tracks.AddRangeSequential(array);
