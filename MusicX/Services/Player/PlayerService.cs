@@ -63,6 +63,7 @@ public class PlayerService
     private readonly IEnumerable<ITrackStatsListener> _statsListeners;
 
     private PlaylistTrack? _nextPlayTrack;
+    private CancellationTokenSource? _tokenSource;
 
     public IPlaylist? CurrentPlaylist { get; set; }
 
@@ -140,6 +141,10 @@ public class PlayerService
             return;
         }
         
+        _tokenSource?.Cancel();
+        _tokenSource?.Dispose();
+        _tokenSource = new();
+        
         player.PlaybackSession.Position = TimeSpan.Zero;
         player.Pause();
         
@@ -157,15 +162,24 @@ public class PlayerService
 
         if (CurrentTrack.Data.Url is null) await NextTrack();
 
-        var sources = new List<MediaSource>();
-        foreach(var source in _mediaSources)
+        MediaSource?[] sources;
+
+        try
         {
-            var item = await source.CreateMediaSourceAsync(track);
-            sources.Add(item);
+            sources = await Task.WhenAll(_mediaSources.Select(b => b.CreateMediaSourceAsync(track, _tokenSource.Token)));
+        }
+        catch (TaskCanceledException)
+        {
+            return;
         }
 
-        if (sources.All(m => m is null)) await NextTrack();
-        player.Source = sources.First(b => b is not null);
+        if (sources.FirstOrDefault(m => m is { }) is not { } source)
+        {
+            await NextTrack();
+            return;
+        }
+        
+        player.Source = source;
         player.Play();
         UpdateWindowsData().SafeFireAndForget();
         
@@ -181,6 +195,7 @@ public class PlayerService
         if (!Application.Current.Dispatcher.CheckAccess())
         {
             await Application.Current.Dispatcher.InvokeAsync(() => PlayAsync(playlist).SafeFireAndForget());
+            return;
         }
 
         try
@@ -222,7 +237,7 @@ public class PlayerService
             Tracks.ReplaceRange(loadTask.Result);
             CurrentIndex = Tracks.IndexOf(CurrentTrack!);
 
-            if (!IsPlaying)
+            if (firstTrack is null)
             {
                 var previousTrack = CurrentTrack;
                 await PlayTrackAsync(Tracks[0]);
