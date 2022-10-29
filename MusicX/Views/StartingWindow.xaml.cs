@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AspNetCore.SignalR.Client;
 using MusicX.ViewModels.Controls;
+using MusicX.RegistryPatches;
 
 namespace MusicX.Views
 {
@@ -63,6 +64,8 @@ namespace MusicX.Views
                 collection.AddSingleton<BoomService>();
                 collection.AddSingleton(LogManager.Setup().GetLogger("Common"));
 
+                collection.AddSingleton<IRegistryPatch, ListenTogetherPatch>();
+
                 collection.AddSingleton<ITrackMediaSource, BoomMediaSource>();
                 collection.AddSingleton<ITrackMediaSource, VkMediaSource>();
 
@@ -88,6 +91,9 @@ namespace MusicX.Views
                 collection.AddSingleton<NotificationsService>();
                 collection.AddSingleton<DownloaderService>();
                 collection.AddSingleton<BannerService>();
+                collection.AddTransient<RegistryPatchManager>();
+
+
                 
                 var container = StaticService.Container = collection.BuildServiceProvider();
 
@@ -107,6 +113,12 @@ namespace MusicX.Views
                 var navigationService = container.GetRequiredService<NavigationService>();
                 var configService = container.GetRequiredService<ConfigService>();
                 var notificationsService = container.GetRequiredService<NotificationsService>();
+                var patchManager = container.GetRequiredService<RegistryPatchManager>();
+
+                logger.Info("Поиск нужных патчей...");
+                await patchManager.Execute();
+                logger.Info("Поиск завершен");
+
 
                 var config = await configService.GetConfig();
 
