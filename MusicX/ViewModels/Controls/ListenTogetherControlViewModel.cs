@@ -8,6 +8,8 @@ using MusicX.Services;
 using MusicX.Services.Player;
 using MusicX.Shared.ListenTogether;
 using MusicX.Shared.Player;
+using MusicX.ViewModels.Modals;
+using MusicX.Views.Modals;
 using NLog;
 using VkNet.Abstractions;
 using VkNet.Enums.Filters;
@@ -23,6 +25,7 @@ public class ListenTogetherControlViewModel : BaseViewModel
     private readonly Logger _logger;
     private readonly ConfigService _configService;
     private readonly PlayerService _playerService;
+    private readonly NavigationService _navigationService;
     public bool IsSessionHost { get; set; }
     public bool IsConnected { get; set; }
     public ObservableRangeCollection<ListenTogetherSession> Sessions { get; } = new();
@@ -32,7 +35,7 @@ public class ListenTogetherControlViewModel : BaseViewModel
     public ICommand StartSessionCommand { get; }
 
     public ListenTogetherControlViewModel(ListenTogetherService service, IUsersCategory vkUsers, NotificationsService notificationsService,
-                                          Logger logger, ConfigService configService, PlayerService playerSerivce)
+                                          Logger logger, ConfigService configService, PlayerService playerSerivce, NavigationService navigationService)
     {
         _service = service;
         _vkUsers = vkUsers;
@@ -40,6 +43,8 @@ public class ListenTogetherControlViewModel : BaseViewModel
         _logger = logger;
         _configService = configService;
         _playerService = playerSerivce;
+        _navigationService = navigationService;
+
         StopCommand = new AsyncCommand(StopAsync);
         ConnectCommand = new AsyncCommand<string>(ConnectAsync);
         StartSessionCommand = new AsyncCommand(StartedSessionAsync);
@@ -62,8 +67,12 @@ public class ListenTogetherControlViewModel : BaseViewModel
             await _service.ChangeTrackAsync(_playerService.CurrentTrack);
 
             Clipboard.SetText(sessionId);
-            
+
+
+            _navigationService.OpenModal<ListenTogetherSessionStartedModal>(new ListenTogetherSessionStartedModalViewModel(sessionId));
             _notificationsService.Show("Успешно", "Сессия успешно создана. Id скопирован в буффер обмена");
+
+            
         }
         catch (Exception e)
         {

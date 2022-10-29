@@ -3,12 +3,31 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:MusicX.Views.Modals"
+      xmlns:local="clr-namespace:MusicX.Views.Modals" xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="ListenTogetherSessionStartedModal">
+      Title="Cовместное прослушивание">
 
-    <Grid>
-        
+    <Grid Height="500" Width="400">
+        <StackPanel>
+            <wpfui:SymbolIcon Symbol="People24" FontSize="150" HorizontalAlignment="Center"/>
+            <TextBlock HorizontalAlignment="Center" FontFamily="{StaticResource VKSansBold}"
+                       FontSize="25" TextWrapping="Wrap"
+                       TextAlignment="Center"
+                       Text="Сессия совместного прослушивания запущена!"/>
+
+            <TextBlock Margin="0,20,0,0" Text="Отправте другу эту ссылку"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBox Width="355" Margin="0,10,0,0" Text="{Binding Url}" IsReadOnly="True"/>
+                <wpfui:Button Command="{Binding CopyUrlCommand}" Height="36" Margin="5,10,0,0" VerticalAlignment="Center" Icon="Copy24"/>
+            </StackPanel>
+            <TextBlock Margin="0,20,0,0" Text="Или сообщите ID сессии"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBox Width="355" Margin="0,10,0,0" Text="{Binding SessionId}" IsReadOnly="True"/>
+                <wpfui:Button Command="{Binding CopySessionCommand}" Height="36" Margin="5,10,0,0" VerticalAlignment="Center" Icon="Copy24"/>
+            </StackPanel>
+        </StackPanel>
+
+        <wpfui:Button VerticalAlignment="Bottom" Command="{Binding CloseCommand}" Width="300" HorizontalAlignment="Center" Content="Закрыть"/>
     </Grid>
 </Page>
