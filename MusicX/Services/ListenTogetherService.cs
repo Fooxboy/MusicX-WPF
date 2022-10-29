@@ -292,9 +292,9 @@ namespace MusicX.Services
 
         private async Task<string> GetListenTogetherHostAsync()
         {
-#if DEBUG
-            return "https://localhost:5001";
-#endif
+//#if DEBUG
+//            return "https://localhost:5001";
+//#endif
             try
             {
                 _logger.Info("Получение адресса сервера Послушать вместе");
