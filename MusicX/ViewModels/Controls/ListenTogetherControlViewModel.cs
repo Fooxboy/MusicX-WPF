@@ -5,6 +5,7 @@ using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
 using MusicX.Helpers;
 using MusicX.Services;
+using MusicX.Services.Player;
 using MusicX.Shared.ListenTogether;
 using MusicX.Shared.Player;
 using NLog;
@@ -21,6 +22,7 @@ public class ListenTogetherControlViewModel : BaseViewModel
     private readonly NotificationsService _notificationsService;
     private readonly Logger _logger;
     private readonly ConfigService _configService;
+    private readonly PlayerService _playerService;
     public bool IsSessionHost { get; set; }
     public bool IsConnected { get; set; }
     public ObservableRangeCollection<ListenTogetherSession> Sessions { get; } = new();
@@ -30,13 +32,14 @@ public class ListenTogetherControlViewModel : BaseViewModel
     public ICommand StartSessionCommand { get; }
 
     public ListenTogetherControlViewModel(ListenTogetherService service, IUsersCategory vkUsers, NotificationsService notificationsService,
-                                          Logger logger, ConfigService configService)
+                                          Logger logger, ConfigService configService, PlayerService playerSerivce)
     {
         _service = service;
         _vkUsers = vkUsers;
         _notificationsService = notificationsService;
         _logger = logger;
         _configService = configService;
+        _playerService = playerSerivce;
         StopCommand = new AsyncCommand(StopAsync);
         ConnectCommand = new AsyncCommand<string>(ConnectAsync);
         StartSessionCommand = new AsyncCommand(StartedSessionAsync);
@@ -55,6 +58,8 @@ public class ListenTogetherControlViewModel : BaseViewModel
         try
         {
             var sessionId = await _service.StartSessionAsync(_configService.Config.UserId);
+
+            await _service.ChangeTrackAsync(_playerService.CurrentTrack);
 
             Clipboard.SetText(sessionId);
             

@@ -126,7 +126,12 @@ namespace MusicX.Services
 
             SessionId = session;
 
-            var currentTrack = await GetCurrentTrackInSession();
+            PlaylistTrack currentTrack = null;
+
+            while(currentTrack is null)
+            {
+                currentTrack = await GetCurrentTrackInSession();
+            }
 
             ConnectedToSession?.Invoke(currentTrack);
 
@@ -234,8 +239,6 @@ namespace MusicX.Services
             _logger.Info("Успешное подключение");
 
         }
-
-        
 
         public async Task<PlaylistTrack> GetCurrentTrackInSession()
             {

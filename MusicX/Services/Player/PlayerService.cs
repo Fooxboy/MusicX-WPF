@@ -120,7 +120,8 @@ public class PlayerService
         
         player.PlaybackSession.Position = TimeSpan.Zero;
         player.Pause();
-        
+
+        if (track is null) return;
         CurrentTrack = track;
         CurrentIndex = Tracks.IndexOf(track);
         NextPlayTrack = Tracks.ElementAtOrDefault(CurrentIndex + 1);

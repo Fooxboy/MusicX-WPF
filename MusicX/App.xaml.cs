@@ -3,6 +3,7 @@ using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using MusicX.Services;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 
 namespace MusicX
@@ -26,6 +27,8 @@ namespace MusicX
                     {"Version", StaticService.Version }
                 };
             Analytics.TrackEvent("StartApp", properties);
+
+            if(e.Args.Length > 0) MessageBox.Show(e.Args[0]);
 
         }
     }

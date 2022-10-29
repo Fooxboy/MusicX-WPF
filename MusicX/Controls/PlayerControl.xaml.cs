@@ -50,6 +50,7 @@ namespace MusicX.Controls
         }
         
         private readonly PlayerService playerService;
+        private readonly ListenTogetherService listenTogetherService;
         private readonly Logger logger;
         private ConfigModel config;
 
@@ -59,15 +60,32 @@ namespace MusicX.Controls
 
             this.playerService = StaticService.Container.GetRequiredService<PlayerService>();
             this.logger = StaticService.Container.GetRequiredService<Logger>();
+            this.listenTogetherService = StaticService.Container.GetRequiredService<ListenTogetherService>();
             playerService.PlayStateChangedEvent += PlayerService_PlayStateChangedEvent;
             playerService.PositionTrackChangedEvent += PlayerService_PositionTrackChangedEvent;
             playerService.TrackChangedEvent += PlayerService_TrackChangedEvent;
             playerService.QueueLoadingStateChanged += PlayerService_QueueLoadingStateChanged;
             playerService.TrackLoadingStateChanged += PlayerService_TrackLoadingStateChanged;
-
+            listenTogetherService.ConnectedToSession += ListenTogetherService_ConnectedToSession;
+            listenTogetherService.LeaveSession += ListenTogetherService_LeaveSession;
+            listenTogetherService.SessionOwnerStoped += ListenTogetherService_LeaveSession;
             this.MouseWheel += PlayerControl_MouseWheel;
             
             Queue.ItemsSource = playerService.Tracks;
+        }
+
+        private Task ListenTogetherService_LeaveSession()
+        {
+            ButtonsStackPanel.Visibility = Visibility.Visible;
+            QueueButton.Visibility = Visibility.Visible;
+            return Task.CompletedTask;
+        }
+
+        private Task ListenTogetherService_ConnectedToSession(PlaylistTrack arg)
+        {
+            ButtonsStackPanel.Visibility = Visibility.Collapsed;
+            QueueButton.Visibility = Visibility.Collapsed;
+            return Task.CompletedTask;
         }
 
         private void PlayerService_TrackLoadingStateChanged(object? sender, PlayerLoadingEventArgs e)

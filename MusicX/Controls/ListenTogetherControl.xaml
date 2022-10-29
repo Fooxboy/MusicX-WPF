@@ -60,7 +60,7 @@
                     </ItemsControl>
                 </StackPanel>
 
-                <ui:Button Height="30" Appearance="Secondary"
+                <ui:Button Height="30" Width="200" Appearance="Secondary"
                            Command="{Binding StopCommand}">
                     <ui:Button.Style>
                         <Style TargetType="{x:Type ui:Button}"
@@ -82,20 +82,23 @@
         
         <ControlTemplate x:Key="DisconnectedTemplate">
             <StackPanel>
-                <TextBlock Text="Не подключено" HorizontalAlignment="Center" />
-                <ui:SymbolIcon Margin="0,15,0,15"
+                <TextBlock Text="Совместное прослушивание" FontFamily="{StaticResource VKSansBold}" HorizontalAlignment="Center" />
+                <StackPanel HorizontalAlignment="Center" Margin="0,15,0,15" Orientation="Horizontal">
+                    <ui:SymbolIcon 
                                Symbol="PlugDisconnected28"
-                               FontSize="28"
-                               HorizontalAlignment="Center" />
+                               FontSize="28"/>
+                    <TextBlock Margin="10,5,0,0" FontFamily="{StaticResource VKSansMedium}" Text="Не подключено"/>
+                </StackPanel>
+               
                 
-                <ui:Button Appearance="Secondary" Content="Создать" Icon="Add24"
+                <ui:Button Appearance="Secondary" Content="Создать сессию" Icon="Add24"
                            Margin="0,5"
-                           HorizontalAlignment="Center"
+                           HorizontalAlignment="Stretch"
                            Command="{Binding StartSessionCommand}"/>
                 
                 <StackPanel Orientation="Horizontal">
-                    <ui:TextBox PlaceholderText="Id сессии" Name="SessionIdBox" MaxWidth="180" HorizontalAlignment="Center" />
-                    <ui:Button Margin="5,0,0,0" Appearance="Secondary" Icon="Connector24"
+                    <ui:TextBox PlaceholderText="Id сессии" MinWidth="180" Name="SessionIdBox" HorizontalAlignment="Center" />
+                    <ui:Button Margin="5,0,0,0" Height="35" Appearance="Secondary" Icon="Play28"
                                Command="{Binding ConnectCommand}"
                                CommandParameter="{Binding Text, ElementName=SessionIdBox}" HorizontalAlignment="Center" />
                 </StackPanel>
