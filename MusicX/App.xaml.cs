@@ -2,6 +2,7 @@
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using MusicX.Services;
+using MusicX.Views;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -29,6 +30,9 @@ namespace MusicX
             Analytics.TrackEvent("StartApp", properties);
 
             if(e.Args.Length > 0) MessageBox.Show(e.Args[0]);
+
+            var window = new StartingWindow(e.Args);
+            window.Show();
 
         }
     }

@@ -40,8 +40,6 @@ namespace MusicX
 
         public RootWindow(NavigationService navigationService, VkService vkService, Logger logger, ConfigService configService, NotificationsService notificationsService)
         {
-            //Style = "{StaticResource UiWindow}"
-
             InitializeComponent();     
             this.navigationService = navigationService;
             this.vkService = vkService;
@@ -57,6 +55,19 @@ namespace MusicX
             Accent.Apply(Accent.GetColorizationColor(), ThemeType.Dark);
 
             this.Closing += RootWindow_Closing;
+        }
+
+        public async Task StartListenTogether(string sessionId)
+        {
+            var listenTogetherService = StaticService.Container.GetRequiredService<ListenTogetherService>();
+
+            await Task.Factory.StartNew(async() =>
+            {
+                var config = await configService.GetConfig();
+                await listenTogetherService.ConnectToServerAsync(config.UserId);
+                await listenTogetherService.JoinToSesstionAsync(sessionId);
+            });
+          
         }
 
         private async void RootWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)

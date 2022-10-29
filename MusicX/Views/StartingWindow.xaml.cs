@@ -28,10 +28,13 @@ namespace MusicX.Views
     /// </summary>
     public partial class StartingWindow : UiWindow
     {
-        public StartingWindow()
+        private readonly string[] _args;
+
+        public StartingWindow(string[] args)
         {
             InitializeComponent();
-           Accent.Apply(Accent.GetColorizationColor(), ThemeType.Dark);
+            Accent.Apply(Accent.GetColorizationColor(), ThemeType.Dark);
+            _args = args;
         }
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
@@ -143,6 +146,17 @@ namespace MusicX.Views
                                 await vkService.SetTokenAsync(config.AccessToken);
                                 var rootWindow = new RootWindow(navigationService, vkService, logger, configService, notificationsService);
                                 rootWindow.Show();
+
+                                if(_args != null && _args.Length > 0)
+                                {
+                                    var arg = _args[0].Split(":");
+
+                                    if (arg[0] == "musicxshare")
+                                    {
+                                        await rootWindow.StartListenTogether(arg[1]);
+                                    }
+                                }
+
                                 this.Close();
                             }
                             catch (VkNet.Exception.VkApiMethodInvokeException e) when (e.ErrorCode is 5 or 1117)
