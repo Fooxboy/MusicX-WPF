@@ -1,6 +1,7 @@
 ﻿using DiscordRPC;
 using MusicX.Core.Models;
 using NLog;
+using ProtoBuf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,14 +15,33 @@ namespace MusicX.Core.Services
         private readonly DiscordRpcClient client;
         private readonly Logger logger;
 
+        public event Func<string, Task> OnJoinRequested;
+
         public DiscordService(Logger logger)
         {
             this.logger = logger;
-            client = new DiscordRpcClient("652832654944894976");
-
+            client = new DiscordRpcClient("652832654944894976", autoEvents: true);
+            client.OnJoinRequested += Client_OnJoinRequested;
+            client.OnJoin += Client_OnJoin;
+            client.OnError += Client_OnError;
+            client.RegisterUriScheme();
             client.Initialize();
         }
 
+        private void Client_OnError(object sender, DiscordRPC.Message.ErrorMessage args)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void Client_OnJoin(object sender, DiscordRPC.Message.JoinMessage args)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void Client_OnJoinRequested(object sender, DiscordRPC.Message.JoinRequestMessage args)
+        {
+            OnJoinRequested?.Invoke(args.User.Username);
+        }
 
         public void SetTrackPlay(string artist, string name, TimeSpan toEnd, string cover)
         {
@@ -41,9 +61,14 @@ namespace MusicX.Core.Services
                         Start = DateTime.UtcNow,
                         End = DateTime.UtcNow + toEnd,
 
-                    }
-                });
-            }catch (Exception ex)
+                    },
+                    Party = new Party() { ID = "w823894923423", Max = 10, Privacy = Party.PrivacySetting.Public, Size = 1},
+                    Secrets = new Secrets() { JoinSecret = "gfdgdfsgdgsdfg" }
+                }) ;
+
+         
+            }
+            catch (Exception ex)
             {
                 logger.Error(ex, ex.Message);
             }
