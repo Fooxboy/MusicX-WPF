@@ -55,6 +55,26 @@ namespace MusicX
             Accent.Apply(Accent.GetColorizationColor(), ThemeType.Dark);
 
             this.Closing += RootWindow_Closing;
+
+            SingleAppService.Instance.RunWitchArgs += Instance_RunWitchArgs;
+        }
+
+        private async Task Instance_RunWitchArgs(string[] arg)
+        {
+            try
+            {
+                var a = arg[0].Split(':');
+                if (a[0] == "musicxshare")
+                {
+                    await StartListenTogether(a[1]);
+                }
+            }catch(Exception ex)
+            {
+                logger.Error(ex, ex.Message);
+
+                notificationsService.Show("Ошибка", "Мы не смогли подключится к сервису совместного прослушивания");
+            }
+           
         }
 
         public async Task StartListenTogether(string sessionId)
