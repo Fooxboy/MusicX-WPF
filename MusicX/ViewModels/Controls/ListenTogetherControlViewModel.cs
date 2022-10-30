@@ -142,7 +142,7 @@ public class ListenTogetherControlViewModel : BaseViewModel
         return Task.CompletedTask;
     }
 
-    private Task OnSessionStarted()
+    private Task OnSessionStarted(string sessionId)
     {
         IsConnected = true;
         IsSessionHost = true;

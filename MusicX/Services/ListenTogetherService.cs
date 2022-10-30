@@ -41,7 +41,7 @@ namespace MusicX.Services
         /// <summary>
         /// Текущий пользователь запустил сессию
         /// </summary>
-        public event Func<Task>? StartedSession;
+        public event Func<string, Task>? StartedSession;
 
         /// <summary>
         /// К сессии подключился слушатель
@@ -102,7 +102,7 @@ namespace MusicX.Services
             SessionId = result.Id;
             
             _logger.Info($"Сессия {SessionId} запущена");
-            StartedSession?.Invoke();
+            StartedSession?.Invoke(SessionId);
 
             return result.Id;
         }

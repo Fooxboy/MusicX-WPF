@@ -20,13 +20,23 @@ namespace MusicX.Services
             this.listenTogetherService = listenTogetherService;
             this.navigationService = navigationService;
 
-
-            discordService.OnJoinRequested += DiscordService_OnJoinRequested;
+            
         }
 
-        private async Task DiscordService_OnJoinRequested(string arg)
+        public void Init()
         {
-            navigationService.OpenModal<RequestListenTogetherModal>(new RequestListenTogetherModal());
+            listenTogetherService.StartedSession += ListenTogetherService_StartedSession;
+            listenTogetherService.SessionStoped += ListenTogetherService_SessionStoped;
+        }
+
+        private async Task ListenTogetherService_SessionStoped()
+        {
+            discordService.DisableListenTogether();
+        }
+
+        private async Task ListenTogetherService_StartedSession(string sessionId)
+        {
+            discordService.EnableListenTogether(sessionId);
         }
     }
 }
