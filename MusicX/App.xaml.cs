@@ -18,15 +18,15 @@ namespace MusicX
     {
         protected async override void OnStartup(StartupEventArgs e)
         {
-            if (!InstanceCheck())
+            if(e.Args != null && e.Args.Length > 0)
             {
-                if(e.Args != null && e.Args.Length > 0)
+                if (!InstanceCheck())
                 {
                     await SingleAppService.Instance.SendArguments(e.Args);
-                }
+                    Application.Current.Shutdown();
 
-                Application.Current.Shutdown();
-                return;
+                    return;
+                }
             }
 
             base.OnStartup(e);
