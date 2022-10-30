@@ -81,28 +81,34 @@
         </ControlTemplate>
         
         <ControlTemplate x:Key="DisconnectedTemplate">
-            <StackPanel>
-                <TextBlock Text="Совместное прослушивание" FontFamily="{StaticResource VKSansBold}" HorizontalAlignment="Center" />
-                <StackPanel HorizontalAlignment="Center" Margin="0,15,0,15" Orientation="Horizontal">
-                    <ui:SymbolIcon 
-                               Symbol="PlugDisconnected28"
-                               FontSize="28"/>
-                    <TextBlock Margin="10,5,0,0" FontFamily="{StaticResource VKSansMedium}" Text="Не подключено"/>
-                </StackPanel>
+            <Grid>
+                <Grid Width="100" Height="100" Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ui:ProgressRing HorizontalAlignment="Center" VerticalAlignment="Center" IsIndeterminate="True"  IsEnabled="True" />
+                </Grid>
+                <StackPanel Visibility="{Binding IsLoading, Converter={StaticResource InversionBooleanToVisibilityConverter}}">
+                    
+                    <TextBlock Text="Совместное прослушивание" FontFamily="{StaticResource VKSansBold}" HorizontalAlignment="Center" />
+                    <StackPanel HorizontalAlignment="Center" Margin="0,15,0,15" Orientation="Horizontal">
+                        <ui:SymbolIcon 
+                                   Symbol="PlugDisconnected28"
+                                   FontSize="28"/>
+                        <TextBlock Margin="10,5,0,0" FontFamily="{StaticResource VKSansMedium}" Text="Не подключено"/>
+                    </StackPanel>
                
                 
-                <ui:Button Appearance="Secondary" Content="Создать сессию" Icon="Add24"
-                           Margin="0,5"
-                           HorizontalAlignment="Stretch"
-                           Command="{Binding StartSessionCommand}"/>
+                    <ui:Button Appearance="Secondary" Content="Создать сессию" Icon="Add24"
+                               Margin="0,5"
+                               HorizontalAlignment="Stretch"
+                               Command="{Binding StartSessionCommand}"/>
                 
-                <StackPanel Orientation="Horizontal">
-                    <ui:TextBox PlaceholderText="Id сессии" MinWidth="180" Name="SessionIdBox" HorizontalAlignment="Center" />
-                    <ui:Button Margin="5,0,0,0" Height="35" Appearance="Secondary" Icon="Play28"
-                               Command="{Binding ConnectCommand}"
-                               CommandParameter="{Binding Text, ElementName=SessionIdBox}" HorizontalAlignment="Center" />
+                    <StackPanel Orientation="Horizontal">
+                        <ui:TextBox PlaceholderText="Id сессии" MinWidth="180" Name="SessionIdBox" HorizontalAlignment="Center" />
+                        <ui:Button Margin="5,0,0,0" Height="35" Appearance="Secondary" Icon="Play28"
+                                   Command="{Binding ConnectCommand}"
+                                   CommandParameter="{Binding Text, ElementName=SessionIdBox}" HorizontalAlignment="Center" />
+                    </StackPanel>
                 </StackPanel>
-            </StackPanel>
+            </Grid>
         </ControlTemplate>
     </UserControl.Resources>
 

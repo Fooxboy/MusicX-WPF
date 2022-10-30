@@ -34,6 +34,8 @@ public class ListenTogetherControlViewModel : BaseViewModel
     public IAsyncCommand<string> ConnectCommand { get; }
     public ICommand StartSessionCommand { get; }
 
+    public bool IsLoading { get; set; } = false;
+
     public ListenTogetherControlViewModel(ListenTogetherService service, IUsersCategory vkUsers, NotificationsService notificationsService,
                                           Logger logger, ConfigService configService, PlayerService playerSerivce, NavigationService navigationService)
     {
@@ -62,47 +64,57 @@ public class ListenTogetherControlViewModel : BaseViewModel
     {
         try
         {
+            IsLoading = true;
+            OnPropertyChanged("IsLoading");
             var sessionId = await _service.StartSessionAsync(_configService.Config.UserId);
 
             await _service.ChangeTrackAsync(_playerService.CurrentTrack);
 
             Clipboard.SetText(sessionId);
 
-
             _navigationService.OpenModal<ListenTogetherSessionStartedModal>(new ListenTogetherSessionStartedModalViewModel(sessionId));
             _notificationsService.Show("Успешно", "Сессия успешно создана. Id скопирован в буффер обмена");
 
-            
+            IsLoading = false;
+            OnPropertyChanged("IsLoading");
+
         }
         catch (Exception e)
         {
+            IsLoading = false;
+            OnPropertyChanged("IsLoading");
+
             _notificationsService.Show("Ошибка", "Ошибка создания сессии");
-            _logger.Error(e);
-            throw;
+            _logger.Error(e, e.Message);
         }
     }
 
     private async Task ConnectAsync(string? sessionId)
     {
+        
         if (string.IsNullOrEmpty(sessionId))
         {
             _notificationsService.Show("Ошибка", "Введите id сессии");
             return;
         }
 
+        IsLoading = true;
+        OnPropertyChanged("IsLoading");
         try
         {
             await _service.ConnectToServerAsync(_configService.Config.UserId);
             await _service.JoinToSesstionAsync(sessionId);
+            _notificationsService.Show("Подключено", "Успешное подключение к сессии");
+
         }
         catch (Exception e)
         {
-            _notificationsService.Show("Ошибка", e.Message);
-            _logger.Error(e);
-            throw;
+            _notificationsService.Show("Ошибка подключении к сессии", e.Message);
+            _logger.Error(e, e.Message);
         }
 
-        _notificationsService.Show("Подключено", "Успешное подключение к сессии");
+        IsLoading = false;
+        OnPropertyChanged("IsLoading");
     }
 
     private Task OnListenerDisconnected(User user)

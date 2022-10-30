@@ -4,8 +4,6 @@ using Microsoft.AppCenter.Crashes;
 using MusicX.Services;
 using MusicX.Views;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Windows;
 
@@ -18,7 +16,7 @@ namespace MusicX
     {
         protected async override void OnStartup(StartupEventArgs e)
         {
-            if(e.Args != null && e.Args.Length > 0)
+            if(e.Args != null && e.Args.Length > 0) //открытие не нового приложения, а передача агрументов уже в открытое
             {
                 if (!InstanceCheck())
                 {
