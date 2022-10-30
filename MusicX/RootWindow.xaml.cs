@@ -83,9 +83,16 @@ namespace MusicX
 
             await Task.Factory.StartNew(async() =>
             {
-                var config = await configService.GetConfig();
-                await listenTogetherService.ConnectToServerAsync(config.UserId);
-                await listenTogetherService.JoinToSesstionAsync(sessionId);
+                try
+                {
+                    var config = await configService.GetConfig();
+                    await listenTogetherService.ConnectToServerAsync(config.UserId);
+                    await listenTogetherService.JoinToSesstionAsync(sessionId);
+                }catch(Exception ex)
+                {
+                    logger.Error(ex, ex.Message);
+                }
+                
             });
           
         }
