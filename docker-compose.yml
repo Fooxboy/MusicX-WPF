@@ -1,0 +1,95 @@
+version: '3.9'
+
+volumes:
+    traefik-certificates:
+
+services:
+    app:
+        build:
+            context: .
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.app.rule=Host(`musicx-connect.zznty.ru`)"
+            - "traefik.http.routers.app.service=app"
+            - "traefik.http.routers.app.entrypoints=websecure"
+            - "traefik.http.services.app.loadbalancer.server.port=5000"
+            - "traefik.http.routers.app.tls=true"
+            - "traefik.http.routers.app.tls.certresolver=letsencrypt"
+            - "traefik.http.services.app.loadbalancer.passhostheader=true"
+            - "traefik.http.routers.app.middlewares=compresstraefik"
+            - "traefik.http.middlewares.compresstraefik.compress=true"
+
+    site:
+        build:
+            context: ./MusicX.Site
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.site.rule=Host(`musicx.zznty.ru`)"
+            - "traefik.http.routers.site.service=site"
+            - "traefik.http.routers.site.entrypoints=websecure"
+            - "traefik.http.services.site.loadbalancer.server.port=8080"
+            - "traefik.http.routers.site.tls=true"
+            - "traefik.http.routers.site.tls.certresolver=letsencrypt"
+            - "traefik.http.services.site.loadbalancer.passhostheader=true"
+            - "traefik.http.routers.site.middlewares=compresstraefik"
+            - "traefik.http.middlewares.compresstraefik.compress=true"
+
+    traefik:
+        image: traefik
+        command:
+            - "--log.level=WARN"
+            - "--accesslog=true"
+            - "--api.dashboard=true"
+            - "--api.insecure=true"
+            - "--ping=true"
+            - "--ping.entrypoint=ping"
+            - "--entryPoints.ping.address=:8082"
+            - "--entryPoints.web.address=:80"
+            - "--entryPoints.websecure.address=:443"
+            - "--providers.docker=true"
+            - "--providers.docker.endpoint=unix:///var/run/docker.sock"
+            - "--providers.docker.exposedByDefault=false"
+            - "--certificatesresolvers.letsencrypt.acme.dnschallenge=true"
+            - "--certificatesresolvers.letsencrypt.acme.dnschallenge.provider=cloudflare"
+            # Email for Let's Encrypt (replace with yours)
+            - "--certificatesresolvers.letsencrypt.acme.email=exmaple@example.com"
+            - "--certificatesresolvers.letsencrypt.acme.storage=/etc/traefik/acme/acme.json"
+            - "--metrics.prometheus=true"
+            - "--metrics.prometheus.buckets=0.1,0.3,1.2,5.0"
+            - "--global.checkNewVersion=false"
+            - "--global.sendAnonymousUsage=false"
+            - "--serverstransport.insecureskipverify=true"
+        environment:
+            - CLOUDFLARE_EMAIL=exmaple@example.com
+            - CLOUDFLARE_DNS_API_TOKEN=somekey
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+            - traefik-certificates:/etc/traefik/acme
+        ports:
+            - "80:80"
+            - "443:443"
+        healthcheck:
+            test: [ "CMD", "wget", "http://localhost:8082/ping","--spider" ]
+            interval: 10s
+            timeout: 5s
+            retries: 3
+            start_period: 5s
+        labels:
+            - "traefik.enable=true"
+            # Traefik URL (replace with yours)
+            - "traefik.http.routers.dashboard.rule=Host(`trf.zznty.ru`)"
+            - "traefik.http.routers.dashboard.service=api@internal"
+            - "traefik.http.routers.dashboard.entrypoints=websecure"
+            - "traefik.http.services.dashboard.loadbalancer.server.port=8080"
+            - "traefik.http.routers.dashboard.tls=true"
+            - "traefik.http.routers.dashboard.tls.certresolver=letsencrypt"
+            - "traefik.http.services.dashboard.loadbalancer.passhostheader=true"
+            - "traefik.http.routers.dashboard.middlewares=authtraefik"
+            # Basic Authentication for Traefik Dashboard
+            # Passwords must be encoded using MD5, SHA1, or BCrypt https://hostingcanada.org/htpasswd-generator/
+            - "traefik.http.middlewares.authtraefik.basicauth.users=trfadmn:$$2y$$10$$a5QGcYtIkm52y.iyAkhVGuU3/yjNm4fkI2Qv64OWNZt0V6nQogU9."
+            - "traefik.http.routers.http-catchall.rule=HostRegexp(`{host:.+}`)"
+            - "traefik.http.routers.http-catchall.entrypoints=web"
+            - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
+            - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+        restart: unless-stopped

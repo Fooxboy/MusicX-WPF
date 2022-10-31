@@ -292,6 +292,7 @@ namespace MusicX.Services
 
         private async Task<string> GetListenTogetherHostAsync()
         {
+            return "https://musicx-connect.zznty.ru";
 //#if DEBUG
 //            return "https://localhost:5001";
 //#endif

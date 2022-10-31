@@ -67,7 +67,7 @@ namespace MusicX.Core.Services
             _listenTogetherEnable = true;
             this.sessionId = sessionId;
 
-            var rpc = client.UpdateButtons(new[] { new DiscordRPC.Button() { Label = "Слушать вместе", Url = $"musicxshare:{sessionId}" } });
+            var rpc = client.UpdateButtons(new[] { new DiscordRPC.Button() { Label = "Слушать вместе", Url = $"https://musicx-connect.zznty.ru/connect?id={sessionId}" } });
 
             SetTrackPlay(rpc.Details, rpc.State, TimeSpan.FromSeconds(30), rpc.Assets.LargeImageKey); //костыль с 30тью секундами...
         }
