@@ -2,13 +2,13 @@
 using MusicX.Shared.ListenTogether;
 using MusicX.Shared.Player;
 
-namespace MusicX.Server.Managers
+namespace MusicX.Server.Services
 {
-    public class SessionManager
+    public class SessionService
     {
         private readonly Dictionary<string, ListenTogetherSession> Sessions;
 
-        public SessionManager()
+        public SessionService()
         {
             Sessions = new Dictionary<string, ListenTogetherSession>();
         }
