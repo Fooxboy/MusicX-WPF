@@ -15,16 +15,39 @@ namespace MusicX.Core.Services
     {
         private readonly DiscordRpcClient client;
         private readonly Logger logger;
+        private readonly ListenTogetherService _listenTogetherService;
 
         private bool _listenTogetherEnable = false;
-        private string sessionId = string.Empty;
 
-        public DiscordService(Logger logger)
+        public DiscordService(Logger logger, ListenTogetherService listenTogetherService)
         {
             this.logger = logger;
+            _listenTogetherService = listenTogetherService;
             client = new DiscordRpcClient("652832654944894976");
-            client.RegisterUriScheme(executable: "musicxshare:11111");
             client.Initialize();
+
+            listenTogetherService.StartedSession += ListenTogetherServiceOnStartedSession;
+            listenTogetherService.SessionStoped += ListenTogetherServiceOnSessionStoped;
+        }
+
+        private Task ListenTogetherServiceOnSessionStoped()
+        {
+            _listenTogetherEnable = false;
+            Update();
+            return Task.CompletedTask;
+        }
+
+        private Task ListenTogetherServiceOnStartedSession(string sessionId)
+        {
+            _listenTogetherEnable = true;
+            Update();
+            return Task.CompletedTask;
+        }
+
+        private void Update()
+        {
+            var rpc = client.CurrentPresence;
+            SetTrackPlay(rpc.Details, rpc.State, rpc.Timestamps.End!.Value - DateTime.UtcNow, rpc.Assets.LargeImageKey);
         }
 
         public void SetTrackPlay(string artist, string name, TimeSpan toEnd, string cover)
@@ -35,7 +58,14 @@ namespace MusicX.Core.Services
 
                 if(_listenTogetherEnable)
                 {
-                    buttons = new[] { new DiscordRPC.Button() { Label = "Слушать вместе", Url = $"musicxshare:{sessionId}" } };
+                    buttons = new[]
+                    {
+                        new DiscordRPC.Button
+                        {
+                            Label = "Слушать вместе",
+                            Url = _listenTogetherService.ConnectUrl
+                        }
+                    };
                 }
                 client.SetPresence(new RichPresence()
                 {
@@ -59,24 +89,6 @@ namespace MusicX.Core.Services
                 logger.Error(ex, ex.Message);
             }
            
-        }
-
-
-        public void EnableListenTogether(string sessionId)
-        {
-            _listenTogetherEnable = true;
-            this.sessionId = sessionId;
-
-            var rpc = client.UpdateButtons(new[] { new DiscordRPC.Button() { Label = "Слушать вместе", Url = $"https://musicx-connect.zznty.ru/connect?id={sessionId}" } });
-
-            SetTrackPlay(rpc.Details, rpc.State, TimeSpan.FromSeconds(30), rpc.Assets.LargeImageKey); //костыль с 30тью секундами...
-        }
-
-        public void DisableListenTogether()
-        {
-            _listenTogetherEnable = false;
-
-            client.UpdateButtons();
         }
 
         public void RemoveTrackPlay(bool pause = false)

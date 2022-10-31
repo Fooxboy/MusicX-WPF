@@ -1,21 +1,15 @@
-﻿using AsyncAwaitBestPractices;
+﻿using System.Net.Http.Json;
 using Microsoft.AspNetCore.SignalR.Client;
-using MusicX.Models;
-using MusicX.Models.Enums;
+using MusicX.Core.Models;
+using MusicX.Shared.Extensions;
 using MusicX.Shared.ListenTogether;
+using MusicX.Shared.Player;
 using Newtonsoft.Json;
 using NLog;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Threading.Tasks;
-using MusicX.Shared.Extensions;
-using MusicX.Shared.Player;
 
-namespace MusicX.Services
+namespace MusicX.Core.Services
 {
-    public class ListenTogetherService : IDisposable
+    public class ListenTogetherService : IAsyncDisposable
     {
         private readonly Logger _logger;
         private HubConnection _connection;
@@ -73,6 +67,8 @@ namespace MusicX.Services
         public PlayerMode PlayerMode { get; set; } = PlayerMode.None;
 
         public string SessionId { get; set; }
+
+        public string ConnectUrl => $"{_host}/connect?id={SessionId}";
 
         public ListenTogetherService(Logger logger)
         {
@@ -218,8 +214,7 @@ namespace MusicX.Services
 
             _logger.Info("Подключение к серверу Слушать вместе");
 
-            var host = await GetListenTogetherHostAsync();
-            this._host = host;
+            await GetListenTogetherHostAsync();
 
             var token = await GetTokenAsync(userId);
 
@@ -292,7 +287,6 @@ namespace MusicX.Services
 
         private async Task<string> GetListenTogetherHostAsync()
         {
-            return "https://musicx-connect.zznty.ru";
 //#if DEBUG
 //            return "https://localhost:5001";
 //#endif
@@ -306,13 +300,12 @@ namespace MusicX.Services
                     var contents = await response.Content.ReadAsStringAsync();
 
                     var servers = JsonConvert.DeserializeObject<ListenTogetherServersModel>(contents);
-
-                    //retrun "localhost";
+                    
+                    return _host =
 #if DEBUG
-                    return servers.Test;
-
+                    servers.Test;
 #else
-                return servers.Production;
+                    servers.Production;
 #endif
                 }
             }catch(Exception)
@@ -351,13 +344,14 @@ namespace MusicX.Services
             };
         }
 
-        public void Dispose()
+        public async ValueTask DisposeAsync()
         {
             foreach (var subscription in _subscriptions)
             {
                 subscription.Dispose();
             }
-            _connection.StopAsync().SafeFireAndForget();
+
+            await _connection.StopAsync();
         }
     }
 }

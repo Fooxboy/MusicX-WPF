@@ -62,7 +62,6 @@ namespace MusicX.Views
                 collection.AddSingleton<GithubService>();
                 collection.AddSingleton<DiscordService>();
                 collection.AddSingleton<BoomService>();
-                collection.AddSingleton<DiscordListenTogetherService>();
                 collection.AddSingleton(LogManager.Setup().GetLogger("Common"));
 
                 collection.AddSingleton<IRegistryPatch, ListenTogetherPatch>();
@@ -115,8 +114,6 @@ namespace MusicX.Views
                 var configService = container.GetRequiredService<ConfigService>();
                 var notificationsService = container.GetRequiredService<NotificationsService>();
                 var patchManager = container.GetRequiredService<RegistryPatchManager>();
-                var dl = container.GetRequiredService<DiscordListenTogetherService>();
-                dl.Init();
 
                 logger.Info("Поиск нужных патчей...");
                 await patchManager.Execute();

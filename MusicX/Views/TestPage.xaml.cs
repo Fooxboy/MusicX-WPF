@@ -11,6 +11,7 @@ using MusicX.ViewModels;
 using MusicX.ViewModels.Modals;
 using System;
 using System.Windows.Interop;
+using MusicX.Core.Services;
 
 namespace MusicX.Views
 {
