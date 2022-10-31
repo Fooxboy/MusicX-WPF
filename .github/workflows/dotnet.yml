@@ -31,9 +31,4 @@ jobs:
       run: dotnet restore MusicX/MusicX.csproj --use-lock-file
     - name: Build
       run: dotnet build MusicX/MusicX.csproj --no-restore
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v3.1.0
-      with:
-        name: release-${{ github.job}}
-        path: ${{ github.workspace }}/MusicX/bin/Debug/
 
