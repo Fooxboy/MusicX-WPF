@@ -18,12 +18,12 @@
 
             <TextBlock Margin="0,20,0,0" Text="Отправте другу эту ссылку"/>
             <StackPanel Orientation="Horizontal">
-                <TextBox Width="355" Margin="0,10,0,0" Text="{Binding Url}" IsReadOnly="True"/>
+                <TextBox Width="355" Margin="0,10,0,0" Text="{Binding Url, Mode=OneWay}" IsReadOnly="True"/>
                 <wpfui:Button Command="{Binding CopyUrlCommand}" Height="36" Margin="5,10,0,0" VerticalAlignment="Center" Icon="Copy24"/>
             </StackPanel>
             <TextBlock Margin="0,20,0,0" Text="Или сообщите ID сессии"/>
             <StackPanel Orientation="Horizontal">
-                <TextBox Width="355" Margin="0,10,0,0" Text="{Binding SessionId}" IsReadOnly="True"/>
+                <TextBox Width="355" Margin="0,10,0,0" Text="{Binding SessionId, Mode=OneWay}" IsReadOnly="True"/>
                 <wpfui:Button Command="{Binding CopySessionCommand}" Height="36" Margin="5,10,0,0" VerticalAlignment="Center" Icon="Copy24"/>
             </StackPanel>
         </StackPanel>
