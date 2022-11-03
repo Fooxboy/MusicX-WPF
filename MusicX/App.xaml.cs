@@ -16,16 +16,17 @@ namespace MusicX
     {
         protected async override void OnStartup(StartupEventArgs e)
         {
-            if(e.Args != null && e.Args.Length > 0) //открытие не нового приложения, а передача агрументов уже в открытое
+            if (!InstanceCheck())
             {
-                if (!InstanceCheck())
+                if (e.Args != null && e.Args.Length > 0) //открытие не нового приложения, а передача агрументов уже в открытое
                 {
                     await SingleAppService.Instance.SendArguments(e.Args);
                     Application.Current.Shutdown();
-
-                    return;
                 }
+
+                return;
             }
+           
 
             base.OnStartup(e);
 

@@ -3,6 +3,8 @@ using MusicX.Models.Enums;
 using MusicX.Shared.Player;
 using System;
 using System.Threading.Tasks;
+using MusicX.Core.Models;
+using MusicX.Core.Services;
 
 namespace MusicX.Services.Player.TrackStats
 {

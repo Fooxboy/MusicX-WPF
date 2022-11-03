@@ -22,6 +22,7 @@ using Wpf.Ui.Controls;
 using Wpf.Ui.Extensions;
 using NavigationService = MusicX.Services.NavigationService;
 using Microsoft.AppCenter.Crashes;
+using MusicX.Core.Models;
 
 namespace MusicX
 {
@@ -83,9 +84,16 @@ namespace MusicX
 
             await Task.Factory.StartNew(async() =>
             {
-                var config = await configService.GetConfig();
-                await listenTogetherService.ConnectToServerAsync(config.UserId);
-                await listenTogetherService.JoinToSesstionAsync(sessionId);
+                try
+                {
+                    var config = await configService.GetConfig();
+                    await listenTogetherService.ConnectToServerAsync(config.UserId);
+                    await listenTogetherService.JoinToSesstionAsync(sessionId);
+                }catch(Exception ex)
+                {
+                    logger.Error(ex, ex.Message);
+                }
+                
             });
           
         }
@@ -96,9 +104,9 @@ namespace MusicX
             {
                 var listenTogetherService = StaticService.Container.GetRequiredService<ListenTogetherService>();
 
-                if (listenTogetherService.IsConnectedToServer && listenTogetherService.PlayerMode != Models.Enums.PlayerMode.None)
+                if (listenTogetherService.IsConnectedToServer && listenTogetherService.PlayerMode != PlayerMode.None)
                 {
-                    if (listenTogetherService.PlayerMode == Models.Enums.PlayerMode.Owner)
+                    if (listenTogetherService.PlayerMode == PlayerMode.Owner)
                     {
                         await listenTogetherService.StopPlaySessionAsync();
                     }

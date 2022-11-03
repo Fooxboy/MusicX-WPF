@@ -8,27 +8,25 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Wpf.Ui.Common;
 using Microsoft.Extensions.DependencyInjection;
+using MusicX.Core.Services;
 
 namespace MusicX.ViewModels.Modals
 {
     public class ListenTogetherSessionStartedModalViewModel : BaseViewModel
     {
-        public string SessionId { get; set; }
+        private readonly ListenTogetherService _service;
+        public string SessionId => _service.SessionId;
 
-        public string Url
-        {
-            get => $"musicxshare:{SessionId}";
-            set { }
-        }
+        public string Url => _service.ConnectUrl;
 
         public ICommand CopyUrlCommand { get; set; }
         public ICommand CopySessionCommand { get; set; }
 
         public ICommand CloseCommand { get; set; }
 
-        public ListenTogetherSessionStartedModalViewModel(string sessionId)
+        public ListenTogetherSessionStartedModalViewModel(ListenTogetherService service)
         {
-            SessionId = sessionId;
+            _service = service;
             var notificationService = StaticService.Container.GetRequiredService<NotificationsService>();
             var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
             this.CopyUrlCommand = new RelayCommand(()=>

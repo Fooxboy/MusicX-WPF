@@ -119,7 +119,6 @@ namespace MusicX.Views
                 await patchManager.Execute();
                 logger.Info("Поиск завершен");
 
-
                 var config = await configService.GetConfig();
 
                 logger.Info("Check new updater");

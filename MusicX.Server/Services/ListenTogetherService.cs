@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using MusicX.Server.Hubs;
-using MusicX.Server.Managers;
 using MusicX.Server.Models;
 using MusicX.Shared.ListenTogether;
 using MusicX.Shared.Player;
@@ -11,25 +10,25 @@ namespace MusicX.Server.Services
     {
         private readonly IHubContext<ListenTogetherHub> _hub;
         private readonly ILogger<ListenTogetherService> _logger;
-        private readonly SessionManager _sessionManager;
+        private readonly SessionService _sessionService;
 
-        public ListenTogetherService(IHubContext<ListenTogetherHub> hub, SessionManager manager, ILogger<ListenTogetherService> logger)
+        public ListenTogetherService(IHubContext<ListenTogetherHub> hub, SessionService service, ILogger<ListenTogetherService> logger)
         {
             _hub = hub;
-            _sessionManager = manager;
+            _sessionService = service;
             _logger = logger;
         }
 
         public async Task<string?> StartSessionAsync(string ownerConnectionId, long ownerVkId)
         {
 
-            var session = _sessionManager.GetSessionByOwner(ownerConnectionId);
+            var session = _sessionService.GetSessionByOwner(ownerConnectionId);
 
             if (session is not null) throw new Exception("Уже существует сессия.");
 
             var owner = new User(ownerConnectionId, ownerVkId);
 
-            session = _sessionManager.AddSession(owner);
+            session = _sessionService.AddSession(owner);
 
             //todo: и другая магия, которой пока нет.
 
@@ -40,7 +39,7 @@ namespace MusicX.Server.Services
 
         public async Task<bool> JoinToSessionAsync(string listenerConnectionId, long listenerVkId,  string ownerConnectionId)
         {
-            var session = _sessionManager.GetSessionByOwner(ownerConnectionId);
+            var session = _sessionService.GetSessionByOwner(ownerConnectionId);
 
             if(session is null) throw new Exception("Не найдена сессия.");
 
@@ -48,7 +47,7 @@ namespace MusicX.Server.Services
 
             var listener = new User(listenerConnectionId, listenerVkId);
 
-            _sessionManager.AddListenerToSesstion(session.Owner.ConnectionId, listener);
+            _sessionService.AddListenerToSesstion(session.Owner.ConnectionId, listener);
 
             await _hub.Clients.Client(session.Owner.ConnectionId).SendAsync(Callbacks.ListenerConnected, listener);
 
@@ -60,7 +59,7 @@ namespace MusicX.Server.Services
         public async Task<bool> LeaveSessionAsync(string connectionId, long vkId)
         {
 
-            var session = _sessionManager.GetSessionByListener(vkId);
+            var session = _sessionService.GetSessionByListener(vkId);
 
             if (session is null) return true;
 
@@ -70,7 +69,7 @@ namespace MusicX.Server.Services
 
             if (listener is null) return true;
 
-            _sessionManager.RemoveListener(session.Owner.ConnectionId, listener);
+            _sessionService.RemoveListener(session.Owner.ConnectionId, listener);
 
             await _hub.Clients.Client(session.Owner.ConnectionId).SendAsync(Callbacks.ListenerDisconnected, listener);
 
@@ -81,7 +80,7 @@ namespace MusicX.Server.Services
 
         public async Task<bool> StopSessionAsync(string ownerConnectionId)
         {
-            var session = _sessionManager.GetSessionByOwner(ownerConnectionId);
+            var session = _sessionService.GetSessionByOwner(ownerConnectionId);
 
             if (session is null) return true;
 
@@ -92,7 +91,7 @@ namespace MusicX.Server.Services
                 await _hub.Groups.RemoveFromGroupAsync(listener.ConnectionId, session.Owner.ConnectionId);
             }
 
-            _sessionManager.RemoveSession(ownerConnectionId);
+            _sessionService.RemoveSession(ownerConnectionId);
 
             _logger.LogInformation($"Пользователь {ownerConnectionId} остановил сессию");
 
@@ -102,7 +101,7 @@ namespace MusicX.Server.Services
 
         public async Task<bool> ChangeTrackAsync(PlaylistTrack track, string ownerConnectionId)
         {
-            var session = _sessionManager.GetSessionByOwner(ownerConnectionId);
+            var session = _sessionService.GetSessionByOwner(ownerConnectionId);
 
             if (session is null) return false;
 
@@ -110,12 +109,12 @@ namespace MusicX.Server.Services
 
             _logger.LogInformation($"Пользователь {ownerConnectionId} сменил трек.");
 
-            return _sessionManager.ChangeTrackInSession(track, ownerConnectionId);
+            return _sessionService.ChangeTrackInSession(track, ownerConnectionId);
         }
 
         public async Task<bool> ChangePlayStateAsync(string ownerConnectionId, TimeSpan position, bool pause)
         {
-            var session = _sessionManager.GetSessionByOwner(ownerConnectionId);
+            var session = _sessionService.GetSessionByOwner(ownerConnectionId);
 
             if (session is null) return false;
 
@@ -126,7 +125,7 @@ namespace MusicX.Server.Services
 
         public async Task<PlaylistTrack> GetCurrentSessionTrack(long vkId)
         {
-            var session = _sessionManager.GetSessionByListener(vkId);
+            var session = _sessionService.GetSessionByListener(vkId);
 
             if (session is null) throw new Exception("сессия не найдена");
 
@@ -135,7 +134,7 @@ namespace MusicX.Server.Services
 
         public async Task<User> GetOwnerSessionInfoAsync(long listenerVkId)
         {
-            var session = _sessionManager.GetSessionByListener(listenerVkId);
+            var session = _sessionService.GetSessionByListener(listenerVkId);
 
             if (session is null) throw new Exception("Сессия не найдена.") ;
 
@@ -146,7 +145,7 @@ namespace MusicX.Server.Services
 
         public async Task<UsersList> GetListenersInSessionAsync(string ownerConnectionId)
         {
-            var session = _sessionManager.GetSessionByOwner(ownerConnectionId);
+            var session = _sessionService.GetSessionByOwner(ownerConnectionId);
 
             if (session is null) return null;
 

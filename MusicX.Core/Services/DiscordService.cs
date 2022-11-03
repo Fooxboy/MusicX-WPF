@@ -1,6 +1,8 @@
 ﻿using DiscordRPC;
 using MusicX.Core.Models;
+using MusicX.Shared.ListenTogether;
 using NLog;
+using ProtoBuf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,20 +15,58 @@ namespace MusicX.Core.Services
     {
         private readonly DiscordRpcClient client;
         private readonly Logger logger;
+        private readonly ListenTogetherService _listenTogetherService;
 
-        public DiscordService(Logger logger)
+        private bool _listenTogetherEnable = false;
+
+        public DiscordService(Logger logger, ListenTogetherService listenTogetherService)
         {
             this.logger = logger;
+            _listenTogetherService = listenTogetherService;
             client = new DiscordRpcClient("652832654944894976");
-
             client.Initialize();
+
+            listenTogetherService.StartedSession += ListenTogetherServiceOnStartedSession;
+            listenTogetherService.SessionStoped += ListenTogetherServiceOnSessionStoped;
         }
 
+        private Task ListenTogetherServiceOnSessionStoped()
+        {
+            _listenTogetherEnable = false;
+            Update();
+            return Task.CompletedTask;
+        }
+
+        private Task ListenTogetherServiceOnStartedSession(string sessionId)
+        {
+            _listenTogetherEnable = true;
+            Update();
+            return Task.CompletedTask;
+        }
+
+        private void Update()
+        {
+            var rpc = client.CurrentPresence;
+            SetTrackPlay(rpc.Details, rpc.State, rpc.Timestamps.End!.Value - DateTime.UtcNow, rpc.Assets.LargeImageKey);
+        }
 
         public void SetTrackPlay(string artist, string name, TimeSpan toEnd, string cover)
         {
             try
             {
+                DiscordRPC.Button[] buttons = null;
+
+                if(_listenTogetherEnable)
+                {
+                    buttons = new[]
+                    {
+                        new DiscordRPC.Button
+                        {
+                            Label = "Слушать вместе",
+                            Url = _listenTogetherService.ConnectUrl
+                        }
+                    };
+                }
                 client.SetPresence(new RichPresence()
                 {
                     Details = artist,
@@ -40,16 +80,16 @@ namespace MusicX.Core.Services
                     {
                         Start = DateTime.UtcNow,
                         End = DateTime.UtcNow + toEnd,
-
-                    }
-                });
-            }catch (Exception ex)
+                    },
+                    Buttons = buttons
+                }) ;
+            }
+            catch (Exception ex)
             {
                 logger.Error(ex, ex.Message);
             }
            
         }
-
 
         public void RemoveTrackPlay(bool pause = false)
         {

@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using MusicX.Server.Hubs;
-using MusicX.Server.Managers;
 using MusicX.Server.Services;
 using MusicX.Shared.Extensions;
 
@@ -21,6 +20,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR(options => options.EnableDetailedErrors = true).AddProtobufProtocol();
 builder.Services.AddMemoryCache();
 builder.Services.AddAuthorization();
+builder.Services.AddMvc(options => options.EnableEndpointRouting = false);
+builder.Services.AddRazorPages();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -41,13 +42,13 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddSingleton<SessionManager>();
+builder.Services.AddSingleton<SessionService>();
 builder.Services.AddTransient<ListenTogetherService>();
 
 var app = builder.Build();
 
 app.Urls.Add("http://0.0.0.0:5000");
-app.Urls.Add("https://0.0.0.0:5001");
+//app.Urls.Add("https://0.0.0.0:5001");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -58,8 +59,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMvc(routeBuilder => routeBuilder.MapRoute("default", "{controller}/{action=Index}"));
 
 app.MapControllers();
+app.MapRazorPages();
 app.MapHub<ListenTogetherHub>("/hubs/listen").RequireAuthorization();
 
 app.MapPost("/token",

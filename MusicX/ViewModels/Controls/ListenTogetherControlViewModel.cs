@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
+using MusicX.Core.Services;
 using MusicX.Helpers;
 using MusicX.Services;
 using MusicX.Services.Player;
@@ -72,7 +73,7 @@ public class ListenTogetherControlViewModel : BaseViewModel
 
             Clipboard.SetText(sessionId);
 
-            _navigationService.OpenModal<ListenTogetherSessionStartedModal>(new ListenTogetherSessionStartedModalViewModel(sessionId));
+            _navigationService.OpenModal<ListenTogetherSessionStartedModal>(new ListenTogetherSessionStartedModalViewModel(_service));
             _notificationsService.Show("Успешно", "Сессия успешно создана. Id скопирован в буффер обмена");
 
             IsLoading = false;
@@ -142,7 +143,7 @@ public class ListenTogetherControlViewModel : BaseViewModel
         return Task.CompletedTask;
     }
 
-    private Task OnSessionStarted()
+    private Task OnSessionStarted(string sessionId)
     {
         IsConnected = true;
         IsSessionHost = true;

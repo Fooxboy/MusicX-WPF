@@ -14,6 +14,7 @@ using MusicX.Services.Player.TrackStats;
 using NLog;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
+using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Shared.Player;
 using MusicX.Models.Enums;

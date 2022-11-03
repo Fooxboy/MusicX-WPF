@@ -4,14 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MusicX.Models.Enums
+namespace MusicX.ViewModels.Modals
 {
-    public enum PlayerMode
+    public class RequestListenTogetherModalViewModel : BaseViewModel
     {
-        None,
-
-        Owner,
-
-        Listener
     }
 }
