@@ -229,7 +229,7 @@ namespace MusicX
 
                 var config = await configService.GetConfig();
 
-                if (config.NotifyMessages is null) config.NotifyMessages = new Models.NotifyMessagesConfig() { ShowListenTogetherModal = true, ShowTelegramBlock = true };
+                if (config.NotifyMessages is null) config.NotifyMessages = new Models.NotifyMessagesConfig() { ShowListenTogetherModal = true, LastShowedTelegramBlock = null };
 
                 await configService.SetConfig(config);
 

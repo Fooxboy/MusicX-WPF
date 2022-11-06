@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace MusicX.Models
 {
@@ -7,7 +8,7 @@ namespace MusicX.Models
         [JsonProperty("show_listen_together_modal")]
         public bool ShowListenTogetherModal { get; set; }
 
-        [JsonProperty("show_telegram_block")]
-        public bool ShowTelegramBlock { get; set; }
+        [JsonProperty("last_showed_telegram_block")]
+        public DateTime? LastShowedTelegramBlock { get; set; }
     }
 }
