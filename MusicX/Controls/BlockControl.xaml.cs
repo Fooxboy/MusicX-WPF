@@ -429,6 +429,8 @@ namespace MusicX.Controls
                 if(Block.DataType == "telegram")
                 {
                     BlocksPanel.Children.Add(new TelegramBlockControl());
+
+                    return;
                 }
 
                 NotFoundBlock.Visibility = Visibility.Visible;

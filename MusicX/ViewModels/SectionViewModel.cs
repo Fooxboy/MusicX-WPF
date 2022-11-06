@@ -27,6 +27,7 @@ namespace MusicX.ViewModels
         private readonly VkService vkService;
         private readonly Logger logger;
         private readonly NotificationsService notificationsService;
+        private readonly ConfigService configService;
 
         public ContentState ContentState { get; set; }
         public bool IsLoadingMore { get; set; }
@@ -39,11 +40,12 @@ namespace MusicX.ViewModels
 
         public ObservableRangeCollection<Block> Blocks { get; set; } = new();
 
-        public SectionViewModel(VkService vkService, Logger logger, NotificationsService notificationsService)
+        public SectionViewModel(VkService vkService, Logger logger, NotificationsService notificationsService, ConfigService configService)
         {
             this.vkService = vkService;
             this.logger = logger;
             this.notificationsService = notificationsService;
+            this.configService = configService;
         }
 
         public async Task LoadAsync()
@@ -152,6 +154,21 @@ namespace MusicX.ViewModels
         {
             Next = nextValue;
             nowOpenSearchSug = false;
+
+            var config = await configService.GetConfig();
+
+            if (config.NotifyMessages is null) config.NotifyMessages = new Models.NotifyMessagesConfig() { ShowListenTogetherModal = true, LastShowedTelegramBlock = null };
+
+            if(config.NotifyMessages.LastShowedTelegramBlock is null || config.NotifyMessages.LastShowedTelegramBlock - DateTime.Now > TimeSpan.FromDays(2))
+            {
+                var telegramBlock = new Block() { DataType = "telegram" };
+
+                blocks.Insert(2, telegramBlock);
+
+                config.NotifyMessages.LastShowedTelegramBlock = DateTime.Now;
+
+                await configService.SetConfig(config);
+            }
 
             try
             {

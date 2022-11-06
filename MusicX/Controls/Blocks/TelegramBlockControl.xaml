@@ -3,13 +3,58 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:MusicX.Controls.Blocks"
+             xmlns:local="clr-namespace:MusicX.Controls.Blocks" xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <StackPanel>
-            <TextBlock Text="Подпишитесь на Telegram канал MusicX"/>
-            <TextBlock Text="Чтобы быть в курсе всех новостей"/>
-        </StackPanel>
+        <wpfui:Card Height="100">
+            <StackPanel Orientation="Horizontal">
+                <Image>
+                    <Image.Source>
+                        <DrawingImage >
+                            <DrawingImage.Drawing>
+                                <DrawingGroup>
+                                    <DrawingGroup.ClipGeometry>
+                                        <RectangleGeometry Rect="0,0,48,48" />
+                                    </DrawingGroup.ClipGeometry>
+                                    <GeometryDrawing Brush="#FF29B6F6">
+                                        <GeometryDrawing.Geometry>
+                                            <PathGeometry FillRule="Nonzero" Figures="M24,4A20,20,0,1,0,24,44A20,20,0,1,0,24,4z" />
+                                        </GeometryDrawing.Geometry>
+                                    </GeometryDrawing>
+                                    <GeometryDrawing Brush="#FFFFFFFF">
+                                        <GeometryDrawing.Geometry>
+                                            <PathGeometry FillRule="Nonzero" Figures="M33.95,15L30.204,34.126C30.204,34.126 30.043,35 28.959,35 28.383,35 28.086,34.726 28.086,34.726L19.972,27.993 16.002,25.992 10.907,24.637C10.907,24.637 10,24.375 10,23.625 10,23 10.933,22.702 10.933,22.702L32.249,14.234C32.248,14.233 32.9,13.999 33.375,14 33.667,14 34,14.125 34,14.5 34,14.75 33.95,15 33.95,15z" />
+                                        </GeometryDrawing.Geometry>
+                                    </GeometryDrawing>
+                                    <GeometryDrawing Brush="#FFB0BEC5">
+                                        <GeometryDrawing.Geometry>
+                                            <PathGeometry FillRule="Nonzero" Figures="M23,30.505L19.574,33.879C19.574,33.879 19.425,33.994 19.226,33.999 19.157,34.001 19.083,33.99 19.007,33.956L19.971,27.991 23,30.505z" />
+                                        </GeometryDrawing.Geometry>
+                                    </GeometryDrawing>
+                                    <GeometryDrawing Brush="#FFCFD8DC">
+                                        <GeometryDrawing.Geometry>
+                                            <PathGeometry FillRule="Nonzero" Figures="M29.897,18.196C29.728,17.976,29.416,17.936,29.196,18.103L16,26C16,26 18.106,31.892 18.427,32.912 18.749,33.933 19.007,33.957 19.007,33.957L19.971,27.992 29.803,18.896C30.023,18.729,30.064,18.416,29.897,18.196z" />
+                                        </GeometryDrawing.Geometry>
+                                    </GeometryDrawing>
+                                </DrawingGroup>
+                            </DrawingImage.Drawing>
+                        </DrawingImage>
+                    </Image.Source>
+                </Image>
+
+                <StackPanel VerticalAlignment="Center" Margin="15,0,0,0">
+                    <TextBlock FontFamily="{StaticResource VKSansBold}" FontSize="20" Text="Подпишитесь на Telegram канал MusicX"/>
+                    <TextBlock FontFamily="{StaticResource VKSansRegular}" Margin="0,10,0,0" Text="Чтобы быть в курсе всех новостей, получить помощь или сообщить о баге"/>
+
+                </StackPanel>
+
+                <wpfui:Button Click="Button_Click" Width="200" Margin="20,0,0,0" Icon="Link32" Appearance="Secondary" Content="Открыть канал"/>
+                <wpfui:Button Click="Button_Click_1" Width="200" Margin="20,0,0,0" Icon="People28" Appearance="Secondary" Content="Открыть чат"/>
+
+            </StackPanel>
+          
+        </wpfui:Card>
+        
     </Grid>
 </UserControl>
