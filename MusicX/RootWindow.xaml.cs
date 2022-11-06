@@ -23,6 +23,7 @@ using Wpf.Ui.Extensions;
 using NavigationService = MusicX.Services.NavigationService;
 using Microsoft.AppCenter.Crashes;
 using MusicX.Core.Models;
+using MusicX.Shared.Player;
 
 namespace MusicX
 {
@@ -39,7 +40,9 @@ namespace MusicX
 
         private bool PlayerShowed = false;
 
-        public RootWindow(NavigationService navigationService, VkService vkService, Logger logger, ConfigService configService, NotificationsService notificationsService)
+        public RootWindow(NavigationService navigationService, VkService vkService, Logger logger,
+                          ConfigService configService, NotificationsService notificationsService,
+                          ListenTogetherService togetherService)
         {
             InitializeComponent();     
             this.navigationService = navigationService;
@@ -58,6 +61,13 @@ namespace MusicX
             this.Closing += RootWindow_Closing;
 
             SingleAppService.Instance.RunWitchArgs += Instance_RunWitchArgs;
+            
+            togetherService.ConnectedToSession += TogetherServiceOnConnectedToSession;
+        }
+
+        private async Task TogetherServiceOnConnectedToSession(PlaylistTrack arg)
+        {
+            await Dispatcher.InvokeAsync(Activate);
         }
 
         private async Task Instance_RunWitchArgs(string[] arg)

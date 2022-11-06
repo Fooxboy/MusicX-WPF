@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Windows;
+using Microsoft.Extensions.DependencyInjection;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
 
@@ -19,18 +20,14 @@ namespace MusicX.Views
         private readonly VkService vkService;
         private readonly ConfigService configService;
         private readonly Logger logger;
-        private readonly NavigationService navigationService;
-        private readonly NotificationsService notificationsService;
 
         private readonly bool tokenRefresh;
-        public LoginWindow(VkService vkService, ConfigService configService, Logger logger, NavigationService navigationService, NotificationsService notificationsService, bool tokenRefresh = false)
+        public LoginWindow(VkService vkService, ConfigService configService, Logger logger, bool tokenRefresh = false)
         {
             InitializeComponent();
             this.vkService = vkService;
             this.configService = configService;
             this.logger = logger;
-            this.navigationService = navigationService;
-            this.notificationsService = notificationsService;
             this.tokenRefresh = tokenRefresh;
             this.WpfTitleBar.MaximizeClicked += WpfTitleBar_MaximizeClicked;
             Accent.Apply(Accent.GetColorizationColor(), ThemeType.Dark);
@@ -92,7 +89,7 @@ namespace MusicX.Views
 
                 await configService.SetConfig(config);
 
-                var rootWindow = new RootWindow(navigationService, vkService, logger, configService, notificationsService);
+                var rootWindow = ActivatorUtilities.CreateInstance<RootWindow>(StaticService.Container);
 
                 rootWindow.Show();
                 this.Close();

@@ -110,9 +110,7 @@ namespace MusicX.Views
 
 
 
-                var navigationService = container.GetRequiredService<NavigationService>();
                 var configService = container.GetRequiredService<ConfigService>();
-                var notificationsService = container.GetRequiredService<NotificationsService>();
                 var patchManager = container.GetRequiredService<RegistryPatchManager>();
 
                 logger.Info("Поиск нужных патчей...");
@@ -145,7 +143,7 @@ namespace MusicX.Views
                     {
                         if (string.IsNullOrEmpty(config.AccessToken))
                         {
-                            var login = new LoginWindow(vkService, configService, logger, navigationService, notificationsService);
+                            var login = new LoginWindow(vkService, configService, logger);
                             login.Show();
                             this.Close();
                         }
@@ -155,7 +153,7 @@ namespace MusicX.Views
                             {
 
                                 await vkService.SetTokenAsync(config.AccessToken);
-                                var rootWindow = new RootWindow(navigationService, vkService, logger, configService, notificationsService);
+                                var rootWindow = ActivatorUtilities.CreateInstance<RootWindow>(container);
                                 rootWindow.Show();
 
                                 if(_args != null && _args.Length > 0)
@@ -182,7 +180,7 @@ namespace MusicX.Views
                                 var navigation = StaticService.Container.GetRequiredService<Services.NavigationService>();
                                 var notifications = StaticService.Container.GetRequiredService<Services.NotificationsService>();
 
-                                new LoginWindow(vkService, configService, logger, navigation, notifications, true).Show();
+                                new LoginWindow(vkService, configService, logger, true).Show();
 
                                 this.Close();
                             }
