@@ -83,8 +83,12 @@ namespace MusicX.Controls
 
         private Task ListenTogetherService_ConnectedToSession(PlaylistTrack arg)
         {
-            ButtonsStackPanel.Visibility = Visibility.Collapsed;
-            QueueButton.Visibility = Visibility.Collapsed;
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                ButtonsStackPanel.Visibility = Visibility.Collapsed;
+                QueueButton.Visibility = Visibility.Collapsed;
+            });
+
             return Task.CompletedTask;
         }
 

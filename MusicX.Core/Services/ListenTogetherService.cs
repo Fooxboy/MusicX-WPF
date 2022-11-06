@@ -105,6 +105,7 @@ namespace MusicX.Core.Services
 
         public async Task JoinToSesstionAsync(string session)
         {
+            session = session.Replace("/", "");
             _logger.Info($"Подключение к сессии {session}");
             if (_connection is null)
             {
