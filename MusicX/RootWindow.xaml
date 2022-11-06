@@ -209,7 +209,7 @@
 
                 <Storyboard x:Key="ListenTogetherHideAnimation">
                     <DoubleAnimation Storyboard.Target="{Binding ElementName=ListenTogetherCard}"
-                                     Storyboard.TargetProperty="Height" From="200"
+                                     Storyboard.TargetProperty="Height" From="220"
                                      To="0" Duration="0:0:0.3">
                         <DoubleAnimation.EasingFunction>
                             <PowerEase EasingMode="EaseIn" />
@@ -228,7 +228,7 @@
                 <Storyboard x:Key="ListenTogetherShowAnimation">
                     <DoubleAnimation Storyboard.Target="{Binding ElementName=ListenTogetherCard}"
                                      Storyboard.TargetProperty="Height" From="0"
-                                     To="200" Duration="0:0:0.3">
+                                     To="220" Duration="0:0:0.3">
                         <DoubleAnimation.EasingFunction>
                             <PowerEase EasingMode="EaseIn" />
                         </DoubleAnimation.EasingFunction>
