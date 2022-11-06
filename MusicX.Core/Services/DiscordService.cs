@@ -46,8 +46,16 @@ namespace MusicX.Core.Services
 
         private void Update()
         {
-            var rpc = client.CurrentPresence;
-            SetTrackPlay(rpc.Details, rpc.State, rpc.Timestamps.End!.Value - DateTime.UtcNow, rpc.Assets.LargeImageKey);
+            try
+            {
+                var rpc = client.CurrentPresence;
+                SetTrackPlay(rpc.Details, rpc.State, rpc.Timestamps.End!.Value - DateTime.UtcNow, rpc.Assets.LargeImageKey);
+
+            }catch(Exception ex)
+            {
+                logger.Error(ex, ex.Message);
+            }
+          
         }
 
         public void SetTrackPlay(string artist, string name, TimeSpan toEnd, string cover)
