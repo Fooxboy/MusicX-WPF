@@ -16,8 +16,10 @@ public class ConnectController : Controller
     // GET
     public IActionResult Index([FromQuery] string id)
     {
-        // if (_sessionService.GetSessionByOwner(id) is null)
-        //     return NotFound();
+#if !DEBUG
+        if (_sessionService.GetSessionByOwner(id) is null)
+            return NotFound();
+#endif
         
         return View(new SessionId(id));
     }
