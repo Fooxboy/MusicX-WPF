@@ -78,6 +78,28 @@ namespace MusicX.Server.Services
             return true;
         }
 
+        public async Task<bool> LeaveSessionAsync(string connectionId)
+        {
+
+            var session = _sessionService.GetSessionByListener(connectionId);
+
+            if (session is null) return true;
+
+            await _hub.Groups.RemoveFromGroupAsync(connectionId, session.Owner.ConnectionId);
+
+            var listener = session.Listeners.Where(l => l.ConnectionId == connectionId).FirstOrDefault();
+
+            if (listener is null) return true;
+
+            _sessionService.RemoveListener(session.Owner.ConnectionId, listener);
+
+            await _hub.Clients.Client(session.Owner.ConnectionId).SendAsync(Callbacks.ListenerDisconnected, listener);
+
+            _logger.LogInformation($"Пользователь {connectionId} покинул сессию");
+
+            return true;
+        }
+
         public async Task<bool> StopSessionAsync(string ownerConnectionId)
         {
             var session = _sessionService.GetSessionByOwner(ownerConnectionId);
@@ -150,6 +172,22 @@ namespace MusicX.Server.Services
             if (session is null) return null;
 
             return new(session.Listeners);
+        }
+
+        public async Task ClientDisconnected(string connectionId)
+        {
+            var session = _sessionService.GetSessionByOwner(connectionId);
+
+            if(session is not null)
+            {
+                await this.StopSessionAsync(connectionId);
+
+                return;
+            }
+
+            var s = _sessionService.GetSessionByListener(connectionId);
+
+            if(s is not null) await this.LeaveSessionAsync(connectionId);
         }
     }
 }

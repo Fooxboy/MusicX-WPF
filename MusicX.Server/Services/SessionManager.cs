@@ -56,6 +56,10 @@ namespace MusicX.Server.Services
             return null;
         }
 
+        /// <summary>
+        /// Получить сессию по ВК ID слушателя
+        /// </summary>
+        /// <param name="listenerVkId">ВК ID слушателя</param>
         public ListenTogetherSession? GetSessionByListener(long listenerVkId)
         {
             //todo: блять надеюсь не ебанет
@@ -65,6 +69,25 @@ namespace MusicX.Server.Services
 
                 return session.Value;
             }catch(Exception)
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Получить сессию по ID подключения слушателя
+        /// </summary>
+        /// <param name="connectionId">ID сессии слушателя</param>
+        public ListenTogetherSession? GetSessionByListener(string connectionId)
+        {
+            //todo: блять надеюсь не ебанет
+            try
+            {
+                var session = Sessions.First(s => s.Value.Listeners.Any(l => l.ConnectionId == connectionId));
+
+                return session.Value;
+            }
+            catch (Exception)
             {
                 return null;
             }

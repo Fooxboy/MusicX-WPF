@@ -190,4 +190,20 @@ public class ListenTogetherHub : Hub
             throw new HubException(ex.Message, ex);
         }
     }
+
+    public async override Task OnDisconnectedAsync(Exception? exception)
+    {
+        try
+        {
+            var connectionId = Context.ConnectionId;
+
+            await _listenTogetherService.ClientDisconnected(connectionId);
+
+        }catch(Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            throw new HubException(ex.Message, ex);
+
+        }
+    }
 }
