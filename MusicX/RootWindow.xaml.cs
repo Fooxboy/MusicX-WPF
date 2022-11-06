@@ -226,6 +226,17 @@ namespace MusicX
                 
                 var thread = new Thread(CheckUpdatesInStart);
                 thread.Start();
+
+                var config = await configService.GetConfig();
+
+                if (config.NotifyMessages is null) config.NotifyMessages = new Models.NotifyMessagesConfig() { ShowListenTogetherModal = true, ShowTelegramBlock = true };
+
+                await configService.SetConfig(config);
+
+                if(config.NotifyMessages.ShowListenTogetherModal)
+                {
+                    navigationService.OpenModal<WelcomeToListenTogetherModal>();
+                }
             }
             catch (Exception ex)
             {

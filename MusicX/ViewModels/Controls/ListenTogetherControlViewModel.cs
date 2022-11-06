@@ -34,6 +34,7 @@ public class ListenTogetherControlViewModel : BaseViewModel
     public ICommand StopCommand { get; }
     public IAsyncCommand<string> ConnectCommand { get; }
     public ICommand StartSessionCommand { get; }
+    public ICommand OpenModalLink { get; set; }
 
     public bool IsLoading { get; set; } = false;
 
@@ -51,6 +52,7 @@ public class ListenTogetherControlViewModel : BaseViewModel
         StopCommand = new AsyncCommand(StopAsync);
         ConnectCommand = new AsyncCommand<string>(ConnectAsync);
         StartSessionCommand = new AsyncCommand(StartedSessionAsync);
+        OpenModalLink = new AsyncCommand(OpenLinkModalAsync);
 
         service.LeaveSession += OnDisconnected;
         service.SessionStoped += OnDisconnected;
@@ -116,6 +118,11 @@ public class ListenTogetherControlViewModel : BaseViewModel
 
         IsLoading = false;
         OnPropertyChanged("IsLoading");
+    }
+
+    private async Task OpenLinkModalAsync() 
+    {
+        _navigationService.OpenModal<ListenTogetherSessionStartedModal>(new ListenTogetherSessionStartedModalViewModel(_service));
     }
 
     private Task OnListenerDisconnected(User user)
