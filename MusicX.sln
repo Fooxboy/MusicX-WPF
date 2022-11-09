@@ -30,9 +30,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscordRPC", "DiscordRPC\Di
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfAnimatedGif", "WpfAnimatedGif\WpfAnimatedGif.csproj", "{9A7108E9-98F6-4D90-AB03-788DA1769566}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicX.Avalonia", "MusicX.Avalonia\MusicX.Avalonia.csproj", "{E2C61095-E619-4A6D-8B56-4E2A7D86782E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicX.Avalonia", "MusicX.Avalonia\MusicX.Avalonia.csproj", "{E2C61095-E619-4A6D-8B56-4E2A7D86782E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VkNet.Extensions.DependencyInjection", "VkNet.Extensions.DependencyInjection\VkNet.Extensions.DependencyInjection.csproj", "{646DE14C-B71A-4A62-8249-204D98DD5334}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VkNet.Extensions.DependencyInjection", "VkNet.Extensions.DependencyInjection\VkNet.Extensions.DependencyInjection.csproj", "{646DE14C-B71A-4A62-8249-204D98DD5334}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicX.Server.Tests", "MusicX.Server.Tests\MusicX.Server.Tests.csproj", "{52E65E39-5947-48FA-B7D4-CEEEFBE33470}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignalR.Protobuf", "SignalR.Protobuf\SignalR.Protobuf.csproj", "{6A511BD3-95E2-4087-9F68-A17DBC237B71}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -92,6 +96,14 @@ Global
 		{646DE14C-B71A-4A62-8249-204D98DD5334}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{646DE14C-B71A-4A62-8249-204D98DD5334}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{646DE14C-B71A-4A62-8249-204D98DD5334}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52E65E39-5947-48FA-B7D4-CEEEFBE33470}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52E65E39-5947-48FA-B7D4-CEEEFBE33470}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52E65E39-5947-48FA-B7D4-CEEEFBE33470}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52E65E39-5947-48FA-B7D4-CEEEFBE33470}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A511BD3-95E2-4087-9F68-A17DBC237B71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A511BD3-95E2-4087-9F68-A17DBC237B71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A511BD3-95E2-4087-9F68-A17DBC237B71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A511BD3-95E2-4087-9F68-A17DBC237B71}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

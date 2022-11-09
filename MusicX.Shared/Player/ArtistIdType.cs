@@ -1,4 +1,4 @@
-﻿namespace MusicX.Services.Player.Playlists;
+﻿namespace MusicX.Shared.Player;
 
 public enum ArtistIdType
 {

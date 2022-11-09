@@ -22,6 +22,8 @@ using Wpf.Ui.Controls;
 using Wpf.Ui.Extensions;
 using NavigationService = MusicX.Services.NavigationService;
 using Microsoft.AppCenter.Crashes;
+using MusicX.Core.Models;
+using MusicX.Shared.Player;
 
 namespace MusicX
 {
@@ -38,10 +40,10 @@ namespace MusicX
 
         private bool PlayerShowed = false;
 
-        public RootWindow(NavigationService navigationService, VkService vkService, Logger logger, ConfigService configService, NotificationsService notificationsService)
+        public RootWindow(NavigationService navigationService, VkService vkService, Logger logger,
+                          ConfigService configService, NotificationsService notificationsService,
+                          ListenTogetherService togetherService)
         {
-            //Style = "{StaticResource UiWindow}"
-
             InitializeComponent();     
             this.navigationService = navigationService;
             this.vkService = vkService;
@@ -55,23 +57,80 @@ namespace MusicX
             notificationsService.NewNotificationEvent += NotificationsService_NewNotificationEvent;
 
             Accent.Apply(Accent.GetColorizationColor(), ThemeType.Dark);
+
+            this.Closing += RootWindow_Closing;
+
+            SingleAppService.Instance.RunWitchArgs += Instance_RunWitchArgs;
+            
+            togetherService.ConnectedToSession += TogetherServiceOnConnectedToSession;
         }
 
+        private async Task TogetherServiceOnConnectedToSession(PlaylistTrack arg)
+        {
+            await Dispatcher.InvokeAsync(Activate);
+        }
 
+        private async Task Instance_RunWitchArgs(string[] arg)
+        {
+            try
+            {
+                var a = arg[0].Split(':');
+                if (a[0] == "musicxshare")
+                {
+                    await StartListenTogether(a[1]);
+                }
+            }catch(Exception ex)
+            {
+                logger.Error(ex, ex.Message);
 
-        //private bool isFullScreen = false;
-        //private void WpfTitleBar_MaximizeClicked(object sender, RoutedEventArgs e)
-        //{
-        //    isFullScreen = !isFullScreen;
-        //    if(isFullScreen)
-        //    {
-        //        rootGrid.Margin = new Thickness(8,8,8,0);
+                notificationsService.Show("Ошибка", "Мы не смогли подключится к сервису совместного прослушивания");
+            }
+           
+        }
 
-        //    }else
-        //    {
-        //        rootGrid.Margin = new Thickness(0, 0, 0, 0);
-        //    }
-        //}
+        public async Task StartListenTogether(string sessionId)
+        {
+            var listenTogetherService = StaticService.Container.GetRequiredService<ListenTogetherService>();
+
+            await Task.Factory.StartNew(async() =>
+            {
+                try
+                {
+                    var config = await configService.GetConfig();
+                    await listenTogetherService.ConnectToServerAsync(config.UserId);
+                    await listenTogetherService.JoinToSesstionAsync(sessionId);
+                }catch(Exception ex)
+                {
+                    logger.Error(ex, ex.Message);
+                }
+                
+            });
+          
+        }
+
+        private async void RootWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
+        {
+            try
+            {
+                var listenTogetherService = StaticService.Container.GetRequiredService<ListenTogetherService>();
+
+                if (listenTogetherService.IsConnectedToServer && listenTogetherService.PlayerMode != PlayerMode.None)
+                {
+                    if (listenTogetherService.PlayerMode == PlayerMode.Owner)
+                    {
+                        await listenTogetherService.StopPlaySessionAsync();
+                    }
+                    else
+                    {
+                        await listenTogetherService.LeavePlaySessionAsync();
+                    }
+                }
+            }catch(Exception ex)
+            {
+                //nothing
+            }
+           
+        }
 
         private async void NotificationsService_NewNotificationEvent(string title, string message)
         {
@@ -177,6 +236,17 @@ namespace MusicX
                 
                 var thread = new Thread(CheckUpdatesInStart);
                 thread.Start();
+
+                var config = await configService.GetConfig();
+
+                if (config.NotifyMessages is null) config.NotifyMessages = new Models.NotifyMessagesConfig() { ShowListenTogetherModal = true, LastShowedTelegramBlock = null };
+
+                await configService.SetConfig(config);
+
+                if(config.NotifyMessages.ShowListenTogetherModal)
+                {
+                    navigationService.OpenModal<WelcomeToListenTogetherModal>();
+                }
             }
             catch (Exception ex)
             {

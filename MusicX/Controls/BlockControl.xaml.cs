@@ -426,6 +426,13 @@ namespace MusicX.Controls
                     }
                 }
 
+                if(Block.DataType == "telegram")
+                {
+                    BlocksPanel.Children.Add(new TelegramBlockControl());
+
+                    return;
+                }
+                
                 if (Block.DataType == "audio_followings_update_info")
                 {
                     if (Block.Layout.Name == "list" && Block.FollowingsUpdateInfos.Count > 0)
@@ -440,7 +447,6 @@ namespace MusicX.Controls
                         return;
                     }
                 }
-
 
                 NotFoundBlock.Visibility = Visibility.Visible;
                 DataTypeName.Text = Block.DataType;

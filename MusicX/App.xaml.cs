@@ -2,7 +2,9 @@
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using MusicX.Services;
+using MusicX.Views;
 using System.Collections.Generic;
+using System.Threading;
 using System.Windows;
 
 namespace MusicX
@@ -14,19 +16,44 @@ namespace MusicX
     {
         protected async override void OnStartup(StartupEventArgs e)
         {
+            if (!InstanceCheck())
+            {
+                if (e.Args != null && e.Args.Length > 0) //открытие не нового приложения, а передача агрументов уже в открытое
+                {
+                    await SingleAppService.Instance.SendArguments(e.Args);
+                    Application.Current.Shutdown();
+                }
+
+                return;
+            }
+           
+
             base.OnStartup(e);
+
             AppCenter.Start("02130c6d-0a3b-4aa2-b46c-8aeb66c3fd71",
                    typeof(Analytics), typeof(Crashes));
 
             var properties = new Dictionary<string, string>
                 {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
                     {"Version", StaticService.Version }
                 };
             Analytics.TrackEvent("StartApp", properties);
 
+            var window = new StartingWindow(e.Args);
+            window.Show();
+
+            await SingleAppService.Instance.StartArgsListener();
+        }
+
+        static Mutex? InstanceCheckMutex;
+        static bool InstanceCheck()
+        {
+            var mutex = new Mutex(true, "MusicXPlayer", out var isNew);
+            if (isNew)
+                InstanceCheckMutex = mutex;
+            else
+                mutex.Dispose(); // отпустить mutex сразу
+            return isNew;
         }
     }
 }

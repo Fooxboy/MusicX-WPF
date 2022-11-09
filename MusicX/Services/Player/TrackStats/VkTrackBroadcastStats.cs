@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using MusicX.Core.Services;
-using MusicX.Services.Player.Playlists;
+using MusicX.Models.Enums;
+using MusicX.Shared.Player;
 
 namespace MusicX.Services.Player.TrackStats;
 
@@ -30,6 +31,8 @@ public class VkTrackBroadcastStats : ITrackStatsListener
 
     public Task TrackPlayStateChangedAsync(PlaylistTrack track, TimeSpan position, bool paused)
     {
+        if (track is null) return Task.CompletedTask;
+
         if (track.Data is VkTrackData data && _configService.Config.BroadcastVK == true)
             return _vkService.SetBroadcastAsync(paused ? null : new()
             {

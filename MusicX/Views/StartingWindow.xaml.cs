@@ -18,6 +18,9 @@ using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
 using System.Collections.Generic;
 using Microsoft.AppCenter.Analytics;
+using Microsoft.AspNetCore.SignalR.Client;
+using MusicX.ViewModels.Controls;
+using MusicX.RegistryPatches;
 
 namespace MusicX.Views
 {
@@ -26,11 +29,13 @@ namespace MusicX.Views
     /// </summary>
     public partial class StartingWindow : UiWindow
     {
-        public StartingWindow()
+        private readonly string[] _args;
+
+        public StartingWindow(string[] args)
         {
             InitializeComponent();
-           // this.Background = Brushes.Black;
-           Accent.Apply(Accent.GetColorizationColor(), ThemeType.Dark);
+            Accent.Apply(Accent.GetColorizationColor(), ThemeType.Dark);
+            _args = args;
         }
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
@@ -53,11 +58,13 @@ namespace MusicX.Views
                 collection.AddVkNet();
 
                 collection.AddSingleton<VkService>();
-                collection.AddSingleton<ServerService>();
+                collection.AddSingleton<ListenTogetherService>();
                 collection.AddSingleton<GithubService>();
                 collection.AddSingleton<DiscordService>();
                 collection.AddSingleton<BoomService>();
                 collection.AddSingleton(LogManager.Setup().GetLogger("Common"));
+
+                collection.AddSingleton<IRegistryPatch, ListenTogetherPatch>();
 
                 collection.AddSingleton<ITrackMediaSource, BoomMediaSource>();
                 collection.AddSingleton<ITrackMediaSource, VkMediaSource>();
@@ -65,6 +72,7 @@ namespace MusicX.Views
                 collection.AddSingleton<ITrackStatsListener, DiscordTrackStats>();
                 collection.AddSingleton<ITrackStatsListener, VkTrackBroadcastStats>();
                 collection.AddSingleton<ITrackStatsListener, VkTrackStats>();
+                collection.AddSingleton<ITrackStatsListener, ListenTogetherStats>();
 
                 collection.AddTransient<SectionViewModel>();
                 collection.AddTransient<PlaylistViewModel>();
@@ -75,6 +83,7 @@ namespace MusicX.Views
                 collection.AddSingleton<DownloaderViewModel>();
                 collection.AddSingleton<VKMixViewModel>();
                 collection.AddSingleton<BoomProfileViewModel>();
+                collection.AddTransient<ListenTogetherControlViewModel>();
 
                 collection.AddSingleton<NavigationService>();
                 collection.AddSingleton<ConfigService>();
@@ -82,6 +91,9 @@ namespace MusicX.Views
                 collection.AddSingleton<NotificationsService>();
                 collection.AddSingleton<DownloaderService>();
                 collection.AddSingleton<BannerService>();
+                collection.AddTransient<RegistryPatchManager>();
+
+
                 
                 var container = StaticService.Container = collection.BuildServiceProvider();
 
@@ -98,9 +110,12 @@ namespace MusicX.Views
 
 
 
-                var navigationService = container.GetRequiredService<NavigationService>();
                 var configService = container.GetRequiredService<ConfigService>();
-                var notificationsService = container.GetRequiredService<NotificationsService>();
+                var patchManager = container.GetRequiredService<RegistryPatchManager>();
+
+                logger.Info("Поиск нужных патчей...");
+                await patchManager.Execute();
+                logger.Info("Поиск завершен");
 
                 var config = await configService.GetConfig();
 
@@ -128,7 +143,7 @@ namespace MusicX.Views
                     {
                         if (string.IsNullOrEmpty(config.AccessToken))
                         {
-                            var login = new LoginWindow(vkService, configService, logger, navigationService, notificationsService);
+                            var login = new LoginWindow(vkService, configService, logger);
                             login.Show();
                             this.Close();
                         }
@@ -138,8 +153,19 @@ namespace MusicX.Views
                             {
 
                                 await vkService.SetTokenAsync(config.AccessToken);
-                                var rootWindow = new RootWindow(navigationService, vkService, logger, configService, notificationsService);
+                                var rootWindow = ActivatorUtilities.CreateInstance<RootWindow>(container);
                                 rootWindow.Show();
+
+                                if(_args != null && _args.Length > 0)
+                                {
+                                    var arg = _args[0].Split(":");
+
+                                    if (arg[0] == "musicxshare")
+                                    {
+                                        await rootWindow.StartListenTogether(arg[1]);
+                                    }
+                                }
+
                                 this.Close();
                             }
                             catch (VkNet.Exception.VkApiMethodInvokeException e) when (e.ErrorCode is 5 or 1117)
@@ -154,7 +180,7 @@ namespace MusicX.Views
                                 var navigation = StaticService.Container.GetRequiredService<Services.NavigationService>();
                                 var notifications = StaticService.Container.GetRequiredService<Services.NotificationsService>();
 
-                                new LoginWindow(vkService, configService, logger, navigation, notifications, true).Show();
+                                new LoginWindow(vkService, configService, logger, true).Show();
 
                                 this.Close();
                             }
@@ -174,13 +200,6 @@ namespace MusicX.Views
 
                 
             });
-        }
-
-        private async void Button_Click(object sender, RoutedEventArgs e)
-        {
-            
-
-
         }
     }
 }

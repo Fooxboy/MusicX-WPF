@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Text;
+using MusicX.Shared.Player;
 
 namespace MusicX.Services.Player.Playlists;
 
@@ -13,7 +14,7 @@ public static partial class TrackExtensions
             builder.Append(name).Append(", ");
         }
 
-        if (track.FeaturedArtists.Any())
+        if (track.FeaturedArtists?.Any() == true)
         {
             builder.Append("feat. ");
             foreach (var (name, _) in track.MainArtists)

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Helpers;
+using MusicX.Shared.Player;
 using MusicX.ViewModels;
 
 namespace MusicX.Services.Player.Playlists;

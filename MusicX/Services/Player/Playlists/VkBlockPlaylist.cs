@@ -2,6 +2,7 @@
 using System.Linq;
 using MusicX.Core.Services;
 using MusicX.Helpers;
+using MusicX.Shared.Player;
 
 namespace MusicX.Services.Player.Playlists;
 

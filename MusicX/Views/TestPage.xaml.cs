@@ -5,9 +5,13 @@ using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Controls;
+using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
 using MusicX.ViewModels;
 using MusicX.ViewModels.Modals;
+using System;
+using System.Windows.Interop;
+using MusicX.Core.Services;
 
 namespace MusicX.Views
 {
@@ -29,7 +33,7 @@ namespace MusicX.Views
         private async void OpenModal_Click(object sender, RoutedEventArgs e)
         {
 
-            /*var window = Application.Current.MainWindow;
+            /*var window = Window.GetWindow(this);
             // ...
             IntPtr hwnd = new WindowInteropHelper(window).Handle;
 
@@ -95,5 +99,67 @@ namespace MusicX.Views
             navigationService.OpenModal<CreatePlaylistModal>(viewModel);
         }
         public string MenuTag { get; set; }
+
+        private async void ListenTogether_OnClick(object sender, RoutedEventArgs e)
+        {
+            var listenTogetherService = StaticService.Container.GetRequiredService<ListenTogetherService>();
+            var configService = StaticService.Container.GetRequiredService<ConfigService>();
+            var config = await configService.GetConfig();
+
+
+            await listenTogetherService.ConnectToServerAsync(config.UserId);
+            await listenTogetherService.JoinToSesstionAsync(UserId.Text);
+        }
+
+        private async void playTogetherSessionStart_Click(object sender, RoutedEventArgs e)
+        {
+            var listenTogetherService = StaticService.Container.GetRequiredService<ListenTogetherService>();
+            var configService = StaticService.Container.GetRequiredService<ConfigService>();
+
+            var config = await configService.GetConfig();
+
+            await listenTogetherService.StartSessionAsync(config.UserId);
+        }
+
+        private async void playTogetherSessionStop_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var listenTogetherService = StaticService.Container.GetRequiredService<ListenTogetherService>();
+
+                await listenTogetherService.StopPlaySessionAsync();
+            }catch(Exception ex)
+            {
+                var window = Window.GetWindow(this);
+
+                IntPtr hwnd = new WindowInteropHelper(window).Handle;
+
+                var brr = new Windows.UI.Popups.MessageDialog($"{ex.Message} \n \n \n {ex.StackTrace}", "Ошибка");
+                WinRT.Interop.InitializeWithWindow.Initialize(brr, hwnd);
+
+                await brr.ShowAsync();
+            }
+        }
+
+        private async void DisconnectListenTogether_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var listenTogetherService = StaticService.Container.GetRequiredService<ListenTogetherService>();
+
+                await listenTogetherService.LeavePlaySessionAsync();
+            }
+            catch (Exception ex)
+            {
+                var window = Window.GetWindow(this);
+
+                IntPtr hwnd = new WindowInteropHelper(window).Handle;
+
+                var brr = new Windows.UI.Popups.MessageDialog($"{ex.Message} \n \n \n {ex.StackTrace}", "Ошибка");
+                WinRT.Interop.InitializeWithWindow.Initialize(brr, hwnd);
+
+                await brr.ShowAsync();
+            }
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using MusicX.Core.Models.Boom;
+using MusicX.Shared.Player;
 
 namespace MusicX.Services.Player.Playlists;
 

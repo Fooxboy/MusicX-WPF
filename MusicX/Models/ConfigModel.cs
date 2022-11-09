@@ -40,5 +40,8 @@ namespace MusicX.Models
 
         [JsonProperty("boom_uuid")]
         public string BoomUuid { get; set; }
+
+        [JsonProperty("notify_messages")]
+        public NotifyMessagesConfig NotifyMessages { get; set; }
     }
 }

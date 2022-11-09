@@ -16,6 +16,7 @@ using MusicX.Core.Services;
 using MusicX.Helpers;
 using MusicX.Services;
 using MusicX.Services.Player.Playlists;
+using MusicX.Shared.Player;
 using NLog;
 using Wpf.Ui.Common;
 using Xabe.FFmpeg.Events;

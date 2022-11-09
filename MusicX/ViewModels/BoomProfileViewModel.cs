@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MusicX.Helpers;
+using MusicX.Shared.Player;
 using Artist = MusicX.Core.Models.Boom.Artist;
 
 namespace MusicX.ViewModels
