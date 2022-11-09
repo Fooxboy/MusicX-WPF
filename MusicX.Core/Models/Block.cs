@@ -82,6 +82,9 @@ namespace MusicX.Core.Models
         [JsonProperty("music_owners_ids")]
         public List<string> MusicOwnerIds { get; set; } = new List<string>();
 
+        [JsonProperty("audio_followings_update_info_ids")]
+        public List<string> FollowingUpdateInfoIds { get; set; } = new List<string>();
+
         public List<Curator> Curators { get; set; } = new List<Curator>();
         public List<Text> Texts { get; set; } = new List<Text>();
         public List<Audio> Audios { get; set; } = new List<Audio>();
@@ -101,5 +104,7 @@ namespace MusicX.Core.Models
         public List<Placeholder> Placeholders { get; set; } = new List<Placeholder>();
 
         public List<MusicOwner> MusicOwners { get; set; } = new List<MusicOwner>();
+        
+        public List<AudioFollowingsUpdateInfo> FollowingsUpdateInfos { get; set; } = new List<AudioFollowingsUpdateInfo>();
     }
 }

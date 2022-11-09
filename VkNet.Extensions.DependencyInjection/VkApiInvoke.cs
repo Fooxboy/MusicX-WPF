@@ -27,14 +27,17 @@ public class VkApiInvoke : IVkApiInvoke
     private readonly IVkApiVersionManager _versionManager;
     private readonly IVkTokenStore _tokenStore;
     private readonly ILanguageService _languageService;
+    private readonly IAsyncRateLimiter _rateLimiter;
 
-    public VkApiInvoke(IRestClient client, ICaptchaHandler handler, IVkApiVersionManager versionManager, IVkTokenStore tokenStore, ILanguageService languageService)
+    public VkApiInvoke(IRestClient client, ICaptchaHandler handler, IVkApiVersionManager versionManager,
+                       IVkTokenStore tokenStore, ILanguageService languageService, IAsyncRateLimiter rateLimiter)
     {
         _client = client;
         _handler = handler;
         _versionManager = versionManager;
         _tokenStore = tokenStore;
         _languageService = languageService;
+        _rateLimiter = rateLimiter;
     }
 
     private void TryAddRequiredParameters(IDictionary<string, string> parameters, bool skipAuthorization)
@@ -117,6 +120,8 @@ public class VkApiInvoke : IVkApiInvoke
                 parameters.Add("captcha_sid", captchaSid.ToString());
                 parameters.Add("captcha_key", key);
             }
+
+            await _rateLimiter.WaitNextAsync();
 
             var response = await _client.PostAsync(new(_apiBaseUri, methodName), parameters, Encoding.UTF8);
             LastInvokeTime = DateTimeOffset.Now;

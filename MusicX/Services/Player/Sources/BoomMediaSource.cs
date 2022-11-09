@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Media.Core;
 using MusicX.Core.Services;
@@ -17,14 +17,14 @@ public class BoomMediaSource : ITrackMediaSource
         _boomService = boomService;
     }
 
-    public async Task<MediaSource?> CreateMediaSourceAsync(PlaylistTrack track)
+    public async Task<MediaSource?> CreateMediaSourceAsync(PlaylistTrack track, CancellationToken cancellationToken = default)
     {
         if (track.Data is VkTrackData)
             return null;
 
-        var response = await _boomService.Client.GetAsync(track.Data.Url);
+        var response = await _boomService.Client.GetAsync(track.Data.Url, cancellationToken);
 
-        var stream = await response.Content.ReadAsStreamAsync();
+        var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
 
         return MediaSource.CreateFromStream(stream.AsRandomAccessStream(),
                                             response.Content.Headers.ContentType?.MediaType ??

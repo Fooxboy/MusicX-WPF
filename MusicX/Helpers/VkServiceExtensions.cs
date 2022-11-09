@@ -9,14 +9,11 @@ public static class VkServiceExtensions
 {
     public static async Task<ResponseData> LoadFullPlaylistAsync(this VkService service, long playlistId, long ownerId, string accessKey)
     {
-        await Task.Delay(1000);
-
         var data = await service.GetPlaylistAsync(100, playlistId, accessKey, ownerId);
         
         var offset = data.Audios.Count;
         while (offset < data.Playlist.Count)
         {
-            await Task.Delay(1000);
             var response = await service.AudioGetAsync(playlistId, ownerId, accessKey, offset);
             
             data.Audios.AddRange(response.Items);
