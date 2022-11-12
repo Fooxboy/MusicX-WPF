@@ -16,6 +16,9 @@ public class ConnectController : Controller
     // GET
     public IActionResult Index([FromQuery] string id)
     {
+        if (string.IsNullOrEmpty(id))
+            return BadRequest();
+        
 #if !DEBUG
         if (_sessionService.GetSessionByOwner(id) is null)
             return NotFound();
