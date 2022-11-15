@@ -24,6 +24,7 @@ using NavigationService = MusicX.Services.NavigationService;
 using Microsoft.AppCenter.Crashes;
 using MusicX.Core.Models;
 using MusicX.Shared.Player;
+using Microsoft.AppCenter.Analytics;
 
 namespace MusicX
 {
@@ -96,6 +97,12 @@ namespace MusicX
             {
                 try
                 {
+                    var properties = new Dictionary<string, string>
+                        {
+                            {"Version", StaticService.Version }
+                        };
+                    Analytics.TrackEvent("Connect to session", properties);
+
                     var config = await configService.GetConfig();
                     await listenTogetherService.ConnectToServerAsync(config.UserId);
                     await listenTogetherService.JoinToSesstionAsync(sessionId);

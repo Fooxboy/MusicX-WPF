@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
+using Microsoft.AppCenter.Analytics;
 using MusicX.Core.Services;
 using MusicX.Helpers;
 using MusicX.Services;
@@ -67,6 +69,12 @@ public class ListenTogetherControlViewModel : BaseViewModel
     {
         try
         {
+            var properties = new Dictionary<string, string>
+            {
+                {"Version", StaticService.Version }
+            };
+            Analytics.TrackEvent("Started session", properties);
+
             IsLoading = true;
             OnPropertyChanged("IsLoading");
             var sessionId = await _service.StartSessionAsync(_configService.Config.UserId);
@@ -94,7 +102,6 @@ public class ListenTogetherControlViewModel : BaseViewModel
 
     private async Task ConnectAsync(string? sessionId)
     {
-        
         if (string.IsNullOrEmpty(sessionId))
         {
             _notificationsService.Show("Ошибка", "Введите id сессии");
@@ -105,6 +112,13 @@ public class ListenTogetherControlViewModel : BaseViewModel
         OnPropertyChanged("IsLoading");
         try
         {
+
+            var properties = new Dictionary<string, string>
+            {
+                {"Version", StaticService.Version }
+            };
+            Analytics.TrackEvent("Connect to session", properties);
+
             await _service.ConnectToServerAsync(_configService.Config.UserId);
             await _service.JoinToSesstionAsync(sessionId);
             _notificationsService.Show("Подключено", "Успешное подключение к сессии");

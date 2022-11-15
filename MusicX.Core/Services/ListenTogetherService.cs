@@ -212,7 +212,6 @@ namespace MusicX.Core.Services
 
         public async Task ConnectToServerAsync(long userId)
         {
-
             _logger.Info("Подключение к серверу Слушать вместе");
 
             await GetListenTogetherHostAsync();
