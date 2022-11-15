@@ -1,26 +1,25 @@
-﻿using MusicX.Core.Models;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using MusicX.Shared.Player;
 
-namespace MusicX.Services.Player.Playlists
+namespace MusicX.Services.Player.Playlists;
+
+public class SinglePlaylist : PlaylistBase<PlaylistTrack>
 {
-    public class SinglePlaylist : PlaylistBase<Audio>
+    private bool _canLoad = true;
+
+    public override bool CanLoad => _canLoad;
+
+    public override PlaylistTrack Data { get; }
+
+    public SinglePlaylist(PlaylistTrack data)
     {
-        public override bool CanLoad => true;
+        Data = data;
+    }
 
-        public override Audio Data { get; }
-
-        public SinglePlaylist(Audio data)
-        {
-            Data = data;
-        }
-
-        public override IAsyncEnumerable<PlaylistTrack> LoadAsync()
-        {
-            return new List<PlaylistTrack>() { Data.ToTrack()}.ToAsyncEnumerable();
-        }
+    public override IAsyncEnumerable<PlaylistTrack> LoadAsync()
+    {
+        _canLoad = false;
+        return new List<PlaylistTrack> { Data }.ToAsyncEnumerable();
     }
 }

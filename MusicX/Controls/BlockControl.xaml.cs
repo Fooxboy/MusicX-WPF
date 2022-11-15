@@ -304,7 +304,7 @@ namespace MusicX.Controls
                         var text = new TextBlock();
                         var card = new CardAction()
                         {
-                            Margin = new Thickness(0, 10, 15, 10), 
+                            Margin = new Thickness(0, 10, i + 1 == buttons.Count ? 0 : 15, 10), 
                             Content = text,
                             DataContext = new BlockButtonViewModel(blockButton, Artist, Block),
                         };
@@ -417,6 +417,36 @@ namespace MusicX.Controls
 
                 }
 
+                if (Block.DataType == "music_owners")
+                {
+                    if (Block.Layout.Name == "owner_cell")
+                    {
+                        BlocksPanel.Children.Add(new MusicOwnerCellBlockControl { DataContext = Block.MusicOwners[0] });
+                        return;
+                    }
+                }
+
+                if(Block.DataType == "telegram")
+                {
+                    BlocksPanel.Children.Add(new TelegramBlockControl());
+
+                    return;
+                }
+                
+                if (Block.DataType == "audio_followings_update_info")
+                {
+                    if (Block.Layout.Name == "list" && Block.FollowingsUpdateInfos.Count > 0)
+                    {
+                        BlocksPanel.Children.Add(new FollowingsUpdateInfoListBlockControl
+                        {
+                            Block = Block,
+                            DataContext = new BlockButtonViewModel(
+                                Block.Actions.First(b => b.RefDataType == "audio_followings_update_info"),
+                                parentBlock: Block)
+                        });
+                        return;
+                    }
+                }
 
                 NotFoundBlock.Visibility = Visibility.Visible;
                 DataTypeName.Text = Block.DataType;

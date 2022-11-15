@@ -15,6 +15,7 @@
     KeyDown="Window_KeyDown"
     Loaded="Window_Loaded"
     Title="MusicX"
+    WindowStartupLocation="CenterScreen"
     Background="#202020"
     ExtendsContentIntoTitleBar="True"
     WindowBackdropType="Mica"
@@ -197,34 +198,88 @@
             </Rectangle.Effect>
         </Rectangle>-->
 
-        <controls:PlayerControl
-            x:Name="playerControl"
-            Grid.Row="1"
-            Margin="18,0,12,10"
-            VerticalAlignment="Bottom"
-            MouseDoubleClick="playerControl_MouseDoubleClick"
-            RenderTransformOrigin="0.5,0.5"
-            Visibility="Collapsed">
-            <controls:PlayerControl.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform />
-                    <SkewTransform />
-                    <RotateTransform />
-                    <TranslateTransform />
-                </TransformGroup>
-            </controls:PlayerControl.RenderTransform>
+        <StackPanel Grid.Row="1" VerticalAlignment="Bottom">
+            <StackPanel.Resources>
+                <Thickness x:Key="ListenTogetherShownThickness"
+                           Right="250"
+                           Bottom="10" />
+                <Thickness x:Key="ListenTogetherHiddenThickness"
+                           Right="250"
+                           Bottom="-2000" />
 
-        </controls:PlayerControl>
+                <Storyboard x:Key="ListenTogetherHideAnimation">
+                    <DoubleAnimation Storyboard.Target="{Binding ElementName=ListenTogetherCard}"
+                                     Storyboard.TargetProperty="Height" From="220"
+                                     To="0" Duration="0:0:0.3">
+                        <DoubleAnimation.EasingFunction>
+                            <PowerEase EasingMode="EaseIn" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                    <ThicknessAnimationUsingKeyFrames
+                        BeginTime="00:00:00"
+                        Storyboard.Target="{Binding ElementName=ListenTogetherCard}"
+                        Storyboard.TargetProperty="Margin">
+                        <SplineThicknessKeyFrame KeyTime="00:00:00"
+                                                 Value="{StaticResource ListenTogetherShownThickness}" />
+                        <SplineThicknessKeyFrame KeyTime="00:00:.2"
+                                                 Value="{StaticResource ListenTogetherHiddenThickness}" />
+                    </ThicknessAnimationUsingKeyFrames>
+                </Storyboard>
+                <Storyboard x:Key="ListenTogetherShowAnimation">
+                    <DoubleAnimation Storyboard.Target="{Binding ElementName=ListenTogetherCard}"
+                                     Storyboard.TargetProperty="Height" From="0"
+                                     To="220" Duration="0:0:0.3">
+                        <DoubleAnimation.EasingFunction>
+                            <PowerEase EasingMode="EaseIn" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                    <ThicknessAnimationUsingKeyFrames
+                        BeginTime="00:00:00"
+                        Storyboard.Target="{Binding ElementName=ListenTogetherCard}"
+                        Storyboard.TargetProperty="Margin">
+                        <SplineThicknessKeyFrame KeyTime="00:00:00"
+                                                 Value="{StaticResource ListenTogetherHiddenThickness}" />
+                        <SplineThicknessKeyFrame KeyTime="00:00:.1"
+                                                 Value="{StaticResource ListenTogetherShownThickness}" />
+                    </ThicknessAnimationUsingKeyFrames>
+                </Storyboard>
+            </StackPanel.Resources>
 
-        <wpfui:Snackbar
-            x:Name="RootSnackbar"
-            Grid.RowSpan="3"
-            Grid.ColumnSpan="3"
-            MaxWidth="600"
-            Margin="0,0,0,40"
-            Icon="Info20"
-            CloseButtonEnabled="True"
-            Timeout="5000" />
+            <Grid>
+                <wpfui:Snackbar
+                    x:Name="RootSnackbar"
+                    MaxWidth="600"
+                    Margin="0,0,0,20"
+                    Icon="Info20"
+                    CloseButtonEnabled="True"
+                    Timeout="5000"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Bottom" />
+                <wpfui:Card Margin="{StaticResource ListenTogetherHiddenThickness}"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Bottom"
+                            Name="ListenTogetherCard"
+                            Background="#232323">
+                    <controls:ListenTogetherControl />
+                </wpfui:Card>
+            </Grid>
+
+            <controls:PlayerControl
+                x:Name="playerControl"
+                MouseDoubleClick="playerControl_MouseDoubleClick"
+                RenderTransformOrigin="0.5,0.5"
+                Margin="18,0,12,10"
+                Visibility="Collapsed">
+                <controls:PlayerControl.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform />
+                        <SkewTransform />
+                        <RotateTransform />
+                        <TranslateTransform />
+                    </TransformGroup>
+                </controls:PlayerControl.RenderTransform>
+            </controls:PlayerControl>
+        </StackPanel>
 
         <wpfui:Button
             Width="70"

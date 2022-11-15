@@ -449,6 +449,7 @@ namespace MusicX.Installer
 
                 this.CreateRegistryValues(musicX);
             }
+
         }
 
         private void CreateRegistryValues(RegistryKey musicX)

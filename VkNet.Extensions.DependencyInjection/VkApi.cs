@@ -16,6 +16,7 @@ public class VkApi : IVkApi
     private readonly IVkApiAuthAsync _auth;
     private readonly IVkApiInvoke _invoke;
     private readonly ILanguageService _languageService;
+    private readonly IVkApiCategories _categories;
     private readonly IVkTokenStore _tokenStore;
     private readonly ICaptchaHandler _captchaHandler;
     private readonly IAuthorizationFlow _authorizationFlow;
@@ -32,49 +33,7 @@ public class VkApi : IVkApi
         _auth = auth;
         _invoke = invoke;
         _languageService = languageService;
-        // Users = categories.Users;
-        // Friends = categories.Friends;
-        // Status = categories.Status;
-        // Messages = categories.Messages;
-        // Groups = categories.Groups;
-        // Audio = categories.Audio;
-        // Database = categories.Database;
-        // Utils = categories.Utils;
-        // Wall = categories.Wall;
-        // Board = categories.Board;
-        // Fave = categories.Fave;
-        // Video = categories.Video;
-        // Account = categories.Account;
-        // Photo = categories.Photo;
-        // Docs = categories.Docs;
-        // Likes = categories.Likes;
-        // Pages = categories.Pages;
-        // Apps = categories.Apps;
-        // NewsFeed = categories.NewsFeed;
-        // Stats = categories.Stats;
-        // Gifts = categories.Gifts;
-        // Markets = categories.Markets;
-        // Auth = categories.Auth;
-        // Execute = categories.Execute;
-        // PollsCategory = categories.PollsCategory;
-        // Search = categories.Search;
-        // Storage = categories.Storage;
-        // Ads = categories.Ads;
-        // Notifications = categories.Notifications;
-        // Widgets = categories.Widgets;
-        // Leads = categories.Leads;
-        // Streaming = categories.Streaming;
-        // Places = categories.Places;
-        // Notes = categories.Notes;
-        // AppWidgets = categories.AppWidgets;
-        // Orders = categories.Orders;
-        // Secure = categories.Secure;
-        // Stories = categories.Stories;
-        // LeadForms = categories.LeadForms;
-        // PrettyCards = categories.PrettyCards;
-        // Podcasts = categories.Podcasts;
-        // Donut = categories.Donut;
-        // DownloadedGames = categories.DownloadedGames;
+        _categories = categories;
         CaptchaSolver = captchaSolver;
         _authorizationFlow = authorizationFlow;
         _needValidationHandler = needValidationHandler;
@@ -108,49 +67,49 @@ public class VkApi : IVkApi
 
     public Task LogOutAsync() => _auth.LogOutAsync();
 
-    public IUsersCategory Users { get; }
-    public IFriendsCategory Friends { get; }
-    public IStatusCategory Status { get; }
-    public IMessagesCategory Messages { get; }
-    public IGroupsCategory Groups { get; }
-    public IAudioCategory Audio { get; }
-    public IDatabaseCategory Database { get; }
-    public IUtilsCategory Utils { get; }
-    public IWallCategory Wall { get; }
-    public IBoardCategory Board { get; }
-    public IFaveCategory Fave { get; }
-    public IVideoCategory Video { get; }
-    public IAccountCategory Account { get; }
-    public IPhotoCategory Photo { get; }
-    public IDocsCategory Docs { get; }
-    public ILikesCategory Likes { get; }
-    public IPagesCategory Pages { get; }
-    public IAppsCategory Apps { get; }
-    public INewsFeedCategory NewsFeed { get; }
-    public IStatsCategory Stats { get; }
-    public IGiftsCategory Gifts { get; }
-    public IMarketsCategory Markets { get; }
-    public IAuthCategory Auth { get; }
-    public IExecuteCategory Execute { get; }
-    public IPollsCategory PollsCategory { get; }
-    public ISearchCategory Search { get; }
-    public IStorageCategory Storage { get; }
-    public IAdsCategory Ads { get; }
-    public INotificationsCategory Notifications { get; }
-    public IWidgetsCategory Widgets { get; }
-    public ILeadsCategory Leads { get; }
-    public IStreamingCategory Streaming { get; }
-    public IPlacesCategory Places { get; }
-    public INotesCategory Notes { get; set; }
-    public IAppWidgetsCategory AppWidgets { get; set; }
-    public IOrdersCategory Orders { get; set; }
-    public ISecureCategory Secure { get; set; }
-    public IStoriesCategory Stories { get; set; }
-    public ILeadFormsCategory LeadForms { get; set; }
-    public IPrettyCardsCategory PrettyCards { get; set; }
-    public IPodcastsCategory Podcasts { get; set; }
-    public IDonutCategory Donut { get; }
-    public IDownloadedGamesCategory DownloadedGames { get; }
+    public IUsersCategory Users => _categories.Users;
+    public IFriendsCategory Friends => _categories.Friends;
+    public IStatusCategory Status => _categories.Status;
+    public IMessagesCategory Messages => _categories.Messages;
+    public IGroupsCategory Groups => _categories.Groups;
+    public IAudioCategory Audio =>  _categories.Audio;
+    public IDatabaseCategory Database => _categories.Database;
+    public IUtilsCategory Utils => _categories.Utils;
+    public IWallCategory Wall => _categories.Wall;
+    public IBoardCategory Board => _categories.Board;
+    public IFaveCategory Fave => _categories.Fave;
+    public IVideoCategory Video => _categories.Video;
+    public IAccountCategory Account => _categories.Account;
+    public IPhotoCategory Photo => _categories.Photo;
+    public IDocsCategory Docs => _categories.Docs;
+    public ILikesCategory Likes => _categories.Likes;
+    public IPagesCategory Pages => _categories.Pages;
+    public IAppsCategory Apps => _categories.Apps;
+    public INewsFeedCategory NewsFeed => _categories.NewsFeed;
+    public IStatsCategory Stats => _categories.Stats;
+    public IGiftsCategory Gifts => _categories.Gifts;
+    public IMarketsCategory Markets => _categories.Markets;
+    public IAuthCategory Auth => _categories.Auth;
+    public IExecuteCategory Execute => _categories.Execute;
+    public IPollsCategory PollsCategory => _categories.PollsCategory;
+    public ISearchCategory Search => _categories.Search;
+    public IStorageCategory Storage => _categories.Storage;
+    public IAdsCategory Ads => _categories.Ads;
+    public INotificationsCategory Notifications => _categories.Notifications;
+    public IWidgetsCategory Widgets => _categories.Widgets;
+    public ILeadsCategory Leads => _categories.Leads;
+    public IStreamingCategory Streaming => _categories.Streaming;
+    public IPlacesCategory Places => _categories.Places;
+    public INotesCategory Notes { get => _categories.Notes; set => throw new NotSupportedException(); }
+    public IAppWidgetsCategory AppWidgets { get => _categories.AppWidgets; set => throw new NotSupportedException(); }
+    public IOrdersCategory Orders { get => _categories.Orders; set => throw new NotSupportedException(); }
+    public ISecureCategory Secure { get => _categories.Secure; set => throw new NotSupportedException(); }
+    public IStoriesCategory Stories { get => _categories.Stories; set => throw new NotSupportedException(); }
+    public ILeadFormsCategory LeadForms { get => _categories.LeadForms; set => throw new NotSupportedException(); }
+    public IPrettyCardsCategory PrettyCards { get => _categories.PrettyCards; set => throw new NotSupportedException(); }
+    public IPodcastsCategory Podcasts { get => _categories.Podcasts; set => throw new NotSupportedException(); }
+    public IDonutCategory Donut => _categories.Donut;
+    public IDownloadedGamesCategory DownloadedGames => _categories.DownloadedGames;
     public ICaptchaSolver? CaptchaSolver { get; }
 
     public int MaxCaptchaRecognitionCount

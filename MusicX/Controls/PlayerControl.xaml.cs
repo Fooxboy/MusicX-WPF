@@ -14,13 +14,15 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Behaviors;
-using MusicX.Core.Models;
 using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
 using MusicX.ViewModels;
 using Wpf.Ui.Common;
 using System.Collections.Generic;
 using Microsoft.AppCenter.Crashes;
+using MusicX.Shared.Player;
+using MusicX.Shared.ListenTogether;
+using System.Windows.Media;
 
 namespace MusicX.Controls
 {
@@ -29,28 +31,75 @@ namespace MusicX.Controls
     /// </summary>
     public partial class PlayerControl : UserControl
     {
+        public static readonly DependencyProperty IsTrackLoadingProperty = DependencyProperty.Register(
+            nameof(IsTrackLoading), typeof(bool), typeof(PlayerControl));
 
+        public bool IsTrackLoading
+        {
+            get => (bool)GetValue(IsTrackLoadingProperty);
+            set => SetValue(IsTrackLoadingProperty, value);
+        }
+
+        public static readonly DependencyProperty IsPlayingProperty = DependencyProperty.Register(
+            nameof(IsPlaying), typeof(bool), typeof(PlayerControl));
+
+        public bool IsPlaying
+        {
+            get => (bool)GetValue(IsPlayingProperty);
+            set => SetValue(IsPlayingProperty, value);
+        }
+        
         private readonly PlayerService playerService;
+        private readonly ListenTogetherService listenTogetherService;
         private readonly Logger logger;
         private ConfigModel config;
+
         public PlayerControl()
         {
             InitializeComponent();
 
             this.playerService = StaticService.Container.GetRequiredService<PlayerService>();
             this.logger = StaticService.Container.GetRequiredService<Logger>();
+            this.listenTogetherService = StaticService.Container.GetRequiredService<ListenTogetherService>();
             playerService.PlayStateChangedEvent += PlayerService_PlayStateChangedEvent;
             playerService.PositionTrackChangedEvent += PlayerService_PositionTrackChangedEvent;
             playerService.TrackChangedEvent += PlayerService_TrackChangedEvent;
             playerService.QueueLoadingStateChanged += PlayerService_QueueLoadingStateChanged;
-
+            playerService.TrackLoadingStateChanged += PlayerService_TrackLoadingStateChanged;
+            listenTogetherService.ConnectedToSession += ListenTogetherService_ConnectedToSession;
+            listenTogetherService.LeaveSession += ListenTogetherService_LeaveSession;
+            listenTogetherService.SessionOwnerStoped += ListenTogetherService_LeaveSession;
             this.MouseWheel += PlayerControl_MouseWheel;
             
             Queue.ItemsSource = playerService.Tracks;
         }
-        private void PlayerService_QueueLoadingStateChanged(object? sender, QueueLoadingEventArgs e)
+
+        private Task ListenTogetherService_LeaveSession()
         {
-            QueueLoadingRing.Visibility = e.State == QueueLoadingState.Started ? Visibility.Visible : Visibility.Collapsed;
+            ButtonsStackPanel.Visibility = Visibility.Visible;
+            QueueButton.Visibility = Visibility.Visible;
+            return Task.CompletedTask;
+        }
+
+        private Task ListenTogetherService_ConnectedToSession(PlaylistTrack arg)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                ButtonsStackPanel.Visibility = Visibility.Collapsed;
+                QueueButton.Visibility = Visibility.Collapsed;
+            });
+
+            return Task.CompletedTask;
+        }
+
+        private void PlayerService_TrackLoadingStateChanged(object? sender, PlayerLoadingEventArgs e)
+        {
+            IsTrackLoading = e.State is PlayerLoadingState.Started;
+        }
+
+        private void PlayerService_QueueLoadingStateChanged(object? sender, PlayerLoadingEventArgs e)
+        {
+            QueueLoadingRing.Visibility = e.State == PlayerLoadingState.Started ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void PlayerControl_MouseWheel(object sender, MouseWheelEventArgs e)
@@ -185,50 +234,12 @@ namespace MusicX.Controls
 
         private void PlayerService_PlayStateChangedEvent(object? sender, EventArgs e)
         {
-            try
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    if (playerService == null) return;
-
-                    if (playerService.IsPlaying)
-                    {
-                        PlayIcon.Symbol = Wpf.Ui.Common.SymbolRegular.Pause24;
-                    }
-                    else
-                    {
-                        PlayIcon.Symbol = Wpf.Ui.Common.SymbolRegular.Play32;
-
-                    }
-                });
-                
-            }
-            catch (Exception ex)
-            {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error(ex, ex.Message);
-            }
-            
-        }
-
-        Rect rect = new Rect(0, 0, 0, 100);
-        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            rect.Width = this.ActualWidth;
+            IsPlaying = playerService.IsPlaying;
         }
 
         private void PositionSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (playerService == null) return;
+            if (playerService == null || !PositionSlider.IsMouseOver) return;
 
             playerService.Seek(TimeSpan.FromSeconds(e.NewValue));
         }
@@ -491,11 +502,6 @@ namespace MusicX.Controls
             }
 
 
-        }
-
-        private async void UserControl_KeyDown(object sender, KeyEventArgs e)
-        {
-           
         }
 
         private void TrackTitle_MouseEnter(object sender, MouseEventArgs e)

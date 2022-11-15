@@ -86,5 +86,10 @@ namespace MusicX.Core.Models.General
         [JsonProperty("placeholders")]
         public List<Placeholder> Placeholders { get; set; }
 
+        [JsonProperty("music_owners")]
+        public List<MusicOwner> MusicOwners { get; set; }
+
+        [JsonProperty("audio_followings_update_info")]
+        public List<AudioFollowingsUpdateInfo> FollowingsUpdateInfos { get; set; }
     }
 }

@@ -21,6 +21,7 @@ using MusicX.ViewModels;
 using MusicX.ViewModels.Modals;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
+using MusicX.Shared.Player;
 using Wpf.Ui.Common;
 
 namespace MusicX.Controls
@@ -491,7 +492,7 @@ namespace MusicX.Controls
                 {
                     var boomService = StaticService.Container.GetRequiredService<BoomService>();
 
-                    await player.PlayAsync(new SinglePlaylist(this.Audio), Audio.ToTrack());
+                    await player.PlayAsync(new SinglePlaylist(this.Audio.ToTrack()), Audio.ToTrack());
                 }
 
                 var vkService = StaticService.Container.GetRequiredService<VkService>();

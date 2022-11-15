@@ -235,14 +235,14 @@
                                 </StackPanel.RenderTransform>
                                 <controls:Button
                                     x:Name="AddPlaylist"
-                                    Width="200"
+                                    MinWidth="200"
                                     Appearance="Secondary"
                                     Click="AddPlaylist_Click"
                                     Content="Добавить к себе"
                                     Icon="Add28" />
                                 <controls:Button
                                     x:Name="PlayPlaylist"
-                                    Width="150"
+                                    MinWidth="150"
                                     Margin="10,0,0,0"
                                     Appearance="Secondary"
                                     Click="PlayPlaylist_Click"
@@ -251,7 +251,7 @@
 
                                 <controls:Button
                                     x:Name="EditPlaylist"
-                                    Width="150"
+                                    MinWidth="150"
                                     Margin="10,0,0,0"
                                     Appearance="Secondary"
                                     Click="EditPlaylist_Click"
@@ -260,7 +260,7 @@
 
                                 <controls:Button
                                     x:Name="DownloadPlaylist"
-                                    Width="120"
+                                    MinWidth="120"
                                     Margin="10,0,0,0"
                                     Appearance="Secondary"
                                     Click="DownloadPlaylist_Click"

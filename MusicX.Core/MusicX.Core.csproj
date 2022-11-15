@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-	  <Version>0.34</Version>
+	  <Version>0.35</Version>
 
   </PropertyGroup>
 
@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.10" />
     <PackageReference Include="NLog" Version="4.7.14" />
     <PackageReference Include="NLog.Schema" Version="5.0.0-rc2" />
     <PackageReference Include="VkNet" Version="1.70.0" />

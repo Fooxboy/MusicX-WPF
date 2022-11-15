@@ -1,9 +1,16 @@
-﻿using System;
+﻿using System.Text.Json.Serialization;
+using ProtoBuf;
 
-namespace MusicX.Services.Player.Playlists;
+namespace MusicX.Shared.Player;
 
+[JsonDerivedType(typeof(VkAlbumId), "vk")]
+[JsonDerivedType(typeof(BoomAlbumId), "boom")]
+[ProtoContract(ImplicitFields = ImplicitFields.AllPublic, SkipConstructor = true)]
+[ProtoInclude(100, typeof(BoomAlbumId))]
+[ProtoInclude(101, typeof(VkAlbumId))]
 public abstract record AlbumId(string Name, string CoverUrl);
 
+[ProtoContract(ImplicitFields = ImplicitFields.AllPublic, SkipConstructor = true)]
 public sealed record VkAlbumId
     (long Id, long OwnerId, string AccessKey, string Name, string CoverUrl) : AlbumId(Name, CoverUrl)
 {
@@ -20,6 +27,7 @@ public sealed record VkAlbumId
         HashCode.Combine(Id.GetHashCode(), OwnerId.GetHashCode(), AccessKey.GetHashCode());
 }
 
+[ProtoContract(ImplicitFields = ImplicitFields.AllPublic, SkipConstructor = true)]
 public sealed record BoomAlbumId(string Id, string Name, string CoverUrl) : AlbumId(Name, CoverUrl)
 {
     public bool Equals(BoomAlbumId? other) => Id == other?.Id;

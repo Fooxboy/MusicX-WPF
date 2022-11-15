@@ -195,6 +195,30 @@ namespace MusicX.Core.Helpers
 
                             }
                         }
+
+                        if (block.MusicOwnerIds.Count > 0)
+                        {
+                            foreach (var ownerId in block.MusicOwnerIds)
+                            {
+                                var owner = response.MusicOwners.SingleOrDefault(b => b.Id == ownerId);
+                        
+                                if (owner == null) continue;
+                        
+                                block.MusicOwners.Add(owner);
+                            }
+                        }
+
+                        if (block.FollowingUpdateInfoIds.Count > 0)
+                        {
+                            foreach (var updateInfoId in block.FollowingUpdateInfoIds)
+                            {
+                                var updateInfo = response.FollowingsUpdateInfos.SingleOrDefault(b => b.Id == updateInfoId);
+                        
+                                if (updateInfo == null) continue;
+
+                                block.FollowingsUpdateInfos.Add(updateInfo);
+                            }
+                        }
                     }
                 }
             }
@@ -343,6 +367,30 @@ namespace MusicX.Core.Helpers
 
                         response.Block.Curators.Add(curator);
 
+                    }
+                }
+
+                if (response.Block.MusicOwnerIds.Count > 0)
+                {
+                    foreach (var ownerId in response.Block.MusicOwnerIds)
+                    {
+                        var owner = response.MusicOwners.SingleOrDefault(b => b.Id == ownerId);
+                        
+                        if (owner == null) continue;
+                        
+                        response.Block.MusicOwners.Add(owner);
+                    }
+                }
+                
+                if (response.Block.FollowingUpdateInfoIds.Count > 0)
+                {
+                    foreach (var updateInfoId in response.Block.FollowingUpdateInfoIds)
+                    {
+                        var updateInfo = response.FollowingsUpdateInfos.SingleOrDefault(b => b.Id == updateInfoId);
+                        
+                        if (updateInfo == null) continue;
+
+                        response.Block.FollowingsUpdateInfos.Add(updateInfo);
                     }
                 }
 
@@ -602,6 +650,29 @@ namespace MusicX.Core.Helpers
                     }
                 }
 
+                if (block.MusicOwnerIds.Count > 0)
+                {
+                    foreach (var ownerId in block.MusicOwnerIds)
+                    {
+                        var owner = response.MusicOwners.SingleOrDefault(b => b.Id == ownerId);
+                        
+                        if (owner == null) continue;
+                        
+                        block.MusicOwners.Add(owner);
+                    }
+                }
+                
+                if (block.FollowingUpdateInfoIds.Count > 0)
+                {
+                    foreach (var updateInfoId in block.FollowingUpdateInfoIds)
+                    {
+                        var updateInfo = response.FollowingsUpdateInfos.SingleOrDefault(b => b.Id == updateInfoId);
+                        
+                        if (updateInfo == null) continue;
+
+                        block.FollowingsUpdateInfos.Add(updateInfo);
+                    }
+                }
             }
 
           

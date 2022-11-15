@@ -43,7 +43,7 @@ namespace MusicX.Views
             await Task.Delay(500);
             if (this.DataContext is BoomProfileViewModel model)
             {
-                
+                await model.TagSelected();
             }
         }
 

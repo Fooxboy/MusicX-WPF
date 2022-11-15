@@ -26,7 +26,7 @@ namespace MusicX.Views
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var start = new StartingWindow();
+            var start = new StartingWindow(Array.Empty<string>());
 
             start.Show();
 

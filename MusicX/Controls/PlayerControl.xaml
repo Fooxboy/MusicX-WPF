@@ -8,11 +8,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wpfui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
     xmlns:models="clr-namespace:MusicX.Core.Models;assembly=MusicX.Core"
-    xmlns:playlists="clr-namespace:MusicX.Services.Player.Playlists"
     xmlns:converters="clr-namespace:MusicX.Converters"
+    xmlns:player="clr-namespace:MusicX.Shared.Player;assembly=MusicX.Shared"
     Loaded="UserControl_Loaded"
     mc:Ignorable="d"
-    d:DataContext="{d:DesignInstance playlists:PlaylistTrack}">
+    d:DataContext="{d:DesignInstance player:PlaylistTrack}"
+    x:Name="Control">
     <UserControl.Resources>
         <ResourceDictionary>
             <Storyboard x:Key="BackgroundAmimate">
@@ -25,7 +26,7 @@
             
             <Storyboard x:Key="QueueHideAnimation">
                 <DoubleAnimation Storyboard.TargetName="QueueGrid"
-                                 Storyboard.TargetProperty="Height" From="530"
+                                 Storyboard.TargetProperty="Height" From="500"
                                  To="0" Duration="0:0:0.3">
                     <DoubleAnimation.EasingFunction>
                         <PowerEase EasingMode="EaseIn" />
@@ -35,7 +36,7 @@
             <Storyboard x:Key="QueueShowAnimation">
                 <DoubleAnimation Storyboard.TargetName="QueueGrid"
                                  Storyboard.TargetProperty="Height" From="0"
-                                 To="530" Duration="0:0:0.3">
+                                 To="500" Duration="0:0:0.3">
                     <DoubleAnimation.EasingFunction>
                         <PowerEase EasingMode="EaseIn" />
                     </DoubleAnimation.EasingFunction>
@@ -47,11 +48,31 @@
                 <Setter Property="Background" Value="Transparent" />
             </Style>
             
+            <Style TargetType="{x:Type Border}"
+                   x:Key="TransparentBorderStyle">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderBrush" Value="{DynamicResource ControlElevationBorderBrush}" />
+                <Setter Property="BorderThickness" Value="{StaticResource ButtonBorderThemeThickness}" />
+                <Setter Property="CornerRadius" Value="5" />
+                <Setter Property="SnapsToDevicePixels" Value="True" />
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource ControlElevationBorderBrush}" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            
             <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" /> 
         </ResourceDictionary>
 
     </UserControl.Resources>
     <Grid>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition x:Name="ListenTogetherBar" Width="0"/>
+        </Grid.ColumnDefinitions>
+        
         <Rectangle x:Name="ShadowShape" Fill="Black" RadiusX="5" RadiusY="5">
             <Rectangle.Effect>
                 <DropShadowEffect BlurRadius="8" ShadowDepth="0" Opacity="0.2" />
@@ -67,6 +88,26 @@
                 </Rectangle.Effect>
             </Rectangle>
         </Border>
+
+        <Grid Grid.Column="1" Visibility="Collapsed" Margin="10,0,0,0" Name="ListenTogether">
+
+            <Rectangle Fill="Black" RadiusX="5" RadiusY="5">
+                <Rectangle.Effect>
+                    <DropShadowEffect BlurRadius="8" ShadowDepth="0" Opacity="0.2" />
+                </Rectangle.Effect>
+            </Rectangle>
+            <Border ClipToBounds="True">
+                <Rectangle  RadiusX="5" RadiusY="5" Margin="7">
+                    <Rectangle.Fill>
+                        <ImageBrush ImageSource="{Binding ElementName=BackgroundCard, Path=ImageSource}" Stretch="UniformToFill" Opacity="0.4" />
+                    </Rectangle.Fill>
+                    <Rectangle.Effect>
+                        <BlurEffect KernelType="Gaussian" Radius="32" />
+                    </Rectangle.Effect>
+                </Rectangle>
+            </Border>
+
+        </Grid>
 
         <Grid Margin="18">
             <Grid.RowDefinitions>
@@ -254,6 +295,8 @@
 
 
                     <StackPanel
+                       
+                        x:Name="ButtonsStackPanel"
                         Grid.Column="1"
                         HorizontalAlignment="Center"
                         Orientation="Horizontal">
@@ -299,10 +342,52 @@
                             Appearance="Transparent"
                             Click="PlayPauseButton_Click">
 
-                            <wpfui:SymbolIcon
-                                x:Name="PlayIcon"
-                                FontSize="20"
-                                Symbol="Play32" />
+                            <wpfui:Button.Style>
+                                <Style TargetType="{x:Type wpfui:Button}"
+                                       BasedOn="{StaticResource {x:Type wpfui:Button}}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate>
+                                                <Border Style="{StaticResource TransparentBorderStyle}">
+                                                    <wpfui:SymbolIcon
+                                                        FontSize="20"
+                                                        Symbol="Play32" />
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPlaying, ElementName=Control}"
+                                                     Value="True">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate>
+                                                        <Border Style="{StaticResource TransparentBorderStyle}">
+                                                            <wpfui:SymbolIcon
+                                                                FontSize="20"
+                                                                Symbol="Pause32" />
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsTrackLoading, ElementName=Control}"
+                                                     Value="True">
+                                            <Setter Property="IsHitTestVisible" Value="False" />
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate>
+                                                        <wpfui:ProgressRing
+                                                            Width="40"
+                                                            Height="40"
+                                                            IsIndeterminate="True" />
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </wpfui:Button.Style>
 
                             <wpfui:Button.ToolTip>
                                 <ToolTip Content="Пауза/Воспроизвести" />
@@ -378,6 +463,7 @@
                             </wpfui:Button>
 
                             <ToggleButton Width="40"
+                                          x:Name="QueueButton"
                                           Height="40"
                                           Margin="0,0,20,0"
                                           Padding="0"
@@ -395,6 +481,28 @@
                                     </EventTrigger>
                                     <EventTrigger RoutedEvent="ToggleButton.Checked">
                                         <BeginStoryboard Storyboard="{StaticResource QueueShowAnimation}"/>
+                                    </EventTrigger>
+                                </ToggleButton.Triggers>
+                            </ToggleButton>
+                            
+                            <ToggleButton Width="40"
+                                          Height="40"
+                                          Margin="0,0,20,0"
+                                          Padding="0"
+                                          HorizontalContentAlignment="Center"
+                                          Style="{StaticResource TransparentToggleButtonStyle}">
+                                <ToggleButton.ToolTip>
+                                    <ToolTip Content="Слушать вместе" />
+                                </ToggleButton.ToolTip>
+                                <ToggleButton.Content>
+                                    <wpfui:SymbolIcon Symbol="People24" />
+                                </ToggleButton.Content>
+                                <ToggleButton.Triggers>
+                                    <EventTrigger RoutedEvent="ToggleButton.Unchecked">
+                                        <BeginStoryboard Storyboard="{DynamicResource ListenTogetherHideAnimation}"/>
+                                    </EventTrigger>
+                                    <EventTrigger RoutedEvent="ToggleButton.Checked">
+                                        <BeginStoryboard Storyboard="{DynamicResource ListenTogetherShowAnimation}"/>
                                     </EventTrigger>
                                 </ToggleButton.Triggers>
                             </ToggleButton>
@@ -448,7 +556,7 @@
                         </ItemsPanelTemplate>
                     </ListBox.ItemsPanel>
                     <ListBox.ItemTemplate>
-                        <DataTemplate DataType="{x:Type playlists:PlaylistTrack}">
+                        <DataTemplate DataType="{x:Type player:PlaylistTrack}">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
@@ -456,7 +564,7 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <wpfui:SymbolIcon Symbol="ReOrderDotsVertical24" MouseDown="ReorderButton_OnMouseDown" />
-                                <local:QueueTrackControl Grid.Column="1" />
+                                <local:QueueTrackControl Grid.Column="1" IsInPlayer="True" />
                                 <wpfui:Button Grid.Column="2"
                                               Icon="Dismiss24"
                                               Appearance="Transparent"

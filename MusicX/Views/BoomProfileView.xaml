@@ -193,6 +193,7 @@
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource {x:Type ListViewItem}}">
                                     <Setter Property="Margin" Value="0,1,10,1" />
+                                    <Setter Property="Focusable" Value="False" />
                                 </Style>
                             </ListView.ItemContainerStyle>
 
@@ -210,7 +211,7 @@
 
                             <ListView.ItemTemplate >
                                 <DataTemplate DataType="{x:Type vk:Audio}">
-                                    <controls:TrackControl ShowCard="False" Audio="{Binding}"/>
+                                    <controls:QueueTrackControl DataContext="{Binding}"/>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
 
