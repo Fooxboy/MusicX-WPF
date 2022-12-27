@@ -38,7 +38,7 @@
                                 FontFamily="{StaticResource VKSansRegular}"
                                 FontSize="26"
                                 Foreground="White"
-                                Text="Привет," />
+                                Text="С Новым 2023 годом," />
                             <TextBlock
                                 x:Name="UserName"
                                 Margin="5,1,0,0"
@@ -208,7 +208,7 @@
                 <StackPanel>
                     <TextBlock Text="Список исполнителей, треки которых автоматически пропускаются"/>
 
-                    <ListView Margin="0,20,0,0" x:Name="IgnoredArtistList">
+                    <ListView Margin="0,20,0,0" HorizontalAlignment="Left" Width="300" x:Name="IgnoredArtistList">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
@@ -226,6 +226,48 @@
                     </StackPanel>
                 </StackPanel>
             </wpfui:Card>
+
+            <TextBlock
+                Margin="5,20,0,0"
+                FontFamily="{StaticResource VKSansDemiBold}"
+                FontSize="30"
+                Text="Зима ❄️"/>
+
+            <wpfui:Card Margin="5,5,5,0" >
+                <StackPanel>
+                    <TextBlock Text="Если включить все эти тумблеры в приложении наступит зима :)"/>
+
+                    <StackPanel Margin="0,20,0,0" Orientation="Horizontal">
+                        <wpfui:ToggleSwitch
+                                x:Name="ShowAmimatedBackground"
+                                Checked="ShowAmimatedBackground_Checked"
+                                Unchecked="ShowAmimatedBackground_Unchecked" />
+
+                        <TextBlock
+                                Margin="5,0,0,0"
+                                FontSize="18"
+                                Foreground="White"
+                                Text="Показывать анимированный фон" />
+
+                    </StackPanel>
+
+                    <StackPanel Margin="0,20,0,0" Orientation="Horizontal">
+                        <wpfui:ToggleSwitch
+                                x:Name="WinterTheme"
+                                Checked="WinterTheme_Checked"
+                                Unchecked="WinterTheme_Unchecked" />
+
+                        <TextBlock
+                                Margin="5,0,0,0"
+                                FontSize="18"
+                                Foreground="White"
+                                Text="Зима" />
+
+                    </StackPanel>
+
+                </StackPanel>
+            </wpfui:Card>
+
 
             <TextBlock
                 Margin="5,20,0,0"
@@ -278,9 +320,6 @@
                     </StackPanel>
                 </Grid>
             </wpfui:Card>
-
-
-
 
             <TextBlock
                 Margin="5,20,0,0"

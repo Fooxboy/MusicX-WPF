@@ -47,5 +47,11 @@ namespace MusicX.Models
 
         [JsonProperty("ignored_artists")]
         public List<string>? IgnoredArtists { get; set; }
+
+        [JsonProperty("animated_background")]
+        public bool? AmimatedBackground { get; set; }
+
+        [JsonProperty("winter_theme")]
+        public bool? WinterTheme { get; set; }
     }
 }

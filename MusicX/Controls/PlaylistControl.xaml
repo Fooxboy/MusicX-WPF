@@ -89,7 +89,6 @@
     </UserControl.ContextMenu>
     <Grid>
 
-
         <Grid x:Name="CompactGrid" Visibility="Visible">
             <controls:CardAction
                 x:Name="cardAction"

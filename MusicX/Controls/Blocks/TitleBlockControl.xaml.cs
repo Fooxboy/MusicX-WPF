@@ -24,6 +24,16 @@ namespace MusicX.Controls.Blocks
 
         private void TitleBlockControl_Loaded(object sender, RoutedEventArgs e)
         {
+            if(RootWindow.WinterTheme)
+            {
+                var r = new Random();
+                var i = r.Next(0, 3);
+                if (i == 1)
+                {
+                    Shapka.Visibility = Visibility.Visible;
+                }
+            }
+           
             Buttons.SelectionChanged += ButtonsComboBox_SelectionChanged;
 
             if (Block.Layout.Name == "header_compact")

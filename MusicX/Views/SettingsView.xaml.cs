@@ -17,6 +17,7 @@ using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using System.Linq;
 using Wpf.Ui.Controls;
+using MusicX.Helpers;
 
 namespace MusicX.Views
 {
@@ -65,9 +66,15 @@ namespace MusicX.Views
                     config.BroadcastVK = false;
                 }
 
+                if(config.WinterTheme == null)
+                {
+                    config.WinterTheme = true;
+                }
 
                 ShowRPC.IsChecked = config.ShowRPC.Value;
                 BroacastVK.IsChecked = config.BroadcastVK.Value;
+                ShowAmimatedBackground.IsChecked = config.AmimatedBackground;
+                WinterTheme.IsChecked = config.WinterTheme.Value;
 
                 UserName.Text = config.UserName.Split(' ')[0];
 
@@ -441,6 +448,50 @@ namespace MusicX.Views
                 logger.Error(ex, ex.Message);
             }
             
+        }
+
+        private async void ShowAmimatedBackground_Checked(object sender, RoutedEventArgs e)
+        {
+            config.AmimatedBackground = true;
+
+            await configService.SetConfig(config);
+
+            if(RootWindow.SnowEngine is null)
+            {
+                StaticService.Container.GetRequiredService<NotificationsService>().Show("Необходим перезапуск", "Перезапустите Music X чтобы пошел снег :)");
+
+                return;
+            }
+
+            RootWindow.SnowEngine.Start();
+        }
+
+        private async void ShowAmimatedBackground_Unchecked(object sender, RoutedEventArgs e)
+        {
+            config.AmimatedBackground = false;
+
+            RootWindow.SnowEngine.Stop();
+
+            await configService.SetConfig(config);
+        }
+
+        private async void WinterTheme_Checked(object sender, RoutedEventArgs e)
+        {
+            config.WinterTheme = true;
+
+            await configService.SetConfig(config);
+
+            StaticService.Container.GetRequiredService<NotificationsService>().Show("Необходим перезапуск", "Перезапустите Music X чтобы началась зима :)");
+        }
+
+        private async void WinterTheme_Unchecked(object sender, RoutedEventArgs e)
+        {
+            config.WinterTheme = false;
+
+            await configService.SetConfig(config);
+
+            StaticService.Container.GetRequiredService<NotificationsService>().Show("Необходим перезапуск", "Перезапустите Music X чтобы зима закончилась :)");
+
         }
     }
 }
