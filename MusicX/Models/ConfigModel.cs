@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace MusicX.Models
@@ -43,5 +44,8 @@ namespace MusicX.Models
 
         [JsonProperty("notify_messages")]
         public NotifyMessagesConfig NotifyMessages { get; set; }
+
+        [JsonProperty("ignored_artists")]
+        public List<string>? IgnoredArtists { get; set; }
     }
 }

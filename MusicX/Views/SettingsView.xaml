@@ -198,6 +198,34 @@
                 </Grid>
             </wpfui:Card>
 
+            <TextBlock
+                Margin="5,20,0,0"
+                FontFamily="{StaticResource VKSansDemiBold}"
+                FontSize="30"
+                Text="Игнорируемые исполнители"/>
+
+            <wpfui:Card Margin="5,5,5,0" >
+                <StackPanel>
+                    <TextBlock Text="Список исполнителей, треки которых автоматически пропускаются"/>
+
+                    <ListView Margin="0,20,0,0" x:Name="IgnoredArtistList">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock VerticalAlignment="Center" Width="200" Text="{Binding}"/>
+                                    <wpfui:Button x:Name="DeleteIgnoredArtist" Click="DeleteIgnoredArtist_Click" Tag="{Binding}" Height="35" Icon="Delete20" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+
+                    <StackPanel Margin="0,10,0,0"  Orientation="Horizontal">
+                        <wpfui:TextBox Width="200" PlaceholderText="Имя исполнителя" x:Name="NameIgnoredArtist"/>
+                        <wpfui:Button Margin="5,0,0,0" x:Name="AddIgnoredArtist" Click="AddIgnoredArtist_Click" Height="35" Icon="Add24"/>
+
+                    </StackPanel>
+                </StackPanel>
+            </wpfui:Card>
 
             <TextBlock
                 Margin="5,20,0,0"

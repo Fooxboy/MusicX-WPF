@@ -88,6 +88,13 @@
                     Text="Добавить в плейлист" />
             </StackPanel>
 
+            <StackPanel x:Name="AddArtistIgnore" MouseDown="AddArtistIgnore_MouseDown"  Orientation="Horizontal">
+                <ui:SymbolIcon Symbol="PresenceBlocked24" />
+                <TextBlock
+                    Margin="10,0,0,0"
+                    Foreground="White"
+                    Text="Пропускать треки исполнителя" />
+            </StackPanel>
 
             <StackPanel MouseDown="Download_MouseDown" Orientation="Horizontal">
                 <ui:SymbolIcon Symbol="ArrowDownload24" />

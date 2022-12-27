@@ -23,6 +23,7 @@ using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using MusicX.Shared.Player;
 using Wpf.Ui.Common;
+using System.Linq;
 
 namespace MusicX.Controls
 {
@@ -833,6 +834,38 @@ namespace MusicX.Controls
                 logger.Error(ex, ex.Message);
 
                 notificationsService.Show("Ошибка", "Произошла ошибка при добавлении трека в плейлист");
+            }
+        }
+
+        private async void AddArtistIgnore_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var notificationsService = StaticService.Container.GetRequiredService<NotificationsService>();
+            var configService = StaticService.Container.GetRequiredService<ConfigService>();
+
+            try
+            {
+                var config = await configService.GetConfig();
+
+                if(config.IgnoredArtists is null) config.IgnoredArtists = new List<string>();
+
+                if(Audio.MainArtists!= null) config.IgnoredArtists?.AddRange(Audio.MainArtists.Select(x => x.Name));
+                if (Audio.FeaturedArtists != null) config.IgnoredArtists?.AddRange(Audio.FeaturedArtists.Select(x => x.Name));
+
+                await configService.SetConfig(config);
+
+                notificationsService.Show("Готово!", "Теперь треки с этим исполнителем будет автоматически пропускаться");
+            }
+            catch (Exception ex)
+            {
+                var properties = new Dictionary<string, string>
+                {
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
+                logger.Error(ex, ex.Message);
+
+                notificationsService.Show("Ошибка", "Произошла ошибка при добавлении добавлении исполнителя в черный список");
             }
         }
     }
