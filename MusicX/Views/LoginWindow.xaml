@@ -95,6 +95,14 @@
 
         </wpfui:Card>
 
+        <wpfui:Card x:Name="UnsupportOsBlock" Visibility="Collapsed" Margin="0,0,0,20" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+            <StackPanel>
+                <TextBlock FontWeight="Bold" Text="Ваша операционная система не поддерживается"/>
+                <TextBlock Margin="0, 20, 0, 0" Text="Music X может корректно работать только на Windows 10 выше версии 1607 (build 14383) (Redstone 1)"/>
+                <TextBlock Text="Если Вы видете это сообщение, значит Ваша операционная система ниже Windows 10 build 14383"/>
+            </StackPanel>
+        </wpfui:Card>
+
         <wpfui:Snackbar
             x:Name="RootSnackbar"
             Title="Hello World!"
