@@ -61,6 +61,32 @@
         </EventTrigger>
     </UserControl.Triggers>
 
+
+    <UserControl.ContextMenu>
+        <ContextMenu
+            Background="#414141"
+            BorderBrush="#646464"
+            Foreground="White">
+
+            <StackPanel x:Name="AddToLibrary" MouseDown="AddToLibrary_MouseDown" Orientation="Horizontal">
+                <controls:SymbolIcon Symbol="Add28" />
+                <TextBlock
+                    Margin="10,0,0,0"
+                    Foreground="White"
+                    Text="Добавить к себе" />
+            </StackPanel>
+
+
+            <StackPanel x:Name="AddToQueue" MouseDown="AddToQueue_MouseDown" Orientation="Horizontal">
+                <controls:SymbolIcon Symbol="AlbumAdd20" />
+                <TextBlock
+                    Margin="10,0,0,0"
+                    Foreground="White"
+                    Text="Добавить в очередь" />
+            </StackPanel>
+            
+        </ContextMenu>
+    </UserControl.ContextMenu>
     <Grid>
 
 
