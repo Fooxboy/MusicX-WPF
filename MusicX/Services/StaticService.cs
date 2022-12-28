@@ -6,9 +6,9 @@ namespace MusicX.Services
     public static class StaticService
     {
         public static IServiceProvider Container { get; set; }
-        public static string Version = "0.35";
+        public static string Version = "0.36";
         public static string VersionKind = "beta";
-        public static string BuildDate = "15 ноября 2022";
+        public static string BuildDate = "29 декабря 2022";
 
         public static WebClient WebClient { get; set; }
     }
