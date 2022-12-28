@@ -38,6 +38,13 @@
                 Opacity="0.3"
                 Text="123"
                 Visibility="Collapsed" />
+
+            <Image x:Name="Shapka" Visibility="Collapsed" Height="40" FlowDirection="RightToLeft"  HorizontalAlignment="Left" Source="pack://application:,,,/Assets/newyear/newyearblock.png">
+                <Image.RenderTransform>
+                    <RotateTransform CenterX="35" Angle="25"/>
+                </Image.RenderTransform>
+            </Image>
+
         </StackPanel>
 
         <Grid
@@ -53,6 +60,7 @@
                 Margin="10,5,0,0"
                 Foreground="White"
                 Text="brr" />
+
 
             <ComboBox
                 x:Name="Buttons"

@@ -97,20 +97,28 @@ public class DownloaderViewModel : BaseViewModel
 
     private async Task QueueAllMyTracks()
     {
-        if (await downloaderService.CheckExistAllDownloadTracksAsync()) return;
-        var tracks = new List<Audio>();
-
-        while (true)
+        try
         {
-            var tr = await vkService.AudioGetAsync(null, null, null, tracks.Count);
+            if (await downloaderService.CheckExistAllDownloadTracksAsync()) return;
+            var tracks = new List<Audio>();
 
-            tracks.AddRange(tr.Items);
+            while (true)
+            {
+                var tr = await vkService.AudioGetAsync(null, null, null, tracks.Count);
 
-            if (tr.Items.Count < 100) break;
+                tracks.AddRange(tr.Items);
+
+                if (tr.Items.Count < 100) break;
+            }
+
+            await AddPlaylistToQueueAsync(tracks.Select(TrackExtensions.ToTrack), "Музыка ВКонтакте");
+            StartDownloading();
+
+        }catch(Exception ex)
+        {
+            notificationsService.Show("Ошибка", "Мы не смогли получить все ваши треки :( ");
         }
-
-        await AddPlaylistToQueueAsync(tracks.Select(TrackExtensions.ToTrack), "Музыка ВКонтакте");
-        StartDownloading();
+        
     }
 
     private async Task QueueAllMyPlaylists()

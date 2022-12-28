@@ -25,6 +25,7 @@ using Microsoft.AppCenter.Crashes;
 using MusicX.Core.Models;
 using MusicX.Shared.Player;
 using Microsoft.AppCenter.Analytics;
+using MusicX.Helpers;
 
 namespace MusicX
 {
@@ -38,6 +39,11 @@ namespace MusicX
         private readonly Logger logger;
         private readonly ConfigService configService;
         private readonly NotificationsService notificationsService;
+
+        public static SnowEngine SnowEngine = null;
+
+        public static bool WinterTheme = false;
+
 
         private bool PlayerShowed = false;
 
@@ -64,6 +70,7 @@ namespace MusicX
             SingleAppService.Instance.RunWitchArgs += Instance_RunWitchArgs;
             
             togetherService.ConnectedToSession += TogetherServiceOnConnectedToSession;
+
         }
 
         private async Task TogetherServiceOnConnectedToSession(PlaylistTrack arg)
@@ -246,6 +253,31 @@ namespace MusicX
 
                 var config = await configService.GetConfig();
 
+                if (config.AmimatedBackground is null) config.AmimatedBackground = true;
+
+                if(config.AmimatedBackground == true)
+                {
+                    SnowEngine = new SnowEngine(canvas, "pack://application:,,,/Assets/newyear/snow1.png",
+                                              "pack://application:,,,/Assets/newyear/snow2.png",
+                                              "pack://application:,,,/Assets/newyear/snow3.png",
+                                              "pack://application:,,,/Assets/newyear/snow4.png",
+                                              "pack://application:,,,/Assets/newyear/snow5.png",
+                                              "pack://application:,,,/Assets/newyear/snow6.png",
+                                              "pack://application:,,,/Assets/newyear/snow7.png",
+                                              "pack://application:,,,/Assets/newyear/snow8.png",
+                                              "pack://application:,,,/Assets/newyear/snow9.png");
+                    SnowEngine.Start();
+                }
+
+                if (config.WinterTheme is null) config.WinterTheme = true;
+
+
+                WinterTheme = config.WinterTheme.Value;
+                if(config.WinterTheme == true)
+                {
+                    WinterBackground.Visibility = Visibility.Visible;
+                }
+
                 if (config.NotifyMessages is null) config.NotifyMessages = new Models.NotifyMessagesConfig() { ShowListenTogetherModal = true, LastShowedTelegramBlock = null };
 
                 await configService.SetConfig(config);
@@ -254,6 +286,9 @@ namespace MusicX
                 {
                     navigationService.OpenModal<WelcomeToListenTogetherModal>();
                 }
+
+
+               
             }
             catch (Exception ex)
             {

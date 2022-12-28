@@ -9,6 +9,7 @@ using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
+using MusicX.Models;
 
 namespace MusicX.Views
 {
@@ -31,6 +32,11 @@ namespace MusicX.Views
             this.tokenRefresh = tokenRefresh;
             this.WpfTitleBar.MaximizeClicked += WpfTitleBar_MaximizeClicked;
             Accent.Apply(Accent.GetColorizationColor(), ThemeType.Dark);
+
+            if(Environment.OSVersion.Version.Build < WindowsBuild.Windows10_1607)
+            {
+                UnsupportOsBlock.Visibility = Visibility.Visible;
+            }
         }
 
         private bool isFullScreen = false;

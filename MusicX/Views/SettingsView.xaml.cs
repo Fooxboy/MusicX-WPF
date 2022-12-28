@@ -15,6 +15,9 @@ using Ookii.Dialogs.Wpf;
 using System.Collections.Generic;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
+using System.Linq;
+using Wpf.Ui.Controls;
+using MusicX.Helpers;
 
 namespace MusicX.Views
 {
@@ -63,9 +66,15 @@ namespace MusicX.Views
                     config.BroadcastVK = false;
                 }
 
+                if(config.WinterTheme == null)
+                {
+                    config.WinterTheme = true;
+                }
 
                 ShowRPC.IsChecked = config.ShowRPC.Value;
                 BroacastVK.IsChecked = config.BroadcastVK.Value;
+                ShowAmimatedBackground.IsChecked = config.AmimatedBackground;
+                WinterTheme.IsChecked = config.WinterTheme.Value;
 
                 UserName.Text = config.UserName.Split(' ')[0];
 
@@ -131,7 +140,22 @@ namespace MusicX.Views
 
                 this.VersionApp.Text = StaticService.Version + " " + StaticService.VersionKind;
                 this.BuildDate.Text = StaticService.BuildDate;
-            }catch (Exception ex)
+
+                if (config.IgnoredArtists is null)
+                {
+                    config.IgnoredArtists = new List<string>();
+                }
+
+                IgnoredArtistList.Items.Clear();
+
+                foreach (var artist in config.IgnoredArtists)
+                {
+                    IgnoredArtistList.Items.Add(artist);
+
+                }
+
+            }
+            catch (Exception ex)
             {
                 var properties = new Dictionary<string, string>
                 {
@@ -145,7 +169,6 @@ namespace MusicX.Views
                 var logger = StaticService.Container.GetRequiredService<Logger>();
                 logger.Error(ex, ex.Message);
             }
-
         }
 
         private async void DeleteAccount_Click(object sender, RoutedEventArgs e)
@@ -234,17 +257,45 @@ namespace MusicX.Views
 
         private async void ShowRPC_Checked(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                config.ShowRPC = true;
 
-            config.ShowRPC = true;
+                await configService.SetConfig(config);
+            }
+            catch(Exception ex)
+            {
+                var properties = new Dictionary<string, string>
+                {
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
 
-            await configService.SetConfig(config);
+                var logger = StaticService.Container.GetRequiredService<Logger>();
+                logger.Error(ex, ex.Message);
+            }
+           
         }
 
         private async void ShowRPC_Unchecked(object sender, RoutedEventArgs e)
         {
-            config.ShowRPC = false;
+            try
+            {
+                config.ShowRPC = false;
 
-            await configService.SetConfig(config);
+                await configService.SetConfig(config);
+            }catch(Exception ex)
+            {
+                var properties = new Dictionary<string, string>
+                {
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
+                var logger = StaticService.Container.GetRequiredService<Logger>();
+                logger.Error(ex, ex.Message);
+            }
+            
         }
 
         private async void BroacastVK_Checked(object sender, RoutedEventArgs e)
@@ -256,7 +307,14 @@ namespace MusicX.Views
                 await configService.SetConfig(config);
             }catch (Exception ex)
             {
+                var properties = new Dictionary<string, string>
+                {
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
 
+                var logger = StaticService.Container.GetRequiredService<Logger>();
+                logger.Error(ex, ex.Message);
             }
             
         }
@@ -271,7 +329,14 @@ namespace MusicX.Views
                 await vkService.SetBroadcastAsync(null);
             }catch (Exception ex)
             {
-                
+                var properties = new Dictionary<string, string>
+                {
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
+                var logger = StaticService.Container.GetRequiredService<Logger>();
+                logger.Error(ex, ex.Message);
             }
            
         }
@@ -304,5 +369,129 @@ namespace MusicX.Views
             });
         }
         public string MenuTag { get; set; }
+
+        private async void DeleteIgnoredArtist_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (config.IgnoredArtists is null)
+                {
+                    config.IgnoredArtists = new List<string>();
+                }
+
+                var selectedArtistName = (sender as Wpf.Ui.Controls.Button).Tag;
+                var selectedArtist = config.IgnoredArtists.SingleOrDefault(x => x == selectedArtistName);
+
+                if (selectedArtist != null)
+                {
+                    config.IgnoredArtists.Remove(selectedArtist);
+                    await configService.SetConfig(config);
+
+                    IgnoredArtistList.Items.Clear();
+
+                    foreach (var artist in config.IgnoredArtists)
+                    {
+                        IgnoredArtistList.Items.Add(artist);
+                    }
+                }
+            }catch(Exception ex)
+            {
+                var properties = new Dictionary<string, string>
+                {
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
+                var logger = StaticService.Container.GetRequiredService<Logger>();
+                logger.Error(ex, ex.Message);
+            }
+          
+        }
+
+        private async void AddIgnoredArtist_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (config.IgnoredArtists is null)
+                {
+                    config.IgnoredArtists = new List<string>();
+                }
+
+                if (string.IsNullOrEmpty(NameIgnoredArtist.Text))
+                {
+                    return;
+                }
+
+                config.IgnoredArtists.Add(NameIgnoredArtist.Text);
+
+                await configService.SetConfig(config);
+
+                IgnoredArtistList.Items.Clear();
+
+                foreach (var artist in config.IgnoredArtists)
+                {
+                    IgnoredArtistList.Items.Add(artist);
+
+                }
+
+                NameIgnoredArtist.Text = string.Empty;
+
+            }catch(Exception ex)
+            {
+                var properties = new Dictionary<string, string>
+                {
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
+                var logger = StaticService.Container.GetRequiredService<Logger>();
+                logger.Error(ex, ex.Message);
+            }
+            
+        }
+
+        private async void ShowAmimatedBackground_Checked(object sender, RoutedEventArgs e)
+        {
+            config.AmimatedBackground = true;
+
+            await configService.SetConfig(config);
+
+            if(RootWindow.SnowEngine is null)
+            {
+                StaticService.Container.GetRequiredService<NotificationsService>().Show("Необходим перезапуск", "Перезапустите Music X чтобы пошел снег :)");
+
+                return;
+            }
+
+            RootWindow.SnowEngine.Start();
+        }
+
+        private async void ShowAmimatedBackground_Unchecked(object sender, RoutedEventArgs e)
+        {
+            config.AmimatedBackground = false;
+
+            RootWindow.SnowEngine.Stop();
+
+            await configService.SetConfig(config);
+        }
+
+        private async void WinterTheme_Checked(object sender, RoutedEventArgs e)
+        {
+            config.WinterTheme = true;
+
+            await configService.SetConfig(config);
+
+            StaticService.Container.GetRequiredService<NotificationsService>().Show("Необходим перезапуск", "Перезапустите Music X чтобы началась зима :)");
+        }
+
+        private async void WinterTheme_Unchecked(object sender, RoutedEventArgs e)
+        {
+            config.WinterTheme = false;
+
+            await configService.SetConfig(config);
+
+            StaticService.Container.GetRequiredService<NotificationsService>().Show("Необходим перезапуск", "Перезапустите Music X чтобы зима закончилась :)");
+
+        }
     }
 }

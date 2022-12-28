@@ -7,7 +7,7 @@
     <UseWPF>true</UseWPF>
     <SupportedOSPlatformVersion>10.0.18362.0</SupportedOSPlatformVersion>
     <ApplicationIcon>StoreLogo.scale-400.ico</ApplicationIcon>
-	  	  <Version>0.35</Version>
+	  	  <Version>0.36</Version>
 
     <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
@@ -19,6 +19,17 @@
     <None Remove="Assets\icons\playlists_white.png" />
     <None Remove="Assets\icons\recent_white.png" />
     <None Remove="Assets\lottie\play.json" />
+    <None Remove="Assets\newyear\newyearblock.png" />
+    <None Remove="Assets\newyear\snow1.png" />
+    <None Remove="Assets\newyear\snow2.png" />
+    <None Remove="Assets\newyear\snow3.png" />
+    <None Remove="Assets\newyear\snow4.png" />
+    <None Remove="Assets\newyear\snow5.png" />
+    <None Remove="Assets\newyear\snow6.png" />
+    <None Remove="Assets\newyear\snow7.png" />
+    <None Remove="Assets\newyear\snow8.png" />
+    <None Remove="Assets\newyear\snow9.png" />
+    <None Remove="Assets\newyear\snowfall.png" />
     <None Remove="Fonts\VKSansDisplay-Bold.ttf" />
     <None Remove="Fonts\VKSansDisplay-DemiBold.ttf" />
     <None Remove="Fonts\VKSansDisplay-Medium.ttf" />
@@ -30,6 +41,17 @@
     <Resource Include="Assets\icon.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\newyear\newyearblock.png" />
+    <Resource Include="Assets\newyear\snow1.png" />
+    <Resource Include="Assets\newyear\snow2.png" />
+    <Resource Include="Assets\newyear\snow3.png" />
+    <Resource Include="Assets\newyear\snow4.png" />
+    <Resource Include="Assets\newyear\snow5.png" />
+    <Resource Include="Assets\newyear\snow6.png" />
+    <Resource Include="Assets\newyear\snow7.png" />
+    <Resource Include="Assets\newyear\snow8.png" />
+    <Resource Include="Assets\newyear\snow9.png" />
+    <Resource Include="Assets\newyear\snowfall.png" />
     <Resource Include="Fonts\VKSansDisplay-Bold.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>

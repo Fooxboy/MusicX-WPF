@@ -57,6 +57,7 @@ public class PlayerService
     private readonly IEnumerable<ITrackMediaSource> _mediaSources;
     private readonly IEnumerable<ITrackStatsListener> _statsListeners;
     private readonly ListenTogetherService _listenTogetherService;
+    private readonly ConfigService _configService;
 
     private PlaylistTrack? _nextPlayTrack;
     private CancellationTokenSource? _tokenSource;
@@ -64,7 +65,7 @@ public class PlayerService
     public IPlaylist? CurrentPlaylist { get; set; }
 
     public PlayerService(Logger logger, NotificationsService notificationsService,
-                         IEnumerable<ITrackMediaSource> mediaSources, IEnumerable<ITrackStatsListener> statsListeners, ListenTogetherService listenTogetherService)
+                         IEnumerable<ITrackMediaSource> mediaSources, IEnumerable<ITrackStatsListener> statsListeners, ListenTogetherService listenTogetherService, ConfigService configService)
     {
         this.logger = logger;
         player = new MediaPlayer();
@@ -78,6 +79,7 @@ public class PlayerService
         _mediaSources = mediaSources;
         _statsListeners = statsListeners;
         this._listenTogetherService = listenTogetherService;
+        this._configService = configService;
 
         SubscribeToListenTogetherEvents();
     }
@@ -124,14 +126,31 @@ public class PlayerService
         _tokenSource?.Cancel();
         _tokenSource?.Dispose();
         _tokenSource = new();
+
         
         player.PlaybackSession.Position = TimeSpan.Zero;
         player.Pause();
 
         if (track is null) return;
+
         CurrentTrack = track;
         CurrentIndex = Tracks.IndexOf(track);
         NextPlayTrack = Tracks.ElementAtOrDefault(CurrentIndex + 1);
+
+
+        var config = await _configService.GetConfig();
+
+        if (config.IgnoredArtists is null) config.IgnoredArtists = new List<string>();
+
+        foreach(var ignoreArtist in config.IgnoredArtists)
+        {
+
+            if((CurrentTrack.MainArtists != null && CurrentTrack.MainArtists.Any(a=> a.Name == ignoreArtist)) || (CurrentTrack.FeaturedArtists.Any(a => a.Name == ignoreArtist) && CurrentTrack.FeaturedArtists != null))
+            {
+                notificationsService.Show("Трек пропущен", $"В этом треке был артист из вашего черного списка: {ignoreArtist}. Настроить пропуск треков можно в настройках");
+                await NextTrack();
+            }
+        }
 
         Application.Current.Dispatcher.BeginInvoke(() =>
         {

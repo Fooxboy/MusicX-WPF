@@ -349,5 +349,68 @@ namespace MusicX.Controls
             var amim = (Storyboard)(this.Resources["CloseAnimation"]);
             amim.Begin();
         }
+
+        private void AddToLibrary_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var notificationsService = StaticService.Container.GetRequiredService<NotificationsService>();
+
+            try
+            {
+                var vkService = StaticService.Container.GetRequiredService<VkService>();
+
+                vkService.AddPlaylistAsync(Playlist.Id, Playlist.OwnerId, Playlist.AccessKey);
+
+                notificationsService.Show("Плейлист добавлен", "Плейлист теперь находится в Вашей библиотеке");
+            }
+            catch(Exception ex)
+            {
+                var properties = new Dictionary<string, string>
+                {
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
+                notificationsService.Show("Ошибка", "Мы не смогли добавить плейлист к Вам в библиотеку");
+
+            }
+
+        }
+
+        private async void AddToQueue_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var notificationsService = StaticService.Container.GetRequiredService<NotificationsService>();
+
+            try
+            {
+                var playerService = StaticService.Container.GetRequiredService<PlayerService>();
+
+                var vkService = StaticService.Container.GetRequiredService<VkService>();
+
+                notificationsService.Show("Подождите", "Мы получаем треки из плейлиста и добавляем их в очередь");
+
+                var result = await vkService.LoadFullPlaylistAsync( Playlist.Id, Playlist.OwnerId, Playlist.AccessKey);
+
+                result.Audios.Reverse();
+                var audios = result.Audios;
+                foreach(var audio in audios)
+                {
+                    playerService.InsertToQueue(audio.ToTrack(result.Playlist), true);
+                }
+
+                notificationsService.Show("Готово!", "Треки из плейлиста добавлены в очередь!");
+
+
+            }
+            catch (Exception ex)
+            {
+                var properties = new Dictionary<string, string>
+                {
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
+                notificationsService.Show("Ошибка", "Мы не смогли обновить очередь");
+            }
+        }
     }
 }
