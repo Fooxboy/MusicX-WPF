@@ -452,6 +452,11 @@ namespace MusicX.Views
 
         private async void ShowAmimatedBackground_Checked(object sender, RoutedEventArgs e)
         {
+            if (config.AmimatedBackground == (sender as ToggleSwitch).IsChecked)
+            {
+                return;
+            }
+
             config.AmimatedBackground = true;
 
             await configService.SetConfig(config);
@@ -468,6 +473,7 @@ namespace MusicX.Views
 
         private async void ShowAmimatedBackground_Unchecked(object sender, RoutedEventArgs e)
         {
+
             config.AmimatedBackground = false;
 
             RootWindow.SnowEngine.Stop();
@@ -477,6 +483,12 @@ namespace MusicX.Views
 
         private async void WinterTheme_Checked(object sender, RoutedEventArgs e)
         {
+
+            if (config.WinterTheme == (sender as ToggleSwitch).IsChecked)
+            {
+                return;
+            }
+
             config.WinterTheme = true;
 
             await configService.SetConfig(config);
