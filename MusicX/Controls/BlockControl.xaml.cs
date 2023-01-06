@@ -225,6 +225,7 @@ namespace MusicX.Controls
 
                     if(Block.Banners[0].ClickAction.Action.Url.Contains("subscription")) return;
                     if(Block.Banners[0].ClickAction.Action.Url.Contains("combo")) return;
+                    if(Block.Banners[0].ClickAction.Action.Url.Contains("https://vk.com/app")) return;
                     //if (Block.Banners[0].Buttons != null) 
 
                     BlocksPanel.Children.Add(new BigBannerControl() { Banners = Block.Banners, Margin = new Thickness(0,0,-10,0) });
