@@ -310,18 +310,23 @@
                         </Border>
 
                     </StackPanel>
-                    <TextBlock
-                        x:Name="Artists"
-                        Margin="0,2,0,0"
-                        FontSize="11"
-                        Foreground="White"
-                        Opacity="0.6"
-                        Text="Artist"
-                        TextTrimming="CharacterEllipsis">
-                        <TextBlock.ToolTip>
-                            <ToolTip Content="Перейти к исполнителю" />
-                        </TextBlock.ToolTip>
-                    </TextBlock>
+                    <Grid x:Name="ArtistTextGrid" HorizontalAlignment="Left" Width="900">
+                        <TextBlock
+                            HorizontalAlignment="Left"
+                            x:Name="Artists"
+                            Margin="0,2,0,0"
+                            FontSize="11"
+                            Foreground="White"
+                            Opacity="0.6"
+                            Text="Artist"
+                            TextWrapping="NoWrap"
+                            TextTrimming="CharacterEllipsis">
+                            <TextBlock.ToolTip>
+                                <ToolTip Content="Перейти к исполнителю" />
+                            </TextBlock.ToolTip>
+                        </TextBlock>
+                    </Grid>
+
                 </StackPanel>
             </StackPanel>
 

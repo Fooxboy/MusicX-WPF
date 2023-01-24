@@ -380,7 +380,7 @@ namespace MusicX.Controls
                     oldWidthArtists = Artists.ActualWidth;
                     Title.MaxWidth = 120;
                     Subtitle.Visibility = Visibility.Collapsed;
-                    Artists.MaxWidth = 120;
+                    //Artists.MaxWidth = 120;
 
                     explicitBadge.Margin = new Thickness(7, 0, 0, 0);
 
