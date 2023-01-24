@@ -367,11 +367,28 @@ namespace MusicX.Controls
                 switch (playerService.CurrentTrack?.Data)
                 {
                     case VkTrackData {IsLiked: true} data:
+                        if(!LikeIcon.Filled)
+                        {
+                            LikeIcon.Filled = true;
+                            await vkService.AudioAddAsync(data.Info.Id, data.Info.OwnerId);
+
+                            notificationService.Show("Добавлено в вашу библиотеку", $"Трек {this.ArtistName.Text} - {this.TrackTitle.Text} теперь находится в Вашей музыке!");
+                            break;
+                        }
+
                         LikeIcon.Filled = false;
                         await vkService.AudioDeleteAsync(data.Info.Id, data.Info.OwnerId);
                         notificationService.Show("Удалено из вашей библиотеки", $"Трек {this.ArtistName.Text} - {this.TrackTitle.Text} теперь удален из вашей музыки");
                         break;
                     case VkTrackData data:
+                        if (LikeIcon.Filled)
+                        {
+                            LikeIcon.Filled = false;
+                            await vkService.AudioDeleteAsync(data.Info.Id, data.Info.OwnerId);
+                            notificationService.Show("Удалено из вашей библиотеки", $"Трек {this.ArtistName.Text} - {this.TrackTitle.Text} теперь удален из вашей музыки");
+                            break;
+                        }
+
                         LikeIcon.Filled = true;
                         await vkService.AudioAddAsync(data.Info.Id, data.Info.OwnerId);
 
