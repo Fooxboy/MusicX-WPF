@@ -12,6 +12,7 @@ using MusicX.ViewModels.Modals;
 using System;
 using System.Windows.Interop;
 using MusicX.Core.Services;
+using Newtonsoft.Json.Linq;
 
 namespace MusicX.Views
 {
@@ -160,6 +161,19 @@ namespace MusicX.Views
 
                 await brr.ShowAsync();
             }
+        }
+
+        private void Mixer_Click(object sender, RoutedEventArgs e)
+        {
+            var value = float.Parse(ValueMixer.Text);
+            new WindowsAudioMixerService().SetVolume(value);
+        }
+
+        private void MixerGet_Click(object sender, RoutedEventArgs e)
+        {
+            var value = new WindowsAudioMixerService().GetVolume();
+
+            CurrentMixer.Text = $"Текущее значение: {value}";
         }
     }
 }

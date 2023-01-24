@@ -315,11 +315,14 @@ namespace MusicX.Controls
         {
             var value = Volume.Value * 100;
             var configService = StaticService.Container.GetRequiredService<ConfigService>();
+            var windowsAudioService = StaticService.Container.GetRequiredService<WindowsAudioMixerService>();
 
             var conf = await configService.GetConfig();
             conf.Volume = (int)value;
             conf.IsMuted = playerService.IsMuted;
 
+            var mixerVolume = windowsAudioService.GetVolume();
+            conf.MixerVolume= (int)mixerVolume;
 
             await configService.SetConfig(conf);
         }
@@ -420,6 +423,7 @@ namespace MusicX.Controls
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             var configService = StaticService.Container.GetRequiredService<ConfigService>();
+            var mixerService = StaticService.Container.GetRequiredService<WindowsAudioMixerService>();
 
             this.config = await configService.GetConfig();
             
@@ -430,7 +434,13 @@ namespace MusicX.Controls
                 await configService.SetConfig(config);
             }
 
+            if (config.MixerVolume is null)
+            {
+                config.MixerVolume = 100;
+                await configService.SetConfig(config);
+            }
 
+            mixerService.SetVolume((float)config.MixerVolume);
             var value = (config.Volume.Value / 100D);
 
             playerService.SetVolume(value);

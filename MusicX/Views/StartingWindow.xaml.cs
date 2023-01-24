@@ -92,9 +92,9 @@ namespace MusicX.Views
                 collection.AddSingleton<DownloaderService>();
                 collection.AddSingleton<BannerService>();
                 collection.AddTransient<RegistryPatchManager>();
+                collection.AddSingleton<WindowsAudioMixerService>();
 
 
-                
                 var container = StaticService.Container = collection.BuildServiceProvider();
 
                 var vkService = container.GetRequiredService<VkService>();
