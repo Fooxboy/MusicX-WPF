@@ -54,24 +54,41 @@ namespace MusicX.ViewModels
         }
         public async ValueTask LoadMore()
         {
-            if (Tracks.Count >= Playlist.Count)
-                return;
-            VisibleLoadingMore = Visibility.Visible;
-            var response = await vkService.AudioGetAsync(Playlist.Id, Playlist.OwnerId, Playlist.AccessKey, Tracks.Count, 40);
-
-            void Add()
+            try
             {
-                foreach (var item in response.Items)
-                {
-                    Tracks.Add(item);
-                }
-            }
+                if (Tracks.Count >= Playlist.Count)
+                    return;
+                VisibleLoadingMore = Visibility.Visible;
+                var response = await vkService.AudioGetAsync(Playlist.Id, Playlist.OwnerId, Playlist.AccessKey, Tracks.Count, 40);
 
-            if (Application.Current.Dispatcher.CheckAccess())
-                Add();
-            else
-                await Application.Current.Dispatcher.InvokeAsync(Add);
-            VisibleLoadingMore = Visibility.Collapsed;
+                void Add()
+                {
+                    foreach (var item in response.Items)
+                    {
+                        Tracks.Add(item);
+                    }
+                }
+
+                if (Application.Current.Dispatcher.CheckAccess())
+                    Add();
+                else
+                    await Application.Current.Dispatcher.InvokeAsync(Add);
+                VisibleLoadingMore = Visibility.Collapsed;
+            }catch(Exception ex)
+            {
+                var properties = new Dictionary<string, string>
+                {
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
+                logger.Error("Fatal error in load playlist");
+                logger.Error(ex, ex.Message);
+
+                notificationsService.Show("Произошла ошибка", "MusicX не смог загрузить плейлист, попробуйте ещё раз");
+
+                VisibleLoadingMore = Visibility.Collapsed;
+            }
         }
         
 

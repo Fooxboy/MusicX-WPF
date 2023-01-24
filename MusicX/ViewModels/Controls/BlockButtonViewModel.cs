@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows.Input;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Models;
@@ -53,6 +54,10 @@ public class BlockButtonViewModel : BaseViewModel
             case "music_follow_owner":
                 Icon = Action.IsFollowing ? SymbolRegular.Checkmark24 : SymbolRegular.Add24;
                 Text = Action.IsFollowing ? "Вы подписаны на музыку" : "Подписаться на музыку";
+                break;
+            case "open_url":
+                Icon = SymbolRegular.MusicNote120;
+                Text = Action.Title;
                 break;
             default:
                 Icon = SymbolRegular.AlertOn24;
@@ -126,6 +131,16 @@ public class BlockButtonViewModel : BaseViewModel
                     Refresh();
                     break;
                 }
+                case "open_url":
+                {
+                        Process.Start(new ProcessStartInfo()
+                        {
+                            UseShellExecute = true,
+                            FileName = Action.Action.Url
+                        });
+                   break;
+                }
+
             }
 
         }
