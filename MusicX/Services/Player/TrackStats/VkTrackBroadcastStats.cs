@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AppCenter.Crashes;
 using MusicX.Core.Services;
 using MusicX.Models.Enums;
 using MusicX.Shared.Player;
+using NLog;
 
 namespace MusicX.Services.Player.TrackStats;
 
@@ -10,36 +13,78 @@ public class VkTrackBroadcastStats : ITrackStatsListener
 {
     private readonly VkService _vkService;
     private readonly ConfigService _configService;
+    private readonly Logger logger;
+    private readonly NotificationsService notificationsService;
 
-    public VkTrackBroadcastStats(VkService vkService, ConfigService configService)
+    public VkTrackBroadcastStats(VkService vkService, ConfigService configService, Logger logger, NotificationsService notificationsService)
     {
         _vkService = vkService;
         _configService = configService;
+        this.logger = logger;
+        this.notificationsService = notificationsService;
     }
 
     public Task TrackChangedAsync(PlaylistTrack? previousTrack, PlaylistTrack newTrack, ChangeReason reason)
     {
-        if (newTrack.Data is VkTrackData data && _configService.Config.BroadcastVK == true)
-            return _vkService.SetBroadcastAsync(new()
-            {
-                Id = data.Info.Id,
-                OwnerId = data.Info.OwnerId,
-                AccessKey = data.Info.AccessKey
-            });
-        return Task.CompletedTask;
+        try
+        {
+            if (newTrack.Data is VkTrackData data && _configService.Config.BroadcastVK == true)
+                return _vkService.SetBroadcastAsync(new()
+                {
+                    Id = data.Info.Id,
+                    OwnerId = data.Info.OwnerId,
+                    AccessKey = data.Info.AccessKey
+                });
+            return Task.CompletedTask;
+
+        }catch(Exception ex)
+        {
+
+            var properties = new Dictionary<string, string>
+                {
+                    {"Version", StaticService.Version }
+                };
+            Crashes.TrackError(ex, properties);
+
+            logger.Error("Fatal error in load playlist");
+            logger.Error(ex, ex.Message);
+
+            notificationsService.Show("Произошла ошибка", "MusicX не смог установить муызку в статус ВКонтакте");
+
+            return Task.CompletedTask;
+        }
+        
     }
 
     public Task TrackPlayStateChangedAsync(PlaylistTrack track, TimeSpan position, bool paused)
     {
-        if (track is null) return Task.CompletedTask;
+        try
+        {
+            if (track is null) return Task.CompletedTask;
 
-        if (track.Data is VkTrackData data && _configService.Config.BroadcastVK == true)
-            return _vkService.SetBroadcastAsync(paused ? null : new()
-            {
-                Id = data.Info.Id,
-                OwnerId = data.Info.OwnerId,
-                AccessKey = data.Info.AccessKey
-            });
-        return Task.CompletedTask;
+            if (track.Data is VkTrackData data && _configService.Config.BroadcastVK == true)
+                return _vkService.SetBroadcastAsync(paused ? null : new()
+                {
+                    Id = data.Info.Id,
+                    OwnerId = data.Info.OwnerId,
+                    AccessKey = data.Info.AccessKey
+                });
+            return Task.CompletedTask;
+        }catch(Exception ex)
+        {
+            var properties = new Dictionary<string, string>
+                {
+                    {"Version", StaticService.Version }
+                };
+            Crashes.TrackError(ex, properties);
+
+            logger.Error("Fatal error in load playlist");
+            logger.Error(ex, ex.Message);
+
+            notificationsService.Show("Произошла ошибка", "MusicX не смог установить музыку в статус ВКонтакте");
+
+            return Task.CompletedTask;
+        }
+        
     }
 }
