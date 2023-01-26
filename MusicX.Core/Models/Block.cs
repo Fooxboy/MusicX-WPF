@@ -85,6 +85,9 @@ namespace MusicX.Core.Models
         [JsonProperty("audio_followings_update_info_ids")]
         public List<string> FollowingUpdateInfoIds { get; set; } = new List<string>();
 
+        [JsonProperty("group_items")]
+        public List<CuratorGroup> GroupsItemsIds { get; set; } = new List<CuratorGroup>();
+
         public List<Curator> Curators { get; set; } = new List<Curator>();
         public List<Text> Texts { get; set; } = new List<Text>();
         public List<Audio> Audios { get; set; } = new List<Audio>();

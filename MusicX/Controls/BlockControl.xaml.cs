@@ -90,7 +90,7 @@ namespace MusicX.Controls
                     return;
                 }
 
-                if (Block.DataType == "groups")
+                if (Block.DataType == "groups_items")
                 {
                     BlocksPanel.Children.Add(new GroupsBlockControl() { Block = Block});
                    
