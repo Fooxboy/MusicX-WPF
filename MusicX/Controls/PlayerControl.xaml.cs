@@ -185,6 +185,9 @@ namespace MusicX.Controls
                     if(track.HasLyrics != null)
                     {
                         TextTrack.IsEnabled = track.HasLyrics.Value;
+                    }else
+                    {
+                        TextTrack.IsEnabled = false;
                     }
                 }
 
@@ -645,8 +648,6 @@ namespace MusicX.Controls
 
         private void TextTrack_Click(object sender, RoutedEventArgs e)
         {
-            //todo: открывать модалку.
-
             var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
             var lyricsViewModel = StaticService.Container.GetRequiredService<LyricsViewModel>();
             lyricsViewModel.Track = playerService.CurrentTrack;

@@ -66,7 +66,12 @@ namespace MusicX.ViewModels.Modals
                     if(track.HasLyrics == null || !track.HasLyrics.Value)
                     {
                         Texts = new List<string>() { "Этот трек", "Не имеет текста" };
-                    } 
+                        IsLoading = false;
+                        OnPropertyChanged(nameof(IsLoading));
+
+                        return;
+
+                    }
 
                     IsLoading = true;
                     OnPropertyChanged(nameof(IsLoading));
@@ -108,6 +113,7 @@ namespace MusicX.ViewModels.Modals
                 };
                 Crashes.TrackError(ex, properties);
 
+                _logger.Error(ex.Message, ex);
                 _notificationsService.Show("Ошибка", "Мы не смогли загрузить текст песни :(");
             }
             
