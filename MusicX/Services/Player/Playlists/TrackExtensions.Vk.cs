@@ -32,7 +32,7 @@ public static partial class TrackExtensions
         }else
         {
             trackData =
-                   new VkTrackData(audio.Url, isLiked, audio.IsExplicit, TimeSpan.FromSeconds(audio.Duration), new(
+                   new VkTrackData(audio.Url, isLiked, audio.IsExplicit, audio.HasLyrics, TimeSpan.FromSeconds(audio.Duration), new(
                                        audio.Id,
                                        audio.OwnerId, audio.AccessKey), audio.TrackCode, audio.ParentBlockId,
                                    playlist is null ? null : new(playlist.Id, playlist.OwnerId, playlist.AccessKey));

@@ -291,11 +291,21 @@
                                 <ToolTip Content="Добавить/убрать в библиотеку" />
                             </wpfui:Button.ToolTip>
                         </wpfui:Button>
+
+                        <wpfui:Button Margin="5,0,0,0"  
+                                      Width="40"
+                                      IsEnabled="False"
+                                      Click="TextTrack_Click"
+                                      x:Name="TextTrack"
+                                      Appearance="Transparent"
+                                      Height="40" >
+                            <TextBlock FontFamily="{StaticResource VKSansBold}" Text="Tт"/>
+                        </wpfui:Button>
+
                     </StackPanel>
 
 
                     <StackPanel
-                       
                         x:Name="ButtonsStackPanel"
                         Grid.Column="1"
                         HorizontalAlignment="Center"

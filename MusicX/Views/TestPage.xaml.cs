@@ -13,6 +13,7 @@ using System;
 using System.Windows.Interop;
 using MusicX.Core.Services;
 using Newtonsoft.Json.Linq;
+using System.Windows.Threading;
 
 namespace MusicX.Views
 {
@@ -23,7 +24,33 @@ namespace MusicX.Views
     {
         public TestPage()
         {
+            this.Loaded += TestPage_Loaded;
             InitializeComponent();
+        }
+
+        private void TestPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            //Lyrics.SetLines(new System.Collections.Generic.List<string>()
+            //{
+            //    "Первая стровка текста",
+            //    "Вторая стровка текста",
+            //    "Третья стровка текста",
+            //    "Четвертая стровка текста",
+            //    "Пятая стровка текста",
+            //    "Шестая стровка текста",
+            //    "Седьмая стровка текста",
+            //    "Восьмая стровка текста",
+            //});
+
+            //var timer = new DispatcherTimer();
+            //timer.Interval = TimeSpan.FromSeconds(2);
+            //timer.Tick += Timer_Tick;
+            //timer.Start();
+        }
+
+        private void Timer_Tick(object? sender, EventArgs e)
+        {
+            //Lyrics.NextLine();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

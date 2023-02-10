@@ -215,6 +215,11 @@
                     Appearance="Secondary"
                     Click="MixerGet_Click"
                     Content="Получить текущую громксоть" />
+
+                <Border MaxHeight="100" BorderThickness="2" BorderBrush="Red">
+                    <music:LyricsControl x:Name="Lyrics"/>
+                </Border>
+
             </StackPanel>
 
     </Grid>

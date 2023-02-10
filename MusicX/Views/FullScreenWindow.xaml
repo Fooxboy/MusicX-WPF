@@ -6,7 +6,7 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:local="clr-namespace:MusicX.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:wpfui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
+    xmlns:wpfui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui" xmlns:controls="clr-namespace:MusicX.Controls"
     Title="FullScreenWindow"
     Width="1280"
     Height="720"
@@ -125,9 +125,10 @@
                     Text="Имя исполнителя" />
 
                 <hc:PreviewSlider
+                    HorizontalAlignment="Left"
                     x:Name="PositionSlider"
                     Grid.Column="1"
-                    Width="600"
+                    Width="400"
                     Margin="0,20,0,0"
                     ValueChanged="PositionSlider_ValueChanged">
                     <hc:PreviewSlider.Background>
@@ -137,6 +138,7 @@
             </StackPanel>
 
 
+            <controls:LyricsControl Margin="30,0,0,0" MaxHeight="500" x:Name="LyricsControlView"/>
 
         </StackPanel>
 

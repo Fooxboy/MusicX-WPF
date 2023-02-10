@@ -23,6 +23,8 @@ using Microsoft.AppCenter.Crashes;
 using MusicX.Shared.Player;
 using MusicX.Shared.ListenTogether;
 using System.Windows.Media;
+using MusicX.Views.Modals;
+using MusicX.ViewModels.Modals;
 
 namespace MusicX.Controls
 {
@@ -177,6 +179,14 @@ namespace MusicX.Controls
                 DownloadButton.IsEnabled = true;
                 Queue.ScrollIntoView(playerService.CurrentTrack);
 
+
+                if(playerService.CurrentTrack.Data is VkTrackData track)
+                {
+                    if(track.HasLyrics != null)
+                    {
+                        TextTrack.IsEnabled = track.HasLyrics.Value;
+                    }
+                }
 
                 await SaveVolume();
             }
@@ -631,6 +641,17 @@ namespace MusicX.Controls
         {
             playerService.IsMuted = !playerService.IsMuted;
             UpdateSpeakerIcon();
+        }
+
+        private void TextTrack_Click(object sender, RoutedEventArgs e)
+        {
+            //todo: открывать модалку.
+
+            var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
+            var lyricsViewModel = StaticService.Container.GetRequiredService<LyricsViewModel>();
+            lyricsViewModel.Track = playerService.CurrentTrack;
+
+            navigationService.OpenModal<LyricsModal>(lyricsViewModel);
         }
     }
 }
