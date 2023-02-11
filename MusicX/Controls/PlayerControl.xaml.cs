@@ -23,6 +23,8 @@ using Microsoft.AppCenter.Crashes;
 using MusicX.Shared.Player;
 using MusicX.Shared.ListenTogether;
 using System.Windows.Media;
+using MusicX.Views.Modals;
+using MusicX.ViewModels.Modals;
 
 namespace MusicX.Controls
 {
@@ -178,6 +180,17 @@ namespace MusicX.Controls
                 Queue.ScrollIntoView(playerService.CurrentTrack);
 
 
+                if(playerService.CurrentTrack.Data is VkTrackData track)
+                {
+                    if(track.HasLyrics != null)
+                    {
+                        TextTrack.IsEnabled = track.HasLyrics.Value;
+                    }else
+                    {
+                        TextTrack.IsEnabled = false;
+                    }
+                }
+
                 await SaveVolume();
             }
             catch (Exception ex)
@@ -315,11 +328,14 @@ namespace MusicX.Controls
         {
             var value = Volume.Value * 100;
             var configService = StaticService.Container.GetRequiredService<ConfigService>();
+            var windowsAudioService = StaticService.Container.GetRequiredService<WindowsAudioMixerService>();
 
             var conf = await configService.GetConfig();
             conf.Volume = (int)value;
             conf.IsMuted = playerService.IsMuted;
 
+            var mixerVolume = windowsAudioService.GetVolume();
+            conf.MixerVolume= (int)mixerVolume;
 
             await configService.SetConfig(conf);
         }
@@ -367,11 +383,28 @@ namespace MusicX.Controls
                 switch (playerService.CurrentTrack?.Data)
                 {
                     case VkTrackData {IsLiked: true} data:
+                        if(!LikeIcon.Filled)
+                        {
+                            LikeIcon.Filled = true;
+                            await vkService.AudioAddAsync(data.Info.Id, data.Info.OwnerId);
+
+                            notificationService.Show("Добавлено в вашу библиотеку", $"Трек {this.ArtistName.Text} - {this.TrackTitle.Text} теперь находится в Вашей музыке!");
+                            break;
+                        }
+
                         LikeIcon.Filled = false;
                         await vkService.AudioDeleteAsync(data.Info.Id, data.Info.OwnerId);
                         notificationService.Show("Удалено из вашей библиотеки", $"Трек {this.ArtistName.Text} - {this.TrackTitle.Text} теперь удален из вашей музыки");
                         break;
                     case VkTrackData data:
+                        if (LikeIcon.Filled)
+                        {
+                            LikeIcon.Filled = false;
+                            await vkService.AudioDeleteAsync(data.Info.Id, data.Info.OwnerId);
+                            notificationService.Show("Удалено из вашей библиотеки", $"Трек {this.ArtistName.Text} - {this.TrackTitle.Text} теперь удален из вашей музыки");
+                            break;
+                        }
+
                         LikeIcon.Filled = true;
                         await vkService.AudioAddAsync(data.Info.Id, data.Info.OwnerId);
 
@@ -403,6 +436,7 @@ namespace MusicX.Controls
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             var configService = StaticService.Container.GetRequiredService<ConfigService>();
+            var mixerService = StaticService.Container.GetRequiredService<WindowsAudioMixerService>();
 
             this.config = await configService.GetConfig();
             
@@ -413,7 +447,13 @@ namespace MusicX.Controls
                 await configService.SetConfig(config);
             }
 
+            if (config.MixerVolume is null)
+            {
+                config.MixerVolume = 100;
+                await configService.SetConfig(config);
+            }
 
+            mixerService.SetVolume((float)config.MixerVolume);
             var value = (config.Volume.Value / 100D);
 
             playerService.SetVolume(value);
@@ -604,6 +644,15 @@ namespace MusicX.Controls
         {
             playerService.IsMuted = !playerService.IsMuted;
             UpdateSpeakerIcon();
+        }
+
+        private void TextTrack_Click(object sender, RoutedEventArgs e)
+        {
+            var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
+            var lyricsViewModel = StaticService.Container.GetRequiredService<LyricsViewModel>();
+            lyricsViewModel.Track = playerService.CurrentTrack;
+
+            navigationService.OpenModal<LyricsModal>(lyricsViewModel);
         }
     }
 }

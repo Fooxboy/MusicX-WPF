@@ -8,6 +8,11 @@ using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
 using System.Collections.Generic;
 using Microsoft.AppCenter.Analytics;
+using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using MusicX.Core.Services;
+using MusicX.Shared.Player;
+using System.Windows.Threading;
 
 namespace MusicX.Views
 {
@@ -59,9 +64,11 @@ namespace MusicX.Views
                 };
             Analytics.TrackEvent("OpenFullScreen", properties);
             this.SetData();
+
+
         }
 
-        private void SetData()
+        private async void SetData()
         {
 
             try
@@ -134,7 +141,10 @@ namespace MusicX.Views
                 {
                     ArtistName.Text = playerService.CurrentTrack.GetArtistsString();
                 }
-            }catch (Exception ex)
+
+                await LoadLyrics();
+            }
+            catch (Exception ex)
             {
                 logger.Error(ex, ex.Message);
                 notificationsService.Show("Произошла ошибка", "MusicX не смог запустить полноэкранный режим");
@@ -143,6 +153,47 @@ namespace MusicX.Views
 
             }
 
+        }
+
+        private DispatcherTimer _timer;
+
+        private async Task LoadLyrics()
+        {
+            var vkService = StaticService.Container.GetRequiredService<VkService>();
+
+            if(playerService.CurrentTrack.Data is VkTrackData track)
+            {
+                if(track.HasLyrics is null || !track.HasLyrics.Value)
+                {
+                    LyricsControlView.SetLines(new List<string>() { "У этого трека", "Нет пока что текста" });
+                }
+
+                var vkLyrics = await vkService.GetLyrics(track.Info.OwnerId + "_" + track.Info.Id);
+
+                if(vkLyrics.LyricsInfo.Timestamps is null)
+                {
+                    LyricsControlView.SetLines(vkLyrics.LyricsInfo.Text);
+                }
+
+                if(vkLyrics.LyricsInfo.Text is null)
+                {
+                    LyricsControlView.SetLines(vkLyrics.LyricsInfo.Timestamps);
+                }
+
+                if (_timer is null)
+                {
+                    _timer = new DispatcherTimer();
+                    _timer.Interval = TimeSpan.FromMilliseconds(500);
+                    _timer.Tick += _timer_Tick;
+                    _timer.Start();
+                }
+            }
+        }
+
+        private void _timer_Tick(object? sender, EventArgs e)
+        {
+            var currentPositionOnMs = playerService.Position.TotalMilliseconds;
+            LyricsControlView.ScrollToTime(Convert.ToInt32(currentPositionOnMs));
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)

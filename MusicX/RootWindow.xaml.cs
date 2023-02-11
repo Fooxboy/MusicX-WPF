@@ -253,7 +253,7 @@ namespace MusicX
 
                 var config = await configService.GetConfig();
 
-                if (config.AmimatedBackground is null) config.AmimatedBackground = true;
+                if (config.AmimatedBackground is null) config.AmimatedBackground = false;
 
                 if(config.AmimatedBackground == true)
                 {
@@ -269,7 +269,7 @@ namespace MusicX
                     SnowEngine.Start();
                 }
 
-                if (config.WinterTheme is null) config.WinterTheme = true;
+                if (config.WinterTheme is null) config.WinterTheme = false;
 
 
                 WinterTheme = config.WinterTheme.Value;

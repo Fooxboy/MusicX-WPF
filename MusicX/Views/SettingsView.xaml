@@ -38,7 +38,7 @@
                                 FontFamily="{StaticResource VKSansRegular}"
                                 FontSize="26"
                                 Foreground="White"
-                                Text="С Новым 2023 годом," />
+                                Text="Привет," />
                             <TextBlock
                                 x:Name="UserName"
                                 Margin="5,1,0,0"

@@ -84,6 +84,7 @@ namespace MusicX.Views
                 collection.AddSingleton<VKMixViewModel>();
                 collection.AddSingleton<BoomProfileViewModel>();
                 collection.AddTransient<ListenTogetherControlViewModel>();
+                collection.AddTransient<LyricsViewModel>();
 
                 collection.AddSingleton<NavigationService>();
                 collection.AddSingleton<ConfigService>();
@@ -92,9 +93,8 @@ namespace MusicX.Views
                 collection.AddSingleton<DownloaderService>();
                 collection.AddSingleton<BannerService>();
                 collection.AddTransient<RegistryPatchManager>();
+                collection.AddSingleton<WindowsAudioMixerService>();
 
-
-                
                 var container = StaticService.Container = collection.BuildServiceProvider();
 
                 var vkService = container.GetRequiredService<VkService>();

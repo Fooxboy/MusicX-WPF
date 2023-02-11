@@ -190,8 +190,37 @@
                     Appearance="Secondary"
                     Click="DisconnectListenTogether_Click"
                     Content="Отключится от прослушивания" />
+                
                 </StackPanel>
-        </StackPanel>
+
+                <TextBlock Text="Управление мишекром"/>
+                <TextBlock x:Name="CurrentMixer" Text="Текущее значение"/>
+
+                <TextBox x:Name="ValueMixer"/>
+
+                <wpfui:Button
+                    x:Name="Mixer"
+                    Width="300"
+                    Margin="0,10,0,0"
+                    HorizontalAlignment="Left"
+                    Appearance="Secondary"
+                    Click="Mixer_Click"
+                    Content="Применить громксоть" />
+            
+                <wpfui:Button
+                    x:Name="MixerGet"
+                    Width="300"
+                    Margin="0,10,0,0"
+                    HorizontalAlignment="Left"
+                    Appearance="Secondary"
+                    Click="MixerGet_Click"
+                    Content="Получить текущую громксоть" />
+
+                <Border MaxHeight="100" BorderThickness="2" BorderBrush="Red">
+                    <music:LyricsControl x:Name="Lyrics"/>
+                </Border>
+
+            </StackPanel>
 
     </Grid>
 

@@ -13,6 +13,7 @@ using VkNet.Exception;
 using VkNet.Extensions.DependencyInjection;
 using VkNet.Model;
 using VkNet.Utils;
+using Lyrics = MusicX.Core.Models.Lyrics;
 
 namespace MusicX.Core.Services
 {
@@ -1168,6 +1169,36 @@ namespace MusicX.Core.Services
                 logger.Error(ex, ex.Message);
                 throw;
             }   
+        }
+
+        public async Task<Lyrics> GetLyrics(string audioId)
+        {
+            try
+            {
+                logger.Info($"Invoke 'audio.getLyrics' with audioId  {audioId}");
+                var parameters = new VkParameters
+                {
+
+                    {"device_id", deviceId},
+
+                    {"audio_id", audioId},
+                };
+
+                var json = await apiInvoke.InvokeAsync("audio.getLyrics", parameters);
+                logger.Debug("RESULT OF 'audio.getLyrics'" + json);
+
+                var model = JsonConvert.DeserializeObject<Lyrics>(json);
+
+                logger.Info("Successful invoke 'audio.getLyrics' ");
+
+                return model;
+            }
+            catch (Exception ex)
+            {
+                logger.Error("VK API ERROR:");
+                logger.Error(ex, ex.Message);
+                throw;
+            }
         }
     }
 }

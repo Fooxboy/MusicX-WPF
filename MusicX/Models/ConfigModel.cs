@@ -53,5 +53,8 @@ namespace MusicX.Models
 
         [JsonProperty("winter_theme")]
         public bool? WinterTheme { get; set; }
+
+        [JsonProperty("mixer_volume")]
+        public int? MixerVolume { get; set; }
     }
 }

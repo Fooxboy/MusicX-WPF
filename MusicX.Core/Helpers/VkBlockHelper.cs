@@ -183,6 +183,19 @@ namespace MusicX.Core.Helpers
                             }
                         }
 
+                        if (block.GroupsItemsIds != null || block.GroupsItemsIds.Count > 0)
+                        {
+                            foreach (var groupId in block.GroupsItemsIds)
+                            {
+                                var group = response.Groups.SingleOrDefault(b => b.Id == groupId.Id);
+
+                                if (group == null) continue;
+
+                                block.Groups.Add(group);
+
+                            }
+                        }
+
                         if (block.CuratorsIds != null || block.CuratorsIds.Count > 0)
                         {
                             foreach (var curatorId in block.CuratorsIds)
@@ -349,6 +362,19 @@ namespace MusicX.Core.Helpers
                     foreach (var groupId in response.Block.GroupIds)
                     {
                         var group = response.Groups.SingleOrDefault(b => b.Id == groupId);
+
+                        if (group == null) continue;
+
+                        response.Block.Groups.Add(group);
+
+                    }
+                }
+
+                if (response.Block.GroupsItemsIds != null || response.Block.GroupsItemsIds.Count > 0)
+                {
+                    foreach (var groupId in response.Block.GroupsItemsIds)
+                    {
+                        var group = response.Groups.SingleOrDefault(b => b.Id == groupId.Id);
 
                         if (group == null) continue;
 
@@ -559,6 +585,19 @@ namespace MusicX.Core.Helpers
                     foreach (var groupId in block.GroupIds)
                     {
                         var group = response.Groups.SingleOrDefault(b => b.Id == groupId);
+
+                        if (group == null) continue;
+
+                        block.Groups.Add(group);
+
+                    }
+                }
+
+                if (block.GroupsItemsIds != null || block.GroupsItemsIds.Count > 0)
+                {
+                    foreach (var groupId in block.GroupsItemsIds)
+                    {
+                        var group = response.Groups.SingleOrDefault(b => b.Id == groupId.Id);
 
                         if (group == null) continue;
 

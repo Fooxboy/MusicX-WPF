@@ -49,7 +49,7 @@ namespace MusicX.Controls.Blocks
 
             if(placeholder.Buttons.Count > 0)
             {
-                var button = placeholder.Buttons.SingleOrDefault(b=> b.Action.Type == "open_url");
+                var button = placeholder.Buttons.FirstOrDefault();
 
                 this.buttonAction = button;
 

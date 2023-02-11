@@ -92,4 +92,14 @@ namespace MusicX.Core.Models.General
         [JsonProperty("audio_followings_update_info")]
         public List<AudioFollowingsUpdateInfo> FollowingsUpdateInfos { get; set; }
     }
+
+    public class ResposeVk<T>
+    {
+        [JsonProperty("response")]
+        public T Response { get; set; }
+
+        [JsonProperty("error")]
+        public ErrorVk Error { get; set; }
+    }
+
 }

@@ -77,6 +77,9 @@ namespace MusicX.Core.Models
         [JsonProperty("lyrics_id")]
         public long? LyricsId { get; set; }
 
+        [JsonProperty("has_lyrics")]
+        public bool? HasLyrics { get; set; }
+
         [JsonProperty("genre_id")]
         public long? GenreId { get; set; }
 
