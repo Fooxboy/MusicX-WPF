@@ -21,14 +21,18 @@ namespace MusicX.Views
         private readonly VkService vkService;
         private readonly ConfigService configService;
         private readonly Logger logger;
+        private readonly NavigationService _navigationService;
+        private readonly NotificationsService _notificationsService;
 
         private readonly bool tokenRefresh;
-        public LoginWindow(VkService vkService, ConfigService configService, Logger logger, bool tokenRefresh = false)
+        public LoginWindow(VkService vkService, ConfigService configService, Logger logger, NavigationService navigationService, NotificationsService notificationsService, bool tokenRefresh = false)
         {
             InitializeComponent();
             this.vkService = vkService;
             this.configService = configService;
             this.logger = logger;
+            _navigationService = navigationService;
+            _notificationsService = notificationsService;
             this.tokenRefresh = tokenRefresh;
             this.WpfTitleBar.MaximizeClicked += WpfTitleBar_MaximizeClicked;
             Accent.Apply(Accent.GetColorizationColor(), ThemeType.Dark);
@@ -37,6 +41,34 @@ namespace MusicX.Views
             {
                 UnsupportOsBlock.Visibility = Visibility.Visible;
             }
+            
+            navigationService.ModalOpenRequested += NavigationServiceOnModalOpenRequested;
+            navigationService.ModalCloseRequested += NavigationServiceOnModalCloseRequested;
+            
+            notificationsService.NewNotificationEvent += NotificationsServiceOnNewNotificationEvent;
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            _navigationService.ModalOpenRequested -= NavigationServiceOnModalOpenRequested;
+            _navigationService.ModalCloseRequested -= NavigationServiceOnModalCloseRequested;
+            
+            _notificationsService.NewNotificationEvent -= NotificationsServiceOnNewNotificationEvent;
+        }
+        
+        private void NotificationsServiceOnNewNotificationEvent(string title, string message)
+        {
+            RootSnackbar.Show(title, message);
+        }
+
+        private void NavigationServiceOnModalCloseRequested(object? sender, EventArgs e)
+        {
+            ModalFrame.Close();
+        }
+        private void NavigationServiceOnModalOpenRequested(object? sender, object e)
+        {
+            ModalFrame.Open(e);
         }
 
         private bool isFullScreen = false;
@@ -55,7 +87,7 @@ namespace MusicX.Views
             }
         }
 
-        private async void Window_Loaded(object sender, RoutedEventArgs e)
+        private void Window_Loaded(object sender, RoutedEventArgs e)
         {
 
             var os = Environment.OSVersion;
@@ -68,7 +100,7 @@ namespace MusicX.Views
 
             if(tokenRefresh)
             {
-                await RootSnackbar.ShowAsync("Токен устарел", "Войдите в аккаунт снова, чтобы продолжить пользоваться MusicX");
+                _notificationsService.Show("Токен устарел", "Войдите в аккаунт снова, чтобы продолжить пользоваться MusicX");
             }
         }
 

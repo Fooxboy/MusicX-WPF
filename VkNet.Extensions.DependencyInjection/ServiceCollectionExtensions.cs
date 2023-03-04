@@ -22,6 +22,7 @@ public static class ServiceCollectionExtensions
         collection.TryAddSingleton<IVkApiAuthAsync, VkApiAuth>();
         collection.TryAddSingleton<IVkTokenStore, DefaultVkTokenStore>();
         collection.TryAddSingleton<IVkApi, VkApi>();
+        collection.TryAddSingleton<IAsyncCaptchaSolver>(_ => null!);
 
         collection.TryAddTransient<IVkApiAuth>(s => s.GetRequiredService<IVkApiAuthAsync>());
         collection.TryAddTransient<IVkInvoke>(s => s.GetRequiredService<IVkApi>());
