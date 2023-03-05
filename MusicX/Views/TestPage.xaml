@@ -192,6 +192,17 @@
                     Content="Отключится от прослушивания" />
                 
                 </StackPanel>
+                    <wpfui:Button
+                        x:Name="RaiseCaptcha"
+                        Width="300"
+                        Margin="0,10,0,0"
+                        HorizontalAlignment="Left"
+                        Appearance="Secondary"
+                        Click="RaiseCaptcha_OnClick"
+                        Content="Вызвать капчу" />
+                <StackPanel>
+                    
+                </StackPanel>
 
                 <TextBlock Text="Управление мишекром"/>
                 <TextBlock x:Name="CurrentMixer" Text="Текущее значение"/>

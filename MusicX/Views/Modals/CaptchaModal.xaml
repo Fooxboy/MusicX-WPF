@@ -1,0 +1,26 @@
+﻿<controls:ModalPage x:Class="MusicX.Views.Modals.CaptchaModal"
+                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    xmlns:local="clr-namespace:MusicX.Views.Modals"
+                    xmlns:modals="clr-namespace:MusicX.ViewModels.Modals"
+                    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                    xmlns:controls="clr-namespace:MusicX.Controls"
+                    mc:Ignorable="d"
+                    Title="Капча" Height="250" Width="300"
+                    d:DataContext="{d:DesignInstance modals:CaptchaModalViewModel}"
+                    Closed="CaptchaModal_OnClosed"
+                    Background="Transparent">
+    <Grid>
+        <StackPanel HorizontalAlignment="Center" Margin="0,30,0,0">
+            <Image Source="{Binding ImageUrl}" Stretch="None" />
+            <ui:TextBox Name="KeyBox" MinWidth="150" Margin="0,20,0,0" />
+            <ui:Button Content="Отправить"
+                       Margin="0,10,0,0"
+                       HorizontalAlignment="Center"
+                       CommandParameter="{Binding Text, ElementName=KeyBox}"
+                       Command="{Binding SolveCommand}" />
+        </StackPanel>
+    </Grid>
+</controls:ModalPage>

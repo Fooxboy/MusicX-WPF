@@ -14,6 +14,9 @@ using System.Windows.Interop;
 using MusicX.Core.Services;
 using Newtonsoft.Json.Linq;
 using System.Windows.Threading;
+using VkNet.Abstractions.Core;
+using VkNet.Exception;
+using VkNet.Model;
 
 namespace MusicX.Views
 {
@@ -201,6 +204,28 @@ namespace MusicX.Views
             var value = new WindowsAudioMixerService().GetVolume();
 
             CurrentMixer.Text = $"Текущее значение: {value}";
+        }
+
+        private void RaiseCaptcha_OnClick(object sender, RoutedEventArgs e)
+        {
+            var handler = StaticService.Container.GetRequiredService<ICaptchaHandler>();
+
+            handler.Perform(async (sid, key) =>
+            {
+                if (sid.HasValue)
+                {
+                    var notificationService = StaticService.Container.GetRequiredService<NotificationsService>();
+                    notificationService.Show("Капча", $"Вы ввели '{key}'");
+                    return 0;
+                }
+                
+                const ulong captchaSid = 123456;
+                throw new CaptchaNeededException(new()
+                {
+                    CaptchaImg = new($"https://api.vk.com//captcha.php?sid={captchaSid}&s=1"),
+                    CaptchaSid = captchaSid
+                });
+            });
         }
     }
 }
