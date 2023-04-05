@@ -1,0 +1,35 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:MusicX.Avalonia.Controls">
+    <Design.PreviewWith>
+        <controls:ModalFrame />
+    </Design.PreviewWith>
+
+    <Style Selector="controls|ModalFrame">
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <ExperimentalAcrylicBorder CornerRadius="{StaticResource OverlayCornerRadius}">
+                    <ExperimentalAcrylicBorder.Material>
+                        <ExperimentalAcrylicMaterial BackgroundSource="Digger" />
+                    </ExperimentalAcrylicBorder.Material>
+                    <Grid RowDefinitions="Auto,*">
+                        <!--<TextBlock Text="{TemplateBinding Title}" />-->
+                        <ContentPresenter Grid.Row="1" Name="ContentPresenter"
+                                          Content="{TemplateBinding Content}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          Padding="{TemplateBinding Padding}"
+                                          Background="{TemplateBinding Background}"
+                                          BorderBrush="{TemplateBinding BorderBrush}"
+                                          BorderThickness="{TemplateBinding BorderThickness}" />
+                    </Grid>
+                </ExperimentalAcrylicBorder>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+</Styles>

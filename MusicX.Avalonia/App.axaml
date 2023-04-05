@@ -1,12 +1,14 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="using:MusicX.Avalonia"
+             xmlns:sty="using:FluentAvalonia.Styling"
+             xmlns:avalonia="clr-namespace:MusicX.Avalonia"
              x:Class="MusicX.Avalonia.App">
-    <Application.DataTemplates>
-        <local:ViewLocator/>
-    </Application.DataTemplates>
-
+    <Application.Resources>
+        <avalonia:PageFactory x:Key="PageFactory" />
+    </Application.Resources>
     <Application.Styles>
-        <FluentTheme Mode="Light"/>
+        <sty:FluentAvaloniaTheme PreferUserAccentColor="True" PreferSystemTheme="True" />
+        <StyleInclude Source="Controls/ModalFrame.axaml" />
+        <StyleInclude Source="Styles/DataValidationStyles.axaml" />
     </Application.Styles>
 </Application>

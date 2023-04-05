@@ -38,6 +38,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicX.Server.Tests", "Musi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignalR.Protobuf", "SignalR.Protobuf\SignalR.Protobuf.csproj", "{6A511BD3-95E2-4087-9F68-A17DBC237B71}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicX.Avalonia.Core", "MusicX.Avalonia.Core\MusicX.Avalonia.Core.csproj", "{F24E5889-6335-4A64-A8E0-749416885DE6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -104,6 +106,10 @@ Global
 		{6A511BD3-95E2-4087-9F68-A17DBC237B71}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6A511BD3-95E2-4087-9F68-A17DBC237B71}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6A511BD3-95E2-4087-9F68-A17DBC237B71}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F24E5889-6335-4A64-A8E0-749416885DE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F24E5889-6335-4A64-A8E0-749416885DE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F24E5889-6335-4A64-A8E0-749416885DE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F24E5889-6335-4A64-A8E0-749416885DE6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,17 +1,42 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:MusicX.Avalonia.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModels="clr-namespace:MusicX.Avalonia.Core.ViewModels;assembly=MusicX.Avalonia.Core"
+        xmlns:ui="clr-namespace:FluentAvalonia.UI.Controls;assembly=FluentAvalonia"
+        xmlns:controls="clr-namespace:MusicX.Avalonia.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="MusicX.Avalonia.Views.MainWindow"
-        Icon="/Assets/avalonia-logo.ico"
-        Title="MusicX.Avalonia">
+        Icon="/Assets/icon.ico"
+        Title="MusicX"
+        TransparencyLevelHint="Mica"
+        Background="Transparent"
+        x:DataType="viewModels:MainWindowViewModel">
+    
+    <Panel>
+        <controls:ModalFrame Name="ModalFrame" NavigationPageFactory="{StaticResource PageFactory}"
+                             Title="{CompiledBinding CurrentModal.Title}"
+                             MaxWidth="500"
+                             MaxHeight="500"/>
 
-    <Design.DataContext>
-        <vm:MainWindowViewModel/>
-    </Design.DataContext>
-
-    <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Grid Name="NavGrid">
+            <ui:NavigationView AlwaysShowHeader="False"
+                               PaneDisplayMode="Left"
+                               Name="NavView"
+                               IsSettingsVisible="False"
+                               IsBackEnabled="{CompiledBinding #FrameView.CanGoBack}"
+                               MenuItems="{CompiledBinding MenuTabs}"
+                               SelectedItem="{CompiledBinding CurrentTab}">
+                <ui:NavigationView.MenuItemTemplate>
+                    <DataTemplate DataType="viewModels:MenuTabViewModel">
+                        <ui:NavigationViewItem Content="{CompiledBinding Title}" />
+                    </DataTemplate>
+                </ui:NavigationView.MenuItemTemplate>
+                <Panel>
+                    <ui:Frame Name="FrameView" NavigationPageFactory="{StaticResource PageFactory}" />
+                </Panel>
+            </ui:NavigationView>
+        </Grid>
+    </Panel>
 
 </Window>

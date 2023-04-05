@@ -1,0 +1,80 @@
+﻿syntax = "proto3";
+package MusicX.Avalonia.Core.Models.Google;
+
+message AndroidCheckinProto {
+   int64 last_checkin_msec = 2;
+   string cell_operator = 6;
+   string sim_operator = 7;
+   string roaming = 8;
+   int32 user_number = 9;
+   DeviceType type = 12; // default value could not be applied: DeviceAndroidOs
+   ChromeBuildProto chrome_build = 13;
+}
+message AndroidCheckinRequest {
+   string imei = 1;
+   int64 id = 2;
+   string digest = 3;
+   AndroidCheckinProto checkin = 4;
+   string desired_build = 5;
+   string locale = 6;
+   int64 logging_id = 7;
+   string market_checkin = 8;
+   repeated string mac_addr = 9;
+   string meid = 10;
+   repeated string account_cookie = 11;
+   string time_zone = 12;
+   fixed64 security_token = 13;
+   int32 version = 14;
+   repeated string ota_cert = 15;
+   string serial_number = 16;
+   string esn = 17;
+   repeated string mac_addr_type = 19;
+   int32 fragment = 20;
+   string user_name = 21;
+   int32 user_serial_number = 22;
+}
+message AndroidCheckinResponse {
+   bool stats_ok = 1;
+   int64 time_msec = 3;
+   string digest = 4;
+   repeated GservicesSetting setting = 5;
+   bool market_ok = 6;
+   fixed64 android_id = 7;
+   fixed64 security_token = 8;
+   bool settings_diff = 9;
+   repeated string delete_setting = 10;
+   string version_info = 11;
+}
+enum Channel {
+   ZERO = 0; // proto3 requires a zero value as the first item (it can be named anything)
+   CHANNEL_STABLE = 1;
+   CHANNEL_BETA = 2;
+   CHANNEL_DEV = 3;
+   CHANNEL_CANARY = 4;
+   CHANNEL_UNKNOWN = 5;
+}
+message ChromeBuildProto {
+   Platform platform = 1; // default value could not be applied: PlatformWin
+   string chrome_version = 2;
+   Channel channel = 3; // default value could not be applied: ChannelStable
+}
+enum DeviceType {
+   DEVICE_ZERO = 0; // proto3 requires a zero value as the first item (it can be named anything)
+   DEVICE_ANDROID_OS = 1;
+   DEVICE_IOS_OS = 2;
+   DEVICE_CHROME_BROWSER = 3;
+   DEVICE_CHROME_OS = 4;
+}
+message GservicesSetting {
+   bytes name = 1;
+   bytes value = 2;
+}
+enum Platform {
+   PLATFORM_ZERO = 0; // proto3 requires a zero value as the first item (it can be named anything)
+   PLATFORM_WIN = 1;
+   PLATFORM_MAC = 2;
+   PLATFORM_LINUX = 3;
+   PLATFORM_CROS = 4;
+   PLATFORM_IOS = 5;
+   PLATFORM_ANDROID = 6;
+}
