@@ -1,7 +1,4 @@
-﻿using System;
-using Avalonia;
-using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.ReactiveUI;
+﻿using Avalonia;
 
 namespace MusicX.Avalonia;
 

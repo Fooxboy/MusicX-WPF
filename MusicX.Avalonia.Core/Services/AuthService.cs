@@ -48,10 +48,10 @@ public class AuthService : IDisposable
         await using var stream = await response.Content.ReadAsStreamAsync();
         var node = JsonNode.Parse(stream)!;
         if (node["error"] != null)
-            throw new AuthException(node.Deserialize(JsonContext.Default.AuthExceptionResponse)!, 
+            throw new AuthException(node.Deserialize(MusicXJsonContext.Default.AuthExceptionResponse)!, 
                                     node["error_code"]?.GetValue<int>() is { } errorCode ? _exceptionFactory.CreateExceptionFromCode(errorCode) : null);
 
-        return node.Deserialize(JsonContext.Default.AuthTokenResponse)!;
+        return node.Deserialize(MusicXJsonContext.Default.AuthTokenResponse)!;
     }
 
     public async Task<string> RefreshTokenAsync(string token)
@@ -59,12 +59,10 @@ public class AuthService : IDisposable
         var receipt = await _receiptParser.GetReceipt();
         
         _api.Client.Headers.Authorization = new("Bearer", token);
+
+        var response = await _api.Auth.RefreshTokenAsync(new(receipt, null, null, null, null, null, null));
         
-        var response =
-            await _api.Client.RequestAsync<AuthRefreshTokenRequest, AuthRefreshTokenResponse>(
-                "auth.refreshToken", new(receipt, null, null, null, null, null, null));
-        
-        return response.Token;
+        return response.Token!;
     }
 
     private void RefreshHeaders()

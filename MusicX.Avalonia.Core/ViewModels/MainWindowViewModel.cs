@@ -1,10 +1,12 @@
 ﻿using System.Reactive;
 using System.Reactive.Linq;
 using DynamicData.Binding;
+using MusicX.Avalonia.Core.Extensions;
 using MusicX.Avalonia.Core.Models;
 using MusicX.Avalonia.Core.Services;
 using ReactiveUI;
 using VkApi;
+using VkApi.Core;
 using VkApi.Core.Requests;
 
 namespace MusicX.Avalonia.Core.ViewModels;
@@ -44,9 +46,18 @@ public class MainWindowViewModel : ViewModelBase
 
         var api = (Api)_provider.GetService(typeof(Api))!;
 
-        var mainCatalog =
-            await api.Client.RequestAsync<CatalogGetAudioRequest, CatalogGetAudioResponse>(
-                "catalog.getAudio", new(null, true, null, null));
+        var mainCatalog = await api.GetCatalogAudioAsync(new(null, true, null, null));
+        
+        foreach (var (id, title, _) in mainCatalog.Catalog.Sections)
+        {
+            var viewModel = (SectionTabViewModel)_provider.GetService(typeof(SectionTabViewModel))!;
+
+            viewModel.Init(id, title);
+            
+            MenuTabs.Add(viewModel);
+            if (mainCatalog.Catalog.DefaultSection == id)
+                CurrentTab = viewModel;
+        }
 
         return default;
     }

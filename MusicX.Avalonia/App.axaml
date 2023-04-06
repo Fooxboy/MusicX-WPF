@@ -10,5 +10,6 @@
         <sty:FluentAvaloniaTheme PreferUserAccentColor="True" PreferSystemTheme="True" />
         <StyleInclude Source="Controls/ModalFrame.axaml" />
         <StyleInclude Source="Styles/DataValidationStyles.axaml" />
+        <StyleInclude Source="Styles/CardStyles.axaml" />
     </Application.Styles>
 </Application>

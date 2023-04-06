@@ -12,6 +12,7 @@ namespace MusicX.Avalonia.Core;
 [Singleton<ConfigurationService>]
 [Transient<Api>(Factory = nameof(CreateVkApi))]
 [Transient<LoginModalViewModel>]
+[Transient<SectionTabViewModel>]
 [Singleton<FakeSafetyNetClient>]
 [Singleton<ReceiptParser>]
 [Singleton<IApiExceptionFactory, ApiExceptionFactory>]

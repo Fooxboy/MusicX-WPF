@@ -18,6 +18,10 @@ public partial class MainWindow : AppWindow
         base.OnDataContextChanged(e);
         if (DataContext is MainWindowViewModel viewModel)
         {
+            viewModel.WhenValueChanged(x => x.CurrentTab)
+                     .ObserveOn(RxApp.MainThreadScheduler)
+                     .Where(b => b is not null)
+                     .Subscribe(tab => FrameView.NavigateFromObject(tab));
             viewModel.WhenValueChanged(x => x.CurrentModal)
                      .ObserveOn(RxApp.MainThreadScheduler)
                      .Where(b => b is not null)

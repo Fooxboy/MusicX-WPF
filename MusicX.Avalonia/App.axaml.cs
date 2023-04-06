@@ -40,6 +40,7 @@ public partial class App : Application
 [Import<IServiceModule>]
 [Transient<MainWindow>]
 [Transient<LoginPage>]
+[Transient<SectionPage>]
 internal partial class ServiceProvider : IServiceModule
 {
     public Api CreateVkApi(ConfigurationService configurationService)

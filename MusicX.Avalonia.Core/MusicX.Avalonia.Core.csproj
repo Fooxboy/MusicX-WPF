@@ -11,7 +11,7 @@
         <PackageReference Include="Google.Protobuf" Version="3.22.1" />
         <PackageReference Include="Jab" Version="0.8.6" />
         <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" PrivateAssets="all" />
-        <PackageReference Include="VkApi" Version="0.0.1" />
+        <PackageReference Include="VkApi" Version="0.0.3" />
     </ItemGroup>
 
 </Project>

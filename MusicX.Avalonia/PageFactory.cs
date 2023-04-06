@@ -20,6 +20,7 @@ public class PageFactory : INavigationPageFactory
         UserControl control = viewModel switch
         {
             LoginModalViewModel => App.Provider.GetService<LoginPage>(),
+            SectionTabViewModel => App.Provider.GetService<SectionPage>(),
             _ => throw new ArgumentOutOfRangeException(nameof(target), target,
                                                        "Target must be an implemented view model type in factory")
         };

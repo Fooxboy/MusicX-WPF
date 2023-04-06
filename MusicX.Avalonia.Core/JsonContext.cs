@@ -5,7 +5,10 @@ namespace MusicX.Avalonia.Core;
 
 [JsonSerializable(typeof(AuthExceptionResponse))]
 [JsonSerializable(typeof(AuthTokenResponse))]
-[JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.SnakeCaseLower)]
-internal partial class JsonContext : JsonSerializerContext
+[JsonSerializable(typeof(CatalogGetAudioResponse))]
+[JsonSerializable(typeof(CatalogGetSectionResponse))]
+[JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.SnakeCaseLower,
+                             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull)]
+internal partial class MusicXJsonContext : JsonSerializerContext
 {
 }
