@@ -1,4 +1,6 @@
-﻿using Avalonia;
+﻿using System.Buffers;
+using System.Diagnostics;
+using Avalonia;
 using Avalonia.Platform;
 using Avalonia.Rendering.Composition.Server;
 using Avalonia.Rendering.SceneGraph;

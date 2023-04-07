@@ -1,8 +1,10 @@
-﻿using Avalonia;
+﻿using System.Reactive.Concurrency;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using MusicX.Avalonia.Rendering;
+using ReactiveUI;
 
 namespace MusicX.Avalonia.Controls;
 
@@ -28,11 +30,15 @@ public class BlurryImage : Control
 
     private void SourceChanged(object? obj)
     {
-        using var stream = new MemoryStream();
-        Source?.Save(stream);
-        if (Source is null || stream.Length <= 0) return;
+        var source = Source;
+        RxApp.TaskpoolScheduler.Schedule(() =>
+        {
+            using var stream = new MemoryStream();
+            source?.Save(stream);
+            if (source is null || stream.Length <= 0) return;
 
-        _render = new BlurImageRender(stream);
+            _render = new BlurImageRender(stream);
+        });
     }
 
     private void BoundsChanged(object? obj)

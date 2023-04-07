@@ -15,7 +15,7 @@
                             CornerRadius="5"
                             Stretch="UniformToFill"
                             StretchDirection="Both"
-                            avalonia:ImageLoader.Source="{TemplateBinding ImageUrl}"
+                            avalonia:ImageLoader.BlurrySource="{TemplateBinding ImageUrl}"
                             Width="{TemplateBinding Width}"
                             Height="{TemplateBinding Height}"
                             Name="PART_PlaylistBackground" />
