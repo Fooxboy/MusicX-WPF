@@ -1,5 +1,6 @@
 ﻿using DynamicData;
 using DynamicData.Binding;
+using MusicX.Avalonia.Core.Blocks;
 using MusicX.Avalonia.Core.Extensions;
 using MusicX.Avalonia.Core.Models;
 using VkApi;
@@ -14,7 +15,7 @@ public class SectionTabViewModel : MenuTabViewModel
 
     public string Id { get; set; } = string.Empty;
 
-    public IObservableCollection<SectionBlock> Blocks { get; } = new ObservableCollectionExtended<SectionBlock>();
+    public IObservableCollection<BlockBase> Blocks { get; } = new ObservableCollectionExtended<BlockBase>();
 
     public SectionTabViewModel(Api api)
     {
@@ -31,6 +32,6 @@ public class SectionTabViewModel : MenuTabViewModel
     {
         var section = await _api.GetCatalogSectionAsync(new(Id, null, null, null, null, null, null, null, null));
         
-        Blocks.AddRange(section.Section.Blocks);
+        Blocks.AddRange(BlockMapper.MapBlocks(section));
     }
 }

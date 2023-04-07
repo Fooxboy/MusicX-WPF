@@ -1,0 +1,56 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:templates="clr-namespace:MusicX.Avalonia.Templates"
+                    xmlns:models="clr-namespace:MusicX.Avalonia.Core.Models;assembly=MusicX.Avalonia.Core"
+                    xmlns:blocks="clr-namespace:MusicX.Avalonia.Core.Blocks;assembly=MusicX.Avalonia.Core"
+                    xmlns:avalonia="clr-namespace:MusicX.Avalonia"
+                    xmlns:controls="clr-namespace:MusicX.Avalonia.Controls">
+    <templates:BlockElementFactory x:Key="BlockElementFactory">
+        <templates:BlockElementFactory.FallbackTemplate>
+            <DataTemplate DataType="blocks:BlockBase">
+                <Border Classes="Card" Margin="5">
+                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                        <TextBlock Text="{CompiledBinding DataType}" FontWeight="Bold" />
+                        <TextBlock Text="{CompiledBinding Layout.Name}" FontWeight="Medium" Margin="0,10,0,0" />
+                    </StackPanel>
+                </Border>
+            </DataTemplate>
+        </templates:BlockElementFactory.FallbackTemplate>
+
+        <!-- None -->
+        <templates:BlockTemplate x:DataType="blocks:BlockBase" BlockDataType="none" LayoutName="header_extended">
+            <TextBlock Text="{CompiledBinding Layout.Title}"
+                       FontSize="26"
+                       FontWeight="Bold" />
+        </templates:BlockTemplate>
+        <templates:BlockTemplate x:DataType="blocks:BlockBase" BlockDataType="none" LayoutName="separator">
+            <Separator />
+        </templates:BlockTemplate>
+
+        <!-- Playlists -->
+        <templates:BlockTemplate x:DataType="blocks:PlaylistsBlock" BlockDataType="music_playlists"
+                                 LayoutName="large_slider">
+            <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto"
+                          HorizontalSnapPointsType="Mandatory">
+                <ItemsControl Items="{CompiledBinding Playlists}" Margin="0,0,0,10">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="models:CatalogPlaylist">
+                            <controls:PlaylistCover ImageUrl="{CompiledBinding Photo.Photo270}"
+                                                    Title="{CompiledBinding Title}"
+                                                    Subtitle="{CompiledBinding Subtitle}"
+                                                    Width="270"
+                                                    Height="270"
+                                                    Margin="5" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </templates:BlockTemplate>
+
+    </templates:BlockElementFactory>
+</ResourceDictionary>

@@ -7,16 +7,9 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="MusicX.Avalonia.Pages.SectionPage"
              x:DataType="viewModels:SectionTabViewModel">
-    <ItemsControl Items="{CompiledBinding Blocks}" Margin="5">
-        <ItemsControl.ItemTemplate>
-            <DataTemplate DataType="models:SectionBlock">
-                <Border Classes="Card" Margin="5">
-                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-                        <TextBlock Text="{CompiledBinding DataType}" FontWeight="Bold" />
-                        <TextBlock Text="{CompiledBinding Layout.Name}" FontWeight="Medium" Margin="0,10,0,0" />
-                    </StackPanel>
-                </Border>
-            </DataTemplate>
-        </ItemsControl.ItemTemplate>
-    </ItemsControl>
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto"
+                  VerticalSnapPointsType="Mandatory">
+        <ItemsControl Items="{CompiledBinding Blocks}" Margin="5"
+                      ItemTemplate="{DynamicResource BlockElementFactory}"/>
+    </ScrollViewer>
 </UserControl>

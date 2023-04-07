@@ -1,0 +1,39 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:MusicX.Avalonia.Controls"
+        xmlns:avalonia="clr-namespace:MusicX.Avalonia">
+    <Design.PreviewWith>
+        <controls:PlaylistCover />
+    </Design.PreviewWith>
+
+    <Style Selector="controls|PlaylistCover">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Classes="PlaylistCard" Margin="{TemplateBinding Margin}">
+                    <Panel>
+                        <controls:BlurryImage
+                            CornerRadius="5"
+                            Stretch="UniformToFill"
+                            StretchDirection="Both"
+                            avalonia:ImageLoader.Source="{TemplateBinding ImageUrl}"
+                            Width="{TemplateBinding Width}"
+                            Height="{TemplateBinding Height}"
+                            Name="PART_PlaylistBackground" />
+                        <Panel Name="PART_Content" VerticalAlignment="Bottom">
+                            <StackPanel Margin="10,5" Orientation="Vertical">
+                                <TextBlock Text="{TemplateBinding Title}"
+                                           TextTrimming="CharacterEllipsis"
+                                           FontSize="26" FontWeight="Bold" />
+                                <TextBlock Text="{TemplateBinding Subtitle}"
+                                           TextTrimming="CharacterEllipsis"
+                                           FontSize="16" FontWeight="Light"
+                                           Opacity="0.8"
+                                           Margin="0,5,0,0" />
+                            </StackPanel>
+                        </Panel>
+                    </Panel>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+</Styles>

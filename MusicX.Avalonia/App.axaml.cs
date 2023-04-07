@@ -1,9 +1,11 @@
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 using Jab;
 using MusicX.Avalonia.Core;
+using MusicX.Avalonia.Core.Models;
 using MusicX.Avalonia.Core.Services;
 using MusicX.Avalonia.Core.ViewModels;
 using MusicX.Avalonia.Pages;

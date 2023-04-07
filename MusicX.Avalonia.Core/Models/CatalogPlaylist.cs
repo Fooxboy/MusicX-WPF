@@ -2,7 +2,7 @@
 
 public record CatalogPlaylist(
     int Id,
-    int OwnerId,
+    long OwnerId,
     int Type,
     string Title,
     string Description,

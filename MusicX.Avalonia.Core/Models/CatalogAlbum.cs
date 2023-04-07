@@ -5,5 +5,5 @@ public record CatalogAlbum(
     string Title,
     int OwnerId,
     string AccessKey,
-    CatalogThumb Thumb
+    CatalogPhoto Thumb
 );

@@ -4,11 +4,17 @@
              xmlns:avalonia="clr-namespace:MusicX.Avalonia"
              x:Class="MusicX.Avalonia.App">
     <Application.Resources>
-        <avalonia:PageFactory x:Key="PageFactory" />
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="Templates/BlockTemplates.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <avalonia:PageFactory x:Key="PageFactory" />
+        </ResourceDictionary>
     </Application.Resources>
     <Application.Styles>
         <sty:FluentAvaloniaTheme PreferUserAccentColor="True" PreferSystemTheme="True" />
         <StyleInclude Source="Controls/ModalFrame.axaml" />
+        <StyleInclude Source="Controls/PlaylistCover.axaml" />
         <StyleInclude Source="Styles/DataValidationStyles.axaml" />
         <StyleInclude Source="Styles/CardStyles.axaml" />
     </Application.Styles>
