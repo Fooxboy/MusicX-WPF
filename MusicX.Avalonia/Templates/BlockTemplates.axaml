@@ -43,9 +43,9 @@
                             <controls:PlaylistCover ImageUrl="{CompiledBinding Photo.Photo270}"
                                                     Title="{CompiledBinding Title}"
                                                     Subtitle="{CompiledBinding Subtitle}"
-                                                    Width="270"
-                                                    Height="270"
-                                                    Margin="5" />
+                                                    Width="220"
+                                                    Height="220"
+                                                    Margin="10, 5" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

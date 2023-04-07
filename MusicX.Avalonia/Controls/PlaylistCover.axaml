@@ -20,7 +20,7 @@
                             Height="{TemplateBinding Height}"
                             Name="PART_PlaylistBackground" />
                         <Panel Name="PART_Content" VerticalAlignment="Bottom">
-                            <StackPanel Margin="10,5" Orientation="Vertical">
+                            <StackPanel Margin="5" Orientation="Vertical">
                                 <TextBlock Text="{TemplateBinding Title}"
                                            TextTrimming="CharacterEllipsis"
                                            FontSize="26" FontWeight="Bold" />
