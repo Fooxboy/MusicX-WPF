@@ -53,7 +53,9 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\MusicX.Avalonia.Audio\MusicX.Avalonia.Audio.csproj" />
       <ProjectReference Include="..\MusicX.Avalonia.Core\MusicX.Avalonia.Core.csproj" />
+      <ProjectReference Include="..\MusicX.Avalonia.ViewModels\MusicX.Avalonia.ViewModels.csproj" />
     </ItemGroup>
     
 </Project>

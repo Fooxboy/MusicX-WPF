@@ -1,4 +1,4 @@
-﻿namespace MusicX.Avalonia.Core.ViewModels;
+﻿namespace MusicX.Avalonia.ViewModels.ViewModels;
 
 public abstract class MenuTabViewModel : ViewModelBase
 {

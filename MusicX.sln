@@ -40,6 +40,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignalR.Protobuf", "SignalR
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicX.Avalonia.Core", "MusicX.Avalonia.Core\MusicX.Avalonia.Core.csproj", "{F24E5889-6335-4A64-A8E0-749416885DE6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicX.Avalonia.Audio", "MusicX.Avalonia.Audio\MusicX.Avalonia.Audio.csproj", "{4A24C442-8A52-452E-8207-4F0414181F97}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicX.Avalonia.ViewModels", "MusicX.Avalonia.ViewModels\MusicX.Avalonia.ViewModels.csproj", "{68DA9B0F-632B-4E4F-9BBE-23C2B34123A9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -110,6 +114,14 @@ Global
 		{F24E5889-6335-4A64-A8E0-749416885DE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F24E5889-6335-4A64-A8E0-749416885DE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F24E5889-6335-4A64-A8E0-749416885DE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A24C442-8A52-452E-8207-4F0414181F97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A24C442-8A52-452E-8207-4F0414181F97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A24C442-8A52-452E-8207-4F0414181F97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A24C442-8A52-452E-8207-4F0414181F97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68DA9B0F-632B-4E4F-9BBE-23C2B34123A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68DA9B0F-632B-4E4F-9BBE-23C2B34123A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68DA9B0F-632B-4E4F-9BBE-23C2B34123A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68DA9B0F-632B-4E4F-9BBE-23C2B34123A9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

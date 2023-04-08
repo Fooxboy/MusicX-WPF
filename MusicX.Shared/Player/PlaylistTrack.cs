@@ -5,8 +5,8 @@ namespace MusicX.Shared.Player;
 
 [ProtoContract(ImplicitFields = ImplicitFields.AllPublic, SkipConstructor = true)]
 public sealed record PlaylistTrack(string Title, string Subtitle, AlbumId? AlbumId,
-                                   ICollection<TrackArtist> MainArtists,
-                                   ICollection<TrackArtist>? FeaturedArtists, TrackData Data)
+                                   IReadOnlyList<TrackArtist> MainArtists,
+                                   IReadOnlyList<TrackArtist>? FeaturedArtists, TrackData Data)
 {
     public bool Equals(PlaylistTrack? other)
     {

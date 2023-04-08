@@ -2,9 +2,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:viewModels="clr-namespace:MusicX.Avalonia.Core.ViewModels;assembly=MusicX.Avalonia.Core"
         xmlns:ui="clr-namespace:FluentAvalonia.UI.Controls;assembly=FluentAvalonia"
         xmlns:controls="clr-namespace:MusicX.Avalonia.Controls"
+        xmlns:viewModels="clr-namespace:MusicX.Avalonia.ViewModels.ViewModels;assembly=MusicX.Avalonia.ViewModels"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="MusicX.Avalonia.Views.MainWindow"
         Icon="/Assets/icon.ico"
@@ -19,7 +19,7 @@
                              MaxWidth="500"
                              MaxHeight="500"/>
 
-        <Grid Name="NavGrid">
+        <Grid Name="NavGrid" RowDefinitions="*,Auto">
             <ui:NavigationView AlwaysShowHeader="False"
                                PaneDisplayMode="Left"
                                Name="NavView"
@@ -36,6 +36,8 @@
                     <ui:Frame Name="FrameView" NavigationPageFactory="{StaticResource PageFactory}" />
                 </Panel>
             </ui:NavigationView>
+            
+            <controls:PlaybackControl Grid.Row="1" />
         </Grid>
     </Panel>
 

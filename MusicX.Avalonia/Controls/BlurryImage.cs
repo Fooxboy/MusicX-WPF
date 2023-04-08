@@ -38,6 +38,7 @@ public class BlurryImage : Control
             if (source is null || stream.Length <= 0) return;
 
             _render = new BlurImageRender(stream);
+            RxApp.MainThreadScheduler.Schedule(InvalidateVisual);
         });
     }
 

@@ -1,6 +1,6 @@
 ﻿using System.Reactive.Concurrency;
 using Avalonia.Controls;
-using MusicX.Avalonia.Core.ViewModels;
+using MusicX.Avalonia.ViewModels.ViewModels;
 using ReactiveUI;
 
 namespace MusicX.Avalonia.Pages;

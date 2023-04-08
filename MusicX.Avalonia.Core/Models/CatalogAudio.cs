@@ -20,7 +20,9 @@ public record CatalogAudio(
     bool StoriesCoverAllowed,
     bool? HasLyrics,
     CatalogAlbum Album,
-    IReadOnlyList<CatalogMainArtist> MainArtists,
+    ICollection<CatalogMainArtist> MainArtists,
+    ICollection<CatalogMainArtist> FeaturedArtists,
     string Subtitle,
-    int? NoSearch
+    int? NoSearch,
+    string? ParentBlockId
 );

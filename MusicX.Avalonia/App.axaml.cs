@@ -4,11 +4,14 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 using Jab;
+using MusicX.Avalonia.Audio;
+using MusicX.Avalonia.Audio.Services;
 using MusicX.Avalonia.Core;
 using MusicX.Avalonia.Core.Models;
 using MusicX.Avalonia.Core.Services;
-using MusicX.Avalonia.Core.ViewModels;
 using MusicX.Avalonia.Pages;
+using MusicX.Avalonia.ViewModels;
+using MusicX.Avalonia.ViewModels.ViewModels;
 using MusicX.Avalonia.Views;
 using ReactiveUI;
 using VkApi;
@@ -40,6 +43,12 @@ public partial class App : Application
 
 [ServiceProvider]
 [Import<IServiceModule>]
+[Transient<MainWindowViewModel>]
+[Transient<LoginModalViewModel>]
+[Transient<SectionTabViewModel>]
+[Transient<PlaybackViewModel>]
+[Singleton<PlayerService>]
+[Singleton<QueueService>]
 [Transient<MainWindow>]
 [Transient<LoginPage>]
 [Transient<SectionPage>]

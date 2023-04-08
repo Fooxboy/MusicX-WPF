@@ -2,7 +2,7 @@
 using DynamicData.Binding;
 using ReactiveUI;
 
-namespace MusicX.Avalonia.Core.ViewModels;
+namespace MusicX.Avalonia.ViewModels.ViewModels;
 
 public abstract class ModalViewModel : ViewModelBase
 {

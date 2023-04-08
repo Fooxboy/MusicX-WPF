@@ -1,0 +1,77 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:MusicX.Avalonia.ViewModels.ViewModels;assembly=MusicX.Avalonia.ViewModels"
+             xmlns:avalonia="clr-namespace:MusicX.Avalonia"
+             xmlns:ui="clr-namespace:FluentAvalonia.UI.Controls;assembly=FluentAvalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="MusicX.Avalonia.Controls.PlaybackControl"
+             x:DataType="viewModels:PlaybackViewModel" Margin="15">
+    <UserControl.Styles>
+        <Style Selector=":is(Button).PlaybackControls">
+            <Setter Property="Margin" Value="5,0" />
+            <Setter Property="Width" Value="48" />
+            <Setter Property="Height" Value="48" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+        </Style>
+    </UserControl.Styles>
+    <Grid ColumnDefinitions="Auto,*,Auto">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+            <Border Classes="Card" Width="64" Height="64">
+                <Border.Background>
+                    <ImageBrush
+                        avalonia:ImageLoader.BrushSource="{CompiledBinding PlayerService.CurrentTrack.AlbumId.CoverUrl}" />
+                </Border.Background>
+            </Border>
+            <StackPanel VerticalAlignment="Center" Margin="10,0,0,0">
+                <TextBlock Text="{CompiledBinding PlayerService.CurrentTrack.Title}"
+                           FontWeight="Medium" />
+                <TextBlock Text="{CompiledBinding PlayerService.CurrentTrack.MainArtists[0].Name}"
+                           FontWeight="Light"
+                           Margin="0,10,0,0" />
+            </StackPanel>
+        </StackPanel>
+
+        <Grid Grid.Column="1" RowDefinitions="*,Auto" MaxWidth="600">
+            <UniformGrid Columns="5" HorizontalAlignment="Center">
+                <Button Classes="PlaybackControls">
+                    <ui:SymbolIcon Symbol="Sort" />
+                </Button>
+                <Button Classes="PlaybackControls" Command="{CompiledBinding PrevTrackCommand}">
+                    <ui:SymbolIcon Symbol="PreviousFilled" />
+                </Button>
+                <Button Classes="PlaybackControls" Command="{CompiledBinding PlayPauseCommand}">
+                    <ui:SymbolIcon Symbol="PlayFilled" />
+                </Button>
+                <Button Classes="PlaybackControls" Command="{CompiledBinding NextTrackCommand}">
+                    <ui:SymbolIcon Symbol="NextFilled" />
+                </Button>
+                <ToggleButton Classes="PlaybackControls" IsChecked="{CompiledBinding PlayerService.Repeat}">
+                    <ui:SymbolIcon Symbol="RepeatAll" />
+                </ToggleButton>
+            </UniformGrid>
+            <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto" Margin="0,5,0,10">
+                <TextBlock Text="{CompiledBinding Elapsed, StringFormat={}{0:mm\\:ss}}"
+                           VerticalAlignment="Center" />
+                <Slider Grid.Column="1" Value="{CompiledBinding Elapsed.TotalSeconds}"
+                        Margin="5,0"
+                        Minimum="0"
+                        Maximum="{CompiledBinding PlayerService.CurrentTrack.Data.Duration.TotalSeconds, FallbackValue=1}" />
+                <TextBlock Grid.Column="2"
+                           VerticalAlignment="Center"
+                           Text="{CompiledBinding PlayerService.CurrentTrack.Data.Duration, StringFormat={}{0:mm\\:ss}, FallbackValue=00:00}" />
+            </Grid>
+        </Grid>
+
+        <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+            <Button Classes="PlaybackControls">
+                <ui:SymbolIcon Symbol="Speaker2" />
+            </Button>
+            <Slider Margin="5,0" MinWidth="150" 
+                    Maximum="1" Minimum="0" Value="{CompiledBinding PlayerService.Volume}" />
+        </StackPanel>
+    </Grid>
+</UserControl>

@@ -9,6 +9,7 @@ public static class BlockMapper
         return response.Section.Blocks.Select(sectionBlock => sectionBlock.DataType switch
         {
             "music_playlists" => MapPlaylistsBlock(response.Playlists, sectionBlock),
+            "music_audios" => MapAudiosBlock(response.Audios, sectionBlock),
             _ => MapBlock(sectionBlock)
         });
     }
@@ -35,6 +36,22 @@ public static class BlockMapper
                        var id = int.Parse(b[(b.IndexOf('_') + 1)..]);
 
                        return playlists.Single(c => c.OwnerId == ownerId && c.Id == id);
+                   }).ToArray());
+    }
+    
+    private static AudiosBlock MapAudiosBlock(ICollection<CatalogAudio> audios, SectionBlock block)
+    {
+        return new(block.Id,
+                   block.DataType,
+                   block.Layout,
+                   block.NextFrom,
+                   block.Url,
+                   block.AudiosIds.Select(b =>
+                   {
+                       var ownerId = long.Parse(b[..b.IndexOf('_')]);
+                       var id = int.Parse(b[(b.IndexOf('_') + 1)..]);
+
+                       return audios.Single(c => c.OwnerId == ownerId && c.Id == id);
                    }).ToArray());
     }
 }

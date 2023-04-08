@@ -2,14 +2,11 @@
 using System.Reactive.Linq;
 using DynamicData.Binding;
 using MusicX.Avalonia.Core.Extensions;
-using MusicX.Avalonia.Core.Models;
 using MusicX.Avalonia.Core.Services;
 using ReactiveUI;
 using VkApi;
-using VkApi.Core;
-using VkApi.Core.Requests;
 
-namespace MusicX.Avalonia.Core.ViewModels;
+namespace MusicX.Avalonia.ViewModels.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {

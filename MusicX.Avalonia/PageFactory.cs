@@ -1,7 +1,7 @@
 ﻿using Avalonia.Controls;
 using FluentAvalonia.UI.Controls;
-using MusicX.Avalonia.Core.ViewModels;
 using MusicX.Avalonia.Pages;
+using MusicX.Avalonia.ViewModels.ViewModels;
 
 namespace MusicX.Avalonia;
 

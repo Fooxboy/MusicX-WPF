@@ -1,7 +1,7 @@
 using System.Reactive.Linq;
 using DynamicData.Binding;
 using FluentAvalonia.UI.Windowing;
-using MusicX.Avalonia.Core.ViewModels;
+using MusicX.Avalonia.ViewModels.ViewModels;
 using ReactiveUI;
 
 namespace MusicX.Avalonia.Views;

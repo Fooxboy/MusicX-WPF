@@ -3,9 +3,8 @@ using System.Reactive;
 using MusicX.Avalonia.Core.Models.Messages;
 using MusicX.Avalonia.Core.Services;
 using ReactiveUI;
-using VkApi;
 
-namespace MusicX.Avalonia.Core.ViewModels;
+namespace MusicX.Avalonia.ViewModels.ViewModels;
 
 public class LoginModalViewModel : ModalViewModel
 {
