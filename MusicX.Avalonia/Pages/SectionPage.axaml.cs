@@ -1,11 +1,12 @@
 ﻿using System.Reactive.Concurrency;
 using Avalonia.Controls;
+using Avalonia.ReactiveUI;
 using MusicX.Avalonia.ViewModels.ViewModels;
 using ReactiveUI;
 
 namespace MusicX.Avalonia.Pages;
 
-public partial class SectionPage : UserControl
+public partial class SectionPage : ReactiveUserControl<SectionTabViewModel>
 {
     public SectionPage()
     {
@@ -15,7 +16,7 @@ public partial class SectionPage : UserControl
     protected override void OnDataContextChanged(EventArgs e)
     {
         base.OnDataContextChanged(e);
-        if (DataContext is SectionTabViewModel viewModel)
-            RxApp.MainThreadScheduler.ScheduleAsync((_, _) => viewModel.LoadAsync());
+        if (ViewModel is not null)
+            RxApp.MainThreadScheduler.ScheduleAsync((_, _) => ViewModel.LoadAsync());
     }
 }

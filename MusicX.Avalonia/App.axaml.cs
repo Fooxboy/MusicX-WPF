@@ -14,6 +14,7 @@ using MusicX.Avalonia.ViewModels;
 using MusicX.Avalonia.ViewModels.ViewModels;
 using MusicX.Avalonia.Views;
 using ReactiveUI;
+using Splat;
 using VkApi;
 
 namespace MusicX.Avalonia;
@@ -28,9 +29,6 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        PlatformRegistrationManager.SetRegistrationNamespaces(RegistrationNamespace.Avalonia);
-        RxApp.MainThreadScheduler = AvaloniaScheduler.Instance;
-
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             desktop.MainWindow = Provider.GetService<MainWindow>();

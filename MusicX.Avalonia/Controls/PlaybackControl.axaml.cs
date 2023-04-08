@@ -1,13 +1,14 @@
 ﻿using Avalonia.Controls;
+using Avalonia.ReactiveUI;
 using MusicX.Avalonia.ViewModels.ViewModels;
 
 namespace MusicX.Avalonia.Controls;
 
-public partial class PlaybackControl : UserControl
+public partial class PlaybackControl : ReactiveUserControl<PlaybackViewModel>
 {
     public PlaybackControl()
     {
         InitializeComponent();
-        DataContext = App.Provider.GetService<PlaybackViewModel>();
+        ViewModel = App.Provider.GetService<PlaybackViewModel>();
     }
 }

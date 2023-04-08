@@ -12,7 +12,7 @@
                 <Border Classes="PlaylistCard" Margin="{TemplateBinding Margin}">
                     <Panel>
                         <controls:BlurryImage
-                            CornerRadius="5"
+                            CornerRadius="8"
                             Stretch="UniformToFill"
                             StretchDirection="Both"
                             avalonia:ImageLoader.BlurrySource="{TemplateBinding ImageUrl}"

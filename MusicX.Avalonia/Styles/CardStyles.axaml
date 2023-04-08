@@ -1,12 +1,38 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:controls="clr-namespace:MusicX.Avalonia.Controls">
+        xmlns:controls="clr-namespace:MusicX.Avalonia.Controls"
+        xmlns:ui="clr-namespace:FluentAvalonia.UI.Controls;assembly=FluentAvalonia">
+    <Style Selector="Button.CardAction">
+        <Setter Property="Padding" Value="12" />
+        <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
+        <Setter Property="BorderThickness" Value="{DynamicResource ThemeBorderThickness}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorderBrush}" />
+        <Setter Property="Background" Value="{DynamicResource ButtonBackgroundDisabled}" />
+    </Style>
+    <Style Selector="Button.CardActionTransparent">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+    </Style>
+    <Style Selector="Button.CardActionTransparent:pointerover">
+        <Setter Property="BorderThickness" Value="{DynamicResource ThemeBorderThickness}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorderBrush}" />
+    </Style>
+    <Style Selector="Button.CardAction:pointerover,Button.CardActionTransparent:pointerover">
+        <Setter Property="Background" Value="{DynamicResource ButtonBackgroundPointerOver}" />
+    </Style>
     <Style Selector="Border.Card">
         <Setter Property="Padding" Value="12" />
         <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
         <Setter Property="BorderThickness" Value="{DynamicResource ThemeBorderThickness}" />
         <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorderBrush}" />
         <Setter Property="Background" Value="{DynamicResource ButtonBackgroundDisabled}" />
+    </Style>
+    <Style Selector="Border.CardTransparent">
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+    <Style Selector="Border.Card:pointerover,Border.CardTransparent:pointerover">
+        <Setter Property="Background" Value="{DynamicResource ButtonBackgroundPointerOver}" />
     </Style>
     <Style Selector="Border.PlaylistCard">
         <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />

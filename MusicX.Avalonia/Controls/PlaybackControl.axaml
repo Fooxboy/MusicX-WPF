@@ -67,8 +67,8 @@
         </Grid>
 
         <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-            <Button Classes="PlaybackControls">
-                <ui:SymbolIcon Symbol="Speaker2" />
+            <Button Classes="PlaybackControls" VerticalAlignment="Center">
+                <ui:SymbolIcon Symbol="Speaker2" FontSize="16" />
             </Button>
             <Slider Margin="5,0" MinWidth="150" 
                     Maximum="1" Minimum="0" Value="{CompiledBinding PlayerService.Volume}" />
