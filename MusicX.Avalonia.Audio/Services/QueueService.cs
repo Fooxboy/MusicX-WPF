@@ -54,13 +54,13 @@ public class QueueService
         Next();
     }
 
-    public async ValueTask PlayPlaylistAsync(IPlaylist playlist, CancellationToken token)
+    public async ValueTask PlayPlaylistAsync(IPlaylist playlist, CancellationToken token, string? url = null)
     {
         _playerService.Stop();
         
         Queue.Clear();
         Queue.AddRange(await playlist.GetNextChunkAsync(token));
-        _playerService.Play(Queue[0]);
+        _playerService.Play(url is null ? Queue[0] : Queue.Single(b => b.Data.Url == url));
 
         CurrentPlaylist = playlist;
     }

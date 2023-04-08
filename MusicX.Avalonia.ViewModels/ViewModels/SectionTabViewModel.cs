@@ -40,7 +40,7 @@ public class SectionTabViewModel : MenuTabViewModel
         else
             playlist = new BlockPlaylist(_api, audio.ParentBlockId, Title);
 
-        return _queueService.PlayPlaylistAsync(playlist, token).AsTask();
+        return _queueService.PlayPlaylistAsync(playlist, token, audio.Url).AsTask();
     }
 
     public void Init(string id, string title)

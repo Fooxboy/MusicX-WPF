@@ -18,10 +18,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="Binaries\bass.dll">
+      <None Update="bass.dll">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="Binaries\basshls.dll">
+      <None Update="basshls.dll">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>

@@ -7,12 +7,10 @@
         xmlns:viewModels="clr-namespace:MusicX.Avalonia.ViewModels.ViewModels;assembly=MusicX.Avalonia.ViewModels"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="MusicX.Avalonia.Views.MainWindow"
-        Icon="/Assets/icon.ico"
         Title="MusicX"
         TransparencyLevelHint="Mica"
         Background="Transparent"
         x:DataType="viewModels:MainWindowViewModel">
-    
     <Panel>
         <controls:ModalFrame Name="ModalFrame" NavigationPageFactory="{StaticResource PageFactory}"
                              Title="{CompiledBinding CurrentModal.Title}"
@@ -21,7 +19,7 @@
 
         <Grid Name="NavGrid" RowDefinitions="*,Auto">
             <ui:NavigationView AlwaysShowHeader="False"
-                               PaneDisplayMode="Left"
+                               PaneDisplayMode="LeftCompact"
                                Name="NavView"
                                IsSettingsVisible="False"
                                IsBackEnabled="{CompiledBinding #FrameView.CanGoBack}"

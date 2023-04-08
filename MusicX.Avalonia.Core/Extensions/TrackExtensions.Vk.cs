@@ -10,7 +10,7 @@ public static partial class TrackExtensions
     public static PlaylistTrack ToTrack(this CatalogAudio audio, CatalogPlaylist? playlist)
     {
         TrackArtist[] mainArtists;
-        if (!audio.MainArtists.Any())
+        if (audio.MainArtists?.Count is null or 0)
             mainArtists = new[] { new TrackArtist(audio.Artist, null) };
         else
             mainArtists = audio.MainArtists.Select(ToTrackArtist).ToArray();

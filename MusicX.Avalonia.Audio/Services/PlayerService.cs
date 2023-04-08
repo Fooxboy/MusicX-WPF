@@ -73,6 +73,9 @@ public class PlayerService : IDisposable, INotifyPropertyChanged
         if (_bassStreamPtr.HasValue && CurrentTrack == track && Bass.ChannelPlay(_bassStreamPtr.Value, resetExisting))
             return;
 
+        if (_bassStreamPtr.HasValue)
+            Bass.StreamFree(_bassStreamPtr.Value);
+
         _bassStreamPtr = Bass.CreateStream(track.Data.Url, 0, BassFlags.Float, null);
         ThrowLastError();
         Bass.ChannelSetSync(_bassStreamPtr.Value, SyncFlags.End, 0, EndSync);

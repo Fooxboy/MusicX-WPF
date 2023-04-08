@@ -80,7 +80,10 @@ public static class BlockMapper
                                                               var id = int.Parse(b[(b.IndexOf('_') + 1)..]);
 
                                                               return audios.Single(
-                                                                  c => c.OwnerId == ownerId && c.Id == id);
+                                                                      c => c.OwnerId == ownerId && c.Id == id) with
+                                                                  {
+                                                                      ParentBlockId = block.Id
+                                                                  };
                                                           }).ToArray(), Color.Parse(recommendedPlaylist.Color),
                                                       playlist);
                    }).ToArray());
@@ -98,7 +101,10 @@ public static class BlockMapper
                        var ownerId = long.Parse(b[..b.IndexOf('_')]);
                        var id = int.Parse(b[(b.IndexOf('_') + 1)..]);
 
-                       return audios.Single(c => c.OwnerId == ownerId && c.Id == id);
+                       return audios.Single(c => c.OwnerId == ownerId && c.Id == id) with
+                       {
+                           ParentBlockId = block.Id
+                       };
                    }).ToArray());
     }
 }
