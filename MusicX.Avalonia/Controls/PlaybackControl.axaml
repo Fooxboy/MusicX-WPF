@@ -26,7 +26,7 @@
                         avalonia:ImageLoader.BrushSource="{CompiledBinding PlayerService.CurrentTrack.AlbumId.CoverUrl}" />
                 </Border.Background>
             </Border>
-            <StackPanel VerticalAlignment="Center" Margin="10,0,0,0">
+            <StackPanel VerticalAlignment="Center" Margin="10,0,0,0" MinWidth="80">
                 <TextBlock Text="{CompiledBinding PlayerService.CurrentTrack.Title}"
                            FontWeight="Medium" />
                 <TextBlock Text="{CompiledBinding PlayerService.CurrentTrack.MainArtists[0].Name}"
