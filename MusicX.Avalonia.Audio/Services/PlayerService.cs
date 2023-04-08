@@ -40,10 +40,10 @@ public class PlayerService : IDisposable, INotifyPropertyChanged
 
     public double Volume
     {
-        get => Bass.Volume;
+        get => Bass.GlobalStreamVolume / 10000d;
         set
         {
-            Bass.Volume = value;
+            Bass.GlobalStreamVolume = (int)(value * 10000);
             OnPropertyChanged();
         }
     }
@@ -92,8 +92,8 @@ public class PlayerService : IDisposable, INotifyPropertyChanged
         
         if (Repeat) Play(CurrentTrack, true);
         
-        Stop();
         TrackEnded?.Invoke(this, EventArgs.Empty);
+        Stop();
     }
 
     [StackTraceHidden]

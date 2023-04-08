@@ -31,7 +31,7 @@ public class QueueService
         if (currentIndex + 1 >= Queue.Count)
             RxApp.TaskpoolScheduler.ScheduleAsync(LoadMoreAsync);
         else
-            _playerService.Play(Queue[currentIndex + 1]);
+            RxApp.TaskpoolScheduler.Schedule(() => _playerService.Play(Queue[currentIndex + 1]));
     }
 
     public void Previous()
