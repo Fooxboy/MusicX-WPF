@@ -6,8 +6,6 @@
         <Nullable>enable</Nullable>
         <TrimMode>copyused</TrimMode>
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
-        <!--Public AOT-->
-        <PublishAot>true</PublishAot>
         <StripSymbols>true</StripSymbols>
     </PropertyGroup>
 
@@ -17,7 +15,7 @@
         <None Remove=".gitignore" />
     </ItemGroup>
 
-    <!--AOT Reflection Define-->
+    <!--Reflection Define-->
     <ItemGroup>
         <TrimmerRootDescriptor Include=".ReflectionDefine\Avalonia.xml" />
     </ItemGroup>
