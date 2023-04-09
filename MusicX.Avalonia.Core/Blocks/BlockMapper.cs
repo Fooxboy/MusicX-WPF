@@ -16,7 +16,18 @@ public static class BlockMapper
             "action" => MapActionBlock(sectionBlock),
             "catalog_banners" => MapCatalogBannersBlock(response.CatalogBanners, sectionBlock),
             _ => MapBlock(sectionBlock)
-        });
+        }).Where(AdFilter);
+    }
+
+    private static bool AdFilter(BlockBase block)
+    {
+        return block switch
+        {
+            BannersBlock bannersBlock when bannersBlock.Banners.ElementAt(0).ClickAction.Action.Url?.Contains("subscription") is true => false,
+            BannersBlock bannersBlock when bannersBlock.Banners.ElementAt(0).ClickAction.Action.Url?.Contains("combo") is true => false,
+            BannersBlock bannersBlock when bannersBlock.Banners.ElementAt(0).ClickAction.Action.Url?.Contains("https://vk.com/app") is true => false,
+            _ => true
+        };
     }
 
     private static BannersBlock MapCatalogBannersBlock(ICollection<CatalogBanner> banners, SectionBlock block)

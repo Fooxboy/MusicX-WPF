@@ -7,5 +7,6 @@ public record CatalogAction(
     string RefLayoutName,
     string RefDataType,
     string SectionId,
-    string BlockId
+    string BlockId,
+    string? Url
 );
