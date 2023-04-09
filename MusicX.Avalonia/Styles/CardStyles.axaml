@@ -35,6 +35,7 @@
         <Setter Property="Background" Value="{DynamicResource ButtonBackgroundPointerOver}" />
     </Style>
     <Style Selector="Button.PlaylistCard">
+        <Setter Property="ClipToBounds" Value="False" />
         <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
         <Setter Property="BorderThickness" Value="{DynamicResource ThemeBorderThickness}" />
         <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorderBrush}" />

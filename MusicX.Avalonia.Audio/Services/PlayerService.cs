@@ -64,7 +64,7 @@ public class PlayerService : IDisposable, INotifyPropertyChanged
 
     public PlayerService()
     {
-        if (!Bass.Init(Frequency: 48000) || Bass.PluginLoad("basshls.dll") == 0)
+        if (!Bass.Init(Frequency: 48000) || Bass.PluginLoad("basshls") == 0)
             throw new ApplicationException("Cannot initialize audio backend");
     }
 

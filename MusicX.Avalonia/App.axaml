@@ -3,7 +3,8 @@
              xmlns:sty="using:FluentAvalonia.Styling"
              xmlns:avalonia="clr-namespace:MusicX.Avalonia"
              xmlns:converters="clr-namespace:MusicX.Avalonia.Converters"
-             x:Class="MusicX.Avalonia.App">
+             x:Class="MusicX.Avalonia.App"
+             x:CompileBindings="True">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

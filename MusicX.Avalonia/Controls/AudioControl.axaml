@@ -8,8 +8,8 @@
         <Setter Property="Template">
             <ControlTemplate>
                 <Button Classes="CardActionTransparent" Width="300" Height="80" Margin="2"
-                        CommandParameter="{Binding Audio, RelativeSource={RelativeSource TemplatedParent}}"
-                        Command="{Binding $parent[pages:SectionPage].ViewModel.TrackClickCommand}"
+                        CommandParameter="{CompiledBinding Audio, RelativeSource={RelativeSource TemplatedParent}}"
+                        Command="{CompiledBinding Path=$parent[pages:SectionPage].ViewModelDirect.TrackClickCommand}"
                         HorizontalContentAlignment="Left" Padding="{TemplateBinding Padding}">
                     <Grid ColumnDefinitions="Auto,*,Auto" Width="300">
                         <Border Width="48" Height="48"
@@ -17,14 +17,14 @@
                                 CornerRadius="{DynamicResource OverlayCornerRadius}">
                             <Border.Background>
                                 <ImageBrush
-                                    avalonia:ImageLoader.BrushSource="{Binding Audio.Album.Thumb.Photo68, RelativeSource={RelativeSource TemplatedParent}}" />
+                                    avalonia:ImageLoader.BrushSource="{CompiledBinding Audio.Album.Thumb.Photo68, RelativeSource={RelativeSource TemplatedParent}}" />
                             </Border.Background>
                         </Border>
                         <StackPanel Grid.Column="1" Orientation="Vertical" Margin="10,0,0,0" VerticalAlignment="Center">
-                            <TextBlock Text="{Binding Audio.Title, RelativeSource={RelativeSource TemplatedParent}}"
+                            <TextBlock Text="{CompiledBinding Audio.Title, RelativeSource={RelativeSource TemplatedParent}}"
                                        FontWeight="Medium"
                                        TextTrimming="CharacterEllipsis" />
-                            <TextBlock Text="{Binding Audio.Artist, RelativeSource={RelativeSource TemplatedParent}}"
+                            <TextBlock Text="{CompiledBinding Audio.Artist, RelativeSource={RelativeSource TemplatedParent}}"
                                        FontWeight="Light"
                                        Opacity="0.8"
                                        TextTrimming="CharacterEllipsis"
@@ -32,7 +32,7 @@
                         </StackPanel>
                         <TextBlock Grid.Column="2"
                                    Margin="0,0,6,0"
-                                   Text="{Binding Audio.Duration, Converter={StaticResource SecondsToTimeSpanConverter}, StringFormat={}{0:mm\\:ss}, RelativeSource={RelativeSource TemplatedParent}}"
+                                   Text="{CompiledBinding Audio.Duration, Converter={StaticResource SecondsToTimeSpanConverter}, StringFormat={}{0:mm\\:ss}, RelativeSource={RelativeSource TemplatedParent}}"
                                    VerticalAlignment="Center"
                                    HorizontalAlignment="Right" />
                     </Grid>

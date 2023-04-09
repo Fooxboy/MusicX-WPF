@@ -6,7 +6,16 @@
         <Nullable>enable</Nullable>
         <TrimMode>copyused</TrimMode>
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
-        <StripSymbols>true</StripSymbols>
+        <RuntimeIdentifiers>win-x64;osx-x64</RuntimeIdentifiers>
+    </PropertyGroup>
+    
+    <PropertyGroup Condition=" $(Configuration) == 'Release' ">
+        <PublishTrimmed>true</PublishTrimmed>
+        <PublishSingleFile>true</PublishSingleFile>
+        <SelfContained>true</SelfContained>
+        <GenerateDocumentationFile>false</GenerateDocumentationFile>
+        <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+        <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
     </PropertyGroup>
 
     <ItemGroup>

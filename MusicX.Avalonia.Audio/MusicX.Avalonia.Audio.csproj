@@ -7,23 +7,25 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\MusicX.Avalonia.Core\MusicX.Avalonia.Core.csproj" />
-      <ProjectReference Include="..\MusicX.Shared\MusicX.Shared.csproj" />
+        <ProjectReference Include="..\MusicX.Avalonia.Core\MusicX.Avalonia.Core.csproj"/>
+        <ProjectReference Include="..\MusicX.Shared\MusicX.Shared.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="M3U8Parser" Version="1.0.0" />
-      <PackageReference Include="ManagedBass" Version="3.1.1" />
-      <PackageReference Include="ManagedBass.Hls" Version="3.1.1" />
+        <PackageReference Include="M3U8Parser" Version="1.0.0"/>
+        <PackageReference Include="ManagedBass" Version="3.1.1"/>
+        <PackageReference Include="ManagedBass.Hls" Version="3.1.1"/>
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="bass.dll">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="basshls.dll">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
+        <None Include="bass.dll" Pack="true" PackagePath="runtimes/win-x64/native/bass.dll">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Include="basshls.dll" Pack="true" PackagePath="runtimes/win-x64/native/basshls.dll">
+            <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        </None>
     </ItemGroup>
 
 </Project>
