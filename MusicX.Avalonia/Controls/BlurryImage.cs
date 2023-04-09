@@ -5,6 +5,7 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using MusicX.Avalonia.Rendering;
 using ReactiveUI;
+using SkiaSharp;
 
 namespace MusicX.Avalonia.Controls;
 
@@ -15,9 +16,12 @@ public class BlurryImage : Control
 
     static BlurryImage()
     {
-        AffectsRender<BlurryImage>(BlurLevelProperty, SourceProperty, StretchDirectionProperty, StretchProperty, CornerRadiusProperty);
-        AffectsMeasure<BlurryImage>(BlurLevelProperty, SourceProperty, StretchDirectionProperty, StretchProperty, CornerRadiusProperty);
-        AffectsArrange<BlurryImage>(BlurLevelProperty, SourceProperty, StretchDirectionProperty, StretchProperty, CornerRadiusProperty);
+        AffectsRender<BlurryImage>(BlurLevelProperty, SourceProperty, StretchDirectionProperty, StretchProperty,
+                                   CornerRadiusProperty, SkImageProperty);
+        AffectsMeasure<BlurryImage>(BlurLevelProperty, SourceProperty, StretchDirectionProperty, StretchProperty,
+                                    CornerRadiusProperty, SkImageProperty);
+        AffectsArrange<BlurryImage>(BlurLevelProperty, SourceProperty, StretchDirectionProperty, StretchProperty,
+                                    CornerRadiusProperty, SkImageProperty);
 
         ClipToBoundsProperty.OverrideDefaultValue<BlurryImage>(true);
     }
@@ -42,12 +46,24 @@ public class BlurryImage : Control
         });
     }
 
+    public void Load(SKBitmap image)
+    {
+        _render = new BlurImageRender(image);
+        RxApp.MainThreadScheduler.Schedule(() => { SkImage = _render.Image; });
+    }
+
+    public void Reset()
+    {
+        Source = null;
+        _render = null;
+    }
+
     private void BoundsChanged(object? obj)
     {
-        if (Source is null)
+        if (_render is null)
             return;
         var viewPort = new Rect(Bounds.Size);
-        var sourceSize = Source.Size;
+        var sourceSize = new Size(_render.Image.Width, _render.Image.Height);
 
         var scale = Stretch.CalculateScaling(Bounds.Size, sourceSize, StretchDirection);
         var scaledSize = sourceSize * scale;
@@ -69,12 +85,12 @@ public class BlurryImage : Control
     ///<inheritdoc/>
     protected override Size MeasureOverride(Size availableSize)
     {
-        var source = Source;
+        var size = Source?.Size ?? (SkImage is null ? null : new Size(SkImage.Width, SkImage.Height));
         var result = new Size();
 
-        if (source != null)
+        if (size.HasValue)
         {
-            result = Stretch.CalculateSize(availableSize, source.Size, StretchDirection);
+            result = Stretch.CalculateSize(availableSize, size.Value, StretchDirection);
         }
 
         return result;
@@ -83,10 +99,10 @@ public class BlurryImage : Control
     /// <inheritdoc/>
     protected override Size ArrangeOverride(Size finalSize)
     {
-        var source = Source;
+        var size = Source?.Size ?? (SkImage is null ? null : new Size(SkImage.Width, SkImage.Height));
 
-        if (source == null) return new Size();
-        var sourceSize = source.Size;
+        if (size == null) return new Size();
+        var sourceSize = size.Value;
         var result = Stretch.CalculateSize(finalSize, sourceSize);
         return result;
     }
@@ -114,7 +130,7 @@ public class BlurryImage : Control
         get => GetValue(StretchDirectionProperty);
         set => SetValue(StretchDirectionProperty, value);
     }
-    
+
     public float CornerRadius
     {
         get => GetValue(CornerRadiusProperty);
@@ -135,6 +151,15 @@ public class BlurryImage : Control
 
     public static readonly StyledProperty<float> CornerRadiusProperty =
         AvaloniaProperty.Register<BlurryImage, float>(nameof(CornerRadius));
+
+    public static readonly StyledProperty<SKImage?> SkImageProperty = AvaloniaProperty.Register<BlurryImage, SKImage?>(
+        "SkImage");
+
+    public SKImage? SkImage
+    {
+        get => GetValue(SkImageProperty);
+        set => SetValue(SkImageProperty, value);
+    }
 
     private BlurImageRender? _render;
 }

@@ -34,12 +34,14 @@
     <Style Selector="Border.Card:pointerover,Border.CardTransparent:pointerover">
         <Setter Property="Background" Value="{DynamicResource ButtonBackgroundPointerOver}" />
     </Style>
-    <Style Selector="Border.PlaylistCard">
+    <Style Selector="Button.PlaylistCard">
         <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
         <Setter Property="BorderThickness" Value="{DynamicResource ThemeBorderThickness}" />
         <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorderBrush}" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Background" Value="Transparent" />
     </Style>
-    <Style Selector="Border.PlaylistCard controls|BlurryImage#PART_PlaylistBackground">
+    <Style Selector="Button.PlaylistCard controls|BlurryImage#PART_PlaylistBackground">
         <Setter Property="BlurLevel" Value="0" />
         <Setter Property="Transitions">
             <Transitions>
@@ -47,10 +49,10 @@
             </Transitions>
         </Setter>
     </Style>
-    <Style Selector="Border.PlaylistCard:pointerover controls|BlurryImage#PART_PlaylistBackground">
+    <Style Selector="Button.PlaylistCard:pointerover controls|BlurryImage#PART_PlaylistBackground">
         <Setter Property="BlurLevel" Value="10" />
     </Style>
-    <Style Selector="Border.PlaylistCard Panel#PART_Content">
+    <Style Selector="Button.PlaylistCard Panel#PART_Content">
         <Setter Property="Opacity" Value="0" />
         <Setter Property="Transitions">
             <Transitions>
@@ -59,7 +61,7 @@
             </Transitions>
         </Setter>
     </Style>
-    <Style Selector="Border.PlaylistCard:pointerover Panel#PART_Content">
+    <Style Selector="Button.PlaylistCard:pointerover Panel#PART_Content">
         <Setter Property="Opacity" Value="1" />
         <Setter Property="Margin" Value="0,0,0,5" />
     </Style>

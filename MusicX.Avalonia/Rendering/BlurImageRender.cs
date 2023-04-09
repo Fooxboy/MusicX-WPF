@@ -23,15 +23,20 @@ public class BlurImageRender : AuraDrawOperationBase
     private Rect _dest;
     private float _levelX;
     private float _levelY;
-    private readonly byte[] _dataArray;
-    private readonly SKImage? _img;
     private float _cornerRadius;
 
-    public BlurImageRender(MemoryStream data)
+    public BlurImageRender(Stream data)
     {
-        _dataArray = data.ToArray();
-        _img = SKImage.FromEncodedData(_dataArray);
+        var bitmap = SKBitmap.Decode(data);
+        Image = SKImage.FromBitmap(bitmap);
     }
+    
+    public BlurImageRender(SKBitmap data)
+    {
+        Image = SKImage.FromBitmap(data);
+    }
+
+    public SKImage Image { get; }
 
     public override void Render(IDrawingContextImpl drwContext)
     {
@@ -43,8 +48,9 @@ public class BlurImageRender : AuraDrawOperationBase
         using var paint = new SKPaint();
 
         paint.ImageFilter = SKImageFilter.CreateBlur(_levelX, _levelY);
+        
         canvas.ClipRoundRect(new(Bounds.ToSKRect(), _cornerRadius));
-        canvas.DrawImage(_img, _dest.ToSKRect(), Bounds.ToSKRect(), paint);
+        canvas.DrawImage(Image, _dest.ToSKRect(), Bounds.ToSKRect(), paint);
     }
 }
 

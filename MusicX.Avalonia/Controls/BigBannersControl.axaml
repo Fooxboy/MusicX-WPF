@@ -1,0 +1,125 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:MusicX.Avalonia.Controls"
+        xmlns:models="clr-namespace:MusicX.Avalonia.Core.Models;assembly=MusicX.Avalonia.Core"
+        xmlns:avalonia="clr-namespace:MusicX.Avalonia">
+    <Design.PreviewWith>
+        <controls:BigBannersControl />
+    </Design.PreviewWith>
+
+    <Style Selector="Button.Banner controls|BlurryImage">
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Stretch" Value="UniformToFill" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <DoubleTransition Property="Width" Duration="0:0:0.2" />
+                <DoubleTransition Property="Height" Duration="0:0:0.2" />
+            </Transitions>
+        </Setter>
+        <Setter Property="Height" Value="350" />
+        <Setter Property="Width" Value="450" />
+    </Style>
+    <Style Selector="Button.BannerActive controls|BlurryImage">
+        <Setter Property="Height" Value="400" />
+        <Setter Property="Width" Value="700" />
+    </Style>
+    <Style Selector="Button.Thumb">
+        <Setter Property="Width" Value="14" />
+        <Setter Property="Height" Value="14" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <DoubleTransition Property="Width" Duration="0:0:0.2" />
+                <DoubleTransition Property="Height" Duration="0:0:0.2" />
+            </Transitions>
+        </Setter>
+    </Style>
+    <Style Selector="Button.Thumb:pointerover,Button.ThumbActive">
+        <Setter Property="Width" Value="20" />
+        <Setter Property="Height" Value="20" />
+    </Style>
+
+    <Style Selector="controls|BigBannersControl">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid RowDefinitions="*,Auto" HorizontalAlignment="Center">
+                    <ScrollViewer Name="PART_BannersScroll" VerticalScrollBarVisibility="Disabled"
+                                  HorizontalScrollBarVisibility="Hidden" IsScrollInertiaEnabled="True">
+                        <ItemsControl Name="PART_Banners"
+                                      Items="{Binding Block.Banners, RelativeSource={RelativeSource TemplatedParent}}"
+                                      HorizontalAlignment="Stretch"
+                                      MinHeight="450">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="models:CatalogBanner">
+                                    <Button Classes="PlaylistCard Banner" Margin="10,15" Padding="0"
+                                            Command="{CompiledBinding $parent[controls:BigBannersControl].BannerSelectCommand}"
+                                            CommandParameter="{CompiledBinding}">
+                                        <Classes.BannerActive>
+                                            <MultiBinding Converter="{StaticResource ObjectEqualsConverter}">
+                                                <CompiledBinding
+                                                    Path="$parent[controls:BigBannersControl].ActiveBanner" />
+                                                <CompiledBinding />
+                                            </MultiBinding>
+                                        </Classes.BannerActive>
+                                        <Panel>
+                                            <controls:BlurryImage
+                                                CornerRadius="8"
+                                                Stretch="UniformToFill"
+                                                StretchDirection="Both"
+                                                avalonia:ImageLoader.BlurrySource="{CompiledBinding Images[2].Url}"
+                                                Width="{TemplateBinding Width}"
+                                                Height="{TemplateBinding Height}"
+                                                Name="PART_PlaylistBackground" />
+                                            <Panel Name="PART_Content" VerticalAlignment="Bottom">
+                                                <StackPanel Margin="10" Orientation="Vertical">
+                                                    <TextBlock Text="{CompiledBinding Title}"
+                                                               TextTrimming="CharacterEllipsis"
+                                                               FontSize="26" FontWeight="Bold" />
+                                                    <TextBlock Text="{CompiledBinding Text}"
+                                                               TextWrapping="Wrap"
+                                                               FontSize="16" FontWeight="Light"
+                                                               Opacity="0.8"
+                                                               Margin="0,5,0,0" />
+                                                </StackPanel>
+                                            </Panel>
+                                        </Panel>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                    <ItemsControl Grid.Row="1"
+                                  Items="{Binding Block.Banners, RelativeSource={RelativeSource TemplatedParent}}"
+                                  HorizontalAlignment="Center"
+                                  MinHeight="40">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="models:CatalogBanner">
+                                <Button ToolTip.Tip="{CompiledBinding Title}" Margin="10"
+                                        Command="{CompiledBinding $parent[controls:BigBannersControl].BannerSelectCommand}"
+                                        CommandParameter="{CompiledBinding}"
+                                        CornerRadius="99"
+                                        Classes="accent Thumb">
+                                    <Classes.ThumbActive>
+                                        <MultiBinding Converter="{StaticResource ObjectEqualsConverter}">
+                                            <CompiledBinding Path="$parent[controls:BigBannersControl].ActiveBanner" />
+                                            <CompiledBinding />
+                                        </MultiBinding>
+                                    </Classes.ThumbActive>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Grid>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+</Styles>

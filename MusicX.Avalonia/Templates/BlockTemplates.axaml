@@ -34,7 +34,7 @@
         <templates:BlockTemplate x:DataType="blocks:PlaylistsBlock" BlockDataType="music_playlists"
                                  LayoutName="large_slider">
             <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto"
-                          HorizontalSnapPointsType="Mandatory">
+                          HorizontalSnapPointsType="Mandatory" AllowAutoHide="True">
                 <ItemsControl Items="{CompiledBinding Playlists}" Margin="0,0,0,10">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -60,7 +60,7 @@
                                  BlockDataType="music_recommended_playlists"
                                  LayoutName="large_slider">
             <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto"
-                          HorizontalSnapPointsType="Mandatory">
+                          HorizontalSnapPointsType="Mandatory" AllowAutoHide="True">
                 <ItemsControl Items="{CompiledBinding RecommendedPlaylists}" Margin="0,0,0,10">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -119,7 +119,7 @@
         <templates:BlockTemplate x:DataType="blocks:AudiosBlock" BlockDataType="music_audios"
                                  LayoutName="triple_stacked_slider">
             <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto"
-                          HorizontalSnapPointsType="Mandatory">
+                          HorizontalSnapPointsType="Mandatory" AllowAutoHide="True">
                 <ItemsControl Items="{CompiledBinding Audios}" Margin="0,0,0,10">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -153,6 +153,12 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
+        </templates:BlockTemplate>
+        
+        <!-- Banners -->
+        <templates:BlockTemplate x:DataType="blocks:BannersBlock" BlockDataType="catalog_banners"
+                                 LayoutName="promo_banners_slider">
+            <controls:BigBannersControl Block="{CompiledBinding}" />
         </templates:BlockTemplate>
 
     </templates:BlockElementFactory>

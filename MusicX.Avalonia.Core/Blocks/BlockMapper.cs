@@ -11,10 +11,22 @@ public static class BlockMapper
         {
             "music_playlists" => MapPlaylistsBlock(response.Playlists, sectionBlock),
             "music_audios" => MapAudiosBlock(response.Audios, sectionBlock),
-            "music_recommended_playlists" => MapRecommendedPlaylistsBlock(response.Playlists, response.RecommendedPlaylists, response.Audios, sectionBlock),
+            "music_recommended_playlists" => MapRecommendedPlaylistsBlock(
+                response.Playlists, response.RecommendedPlaylists, response.Audios, sectionBlock),
             "action" => MapActionBlock(sectionBlock),
+            "catalog_banners" => MapCatalogBannersBlock(response.CatalogBanners, sectionBlock),
             _ => MapBlock(sectionBlock)
         });
+    }
+
+    private static BannersBlock MapCatalogBannersBlock(ICollection<CatalogBanner> banners, SectionBlock block)
+    {
+        return new(block.Id,
+                   block.DataType,
+                   block.Layout,
+                   block.NextFrom,
+                   block.Url,
+                   block.CatalogBannerIds.Select(b => banners.Single(c => c.Id == b)).ToArray());
     }
 
     private static ActionBlock MapActionBlock(SectionBlock block)

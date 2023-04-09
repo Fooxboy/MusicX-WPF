@@ -9,7 +9,7 @@
     <Style Selector="controls|PlaylistCover">
         <Setter Property="Template">
             <ControlTemplate>
-                <Border Classes="PlaylistCard" Margin="{TemplateBinding Margin}">
+                <Button Classes="PlaylistCard" Margin="{TemplateBinding Margin}">
                     <Panel>
                         <controls:BlurryImage
                             CornerRadius="8"
@@ -32,7 +32,7 @@
                             </StackPanel>
                         </Panel>
                     </Panel>
-                </Border>
+                </Button>
             </ControlTemplate>
         </Setter>
     </Style>
