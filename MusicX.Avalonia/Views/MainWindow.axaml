@@ -23,7 +23,7 @@
                                Name="NavView"
                                IsSettingsVisible="False"
                                IsBackEnabled="{CompiledBinding #FrameView.CanGoBack}"
-                               MenuItems="{CompiledBinding MenuTabs}"
+                               MenuItemsSource="{CompiledBinding MenuTabs}"
                                SelectedItem="{CompiledBinding CurrentTab}">
                 <ui:NavigationView.MenuItemTemplate>
                     <DataTemplate DataType="viewModels:MenuTabViewModel">

@@ -11,7 +11,7 @@ using VkApi;
 
 namespace MusicX.Avalonia.ViewModels.ViewModels;
 
-public class SectionTabViewModel : MenuTabViewModel
+public class SectionTabViewModel : MenuTabViewModel, IEquatable<SectionTabViewModel>, IActivatableViewModel
 {
     private readonly Api _api;
     private readonly QueueService _queueService;
@@ -51,8 +51,32 @@ public class SectionTabViewModel : MenuTabViewModel
 
     public async Task LoadAsync()
     {
+        if (Blocks.Count > 0)
+            return;
         var section = await _api.GetCatalogSectionAsync(new(Id, null, null, null, null, null, null, null, null));
         
         Blocks.AddRange(BlockMapper.MapBlocks(section));
     }
+
+    public bool Equals(SectionTabViewModel? other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return Id == other.Id;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != this.GetType()) return false;
+        return Equals((SectionTabViewModel)obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return Id.GetHashCode();
+    }
+
+    public ViewModelActivator Activator { get; } = new ViewModelActivator();
 }

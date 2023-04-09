@@ -33,24 +33,23 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Avalonia.Desktop" Version="11.0.999-cibuild0030643-beta" />
-        <PackageReference Include="Avalonia.Skia" Version="11.0.999-cibuild0030643-beta" />
+        <PackageReference Include="Avalonia.Desktop" Version="11.0.0-preview6" />
+        <PackageReference Include="Avalonia.Skia" Version="11.0.0-preview6" />
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.999-cibuild0030643-beta" />
-        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.999-cibuild0030643-beta" />
-        <PackageReference Include="FluentAvaloniaUI" Version="2.0.0-preview5.1" />
+        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.0-preview6" />
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.0-preview6" />
         <PackageReference Include="Jab" Version="0.8.6" />
         <PackageReference Include="Krafs.Publicizer" Version="2.2.1">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="StoreKeeper" Version="0.0.6" />
-        <PackageReference Include="XamlNameReferenceGenerator" Version="1.6.1" />
         <!--Compresse with UPX-->
         <!-- <PackageReference Include="PublishAotCompressed" Version="1.0.0" /> -->
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\FluentAvalonia\src\FluentAvalonia\FluentAvalonia.csproj" />
       <ProjectReference Include="..\MusicX.Avalonia.Audio\MusicX.Avalonia.Audio.csproj" />
       <ProjectReference Include="..\MusicX.Avalonia.Core\MusicX.Avalonia.Core.csproj" />
       <ProjectReference Include="..\MusicX.Avalonia.ViewModels\MusicX.Avalonia.ViewModels.csproj" />

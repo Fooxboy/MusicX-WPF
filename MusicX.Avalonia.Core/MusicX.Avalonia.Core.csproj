@@ -7,7 +7,7 @@
     </PropertyGroup>
     
     <ItemGroup>
-        <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.999-cibuild0030643-beta" />
+        <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.0-preview6" />
         <PackageReference Include="Google.Protobuf" Version="3.22.1" />
         <PackageReference Include="Jab" Version="0.8.6" />
         <PackageReference Include="VkApi" Version="0.0.3" />
