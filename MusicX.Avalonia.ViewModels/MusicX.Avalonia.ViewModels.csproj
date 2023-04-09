@@ -5,13 +5,15 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
-    
+
     <ItemGroup>
+        <PackageReference Include="OneOf" Version="3.0.243" />
         <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" PrivateAssets="all" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\MusicX.Avalonia.Audio\MusicX.Avalonia.Audio.csproj" />
+        <ProjectReference Include="..\FluentAvalonia\src\FluentAvalonia\FluentAvalonia.csproj" />
+        <ProjectReference Include="..\MusicX.Avalonia.Audio\MusicX.Avalonia.Audio.csproj" />
     </ItemGroup>
 
 </Project>

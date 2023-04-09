@@ -27,7 +27,8 @@
                                SelectedItem="{CompiledBinding CurrentTab}">
                 <ui:NavigationView.MenuItemTemplate>
                     <DataTemplate DataType="viewModels:MenuTabViewModel">
-                        <ui:NavigationViewItem Content="{CompiledBinding Title}" />
+                        <ui:NavigationViewItem Content="{CompiledBinding Title}"
+                                               IconSource="{CompiledBinding Icon.Value}"/>
                     </DataTemplate>
                 </ui:NavigationView.MenuItemTemplate>
                 <Panel>

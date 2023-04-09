@@ -1,6 +1,7 @@
 ﻿using System.Reactive;
 using DynamicData;
 using DynamicData.Binding;
+using FluentAvalonia.UI.Controls;
 using MusicX.Avalonia.Audio.Playlists;
 using MusicX.Avalonia.Audio.Services;
 using MusicX.Avalonia.Core.Blocks;
@@ -8,6 +9,7 @@ using MusicX.Avalonia.Core.Extensions;
 using MusicX.Avalonia.Core.Models;
 using ReactiveUI;
 using VkApi;
+using OneOf;
 
 namespace MusicX.Avalonia.ViewModels.ViewModels;
 
@@ -18,11 +20,21 @@ public class SectionTabViewModel : MenuTabViewModel, IEquatable<SectionTabViewMo
     private string _title = string.Empty;
     public override string Title => _title;
 
+    public override OneOf<string, Symbol> Icon =>
+        Title switch
+        {
+            "Главная" => Symbol.Home,
+            "Моя музыка" => PathIcons.MusicNote,
+            "Обзор" => PathIcons.Compass,
+            "Обновления" => PathIcons.News,
+            _ => Symbol.Code
+        };
+
     public string Id { get; set; } = string.Empty;
 
     public IObservableCollection<BlockBase> Blocks { get; } = new ObservableCollectionExtended<BlockBase>();
-    
-    public ReactiveCommand<CatalogAudio, Unit> TrackClickCommand { get; } 
+
+    public ReactiveCommand<CatalogAudio, Unit> TrackClickCommand { get; }
 
     public SectionTabViewModel(Api api, QueueService queueService)
     {
@@ -54,7 +66,7 @@ public class SectionTabViewModel : MenuTabViewModel, IEquatable<SectionTabViewMo
         if (Blocks.Count > 0)
             return;
         var section = await _api.GetCatalogSectionAsync(new(Id, null, null, null, null, null, null, null, null));
-        
+
         Blocks.AddRange(BlockMapper.MapBlocks(section));
     }
 
