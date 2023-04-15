@@ -7,9 +7,10 @@
              x:Class="MusicX.Avalonia.Pages.SectionPage"
              x:DataType="viewModels:SectionTabViewModel">
     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto"
-                  VerticalSnapPointsType="Mandatory"
                   IsScrollInertiaEnabled="True"
-                  AllowAutoHide="True">
+                  AllowAutoHide="True"
+                  ScrollChanged="ScrollViewer_OnScrollChanged"
+                  Name="MainScrollViewer">
         <ItemsControl Items="{CompiledBinding Blocks}" Margin="5"
                       ItemTemplate="{DynamicResource BlockElementFactory}"/>
     </ScrollViewer>

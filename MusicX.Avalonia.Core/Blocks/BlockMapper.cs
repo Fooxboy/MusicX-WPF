@@ -15,6 +15,10 @@ public static class BlockMapper
                 response.Playlists, response.RecommendedPlaylists, response.Audios, sectionBlock),
             "action" => MapActionBlock(sectionBlock),
             "catalog_banners" => MapCatalogBannersBlock(response.CatalogBanners, sectionBlock),
+            "links" => MapLinksBlock(response.Links, sectionBlock),
+            "artist" => MapArtistBlock(response.Artists, sectionBlock),
+            "artist_videos" => MapVideosBlock(response.ArtistVideos, sectionBlock.ArtistVideosIds, sectionBlock),
+            "videos" => MapVideosBlock(response.Videos, sectionBlock.VideosIds, sectionBlock),
             _ => MapBlock(sectionBlock)
         }).Where(AdFilter);
     }
@@ -28,6 +32,42 @@ public static class BlockMapper
             BannersBlock bannersBlock when bannersBlock.Banners.ElementAt(0).ClickAction.Action.Url?.Contains("https://vk.com/app") is true => false,
             _ => true
         };
+    }
+    
+    private static VideosBlock MapVideosBlock(ICollection<CatalogVideo> videos, ICollection<string> ids, SectionBlock block)
+    {
+        return new(block.Id,
+                   block.DataType,
+                   block.Layout,
+                   block.NextFrom,
+                   block.Url,
+                   ids.Select(b =>
+                   {
+                       var ownerId = long.Parse(b[..b.IndexOf('_')]);
+                       var id = int.Parse(b[(b.IndexOf('_') + 1)..]);
+
+                       return videos.Single(c => c.OwnerId == ownerId && c.Id == id);
+                   }).ToArray());
+    }
+    
+    private static ArtistBlock MapArtistBlock(ICollection<CatalogMainArtist> artists, SectionBlock block)
+    {
+        return new(block.Id,
+                   block.DataType,
+                   block.Layout,
+                   block.NextFrom,
+                   block.Url,
+                   block.ArtistsIds.Select(b => artists.Single(c => c.Id == b)).ToArray());
+    }
+    
+    private static LinksBlock MapLinksBlock(ICollection<CatalogLink> links, SectionBlock block)
+    {
+        return new(block.Id,
+                   block.DataType,
+                   block.Layout,
+                   block.NextFrom,
+                   block.Url,
+                   block.LinksIds.Select(b => links.Single(c => c.Id == b)).ToArray());
     }
 
     private static BannersBlock MapCatalogBannersBlock(ICollection<CatalogBanner> banners, SectionBlock block)

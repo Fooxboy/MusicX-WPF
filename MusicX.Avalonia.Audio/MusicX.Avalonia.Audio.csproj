@@ -12,7 +12,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="M3U8Parser" Version="1.0.0"/>
         <PackageReference Include="ManagedBass" Version="3.1.1"/>
         <PackageReference Include="ManagedBass.Hls" Version="3.1.1"/>
     </ItemGroup>

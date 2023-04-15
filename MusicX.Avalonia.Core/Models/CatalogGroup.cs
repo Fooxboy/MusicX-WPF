@@ -1,7 +1,7 @@
 ﻿namespace MusicX.Avalonia.Core.Models;
 
 public record CatalogGroup(
-    int Id,
+    long Id,
     int MemberStatus,
     int MembersCount,
     string Activity,

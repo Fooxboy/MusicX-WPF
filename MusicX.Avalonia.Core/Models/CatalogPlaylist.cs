@@ -1,4 +1,7 @@
-﻿namespace MusicX.Avalonia.Core.Models;
+﻿using System.Text.Json.Serialization;
+using MusicX.Avalonia.Core.Converters;
+
+namespace MusicX.Avalonia.Core.Models;
 
 public record CatalogPlaylist(
     int Id,
@@ -9,8 +12,8 @@ public record CatalogPlaylist(
     int Count,
     int Followers,
     int Plays,
-    int CreateTime,
-    int UpdateTime,
+    [property: JsonConverter(typeof(DateTimeConverterForCustomStandardFormatR))] DateTime CreateTime,
+    [property: JsonConverter(typeof(DateTimeConverterForCustomStandardFormatR))] DateTime UpdateTime,
     IReadOnlyList<object> Genres,
     bool IsFollowing,
     CatalogPhoto Photo,
@@ -20,5 +23,6 @@ public record CatalogPlaylist(
     string AccessKey,
     string Subtitle,
     string AlbumType,
-    CatalogMeta Meta
-);
+    CatalogMeta Meta,
+    string? OwnerName,
+    IReadOnlyList<CatalogMainArtist>? MainArtists);

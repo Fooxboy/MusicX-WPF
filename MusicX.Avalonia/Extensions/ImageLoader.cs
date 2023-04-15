@@ -8,7 +8,7 @@ using MusicX.Avalonia.Controls;
 using ReactiveUI;
 using SkiaSharp;
 
-namespace MusicX.Avalonia;
+namespace MusicX.Avalonia.Extensions;
 
 public class ImageLoader
 {

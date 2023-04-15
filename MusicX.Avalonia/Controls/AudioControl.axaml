@@ -3,13 +3,44 @@
         xmlns:controls="using:MusicX.Avalonia.Controls"
         xmlns:avalonia="clr-namespace:MusicX.Avalonia"
         xmlns:models="clr-namespace:MusicX.Avalonia.Core.Models;assembly=MusicX.Avalonia.Core"
-        xmlns:pages="clr-namespace:MusicX.Avalonia.Pages">
+        xmlns:pages="clr-namespace:MusicX.Avalonia.Pages"
+        xmlns:views="clr-namespace:MusicX.Avalonia.Views"
+        xmlns:extensions="clr-namespace:MusicX.Avalonia.Extensions">
+    <Styles.Resources>
+        <DataTemplate DataType="models:CatalogMainArtist" x:Key="ArtistTemplate">
+            <Button Content="{CompiledBinding Name}"
+                    Command="{CompiledBinding Path=$parent[views:MainWindow].GlobalViewModel.OpenArtistCommand}"
+                    CommandParameter="{CompiledBinding}">
+                <Button.Styles>
+                    <Style Selector="Button">
+                        <Setter Property="Template">
+                            <ControlTemplate>
+                                <TextBlock x:Name="PART_ContentPresenter"
+                                           Classes="ArtistText"
+                                           Padding="{TemplateBinding Padding}" 
+                                           Text="{TemplateBinding Content}" />
+                            </ControlTemplate>
+                        </Setter>
+                        <Setter Property="Padding" Value="0" />
+                        <Setter Property="BorderThickness" Value="0" />
+                    </Style>
+                    <Style Selector="Button:pointerover TextBlock.ArtistText">
+                        <Setter Property="TextDecorations">
+                            <TextDecorationCollection>
+                                <TextDecoration Location="Underline" Stroke="{DynamicResource HighlightForegroundColor}" />
+                            </TextDecorationCollection>
+                        </Setter>
+                    </Style>
+                </Button.Styles>
+            </Button>
+        </DataTemplate>
+    </Styles.Resources>
     <Style Selector="controls|AudioControl">
         <Setter Property="Template">
             <ControlTemplate>
                 <Button Classes="CardActionTransparent" Width="300" Height="80" Margin="2"
                         CommandParameter="{CompiledBinding Audio, RelativeSource={RelativeSource TemplatedParent}}"
-                        Command="{CompiledBinding Path=$parent[pages:SectionPage].ViewModelDirect.TrackClickCommand}"
+                        Command="{CompiledBinding Path=$parent[views:MainWindow].GlobalViewModel.AudioClickCommand}"
                         HorizontalContentAlignment="Left" Padding="{TemplateBinding Padding}">
                     <Grid ColumnDefinitions="Auto,*,Auto" Width="300">
                         <Border Width="48" Height="48"
@@ -17,15 +48,15 @@
                                 CornerRadius="{DynamicResource OverlayCornerRadius}">
                             <Border.Background>
                                 <ImageBrush
-                                    avalonia:ImageLoader.BrushSource="{CompiledBinding Audio.Album.Thumb.Photo68, RelativeSource={RelativeSource TemplatedParent}}" />
+                                    extensions:ImageLoader.BrushSource="{CompiledBinding Audio.Album.Thumb.Photo68, RelativeSource={RelativeSource TemplatedParent}}" />
                             </Border.Background>
                         </Border>
                         <StackPanel Grid.Column="1" Orientation="Vertical" Margin="10,0,0,0" VerticalAlignment="Center">
                             <TextBlock Text="{CompiledBinding Audio.Title, RelativeSource={RelativeSource TemplatedParent}}"
                                        FontWeight="Medium"
                                        TextTrimming="CharacterEllipsis" />
-                            <TextBlock Text="{CompiledBinding Audio.Artist, RelativeSource={RelativeSource TemplatedParent}}"
-                                       FontWeight="Light"
+                            <TextBlock extensions:AudioArtistsText.Audio="{TemplateBinding Audio}"
+                                       extensions:AudioArtistsText.ArtistTemplate="{StaticResource ArtistTemplate}"
                                        Opacity="0.8"
                                        TextTrimming="CharacterEllipsis"
                                        Margin="0,3,0,0" />

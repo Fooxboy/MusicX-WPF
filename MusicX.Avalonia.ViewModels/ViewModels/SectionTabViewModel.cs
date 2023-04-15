@@ -18,6 +18,7 @@ public class SectionTabViewModel : MenuTabViewModel, IEquatable<SectionTabViewMo
     private readonly Api _api;
     private readonly QueueService _queueService;
     private string _title = string.Empty;
+    private string? _nextFrom;
     public override string Title => _title;
 
     public override OneOf<string, Symbol> Icon =>
@@ -33,26 +34,13 @@ public class SectionTabViewModel : MenuTabViewModel, IEquatable<SectionTabViewMo
     public string Id { get; set; } = string.Empty;
 
     public IObservableCollection<BlockBase> Blocks { get; } = new ObservableCollectionExtended<BlockBase>();
-
-    public ReactiveCommand<CatalogAudio, Unit> TrackClickCommand { get; }
+    
+    public bool IsLoading { get; set; }
 
     public SectionTabViewModel(Api api, QueueService queueService)
     {
         _api = api;
         _queueService = queueService;
-
-        TrackClickCommand = ReactiveCommand.CreateFromTask<CatalogAudio>(PlayAsync);
-    }
-
-    private Task PlayAsync(CatalogAudio audio, CancellationToken token)
-    {
-        IPlaylist playlist;
-        if (audio.ParentBlockId is null)
-            playlist = new SinglePlaylist(audio.ToTrack());
-        else
-            playlist = new BlockPlaylist(_api, audio.ParentBlockId, Title);
-
-        return _queueService.PlayPlaylistAsync(playlist, token, audio.Url).AsTask();
     }
 
     public void Init(string id, string title)
@@ -65,9 +53,24 @@ public class SectionTabViewModel : MenuTabViewModel, IEquatable<SectionTabViewMo
     {
         if (Blocks.Count > 0)
             return;
+        IsLoading = true;
         var section = await _api.GetCatalogSectionAsync(new(Id, null, null, null, null, null, null, null, null));
 
         Blocks.AddRange(BlockMapper.MapBlocks(section));
+        _nextFrom = section.Section.NextFrom;
+        IsLoading = false;
+    }
+    
+    public async Task LoadMoreAsync()
+    {
+        if (Blocks.Count == 0 || _nextFrom == null)
+            return;
+        IsLoading = true;
+        var section = await _api.GetCatalogSectionAsync(new(Id, null, _nextFrom, null, null, null, null, null, null));
+
+        Blocks.AddRange(BlockMapper.MapBlocks(section));
+        _nextFrom = section.Section.NextFrom;
+        IsLoading = false;
     }
 
     public bool Equals(SectionTabViewModel? other)

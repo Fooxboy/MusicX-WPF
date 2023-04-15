@@ -1,7 +1,7 @@
 ﻿namespace MusicX.Avalonia.Core.Models;
 
 public record CatalogProfile(
-    int Id,
+    long Id,
     CatalogCity City,
     CatalogCountry Country,
     string Photo200,

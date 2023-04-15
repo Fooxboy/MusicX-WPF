@@ -3,7 +3,7 @@ using FluentAvalonia.UI.Controls;
 using MusicX.Avalonia.Pages;
 using MusicX.Avalonia.ViewModels.ViewModels;
 
-namespace MusicX.Avalonia;
+namespace MusicX.Avalonia.Extensions;
 
 public class PageFactory : INavigationPageFactory
 {
@@ -21,6 +21,8 @@ public class PageFactory : INavigationPageFactory
         {
             LoginModalViewModel => App.Provider.GetService<LoginPage>(),
             SectionTabViewModel => App.Provider.GetService<SectionPage>(),
+            PlaylistViewModel => App.Provider.GetService<PlaylistPage>(),
+            VideoModalViewModel => App.Provider.GetService<VideoPage>(),
             _ => throw new ArgumentOutOfRangeException(nameof(target), target,
                                                        "Target must be an implemented view model type in factory")
         };

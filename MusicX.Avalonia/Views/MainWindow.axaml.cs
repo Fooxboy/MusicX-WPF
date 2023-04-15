@@ -1,4 +1,5 @@
 using System.Reactive.Linq;
+using Avalonia;
 using DynamicData.Binding;
 using FluentAvalonia.UI.Windowing;
 using MusicX.Avalonia.ViewModels.ViewModels;
@@ -36,4 +37,10 @@ public partial class MainWindow : AppWindow
                      .BindTo(NavGrid, x => x.IsHitTestVisible);
         }
     }
+    
+
+    public static readonly DirectProperty<MainWindow, GlobalViewModel> GlobalViewModelProperty = AvaloniaProperty.RegisterDirect<MainWindow, GlobalViewModel>(
+        "GlobalViewModel", o => o.GlobalViewModel);
+
+    public GlobalViewModel GlobalViewModel => App.Provider.GetService<GlobalViewModel>();
 }

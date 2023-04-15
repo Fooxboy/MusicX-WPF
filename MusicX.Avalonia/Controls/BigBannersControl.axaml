@@ -2,7 +2,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="using:MusicX.Avalonia.Controls"
         xmlns:models="clr-namespace:MusicX.Avalonia.Core.Models;assembly=MusicX.Avalonia.Core"
-        xmlns:avalonia="clr-namespace:MusicX.Avalonia">
+        xmlns:avalonia="clr-namespace:MusicX.Avalonia"
+        xmlns:extensions="clr-namespace:MusicX.Avalonia.Extensions">
     <Design.PreviewWith>
         <controls:BigBannersControl />
     </Design.PreviewWith>
@@ -70,7 +71,7 @@
                                                 CornerRadius="8"
                                                 Stretch="UniformToFill"
                                                 StretchDirection="Both"
-                                                avalonia:ImageLoader.BlurrySource="{CompiledBinding Images[2].Url}"
+                                                extensions:ImageLoader.BlurrySource="{CompiledBinding Images[2].Url}"
                                                 Width="{TemplateBinding Width}"
                                                 Height="{TemplateBinding Height}"
                                                 Name="PART_PlaylistBackground" />

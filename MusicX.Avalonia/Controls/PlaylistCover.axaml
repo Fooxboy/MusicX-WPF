@@ -1,7 +1,9 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="using:MusicX.Avalonia.Controls"
-        xmlns:avalonia="clr-namespace:MusicX.Avalonia">
+        xmlns:avalonia="clr-namespace:MusicX.Avalonia"
+        xmlns:views="clr-namespace:MusicX.Avalonia.Views"
+        xmlns:extensions="clr-namespace:MusicX.Avalonia.Extensions">
     <Design.PreviewWith>
         <controls:PlaylistCover />
     </Design.PreviewWith>
@@ -9,13 +11,15 @@
     <Style Selector="controls|PlaylistCover">
         <Setter Property="Template">
             <ControlTemplate>
-                <Button Classes="PlaylistCard" Margin="{TemplateBinding Margin}">
+                <Button Classes="PlaylistCard" Margin="{TemplateBinding Margin}"
+                        Command="{TemplateBinding Command}"
+                        CommandParameter="{TemplateBinding CommandParameter}">
                     <Panel>
                         <controls:BlurryImage
                             CornerRadius="8"
                             Stretch="UniformToFill"
                             StretchDirection="Both"
-                            avalonia:ImageLoader.BlurrySource="{TemplateBinding ImageUrl}"
+                            extensions:ImageLoader.BlurrySource="{TemplateBinding ImageUrl}"
                             Width="{TemplateBinding Width}"
                             Height="{TemplateBinding Height}"
                             Name="PART_PlaylistBackground" />

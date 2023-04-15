@@ -41,15 +41,20 @@ public partial class App : Application
 
 [ServiceProvider]
 [Import<IServiceModule>]
-[Transient<MainWindowViewModel>]
+[Singleton<MainWindowViewModel>]
 [Transient<LoginModalViewModel>]
 [Transient<SectionTabViewModel>]
-[Transient<PlaybackViewModel>]
+[Singleton<PlaybackViewModel>]
+[Transient<PlaylistViewModel>]
+[Singleton<GlobalViewModel>]
+[Transient<VideoModalViewModel>]
 [Singleton<PlayerService>]
 [Singleton<QueueService>]
 [Transient<MainWindow>]
 [Transient<LoginPage>]
 [Transient<SectionPage>]
+[Transient<PlaylistPage>]
+[Transient<VideoPage>]
 internal partial class ServiceProvider : IServiceModule
 {
     public Api CreateVkApi(ConfigurationService configurationService)

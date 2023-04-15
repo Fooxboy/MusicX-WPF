@@ -5,5 +5,5 @@ public record CatalogMainArtist(
     string Domain,
     string Id,
     bool IsFollowed,
-    bool CanFollow
-);
+    bool CanFollow,
+    IReadOnlyList<CatalogImage> Photo);

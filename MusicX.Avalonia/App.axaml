@@ -3,6 +3,7 @@
              xmlns:sty="using:FluentAvalonia.Styling"
              xmlns:avalonia="clr-namespace:MusicX.Avalonia"
              xmlns:converters="clr-namespace:MusicX.Avalonia.Converters"
+             xmlns:extensions="clr-namespace:MusicX.Avalonia.Extensions"
              x:Class="MusicX.Avalonia.App"
              x:CompileBindings="True">
     <Application.Resources>
@@ -10,7 +11,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source="Templates/BlockTemplates.axaml" />
             </ResourceDictionary.MergedDictionaries>
-            <avalonia:PageFactory x:Key="PageFactory" />
+            <extensions:PageFactory x:Key="PageFactory" />
             <converters:SecondsToTimeSpanConverter x:Key="SecondsToTimeSpanConverter" />
             <converters:ObjectEqualsConverter x:Key="ObjectEqualsConverter" />
         </ResourceDictionary>
@@ -21,6 +22,7 @@
         <StyleInclude Source="Controls/PlaylistCover.axaml" />
         <StyleInclude Source="Controls/AudioControl.axaml" />
         <StyleInclude Source="Controls/BigBannersControl.axaml" />
+        <StyleInclude Source="Controls/TrackControl.axaml" />
         <StyleInclude Source="Styles/DataValidationStyles.axaml" />
         <StyleInclude Source="Styles/CardStyles.axaml" />
     </Application.Styles>

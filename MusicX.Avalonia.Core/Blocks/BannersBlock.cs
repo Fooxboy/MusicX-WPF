@@ -7,4 +7,4 @@ public record BannersBlock(string Id,
                            SectionBlockLayout Layout,
                            string? NextFrom,
                            string? Url,
-                           ICollection<CatalogBanner> Banners) : BlockBase(Id, DataType, Layout, NextFrom, Url);
+                           IReadOnlyList<CatalogBanner> Banners) : BlockBase(Id, DataType, Layout, NextFrom, Url);

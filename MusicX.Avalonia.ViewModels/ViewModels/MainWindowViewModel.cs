@@ -2,6 +2,7 @@
 using System.Reactive.Linq;
 using DynamicData.Binding;
 using MusicX.Avalonia.Core.Extensions;
+using MusicX.Avalonia.Core.Models;
 using MusicX.Avalonia.Core.Services;
 using ReactiveUI;
 using VkApi;
@@ -15,7 +16,7 @@ public class MainWindowViewModel : ViewModelBase
     public IObservableCollection<MenuTabViewModel> MenuTabs { get; } =
         new ObservableCollectionExtended<MenuTabViewModel>();
 
-    public MenuTabViewModel? CurrentTab { get; set; } = null;
+    public ViewModelBase? CurrentTab { get; set; } = null;
 
     public ModalViewModel? CurrentModal { get; set; } = null;
 
@@ -27,6 +28,14 @@ public class MainWindowViewModel : ViewModelBase
                   .Log(this, stringifier: state => state is null ? "Logged out" : $"Logged in as {state.UserId}")
                   .SelectMany(OnLoginStateChanged)
                   .Subscribe();
+
+        MessageBus.Current.Listen<ViewModelBase>("nav")
+                  .Subscribe(viewModel =>
+                  {
+                      if (viewModel is ModalViewModel modal)
+                          CurrentModal = modal;
+                      else CurrentTab = viewModel;
+                  });
         
         MessageBus.Current.SendMessage(configurationService.LoginState);
     }
@@ -42,6 +51,7 @@ public class MainWindowViewModel : ViewModelBase
         }
 
         var api = (Api)_provider.GetService(typeof(Api))!;
+        var globalViewModel = (GlobalViewModel)_provider.GetService(typeof(GlobalViewModel))!;
 
         var mainCatalog = await api.GetCatalogAudioAsync(new(null, true, null, null));
         
@@ -50,10 +60,10 @@ public class MainWindowViewModel : ViewModelBase
             var viewModel = (SectionTabViewModel)_provider.GetService(typeof(SectionTabViewModel))!;
 
             viewModel.Init(id, title);
-            
+
             MenuTabs.Add(viewModel);
             if (mainCatalog.Catalog.DefaultSection == id)
-                CurrentTab = viewModel;
+                await globalViewModel.OpenSectionAsync(id);
         }
 
         return default;

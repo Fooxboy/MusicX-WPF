@@ -58,7 +58,11 @@ public class PlayerService : IDisposable, INotifyPropertyChanged
         }
     }
 
-    public bool IsPlaying => _bassStreamPtr.HasValue && Bass.ChannelIsActive(_bassStreamPtr.Value) == PlaybackState.Playing;
+    public bool IsPlaying
+    {
+        get => _bassStreamPtr.HasValue && Bass.ChannelIsActive(_bassStreamPtr.Value) is PlaybackState.Playing or PlaybackState.Stalled;
+        set => throw new NotSupportedException();
+    }
 
     public event EventHandler? TrackEnded;
 
@@ -71,7 +75,10 @@ public class PlayerService : IDisposable, INotifyPropertyChanged
     public void Play(PlaylistTrack track, bool resetExisting = false)
     {
         if (_bassStreamPtr.HasValue && CurrentTrack == track && Bass.ChannelPlay(_bassStreamPtr.Value, resetExisting))
+        {
+            OnPropertyChanged(nameof(IsPlaying));
             return;
+        }
 
         if (_bassStreamPtr.HasValue)
             Bass.StreamFree(_bassStreamPtr.Value);

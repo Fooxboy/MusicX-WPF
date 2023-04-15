@@ -7,6 +7,8 @@
         <TrimMode>copyused</TrimMode>
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
         <RuntimeIdentifiers>win-x64;osx-x64</RuntimeIdentifiers>
+        
+        <Version>0.0.1</Version>
     </PropertyGroup>
     
     <PropertyGroup Condition=" $(Configuration) == 'Release' ">
@@ -52,15 +54,31 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="StoreKeeper" Version="0.0.6" />
-        <!--Compresse with UPX-->
-        <!-- <PackageReference Include="PublishAotCompressed" Version="1.0.0" /> -->
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\MusicX.Avalonia.Audio\MusicX.Avalonia.Audio.csproj" />
       <ProjectReference Include="..\MusicX.Avalonia.Core\MusicX.Avalonia.Core.csproj" />
       <ProjectReference Include="..\MusicX.Avalonia.ViewModels\MusicX.Avalonia.ViewModels.csproj" />
+    </ItemGroup>
+    
+    <!-- MacOS stuff -->
+    <PropertyGroup>
+        <CFBundleName>MusicX</CFBundleName> <!-- Also defines .app file name -->
+        <CFBundleDisplayName>MusicX Avalonia</CFBundleDisplayName>
+        <CFBundleIdentifier>com.github.fooxboy</CFBundleIdentifier>
+        <CFBundleVersion>$(Version)</CFBundleVersion>
+        <CFBundleShortVersionString>$(Version)</CFBundleShortVersionString>
+        <CFBundlePackageType>APPL</CFBundlePackageType>
+        <CFBundleSignature>????</CFBundleSignature>
+        <CFBundleExecutable>MusicX.Avalonia</CFBundleExecutable>
+        <!--<CFBundleIconFile>AppName.icns</CFBundleIconFile> &lt;!&ndash; Will be copied from output directory &ndash;&gt;-->
+        <NSPrincipalClass>NSApplication</NSPrincipalClass>
+        <NSHighResolutionCapable>true</NSHighResolutionCapable>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <PackageReference Include="Dotnet.Bundle" Version="*" />
     </ItemGroup>
     
 </Project>

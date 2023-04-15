@@ -21,7 +21,7 @@
     <Style Selector="Button.CardAction:pointerover,Button.CardActionTransparent:pointerover">
         <Setter Property="Background" Value="{DynamicResource ButtonBackgroundPointerOver}" />
     </Style>
-    <Style Selector="Border.Card">
+    <Style Selector="Border.Card,Border.CardStatic">
         <Setter Property="Padding" Value="12" />
         <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
         <Setter Property="BorderThickness" Value="{DynamicResource ThemeBorderThickness}" />
