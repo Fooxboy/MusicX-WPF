@@ -260,11 +260,30 @@
         <!-- Artist -->
         <templates:BlockTemplate x:DataType="blocks:ArtistBlock" BlockDataType="artist"
                                  LayoutName="banner">
-            <controls:BlurryImage CornerRadius="8" Height="450" BlurLevel="0"
-                                  Margin="10"
-                                  Stretch="UniformToFill"
-                                  extensions:ImageLoader.BlurrySource="{CompiledBinding Artists[0].Photo[3].Url}">
-            </controls:BlurryImage>
+            <Panel Margin="10" Height="450">
+                <controls:BlurryImage CornerRadius="8" BlurLevel="0"
+                                      Stretch="UniformToFill"
+                                      extensions:ImageLoader.BlurrySource="{CompiledBinding Artists[0].Photo[3].Url}" />
+                <UniformGrid Rows="2" Margin="25" HorizontalAlignment="Left"
+                             VerticalAlignment="Bottom">
+                    <TextBlock Text="{CompiledBinding Artists[0].Name}"
+                               FontWeight="Bold"
+                               FontSize="64"
+                               Margin="0,5" />
+                    <ItemsControl Items="{CompiledBinding Actions}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Columns="{CompiledBinding Actions.Count}" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="models:CatalogAction">
+                                <Button Margin="0,0,10,0" Content="{CompiledBinding Action.Type}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </UniformGrid>
+            </Panel>
         </templates:BlockTemplate>
 
         <!-- Artist Videos -->

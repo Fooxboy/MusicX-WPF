@@ -7,4 +7,5 @@ public record ArtistBlock(string Id,
                           SectionBlockLayout Layout,
                           string? NextFrom,
                           string? Url,
-                          IReadOnlyList<CatalogMainArtist> Artists) : BlockBase(Id, DataType, Layout, NextFrom, Url);
+                          IReadOnlyList<CatalogMainArtist> Artists,
+                          ICollection<CatalogAction> Actions) : BlockBase(Id, DataType, Layout, NextFrom, Url);

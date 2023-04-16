@@ -1,6 +1,6 @@
 ﻿namespace MusicX.Avalonia.Core.Models;
 
-public record CatalogAction2(
+public record CatalogActionMeta(
     string Type,
     string Target,
     string Url,

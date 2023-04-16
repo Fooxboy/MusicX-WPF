@@ -27,14 +27,18 @@ public static class BlockMapper
     {
         return block switch
         {
-            BannersBlock bannersBlock when bannersBlock.Banners.ElementAt(0).ClickAction.Action.Url?.Contains("subscription") is true => false,
-            BannersBlock bannersBlock when bannersBlock.Banners.ElementAt(0).ClickAction.Action.Url?.Contains("combo") is true => false,
-            BannersBlock bannersBlock when bannersBlock.Banners.ElementAt(0).ClickAction.Action.Url?.Contains("https://vk.com/app") is true => false,
+            BannersBlock bannersBlock when bannersBlock.Banners.ElementAt(0).ClickAction.Action.Url
+                                                       ?.Contains("subscription") is true => false,
+            BannersBlock bannersBlock when
+                bannersBlock.Banners.ElementAt(0).ClickAction.Action.Url?.Contains("combo") is true => false,
+            BannersBlock bannersBlock when bannersBlock.Banners.ElementAt(0).ClickAction.Action.Url
+                                                       ?.Contains("https://vk.com/app") is true => false,
             _ => true
         };
     }
-    
-    private static VideosBlock MapVideosBlock(ICollection<CatalogVideo> videos, ICollection<string> ids, SectionBlock block)
+
+    private static VideosBlock MapVideosBlock(ICollection<CatalogVideo> videos, ICollection<string> ids,
+                                              SectionBlock block)
     {
         return new(block.Id,
                    block.DataType,
@@ -49,7 +53,7 @@ public static class BlockMapper
                        return videos.Single(c => c.OwnerId == ownerId && c.Id == id);
                    }).ToArray());
     }
-    
+
     private static ArtistBlock MapArtistBlock(ICollection<CatalogMainArtist> artists, SectionBlock block)
     {
         return new(block.Id,
@@ -57,9 +61,10 @@ public static class BlockMapper
                    block.Layout,
                    block.NextFrom,
                    block.Url,
-                   block.ArtistsIds.Select(b => artists.Single(c => c.Id == b)).ToArray());
+                   block.ArtistsIds.Select(b => artists.Single(c => c.Id == b)).ToArray(),
+                   block.Actions);
     }
-    
+
     private static LinksBlock MapLinksBlock(ICollection<CatalogLink> links, SectionBlock block)
     {
         return new(block.Id,

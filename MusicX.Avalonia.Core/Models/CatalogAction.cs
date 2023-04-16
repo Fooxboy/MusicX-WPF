@@ -1,7 +1,7 @@
 ﻿namespace MusicX.Avalonia.Core.Models;
 
 public record CatalogAction(
-    CatalogAction Action,
+    CatalogActionMeta Action,
     string Title,
     int RefItemsCount,
     string RefLayoutName,
