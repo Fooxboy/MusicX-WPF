@@ -77,7 +77,10 @@ public class GlobalViewModel : ViewModelBase
             case "artist":
             {
                 var uri = new Uri(link.Url);
-                await OpenSectionAsync(uri.Segments.Last());
+                var artist =
+                    await _api.GetCatalogAudioArtistAsync(new(uri.Segments.Last(), null, null, null,
+                                                              link.Meta.TrackCode));
+                await OpenSectionAsync(artist.Catalog.DefaultSection);
                 break;
             }
             default:
