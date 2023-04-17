@@ -197,7 +197,9 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="models:CatalogAction">
-                        <Button Classes="CardAction" HorizontalAlignment="Stretch">
+                        <Button Classes="CardAction" HorizontalAlignment="Stretch"  
+                                Command="{CompiledBinding $parent[views:MainWindow].GlobalViewModel.OpenActionCommand}"
+                                CommandParameter="{CompiledBinding}">
                             <TextBlock Text="{CompiledBinding Title}" FontSize="20" FontWeight="Medium"
                                        VerticalAlignment="Center" />
                         </Button>

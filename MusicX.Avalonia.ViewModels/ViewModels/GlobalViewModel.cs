@@ -27,6 +27,7 @@ public class GlobalViewModel : ViewModelBase
     public ReactiveCommand<string,Unit> OpenSectionCommand { get; }
     public ReactiveCommand<CatalogLink,Unit> OpenLinkCommand { get; }
     public ReactiveCommand<CatalogVideo,Unit> OpenVideoPlayerCommand { get; }
+    public ReactiveCommand<CatalogAction,Unit> OpenActionCommand { get; }
 
     public GlobalViewModel(PlayerService playerService, QueueService queueService, Api api, IServiceProvider provider)
     {
@@ -41,6 +42,18 @@ public class GlobalViewModel : ViewModelBase
         OpenSectionCommand = ReactiveCommand.CreateFromTask<string>(OpenSectionAsync);
         OpenLinkCommand = ReactiveCommand.CreateFromTask<CatalogLink>(OpenLinkAsync);
         OpenVideoPlayerCommand = ReactiveCommand.CreateFromTask<CatalogVideo>(OpenVideoAsync);
+        OpenActionCommand = ReactiveCommand.CreateFromTask<CatalogAction>(OpenActionAsync);
+    }
+
+    private Task OpenActionAsync(CatalogAction action)
+    {
+        if (!string.IsNullOrEmpty(action.SectionId))
+            return OpenSectionAsync(action.SectionId);
+        
+        if (!string.IsNullOrEmpty(action.Action.Url))
+            OpenUrl(action.Action.Url);
+        
+        return Task.CompletedTask;
     }
 
     private async Task OpenVideoAsync(CatalogVideo video)
@@ -51,8 +64,11 @@ public class GlobalViewModel : ViewModelBase
         // await viewModel.LoadVideoAsync(video);
         // MessageBus.Current.SendMessage<ViewModelBase>(viewModel, "nav");
 
-        var url = video.Player;
-        
+        OpenUrl(video.Player);
+    }
+
+    private static void OpenUrl(string url)
+    {
         if (OperatingSystem.IsWindows())
         {
             url = url.Replace("&", "^&");
