@@ -1,12 +1,14 @@
-﻿using DynamicData;
+﻿using System.Reactive;
+using DynamicData;
 using DynamicData.Binding;
+using MusicX.Avalonia.Audio.Playlists;
 using MusicX.Avalonia.Audio.Services;
 using MusicX.Avalonia.Core.Extensions;
 using MusicX.Avalonia.Core.Models;
 using MusicX.Avalonia.Core.Services;
 using MusicX.Shared.Player;
+using ReactiveUI;
 using VkApi;
-using VkApi.Core.Types;
 
 namespace MusicX.Avalonia.ViewModels.ViewModels;
 
@@ -15,12 +17,16 @@ public class PlaylistViewModel : ViewModelBase
     private readonly Api _api;
     private readonly GlobalViewModel _viewModel;
     private readonly ConfigurationService _configurationService;
+    private readonly QueueService _queueService;
 
-    public PlaylistViewModel(PlayerService playerService, Api api, GlobalViewModel viewModel, ConfigurationService configurationService)
+    public ReactiveCommand<PlaylistTrack?,Unit> PlayTrackCommand { get; }
+
+    public PlaylistViewModel(PlayerService playerService, Api api, GlobalViewModel viewModel, ConfigurationService configurationService, QueueService queueService)
     {
         _api = api;
         _viewModel = viewModel;
         _configurationService = configurationService;
+        _queueService = queueService;
         PlayerService = playerService;
         Tracks.ObserveCollectionChanges().Subscribe(_ =>
         {
@@ -32,6 +38,14 @@ public class PlaylistViewModel : ViewModelBase
                                   "{0:%h} часов {0:%m} минут", 
                               total);
         });
+
+        PlayTrackCommand = ReactiveCommand.CreateFromTask<PlaylistTrack?>(PlayTrackAsync);
+    }
+
+    private Task PlayTrackAsync(PlaylistTrack? track)
+    {
+        return _queueService.PlayPlaylistAsync(new PlaylistPlaylist(_api, Playlist, Tracks), CancellationToken.None,
+                                        track?.Data.Url).AsTask();
     }
 
     public PlaylistOwner Owner { get; set; } = null!;

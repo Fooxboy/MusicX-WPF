@@ -7,6 +7,7 @@
              xmlns:avalonia="clr-namespace:MusicX.Avalonia"
              xmlns:player="clr-namespace:MusicX.Shared.Player;assembly=MusicX.Shared"
              xmlns:extensions="clr-namespace:MusicX.Avalonia.Extensions"
+             xmlns:pages="clr-namespace:MusicX.Avalonia.Pages"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="MusicX.Avalonia.Pages.PlaylistPage"
              x:DataType="viewModels:PlaylistViewModel">
@@ -36,7 +37,8 @@
                             <Run Text="{CompiledBinding AudiosTotalLengthFormatted, Mode=OneWay}" FontWeight="ExtraLight" />
                         </TextBlock>
 
-                        <SplitButton Content="Слушать всё" Margin="0,35,0,0" Width="220" />
+                        <SplitButton Content="Слушать всё" Margin="0,35,0,0" Width="220"
+                                     Command="{CompiledBinding PlayTrackCommand}"/>
                     </StackPanel>
                 </Grid>
             </Border>
@@ -44,7 +46,9 @@
             <ItemsControl Items="{CompiledBinding Tracks}" Margin="5,10" Grid.Row="1">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="player:PlaylistTrack">
-                        <controls:TrackControl Track="{CompiledBinding}" Margin="0,3" />
+                        <controls:TrackControl Track="{CompiledBinding}" Margin="0,3"
+                                               Command="{CompiledBinding $parent[pages:PlaylistPage].ViewModelDirect.PlayTrackCommand}"
+                                               CommandParameter="{CompiledBinding}"/>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

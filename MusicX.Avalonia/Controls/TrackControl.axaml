@@ -8,13 +8,18 @@
     <Design.PreviewWith>
         <controls:TrackControl />
     </Design.PreviewWith>
+    
+    <!-- CardActionTransparent has higher prio for some fucking reason -->
+    <!--<Style Selector="controls|TrackControl:playing /template/ Button.CardActionTransparent">
+        <Setter Property="Background" Value="{StaticResource ButtonBackground}" />
+    </Style>-->
 
     <Style Selector="controls|TrackControl">
         <Setter Property="Template">
             <ControlTemplate>
                 <Button Classes="CardActionTransparent"
-                        CommandParameter="{CompiledBinding Track, RelativeSource={RelativeSource TemplatedParent}}"
-                        Command="{CompiledBinding Path=$parent[views:MainWindow].GlobalViewModel.TrackClickCommand}"
+                        CommandParameter="{TemplateBinding CommandParameter}"
+                        Command="{TemplateBinding Command}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Stretch">
                     <Grid ColumnDefinitions="Auto,4*,2*,3*,3*,Auto">
