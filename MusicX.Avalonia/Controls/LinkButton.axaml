@@ -1,0 +1,41 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:MusicX.Avalonia.Controls"
+        xmlns:extensions="clr-namespace:MusicX.Avalonia.Extensions">
+    <Design.PreviewWith>
+        <controls:LinkButton />
+    </Design.PreviewWith>
+
+    <Style Selector="controls|LinkButton">
+        <Setter Property="Width" Value="220" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <StackPanel HorizontalAlignment="Center">
+                    <controls:BlurryImage CornerRadius="99"
+                                          Classes="Link"
+                                          extensions:ImageLoader.BlurrySource="{TemplateBinding ImageUrl}">
+                        <controls:BlurryImage.Styles>
+                            <Style Selector="controls|BlurryImage.Link">
+                                <Setter Property="BlurLevel" Value="0" />
+                                <Setter Property="Transitions">
+                                    <Transitions>
+                                        <FloatTransition Property="BlurLevel" Duration="0.1" />
+                                    </Transitions>
+                                </Setter>
+                            </Style>
+                            <Style Selector="controls|BlurryImage.Link:pointerover">
+                                <Setter Property="BlurLevel" Value="8" />
+                            </Style>
+                        </controls:BlurryImage.Styles>
+                    </controls:BlurryImage>
+                    <TextBlock Margin="0,5,0,3"
+                               Text="{TemplateBinding Title}"
+                               HorizontalAlignment="Center" />
+                    <TextBlock Text="{TemplateBinding Subtitle}"
+                               HorizontalAlignment="Center"
+                               FontWeight="Light" />
+                </StackPanel>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+</Styles>

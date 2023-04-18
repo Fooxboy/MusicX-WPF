@@ -1,0 +1,43 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Style Selector="ItemsControl.HorizontalSlider,ItemsControl.HorizontalVirtualizingSlider">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto"
+                              HorizontalSnapPointsType="Mandatory" AllowAutoHide="True">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            Padding="{TemplateBinding Padding}">
+                        <ItemsPresenter Name="PART_ItemsPresenter"
+                                        ItemsPanel="{TemplateBinding ItemsPanel}" />
+                    </Border>
+                </ScrollViewer>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+    <Style Selector="ItemsControl.HorizontalSlider">
+        <Setter Property="ItemsPanel">
+            <ItemsPanelTemplate>
+                <StackPanel Orientation="Horizontal" />
+            </ItemsPanelTemplate>
+        </Setter>
+    </Style>
+    <Style Selector="ItemsControl.HorizontalVirtualizingSlider">
+        <Setter Property="ItemsPanel">
+            <ItemsPanelTemplate>
+                <VirtualizingStackPanel Orientation="Horizontal" />
+            </ItemsPanelTemplate>
+        </Setter>
+    </Style>
+    
+    <Style Selector="ItemsControl.WrapPanel">
+        <Setter Property="ItemsPanel">
+            <ItemsPanelTemplate>
+                <!--<WrapPanel Orientation="Vertical" />--> <!-- TODO avalonia moment -->
+                <UniformGrid Columns="3" />
+            </ItemsPanelTemplate>
+        </Setter>
+    </Style>
+</Styles>

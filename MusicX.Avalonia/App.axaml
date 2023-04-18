@@ -23,7 +23,10 @@
         <StyleInclude Source="Controls/AudioControl.axaml" />
         <StyleInclude Source="Controls/BigBannersControl.axaml" />
         <StyleInclude Source="Controls/TrackControl.axaml" />
+        <StyleInclude Source="Controls/LinkButton.axaml" />
+        <StyleInclude Source="Controls/RecommendedPlaylist.axaml" />
         <StyleInclude Source="Styles/DataValidationStyles.axaml" />
         <StyleInclude Source="Styles/CardStyles.axaml" />
+        <StyleInclude Source="Styles/ItemsControlStyles.axaml" />
     </Application.Styles>
 </Application>

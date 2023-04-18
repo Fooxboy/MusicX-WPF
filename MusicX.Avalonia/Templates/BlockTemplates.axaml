@@ -40,150 +40,95 @@
         <!-- Playlists -->
         <templates:BlockTemplate x:DataType="blocks:PlaylistsBlock" BlockDataType="music_playlists"
                                  LayoutName="large_slider">
-            <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto"
-                          HorizontalSnapPointsType="Mandatory" AllowAutoHide="True">
-                <ItemsControl Items="{CompiledBinding Playlists}" Margin="0,0,0,10">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate DataType="models:CatalogPlaylist">
+            <ItemsControl Items="{CompiledBinding Playlists}" Margin="0,0,0,10"
+                          Classes="HorizontalSlider">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="models:CatalogPlaylist">
+                        <controls:PlaylistCover ImageUrl="{CompiledBinding Photo.Photo270}"
+                                                Title="{CompiledBinding Title}"
+                                                Subtitle="{CompiledBinding Subtitle}"
+                                                Width="220"
+                                                Height="220"
+                                                Margin="10, 5"
+                                                Command="{CompiledBinding Path=$parent[views:MainWindow].GlobalViewModel.OpenPlaylistCommand}"
+                                                CommandParameter="{CompiledBinding}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </templates:BlockTemplate>
+        <templates:BlockTemplate x:DataType="blocks:PlaylistsBlock" BlockDataType="music_playlists"
+                                 LayoutName="list">
+            <ItemsControl Items="{CompiledBinding Playlists}" Margin="0,0,0,10"
+                          Classes="HorizontalSlider">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="models:CatalogPlaylist">
+                        <Grid ColumnDefinitions="Auto,*">
                             <controls:PlaylistCover ImageUrl="{CompiledBinding Photo.Photo270}"
-                                                    Title="{CompiledBinding Title}"
-                                                    Subtitle="{CompiledBinding Subtitle}"
                                                     Width="220"
                                                     Height="220"
                                                     Margin="10, 5"
                                                     Command="{CompiledBinding Path=$parent[views:MainWindow].GlobalViewModel.OpenPlaylistCommand}"
                                                     CommandParameter="{CompiledBinding}" />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </ScrollViewer>
-        </templates:BlockTemplate>
-        <templates:BlockTemplate x:DataType="blocks:PlaylistsBlock" BlockDataType="music_playlists"
-                                 LayoutName="list">
-            <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto"
-                          HorizontalSnapPointsType="Mandatory" AllowAutoHide="True">
-                <ItemsControl Items="{CompiledBinding Playlists}" Margin="0,0,0,10">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate DataType="models:CatalogPlaylist">
-                            <Grid ColumnDefinitions="Auto,*">
-                                <controls:PlaylistCover ImageUrl="{CompiledBinding Photo.Photo270}"
-                                                        Width="220"
-                                                        Height="220"
-                                                        Margin="10, 5"
-                                                        Command="{CompiledBinding Path=$parent[views:MainWindow].GlobalViewModel.OpenPlaylistCommand}"
-                                                        CommandParameter="{CompiledBinding}" />
-                                <UniformGrid Grid.Column="1" Rows="3" Margin="10,0" VerticalAlignment="Center">
-                                    <TextBlock Text="{CompiledBinding Title}"
-                                               FontSize="20"
-                                               FontWeight="Medium" Height="35" />
-                                    <TextBlock Text="{CompiledBinding MainArtists[0].Name, FallbackValue=Artist}"
-                                               FontSize="18"
-                                               FontWeight="Light" />
-                                    <TextBlock Text="{CompiledBinding CreateTime, StringFormat={}{0:yyyy}}"
-                                               FontSize="18"
-                                               FontWeight="Light" />
-                                </UniformGrid>
-                            </Grid>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </ScrollViewer>
+                            <UniformGrid Grid.Column="1" Rows="3" Margin="10,0" VerticalAlignment="Center">
+                                <TextBlock Text="{CompiledBinding Title}"
+                                           FontSize="20"
+                                           FontWeight="Medium" Height="35" />
+                                <TextBlock Text="{CompiledBinding MainArtists[0].Name, FallbackValue=Artist}"
+                                           FontSize="18"
+                                           FontWeight="Light" />
+                                <TextBlock Text="{CompiledBinding CreateTime, StringFormat={}{0:yyyy}}"
+                                           FontSize="18"
+                                           FontWeight="Light" />
+                            </UniformGrid>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </templates:BlockTemplate>
 
         <!-- Recommended Playlists -->
         <templates:BlockTemplate x:DataType="blocks:RecommendedPlaylistsBlock"
                                  BlockDataType="music_recommended_playlists"
                                  LayoutName="large_slider">
-            <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto"
-                          HorizontalSnapPointsType="Mandatory" AllowAutoHide="True">
-                <ItemsControl Items="{CompiledBinding RecommendedPlaylists}" Margin="0,0,0,10">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate DataType="blocks:RecommendedPlaylist">
-                            <Border Classes="Card" Padding="0" Margin="5">
-                                <StackPanel Orientation="Vertical">
-                                    <Button Classes="CardActionTransparent"
-                                            Command="{CompiledBinding Path=$parent[views:MainWindow].GlobalViewModel.OpenPlaylistCommand}"
-                                            CommandParameter="{CompiledBinding Playlist}"
-                                            Padding="0">
-                                        <Border Width="328"
-                                                Height="120"
-                                                Classes="CardStatic">
-                                            <Border.Background>
-                                                <SolidColorBrush Color="{CompiledBinding Color}" />
-                                            </Border.Background>
-                                            <Panel>
-                                                <Grid HorizontalAlignment="Left" ColumnDefinitions="Auto,*"
-                                                      VerticalAlignment="Top">
-                                                    <TextBlock
-                                                        Text="{CompiledBinding Percentage, StringFormat={}{0:P0}}"
-                                                        FontSize="24"
-                                                        FontWeight="Bold" />
-                                                    <TextBlock Grid.Column="1" Text="{CompiledBinding PercentageTitle}"
-                                                               TextTrimming="CharacterEllipsis"
-                                                               Margin="10,0,0,0"
-                                                               VerticalAlignment="Center"
-                                                               FontWeight="Light" />
-                                                </Grid>
-                                                <TextBlock Text="{CompiledBinding Playlist.Title}"
-                                                           TextTrimming="CharacterEllipsis"
-                                                           FontWeight="Medium" FontSize="26"
-                                                           VerticalAlignment="Bottom" HorizontalAlignment="Left" />
-                                            </Panel>
-                                        </Border>
-                                    </Button>
-                                    <ItemsControl Items="{CompiledBinding Audios}" Padding="12">
-                                        <ItemsControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <controls:DynamicUniformGrid Rows="3" />
-                                            </ItemsPanelTemplate>
-                                        </ItemsControl.ItemsPanel>
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate DataType="models:CatalogAudio">
-                                                <controls:AudioControl Audio="{CompiledBinding}" />
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-                                </StackPanel>
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </ScrollViewer>
+            <ItemsControl Items="{CompiledBinding RecommendedPlaylists}" Margin="0,0,0,10"
+                          Classes="HorizontalSlider">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="blocks:RecommendedPlaylist">
+                        <controls:RecommendedPlaylist Playlist="{CompiledBinding}" Margin="5" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </templates:BlockTemplate>
+        <templates:BlockTemplate x:DataType="blocks:RecommendedPlaylistsBlock"
+                                 BlockDataType="music_recommended_playlists"
+                                 LayoutName="list">
+            <ItemsControl Items="{CompiledBinding RecommendedPlaylists}" Margin="0,0,0,10"
+                          Classes="WrapPanel">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="blocks:RecommendedPlaylist">
+                        <controls:RecommendedPlaylist Playlist="{CompiledBinding}" Margin="5"
+                                                      HorizontalAlignment="Center" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </templates:BlockTemplate>
 
         <!-- Audios -->
         <templates:BlockTemplate x:DataType="blocks:AudiosBlock" BlockDataType="music_audios"
                                  LayoutName="triple_stacked_slider">
-            <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto"
-                          HorizontalSnapPointsType="Mandatory" AllowAutoHide="True">
-                <ItemsControl Items="{CompiledBinding Audios}" Margin="0,0,0,10">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <controls:DynamicUniformGrid Rows="3" HorizontalAlignment="Left" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate DataType="models:CatalogAudio">
-                            <controls:AudioControl Audio="{CompiledBinding}" />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </ScrollViewer>
+            <ItemsControl Items="{CompiledBinding Audios}" Margin="0,0,0,10"
+                          Classes="HorizontalSlider">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <controls:DynamicUniformGrid Rows="3" HorizontalAlignment="Left" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="models:CatalogAudio">
+                        <controls:AudioControl Audio="{CompiledBinding}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </templates:BlockTemplate>
 
         <!-- Action -->
@@ -197,7 +142,7 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="models:CatalogAction">
-                        <Button Classes="CardAction" HorizontalAlignment="Stretch"  
+                        <Button Classes="CardAction" HorizontalAlignment="Stretch"
                                 Command="{CompiledBinding $parent[views:MainWindow].GlobalViewModel.OpenActionCommand}"
                                 CommandParameter="{CompiledBinding}">
                             <TextBlock Text="{CompiledBinding Title}" FontSize="20" FontWeight="Medium"
@@ -217,43 +162,15 @@
         <!-- Links -->
         <templates:BlockTemplate x:DataType="blocks:LinksBlock" BlockDataType="links"
                                  LayoutName="slider">
-            <ItemsControl Items="{CompiledBinding Links}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <VirtualizingStackPanel Orientation="Horizontal" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
+            <ItemsControl Items="{CompiledBinding Links}" Classes="HorizontalVirtualizingSlider">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="models:CatalogLink">
-                        <Button Margin="5,0" Classes="CardAction" Width="220"
-                                Command="{CompiledBinding $parent[views:MainWindow].GlobalViewModel.OpenLinkCommand}"
-                                CommandParameter="{CompiledBinding}">
-                            <StackPanel HorizontalAlignment="Center">
-                                <controls:BlurryImage CornerRadius="99"
-                                                      Classes="Link"
-                                                      extensions:ImageLoader.BlurrySource="{CompiledBinding Images[3].Url}">
-                                    <controls:BlurryImage.Styles>
-                                        <Style Selector="controls|BlurryImage.Link">
-                                            <Setter Property="BlurLevel" Value="0" />
-                                            <Setter Property="Transitions">
-                                                <Transitions>
-                                                    <FloatTransition Property="BlurLevel" Duration="0.1" />
-                                                </Transitions>
-                                            </Setter>
-                                        </Style>
-                                        <Style Selector="controls|BlurryImage.Link:pointerover">
-                                            <Setter Property="BlurLevel" Value="8" />
-                                        </Style>
-                                    </controls:BlurryImage.Styles>
-                                </controls:BlurryImage>
-                                <TextBlock Margin="0,5,0,3"
-                                           Text="{CompiledBinding Title}"
-                                           HorizontalAlignment="Center" />
-                                <TextBlock Text="{CompiledBinding Subtitle}"
-                                           HorizontalAlignment="Center"
-                                           FontWeight="Light" />
-                            </StackPanel>
-                        </Button>
+                        <controls:LinkButton Margin="5,0" Classes="CardAction"
+                                             Command="{CompiledBinding $parent[views:MainWindow].GlobalViewModel.OpenLinkCommand}"
+                                             CommandParameter="{CompiledBinding}"
+                                             ImageUrl="{CompiledBinding Images[3].Url}"
+                                             Title="{CompiledBinding Title}"
+                                             Subtitle="{CompiledBinding Subtitle}" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
@@ -291,12 +208,8 @@
         <!-- Artist Videos -->
         <templates:BlockTemplate x:DataType="blocks:VideosBlock" BlockDataType="artist_videos"
                                  LayoutName="slider">
-            <ItemsControl Items="{CompiledBinding Videos}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <VirtualizingStackPanel Orientation="Horizontal" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
+            <ItemsControl Items="{CompiledBinding Videos}"
+                          Classes="HorizontalVirtualizingSlider">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="models:CatalogVideo">
                         <controls:PlaylistCover ImageUrl="{CompiledBinding Images[3].Url}"

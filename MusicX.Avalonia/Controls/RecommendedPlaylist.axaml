@@ -1,0 +1,76 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:MusicX.Avalonia.Controls"
+        xmlns:views="clr-namespace:MusicX.Avalonia.Views"
+        xmlns:models="clr-namespace:MusicX.Avalonia.Core.Models;assembly=MusicX.Avalonia.Core">
+    <Design.PreviewWith>
+        <controls:RecommendedPlaylist />
+    </Design.PreviewWith>
+    
+    <Style Selector="controls|RecommendedPlaylist /template/ Border#PART_PlaylistBackground">
+        <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
+        <Setter Property="BorderThickness" Value="{DynamicResource ThemeBorderThickness}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorderBrush}" />
+        <Setter Property="Background" Value="{DynamicResource ButtonBackgroundDisabled}" />
+    </Style>
+    <Style Selector="controls|RecommendedPlaylist:pointerover /template/ Border#PART_PlaylistBackground">
+        <Setter Property="Background" Value="{DynamicResource ButtonBackgroundPointerOver}" />
+    </Style>
+
+    <Style Selector="controls|RecommendedPlaylist">
+        <Setter Property="Width" Value="328" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Padding="{TemplateBinding Padding}" Name="PART_PlaylistBackground" Width="{TemplateBinding Width}">
+                    <StackPanel Orientation="Vertical">
+                        <Button Classes="CardActionTransparent"
+                                Command="{CompiledBinding Path=$parent[views:MainWindow].GlobalViewModel.OpenPlaylistCommand}"
+                                CommandParameter="{TemplateBinding Playlist}"
+                                Padding="0">
+                            <Border Width="{TemplateBinding Width}"
+                                    Height="120"
+                                    Padding="12"
+                                    CornerRadius="{DynamicResource OverlayCornerRadius}"
+                                    BorderThickness="{DynamicResource ThemeBorderThickness}"
+                                    BorderBrush="{DynamicResource ButtonBorderBrush}">
+                                <Border.Background>
+                                    <SolidColorBrush Color="{CompiledBinding Playlist.Color, RelativeSource={RelativeSource TemplatedParent}}" />
+                                </Border.Background>
+                                <Panel>
+                                    <Grid HorizontalAlignment="Left" ColumnDefinitions="Auto,*"
+                                          VerticalAlignment="Top">
+                                        <TextBlock
+                                            Text="{CompiledBinding Playlist.Percentage, StringFormat={}{0:P0}, RelativeSource={RelativeSource TemplatedParent}}"
+                                            FontSize="24"
+                                            FontWeight="Bold" />
+                                        <TextBlock Grid.Column="1" Text="{CompiledBinding Playlist.PercentageTitle, RelativeSource={RelativeSource TemplatedParent}}"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   Margin="10,0,0,0"
+                                                   VerticalAlignment="Center"
+                                                   FontWeight="Light" />
+                                    </Grid>
+                                    <TextBlock Text="{CompiledBinding Playlist.Playlist.Title, RelativeSource={RelativeSource TemplatedParent}}"
+                                               TextTrimming="CharacterEllipsis"
+                                               FontWeight="Medium" FontSize="26"
+                                               VerticalAlignment="Bottom" HorizontalAlignment="Left" />
+                                </Panel>
+                            </Border>
+                        </Button>
+                        <ItemsControl Items="{CompiledBinding Playlist.Audios, RelativeSource={RelativeSource TemplatedParent}}" Padding="12">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <controls:DynamicUniformGrid Rows="3" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="models:CatalogAudio">
+                                    <controls:AudioControl Audio="{CompiledBinding}" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+</Styles>
