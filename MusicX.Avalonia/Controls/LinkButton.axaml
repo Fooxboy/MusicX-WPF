@@ -5,36 +5,52 @@
     <Design.PreviewWith>
         <controls:LinkButton />
     </Design.PreviewWith>
+    
+    <Style Selector="controls|LinkButton:pointerover">
+        <Setter Property="Background" Value="{DynamicResource ButtonBackgroundPointerOver}" />
+    </Style>
 
     <Style Selector="controls|LinkButton">
+        <Setter Property="Padding" Value="12" />
+        <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
+        <Setter Property="BorderThickness" Value="{DynamicResource ThemeBorderThickness}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorderBrush}" />
+        <Setter Property="Background" Value="{DynamicResource ButtonBackgroundDisabled}" />
         <Setter Property="Width" Value="220" />
         <Setter Property="Template">
             <ControlTemplate>
-                <StackPanel HorizontalAlignment="Center">
-                    <controls:BlurryImage CornerRadius="99"
-                                          Classes="Link"
-                                          extensions:ImageLoader.BlurrySource="{TemplateBinding ImageUrl}">
-                        <controls:BlurryImage.Styles>
-                            <Style Selector="controls|BlurryImage.Link">
-                                <Setter Property="BlurLevel" Value="0" />
-                                <Setter Property="Transitions">
-                                    <Transitions>
-                                        <FloatTransition Property="BlurLevel" Duration="0.1" />
-                                    </Transitions>
-                                </Setter>
-                            </Style>
-                            <Style Selector="controls|BlurryImage.Link:pointerover">
-                                <Setter Property="BlurLevel" Value="8" />
-                            </Style>
-                        </controls:BlurryImage.Styles>
-                    </controls:BlurryImage>
-                    <TextBlock Margin="0,5,0,3"
-                               Text="{TemplateBinding Title}"
-                               HorizontalAlignment="Center" />
-                    <TextBlock Text="{TemplateBinding Subtitle}"
-                               HorizontalAlignment="Center"
-                               FontWeight="Light" />
-                </StackPanel>
+                <Border x:Name="PART_ContentPresenter"
+                                  Background="{TemplateBinding Background}"
+                                  BorderBrush="{TemplateBinding BorderBrush}"
+                                  BorderThickness="{TemplateBinding BorderThickness}"
+                                  CornerRadius="{TemplateBinding CornerRadius}"
+                                  Padding="{TemplateBinding Padding}">
+                    <StackPanel HorizontalAlignment="Center">
+                        <controls:BlurryImage CornerRadius="99"
+                                              Classes="Link"
+                                              extensions:ImageLoader.BlurrySource="{TemplateBinding ImageUrl}">
+                            <controls:BlurryImage.Styles>
+                                <Style Selector="controls|BlurryImage.Link">
+                                    <Setter Property="BlurLevel" Value="0" />
+                                    <Setter Property="Transitions">
+                                        <Transitions>
+                                            <FloatTransition Property="BlurLevel" Duration="0.1" />
+                                        </Transitions>
+                                    </Setter>
+                                </Style>
+                                <Style Selector="controls|BlurryImage.Link:pointerover">
+                                    <Setter Property="BlurLevel" Value="8" />
+                                </Style>
+                            </controls:BlurryImage.Styles>
+                        </controls:BlurryImage>
+                        <TextBlock Margin="0,5,0,3"
+                                   Text="{TemplateBinding Title}"
+                                   HorizontalAlignment="Center" />
+                        <TextBlock Text="{TemplateBinding Subtitle}"
+                                   HorizontalAlignment="Center"
+                                   FontWeight="Light" />
+                    </StackPanel>
+                </Border>
             </ControlTemplate>
         </Setter>
     </Style>

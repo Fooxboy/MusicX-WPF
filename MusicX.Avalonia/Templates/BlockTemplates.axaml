@@ -165,7 +165,7 @@
             <ItemsControl Items="{CompiledBinding Links}" Classes="HorizontalVirtualizingSlider">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="models:CatalogLink">
-                        <controls:LinkButton Margin="5,0" Classes="CardAction"
+                        <controls:LinkButton Margin="5,0"
                                              Command="{CompiledBinding $parent[views:MainWindow].GlobalViewModel.OpenLinkCommand}"
                                              CommandParameter="{CompiledBinding}"
                                              ImageUrl="{CompiledBinding Images[3].Url}"
