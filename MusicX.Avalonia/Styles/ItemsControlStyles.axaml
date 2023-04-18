@@ -35,8 +35,7 @@
     <Style Selector="ItemsControl.WrapPanel">
         <Setter Property="ItemsPanel">
             <ItemsPanelTemplate>
-                <!--<WrapPanel Orientation="Vertical" />--> <!-- TODO avalonia moment -->
-                <UniformGrid Columns="3" />
+                <WrapPanel />
             </ItemsPanelTemplate>
         </Setter>
     </Style>
