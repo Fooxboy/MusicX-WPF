@@ -14,6 +14,7 @@ public static class BlockMapper
             "music_recommended_playlists" => MapRecommendedPlaylistsBlock(
                 response.Playlists, response.RecommendedPlaylists, response.Audios, sectionBlock),
             "action" => MapActionBlock(sectionBlock),
+            "none" when sectionBlock.Layout.Name is "header" or "header_extended" => MapActionBlock(sectionBlock),
             "catalog_banners" => MapCatalogBannersBlock(response.CatalogBanners, sectionBlock),
             "links" => MapLinksBlock(response.Links, sectionBlock),
             "artist" => MapArtistBlock(response.Artists, sectionBlock),
