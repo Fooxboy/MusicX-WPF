@@ -66,6 +66,7 @@ public class MainWindowViewModel : ViewModelBase
                 await globalViewModel.OpenSectionAsync(id);
         }
 
+        CurrentModal = null;
         return default;
     }
 }
