@@ -5,7 +5,7 @@
     <Design.PreviewWith>
         <controls:LinkButton />
     </Design.PreviewWith>
-    
+
     <Style Selector="controls|LinkButton:pointerover">
         <Setter Property="Background" Value="{DynamicResource ButtonBackgroundPointerOver}" />
     </Style>
@@ -20,11 +20,11 @@
         <Setter Property="Template">
             <ControlTemplate>
                 <Border x:Name="PART_ContentPresenter"
-                                  Background="{TemplateBinding Background}"
-                                  BorderBrush="{TemplateBinding BorderBrush}"
-                                  BorderThickness="{TemplateBinding BorderThickness}"
-                                  CornerRadius="{TemplateBinding CornerRadius}"
-                                  Padding="{TemplateBinding Padding}">
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        Padding="{TemplateBinding Padding}">
                     <StackPanel HorizontalAlignment="Center">
                         <controls:BlurryImage CornerRadius="99"
                                               Classes="Link"
@@ -50,6 +50,31 @@
                                    HorizontalAlignment="Center"
                                    FontWeight="Light" />
                     </StackPanel>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+
+    <Style Selector="controls|LinkButton.CategoryLink">
+        <Setter Property="Width" Value="NaN" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border x:Name="PART_ContentPresenter"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        Padding="{TemplateBinding Padding}">
+                    <Grid ColumnDefinitions="Auto,*">
+                        <controls:BlurryImage Width="65" Height="65" CornerRadius="8"
+                                              BlurLevel="0"
+                                              extensions:ImageLoader.BlurrySource="{TemplateBinding ImageUrl}"/>
+                        <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="10,5,10,3"
+                                   VerticalAlignment="Center"
+                                   Text="{TemplateBinding Title}"
+                                   FontWeight="Medium"
+                                   FontSize="20" />
+                    </Grid>
                 </Border>
             </ControlTemplate>
         </Setter>

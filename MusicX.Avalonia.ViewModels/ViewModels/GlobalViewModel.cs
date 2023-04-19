@@ -84,7 +84,7 @@ public class GlobalViewModel : ViewModelBase
     {
         switch (link.Meta.ContentType)
         {
-            case "user" or "group":
+            case "user" or "group" or null:
             {
                 var catalog = await _api.GetCatalogAudioAsync(new(null, null, link.Url, null));
                 await OpenSectionAsync(catalog.Catalog.DefaultSection);
@@ -99,6 +99,7 @@ public class GlobalViewModel : ViewModelBase
                 await OpenSectionAsync(artist.Catalog.DefaultSection);
                 break;
             }
+            
             default:
                 throw new ArgumentOutOfRangeException(nameof(link.Meta.ContentType), link.Meta.ContentType,
                                                       "Unknown content type");

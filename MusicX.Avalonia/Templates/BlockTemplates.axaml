@@ -34,7 +34,7 @@
                         <DataTemplate DataType="models:CatalogAction">
                             <Button Content="{CompiledBinding Title}"
                                     Command="{CompiledBinding $parent[views:MainWindow].GlobalViewModel.OpenSectionCommand}"
-                                    CommandParameter="{CompiledBinding SectionId}"/>
+                                    CommandParameter="{CompiledBinding SectionId}" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
@@ -51,7 +51,7 @@
                         <DataTemplate DataType="models:CatalogAction">
                             <Button Content="{CompiledBinding Title}"
                                     Command="{CompiledBinding $parent[views:MainWindow].GlobalViewModel.OpenSectionCommand}"
-                                    CommandParameter="{CompiledBinding SectionId}"/>
+                                    CommandParameter="{CompiledBinding SectionId}" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
@@ -85,17 +85,18 @@
             <ItemsControl Items="{CompiledBinding Playlists}" Margin="0,0,0,10">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="models:CatalogPlaylist">
-                        <Button Command="{CompiledBinding Path=$parent[views:MainWindow].GlobalViewModel.OpenPlaylistCommand}"
-                                CommandParameter="{CompiledBinding}"
-                                Margin="5"
-                                HorizontalAlignment="Stretch"
-                                HorizontalContentAlignment="Left"
-                                Classes="CardActionTransparent">
+                        <Button
+                            Command="{CompiledBinding Path=$parent[views:MainWindow].GlobalViewModel.OpenPlaylistCommand}"
+                            CommandParameter="{CompiledBinding}"
+                            Margin="5"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Left"
+                            Classes="CardActionTransparent">
                             <Grid ColumnDefinitions="Auto,*">
                                 <controls:PlaylistCover ImageUrl="{CompiledBinding Photo.Photo270}"
                                                         Width="220"
                                                         Height="220"
-                                                        Margin="10, 5"/>
+                                                        Margin="10, 5" />
                                 <UniformGrid Grid.Column="1" Rows="3" Margin="10,0" VerticalAlignment="Center">
                                     <TextBlock Text="{CompiledBinding Title}"
                                                FontSize="20"
@@ -159,6 +160,16 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </templates:BlockTemplate>
+        <templates:BlockTemplate x:DataType="blocks:AudiosBlock" BlockDataType="music_audios"
+                                 LayoutName="list">
+            <ItemsControl Items="{CompiledBinding Audios}" Margin="0,0,0,10">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="models:CatalogAudio">
+                        <controls:AudioControl Audio="{CompiledBinding}" Classes="Full" Margin="0,3" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </templates:BlockTemplate>
 
         <!-- Action -->
         <templates:BlockTemplate x:DataType="blocks:ActionBlock" BlockDataType="action"
@@ -197,7 +208,29 @@
                         <controls:LinkButton Margin="5,0"
                                              Command="{CompiledBinding $parent[views:MainWindow].GlobalViewModel.OpenLinkCommand}"
                                              CommandParameter="{CompiledBinding}"
-                                             ImageUrl="{CompiledBinding Images[3].Url}"
+                                             ImageUrl="{CompiledBinding Images[0].Url}"
+                                             Title="{CompiledBinding Title}"
+                                             Subtitle="{CompiledBinding Subtitle}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </templates:BlockTemplate>
+        <templates:BlockTemplate x:DataType="blocks:LinksBlock" BlockDataType="links"
+                                 LayoutName="categories_list">
+            <ItemsControl Items="{CompiledBinding Links}" Margin="0,0,0,10"
+                          Classes="HorizontalSlider">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <controls:DynamicUniformGrid Columns="2" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="models:CatalogLink">
+                        <controls:LinkButton Margin="5"
+                                             Classes="CategoryLink"
+                                             Command="{CompiledBinding $parent[views:MainWindow].GlobalViewModel.OpenLinkCommand}"
+                                             CommandParameter="{CompiledBinding}"
+                                             ImageUrl="{CompiledBinding Images[0].Url}"
                                              Title="{CompiledBinding Title}"
                                              Subtitle="{CompiledBinding Subtitle}" />
                     </DataTemplate>
