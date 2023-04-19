@@ -26,7 +26,7 @@ public class ConfigurationService
         {
             if (value is null)
             {
-                Registry.CurrentUser.DeleteSubKeyTree($"{RootKey}\\Login");
+                Registry.CurrentUser.DeleteSubKeyTree($"{RootKey}\\Login", false);
                 return;
             }
 
