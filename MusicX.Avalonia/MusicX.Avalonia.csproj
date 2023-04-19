@@ -9,6 +9,8 @@
         <RuntimeIdentifiers>win-x64;osx-x64</RuntimeIdentifiers>
         
         <Version>0.0.1</Version>
+        
+        <ApplicationIcon>Assets/icon.ico</ApplicationIcon>
     </PropertyGroup>
     
     <PropertyGroup Condition=" $(Configuration) == 'Release' ">
