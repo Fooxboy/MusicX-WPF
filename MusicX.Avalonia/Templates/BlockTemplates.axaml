@@ -216,6 +216,21 @@
             </ItemsControl>
         </templates:BlockTemplate>
         <templates:BlockTemplate x:DataType="blocks:LinksBlock" BlockDataType="links"
+                                 LayoutName="list">
+            <ItemsControl Items="{CompiledBinding Links}" Classes="WrapPanel">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="models:CatalogLink">
+                        <controls:LinkButton Margin="5"
+                                             Command="{CompiledBinding $parent[views:MainWindow].GlobalViewModel.OpenLinkCommand}"
+                                             CommandParameter="{CompiledBinding}"
+                                             ImageUrl="{CompiledBinding Images[0].Url}"
+                                             Title="{CompiledBinding Title}"
+                                             Subtitle="{CompiledBinding Subtitle}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </templates:BlockTemplate>
+        <templates:BlockTemplate x:DataType="blocks:LinksBlock" BlockDataType="links"
                                  LayoutName="categories_list">
             <ItemsControl Items="{CompiledBinding Links}" Margin="0,0,0,10"
                           Classes="HorizontalSlider">
