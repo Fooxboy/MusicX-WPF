@@ -4,6 +4,12 @@ using Avalonia.Controls.Primitives;
 
 namespace MusicX.Avalonia.Controls;
 
+public enum ArrangeDirection
+{
+    LeftToRight,
+    UpToDown
+}
+
 public class DynamicUniformGrid : Panel
 {
     /// <summary>
@@ -23,6 +29,12 @@ public class DynamicUniformGrid : Panel
     /// </summary>
     public static readonly StyledProperty<int> FirstColumnProperty =
         AvaloniaProperty.Register<UniformGrid, int>(nameof(FirstColumn));
+
+    /// <summary>
+    /// Defines the <see cref="ArrangeDirection"/> property.
+    /// </summary>
+    public static readonly StyledProperty<ArrangeDirection> ArrangeDirectionProperty = AvaloniaProperty.Register<DynamicUniformGrid, ArrangeDirection>(
+        nameof(ArrangeDirection));
 
     private int _rows;
     private int _columns;
@@ -57,6 +69,15 @@ public class DynamicUniformGrid : Panel
     {
         get => GetValue(FirstColumnProperty);
         set => SetValue(FirstColumnProperty, value);
+    }
+    
+    /// <summary>
+    /// Specifies the arrange direction of children.
+    /// </summary>
+    public ArrangeDirection ArrangeDirection
+    {
+        get => GetValue(ArrangeDirectionProperty);
+        set => SetValue(ArrangeDirectionProperty, value);
     }
 
     protected override Size MeasureOverride(Size availableSize)
@@ -103,12 +124,23 @@ public class DynamicUniformGrid : Panel
 
             child.Arrange(new Rect(x * width, y * height, width, height));
 
-            x++;
-
-            if (x >= _columns)
+            if (ArrangeDirection == ArrangeDirection.LeftToRight)
             {
+                x++;
+
+                if (x < _columns) continue;
+            
                 x = 0;
                 y++;
+            }
+            else
+            {
+                y++;
+                
+                if (y < _rows) continue;
+
+                y = 0;
+                x++;
             }
         }
 
@@ -125,15 +157,7 @@ public class DynamicUniformGrid : Panel
             FirstColumn = 0;
         }
 
-        var itemCount = FirstColumn;
-
-        foreach (var child in Children)
-        {
-            if (child.IsVisible)
-            {
-                itemCount++;
-            }
-        }
+        var itemCount = FirstColumn + Children.Count(child => child.IsVisible);
 
         if (_rows == 0)
         {
@@ -144,7 +168,7 @@ public class DynamicUniformGrid : Panel
             else
             {
                 _columns = Math.Min(_columns, itemCount);
-                _rows = Math.DivRem(itemCount, _columns, out int rem);
+                _rows = Math.DivRem(itemCount, _columns, out var rem);
 
                 if (rem != 0)
                 {
@@ -155,7 +179,7 @@ public class DynamicUniformGrid : Panel
         else if (_columns == 0)
         {
             _rows = Math.Min(_rows, itemCount);
-            _columns = Math.DivRem(itemCount, _rows, out int rem);
+            _columns = Math.DivRem(itemCount, _rows, out var rem);
 
             if (rem != 0)
             {

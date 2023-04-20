@@ -150,7 +150,7 @@
                           Classes="HorizontalSlider">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <controls:DynamicUniformGrid Rows="3" HorizontalAlignment="Left" />
+                        <controls:DynamicUniformGrid Rows="3" HorizontalAlignment="Left" ArrangeDirection="UpToDown" />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
