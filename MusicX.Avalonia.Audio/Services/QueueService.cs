@@ -7,14 +7,14 @@ using ReactiveUI;
 
 namespace MusicX.Avalonia.Audio.Services;
 
-public class QueueService
+public class QueueService : IQueueService
 {
-    private readonly PlayerService _playerService;
+    private readonly IPlayerService _playerService;
     
     public IPlaylist? CurrentPlaylist { get; private set; }
     public IObservableCollection<PlaylistTrack> Queue { get; } = new ObservableCollectionExtended<PlaylistTrack>();
 
-    public QueueService(PlayerService playerService)
+    public QueueService(IPlayerService playerService)
     {
         _playerService = playerService;
         _playerService.TrackEnded += PlayerServiceOnTrackEnded;

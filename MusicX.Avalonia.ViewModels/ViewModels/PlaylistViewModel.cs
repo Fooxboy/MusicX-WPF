@@ -17,11 +17,11 @@ public class PlaylistViewModel : ViewModelBase
     private readonly Api _api;
     private readonly GlobalViewModel _viewModel;
     private readonly ConfigurationService _configurationService;
-    private readonly QueueService _queueService;
+    private readonly IQueueService _queueService;
 
     public ReactiveCommand<PlaylistTrack?,Unit> PlayTrackCommand { get; }
 
-    public PlaylistViewModel(PlayerService playerService, Api api, GlobalViewModel viewModel, ConfigurationService configurationService, QueueService queueService)
+    public PlaylistViewModel(IPlayerService playerService, Api api, GlobalViewModel viewModel, ConfigurationService configurationService, IQueueService queueService)
     {
         _api = api;
         _viewModel = viewModel;
@@ -55,7 +55,7 @@ public class PlaylistViewModel : ViewModelBase
     public IObservableCollection<PlaylistTrack> Tracks { get; set; } =
         new ObservableCollectionExtended<PlaylistTrack>();
 
-    public PlayerService PlayerService { get; }
+    public IPlayerService PlayerService { get; }
 
     public async Task LoadAsync(CatalogPlaylist playlist)
     {

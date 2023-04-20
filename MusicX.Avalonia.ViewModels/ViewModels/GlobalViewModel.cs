@@ -16,10 +16,10 @@ namespace MusicX.Avalonia.ViewModels.ViewModels;
 public class GlobalViewModel : ViewModelBase
 {
     private readonly ConcurrentDictionary<long, OneOf<CatalogProfile, CatalogGroup>> _profiles = new();
-    private readonly QueueService _queueService;
+    private readonly IQueueService _queueService;
     private readonly Api _api;
     private readonly IServiceProvider _provider;
-    public PlayerService PlayerService { get; }
+    public IPlayerService PlayerService { get; }
     public ReactiveCommand<CatalogAudio, Unit> AudioClickCommand { get; }
     public ReactiveCommand<CatalogPlaylist, Unit> OpenPlaylistCommand { get; }
     public ReactiveCommand<PlaylistTrack,Unit> TrackClickCommand { get; }
@@ -29,7 +29,7 @@ public class GlobalViewModel : ViewModelBase
     public ReactiveCommand<CatalogVideo,Unit> OpenVideoPlayerCommand { get; }
     public ReactiveCommand<CatalogAction,Unit> OpenActionCommand { get; }
 
-    public GlobalViewModel(PlayerService playerService, QueueService queueService, Api api, IServiceProvider provider)
+    public GlobalViewModel(IPlayerService playerService, IQueueService queueService, Api api, IServiceProvider provider)
     {
         _queueService = queueService;
         _api = api;

@@ -48,7 +48,7 @@ public class TrackControl : TemplatedControl
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        _disposable = App.Provider.GetService<PlayerService>()
+        _disposable = App.Provider.GetService<IPlayerService>()
                          .WhenValueChanged(x => x.CurrentTrack)
                          .ObserveOn(RxApp.MainThreadScheduler)
                          .Subscribe(track =>

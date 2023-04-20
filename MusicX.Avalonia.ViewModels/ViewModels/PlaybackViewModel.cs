@@ -7,11 +7,11 @@ namespace MusicX.Avalonia.ViewModels.ViewModels;
 
 public class PlaybackViewModel : ViewModelBase
 {
-    public PlayerService PlayerService { get; }
+    public IPlayerService PlayerService { get; }
     
-    private readonly QueueService _queueService;
+    private readonly IQueueService _queueService;
 
-    public PlaybackViewModel(PlayerService playerService, QueueService queueService)
+    public PlaybackViewModel(IPlayerService playerService, IQueueService queueService)
     {
         PlayerService = playerService;
         _queueService = queueService;

@@ -7,13 +7,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\MusicX.Avalonia.Core\MusicX.Avalonia.Core.csproj"/>
-        <ProjectReference Include="..\MusicX.Shared\MusicX.Shared.csproj"/>
+        <ProjectReference Include="..\MusicX.Avalonia.Core\MusicX.Avalonia.Core.csproj" />
+        <ProjectReference Include="..\MusicX.Shared\MusicX.Shared.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="ManagedBass" Version="3.1.1"/>
-        <PackageReference Include="ManagedBass.Hls" Version="3.1.1"/>
+        <PackageReference Include="ManagedBass" Version="3.1.1" />
+        <PackageReference Include="ManagedBass.Hls" Version="3.1.1" />
     </ItemGroup>
 
     <ItemGroup>

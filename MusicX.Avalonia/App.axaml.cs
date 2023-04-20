@@ -1,20 +1,13 @@
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using Avalonia.ReactiveUI;
 using Jab;
-using MusicX.Avalonia.Audio;
 using MusicX.Avalonia.Audio.Services;
 using MusicX.Avalonia.Core;
-using MusicX.Avalonia.Core.Models;
 using MusicX.Avalonia.Core.Services;
 using MusicX.Avalonia.Pages;
-using MusicX.Avalonia.ViewModels;
 using MusicX.Avalonia.ViewModels.ViewModels;
 using MusicX.Avalonia.Views;
-using ReactiveUI;
-using Splat;
 using VkApi;
 
 namespace MusicX.Avalonia;
@@ -48,8 +41,8 @@ public partial class App : Application
 [Transient<PlaylistViewModel>]
 [Singleton<GlobalViewModel>]
 [Transient<VideoModalViewModel>]
-[Singleton<PlayerService>]
-[Singleton<QueueService>]
+[Singleton<IPlayerService>(Factory = nameof(CreatePlayerService))]
+[Singleton<IQueueService>(Factory = nameof(CreateQueueService))]
 [Transient<MainWindow>]
 [Transient<LoginPage>]
 [Transient<SectionPage>]
@@ -69,6 +62,31 @@ internal partial class ServiceProvider : IServiceModule
         
         return vkApi;
     }
+
+    public IPlayerService CreatePlayerService()
+    {
+        return OperatingSystem.IsWindowsVersionAtLeast(10, 0, 19041) ? UseWindowsAudio() : UseBassAudio();
+    }
+
+    public IQueueService CreateQueueService()
+    {
+        return OperatingSystem.IsWindowsVersionAtLeast(10, 0, 19041) ? UseWindowsQueue() : new QueueService(GetService<IPlayerService>());
+    }
+
+    private static IPlayerService UseBassAudio() => new PlayerService();
+    private IPlayerService UseWindowsAudio() =>
+#if WINDOWS
+        new Audio.Windows.WindowsPlayerService();
+#else
+        throw new PlatformNotSupportedException();
+#endif
+
+    private IQueueService UseWindowsQueue() =>
+#if WINDOWS
+        new Audio.Windows.WindowsQueueService(GetService<IPlayerService>());
+#else
+        throw new PlatformNotSupportedException();
+#endif
 
     public partial class Scope
     {

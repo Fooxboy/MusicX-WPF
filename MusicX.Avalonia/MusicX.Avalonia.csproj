@@ -1,12 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFrameworks>net8.0;net8.0-windows10.0.19041.0</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <TrimMode>copyused</TrimMode>
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
-        <RuntimeIdentifiers>win-x64;osx-x64</RuntimeIdentifiers>
         
         <Version>0.0.1</Version>
         
@@ -20,6 +19,10 @@
         <GenerateDocumentationFile>false</GenerateDocumentationFile>
         <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
         <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    </PropertyGroup>
+    
+    <PropertyGroup Condition=" $(TargetFramework) == 'net8.0-windows10.0.19041.0' ">
+        <DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
     </PropertyGroup>
 
     <ItemGroup>
@@ -59,6 +62,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\MusicX.Avalonia.Audio.Windows\MusicX.Avalonia.Audio.Windows.csproj" Condition=" $(TargetFramework) == 'net8.0-windows10.0.19041.0' " />
       <ProjectReference Include="..\MusicX.Avalonia.Audio\MusicX.Avalonia.Audio.csproj" />
       <ProjectReference Include="..\MusicX.Avalonia.Core\MusicX.Avalonia.Core.csproj" />
       <ProjectReference Include="..\MusicX.Avalonia.ViewModels\MusicX.Avalonia.ViewModels.csproj" />

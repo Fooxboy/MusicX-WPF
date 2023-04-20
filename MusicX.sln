@@ -46,6 +46,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicX.Avalonia.ViewModels"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentAvalonia", "FluentAvalonia\src\FluentAvalonia\FluentAvalonia.csproj", "{CE518FD2-ED25-439C-9F0B-FD852B6A0321}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicX.Avalonia.Audio.Windows", "MusicX.Avalonia.Audio.Windows\MusicX.Avalonia.Audio.Windows.csproj", "{3A2FBCFE-4243-4A96-896A-515FD67BAD19}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -128,6 +130,10 @@ Global
 		{CE518FD2-ED25-439C-9F0B-FD852B6A0321}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE518FD2-ED25-439C-9F0B-FD852B6A0321}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CE518FD2-ED25-439C-9F0B-FD852B6A0321}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A2FBCFE-4243-4A96-896A-515FD67BAD19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A2FBCFE-4243-4A96-896A-515FD67BAD19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A2FBCFE-4243-4A96-896A-515FD67BAD19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A2FBCFE-4243-4A96-896A-515FD67BAD19}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -6,7 +6,7 @@ using MusicX.Shared.Player;
 
 namespace MusicX.Avalonia.Audio.Services;
 
-public class PlayerService : IDisposable, INotifyPropertyChanged
+public class PlayerService : IPlayerService
 {
     private int? _bassStreamPtr;
     private PlaylistTrack? _currentTrack;

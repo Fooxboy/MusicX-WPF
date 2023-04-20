@@ -16,7 +16,7 @@ namespace MusicX.Avalonia.ViewModels.ViewModels;
 public class SectionTabViewModel : MenuTabViewModel, IEquatable<SectionTabViewModel>, IActivatableViewModel
 {
     private readonly Api _api;
-    private readonly QueueService _queueService;
+    private readonly IQueueService _queueService;
     private string _title = string.Empty;
     private string? _nextFrom;
     public override string Title => _title;
@@ -37,7 +37,7 @@ public class SectionTabViewModel : MenuTabViewModel, IEquatable<SectionTabViewMo
     
     public bool IsLoading { get; set; }
 
-    public SectionTabViewModel(Api api, QueueService queueService)
+    public SectionTabViewModel(Api api, IQueueService queueService)
     {
         _api = api;
         _queueService = queueService;
