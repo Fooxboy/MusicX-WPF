@@ -44,8 +44,7 @@ public class PlaylistViewModel : ViewModelBase
 
     private Task PlayTrackAsync(PlaylistTrack? track)
     {
-        return _queueService.PlayPlaylistAsync(new PlaylistPlaylist(_api, Playlist, Tracks), CancellationToken.None,
-                                        track?.Data.Url).AsTask();
+        return _queueService.PlayPlaylistAsync(new PlaylistPlaylist(_api, Playlist, Tracks), CancellationToken.None, track).AsTask();
     }
 
     public PlaylistOwner Owner { get; set; } = null!;

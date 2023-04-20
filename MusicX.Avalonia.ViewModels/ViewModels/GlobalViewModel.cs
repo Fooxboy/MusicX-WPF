@@ -140,7 +140,7 @@ public class GlobalViewModel : ViewModelBase
         else
             playlist = new BlockPlaylist(_api, audio.ParentBlockId);
 
-        return _queueService.PlayPlaylistAsync(playlist, token, audio.Url).AsTask();
+        return _queueService.PlayPlaylistAsync(playlist, token, audio.ToTrack()).AsTask();
     }
 
     private Task PlayAsync(PlaylistTrack track, CancellationToken token)
@@ -154,7 +154,7 @@ public class GlobalViewModel : ViewModelBase
         else
             playlist = new BlockPlaylist(_api, data.ParentBlockId);
 
-        return _queueService.PlayPlaylistAsync(playlist, token, data.Url).AsTask();
+        return _queueService.PlayPlaylistAsync(playlist, token, track).AsTask();
     }
 
     public void CacheProfiles(IEnumerable<CatalogProfile> profiles)

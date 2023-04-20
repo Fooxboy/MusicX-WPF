@@ -10,5 +10,5 @@ public interface IQueueService
     IObservableCollection<PlaylistTrack> Queue { get; }
     void Next();
     void Previous();
-    ValueTask PlayPlaylistAsync(IPlaylist playlist, CancellationToken token, string? url = null);
+    ValueTask PlayPlaylistAsync(IPlaylist playlist, CancellationToken token, PlaylistTrack? track = null);
 }
