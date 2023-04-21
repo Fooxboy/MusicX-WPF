@@ -1,48 +1,48 @@
 ﻿using System.Collections.Frozen;
+using System.Reactive.Linq;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
+using Avalonia.Data;
 using Avalonia.Metadata;
-using MusicX.Avalonia.Core.Blocks;
 
 namespace MusicX.Avalonia.Templates;
 
-public class BlockElementFactory : ElementFactory
+public class KeyedElementFactory : ElementFactory
 {
-    private FrozenDictionary<(string DataType, string LayoutName), BlockTemplate>? _templates;
+    private FrozenDictionary<string, KeyedTemplate>? _templates;
 
     public RecyclePool Pool { get; } = new();
 
-    [Content] public ICollection<BlockTemplate> Templates { get; } = new List<BlockTemplate>();
+    [Content] public ICollection<KeyedTemplate> Templates { get; } = new List<KeyedTemplate>();
     
     public IDataTemplate? FallbackTemplate { get; set; }
 
     protected override Control GetElementCore(ElementFactoryGetArgs args)
     {
-        if (args.Data is not BlockBase block)
+        if (args.Data is not { } data)
             throw new ArgumentException(null, nameof(args));
+        
+        var key = data.ToString()!;
 
-        if (Pool.TryGetElement(block.Id, args.Parent) is { } element)
+        if (Pool.TryGetElement(key, args.Parent) is { } element)
             return element;
 
-        _templates ??= Templates.ToFrozenDictionary(b => (b.BlockDataType, b.LayoutName));
+        _templates ??= Templates.ToFrozenDictionary(b => b.DataKey);
         
-        if (!_templates.TryGetValue((block.DataType, block.Layout.Name), out var template))
+        if (!_templates.TryGetValue(key, out var template))
         {
             if (FallbackTemplate is null)
                 throw new KeyNotFoundException(
-                    $"Missing template for {block.DataType} with layout {block.Layout.Name}");
-            
-            if (Pool.TryGetElement(block.Id, args.Parent) is { } fallbackElement)
-                return fallbackElement;
+                    $"Missing template for {key}");
 
-            fallbackElement = FallbackTemplate.Build(args.Data)!;
+            var fallbackElement = FallbackTemplate.Build(args.Data)!;
             Pool.SetReuseKey(fallbackElement, "FallbackBlock");
             
             return fallbackElement;
         }
         
         element = template.Build(args.Data, args.Parent);
-        Pool.SetReuseKey(element, block.Id);
+        Pool.SetReuseKey(element, key);
         
         return element;
     }

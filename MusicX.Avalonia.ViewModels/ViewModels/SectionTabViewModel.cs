@@ -1,12 +1,9 @@
-﻿using System.Reactive;
-using DynamicData;
+﻿using DynamicData;
 using DynamicData.Binding;
 using FluentAvalonia.UI.Controls;
-using MusicX.Avalonia.Audio.Playlists;
 using MusicX.Avalonia.Audio.Services;
 using MusicX.Avalonia.Core.Blocks;
 using MusicX.Avalonia.Core.Extensions;
-using MusicX.Avalonia.Core.Models;
 using ReactiveUI;
 using VkApi;
 using OneOf;

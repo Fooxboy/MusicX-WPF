@@ -10,6 +10,32 @@
                     xmlns:ui="clr-namespace:FluentAvalonia.UI.Controls;assembly=FluentAvalonia"
                     xmlns:views="clr-namespace:MusicX.Avalonia.Views"
                     xmlns:extensions="clr-namespace:MusicX.Avalonia.Extensions">
+    <templates:KeyedElementFactory x:Key="HeaderActionsElementFactory">
+        <templates:KeyedTemplate DataKey="open_section" x:DataType="models:CatalogAction">
+            <Button Content="{CompiledBinding Title}"
+                    Command="{CompiledBinding $parent[views:MainWindow].GlobalViewModel.OpenSectionCommand}"
+                    CommandParameter="{CompiledBinding SectionId}" />
+        </templates:KeyedTemplate>
+        <templates:KeyedTemplate DataKey="select_sorting" x:DataType="models:CatalogAction">
+            <ui:FAComboBox Items="{CompiledBinding Options}" 
+                           SelectedItem="{CompiledBinding Options[0]}">
+                <ui:FAComboBox.ItemTemplate>
+                    <DataTemplate DataType="models:CatalogActionOption">
+                        <Grid ColumnDefinitions="Auto,*" Margin="3,0">
+                            <Border Width="16" Height="16">
+                                <Border.Background>
+                                    <ImageBrush extensions:ImageLoader.BrushSource="{CompiledBinding Icon}" />
+                                </Border.Background>
+                            </Border>
+                            <TextBlock Grid.Column="1" Margin="3,0,0,0"
+                                       Text="{CompiledBinding Text}" />
+                        </Grid>
+                    </DataTemplate>
+                </ui:FAComboBox.ItemTemplate>
+            </ui:FAComboBox>
+        </templates:KeyedTemplate>
+    </templates:KeyedElementFactory>
+
     <templates:BlockElementFactory x:Key="BlockElementFactory">
         <templates:BlockElementFactory.FallbackTemplate>
             <DataTemplate DataType="blocks:BlockBase">
@@ -29,15 +55,8 @@
                            FontSize="26"
                            FontWeight="Bold" />
                 <ItemsControl Grid.Column="1" Classes="HorizontalSlider"
-                              Items="{CompiledBinding Actions}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate DataType="models:CatalogAction">
-                            <Button Content="{CompiledBinding Title}"
-                                    Command="{CompiledBinding $parent[views:MainWindow].GlobalViewModel.OpenSectionCommand}"
-                                    CommandParameter="{CompiledBinding SectionId}" />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                              Items="{CompiledBinding Actions}"
+                              ItemTemplate="{StaticResource HeaderActionsElementFactory}" />
             </Grid>
         </templates:BlockTemplate>
         <templates:BlockTemplate x:DataType="blocks:ActionBlock" BlockDataType="none" LayoutName="header">
@@ -46,15 +65,8 @@
                            FontSize="24"
                            FontWeight="Medium" />
                 <ItemsControl Grid.Column="1" Classes="HorizontalSlider"
-                              Items="{CompiledBinding Actions}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate DataType="models:CatalogAction">
-                            <Button Content="{CompiledBinding Title}"
-                                    Command="{CompiledBinding $parent[views:MainWindow].GlobalViewModel.OpenSectionCommand}"
-                                    CommandParameter="{CompiledBinding SectionId}" />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                              Items="{CompiledBinding Actions}"
+                              ItemTemplate="{StaticResource HeaderActionsElementFactory}" />
             </Grid>
         </templates:BlockTemplate>
         <templates:BlockTemplate x:DataType="blocks:BlockBase" BlockDataType="none" LayoutName="separator">

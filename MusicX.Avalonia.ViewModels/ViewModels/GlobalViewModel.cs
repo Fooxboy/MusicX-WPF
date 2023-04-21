@@ -1,7 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Reactive;
-using System.Runtime.InteropServices;
 using MusicX.Avalonia.Audio.Playlists;
 using MusicX.Avalonia.Audio.Services;
 using MusicX.Avalonia.Core.Extensions;
