@@ -77,7 +77,7 @@ namespace MusicX.ViewModels.Modals
             
         }
 
-        public void LoadDataFromPlaylist(Playlist plist)
+        public async void LoadDataFromPlaylist(Playlist plist)
         {
             this.CreateIsEnable = true;
             this.CoverPath = plist.Cover;
@@ -90,6 +90,16 @@ namespace MusicX.ViewModels.Modals
             foreach (var track in plist.Audios)
             {
                 this.Tracks.Add(track);
+            }
+
+            while (plist.Count > Tracks.Count)
+            {
+                var tracks = await vkService.AudioGetAsync(plist.Id, plist.OwnerId, plist.AccessKey, this.Tracks.Count);
+
+                foreach(var track in tracks.Items)
+                {
+                    this.Tracks.Add(track);
+                }
             }
 
         }
