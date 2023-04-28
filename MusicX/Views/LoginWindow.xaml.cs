@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
 using MusicX.Models;
+using System.Diagnostics;
 
 namespace MusicX.Views
 {
@@ -212,6 +213,15 @@ namespace MusicX.Views
             });
 
             
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "https://t.me/MusicXPlayer",
+                UseShellExecute = true
+            });
         }
     }
 }

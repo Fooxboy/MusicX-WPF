@@ -106,6 +106,7 @@
             </StackPanel>
         </wpfui:Card>
 
+
         <wpfui:Snackbar
             x:Name="RootSnackbar"
             Title="Hello World!"
@@ -118,6 +119,9 @@
         
         <controls:ModalFrame Grid.Row="1"
                              x:Name="ModalFrame" />
+
+        <Button HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Bottom" Margin="0,0,0,10" Click="Button_Click_1"  Content="Телеграм канал для решения проблем"/>
+
 
     </Grid>
 </wpfui:UiWindow>
