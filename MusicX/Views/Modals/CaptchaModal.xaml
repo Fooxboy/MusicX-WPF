@@ -14,6 +14,7 @@
                     Background="Transparent">
     <Grid>
         <StackPanel HorizontalAlignment="Center" Margin="0,30,0,0">
+
             <Image Source="{Binding ImageUrl}" Stretch="None" />
             <ui:TextBox Name="KeyBox" MinWidth="150" Margin="0,20,0,0" />
             <ui:Button Content="Отправить"
@@ -21,6 +22,9 @@
                        HorizontalAlignment="Center"
                        CommandParameter="{Binding Text, ElementName=KeyBox}"
                        Command="{Binding SolveCommand}" />
+
+            <TextBlock Margin="0,10,0,0" TextWrapping="Wrap" Opacity="0.4" Text="Если код из СМС не приходит, попробуйте привязать гугл аутификатор или резервные коды"/>
+
         </StackPanel>
     </Grid>
 </controls:ModalPage>
