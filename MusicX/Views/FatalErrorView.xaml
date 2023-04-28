@@ -19,7 +19,7 @@
 
     <Grid>
         <wpfui:TitleBar/>
-        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer Margin="0,40,0,0" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
             <StackPanel>
                 <TextBlock
                     Margin="0,30,0,0"

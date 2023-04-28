@@ -191,7 +191,17 @@ namespace MusicX.Views
                             }
 
                         }
-                    }catch(Exception ex)
+                    }
+                    catch(System.Net.Http.HttpRequestException ex)
+                    {
+                        logger.Error(ex, ex.Message);
+
+                        var error = new NoInternetWindow();
+
+                        error.Show();
+                        this.Close();
+                    }
+                    catch(Exception ex)
                     {
                         logger.Error(ex, ex.Message);
 
@@ -202,8 +212,6 @@ namespace MusicX.Views
                     }
                     
                 });
-
-                
             });
         }
     }
