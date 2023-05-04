@@ -1,0 +1,72 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:MusicX.Avalonia.ViewModels.ViewModels;assembly=MusicX.Avalonia.ViewModels"
+             xmlns:controls="clr-namespace:MusicX.Avalonia.Controls"
+             xmlns:player="clr-namespace:MusicX.Shared.Player;assembly=MusicX.Shared"
+             xmlns:pages="clr-namespace:MusicX.Avalonia.Pages"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="MusicX.Avalonia.Pages.QueuePage"
+             x:DataType="viewModels:QueueViewModel">
+
+    <Grid RowDefinitions="Auto,*" Margin="5">
+        <TextBlock Text="Очередь"
+                   FontSize="26"
+                   FontWeight="Bold" Margin="0,15,0,10" />
+
+        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible"
+                      IsScrollInertiaEnabled="True"
+                      AllowAutoHide="True"
+                      Name="QueueScroll">
+            <StackPanel Orientation="Vertical">
+                <ItemsControl ItemsSource="{CompiledBinding QueueService.Queue}" Margin="0,0,0,10" Name="Queue">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel Orientation="Vertical" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="player:PlaylistTrack">
+                            <TemplatedControl Classes="Track">
+                                <Classes.PlayingTrack>
+                                    <MultiBinding Converter="{StaticResource ObjectEqualsConverter}">
+                                        <CompiledBinding />
+                                        <CompiledBinding
+                                            Path="$parent[pages:QueuePage].ViewModelDirect.PlayerService.CurrentTrack" />
+                                    </MultiBinding>
+                                </Classes.PlayingTrack>
+                                <TemplatedControl.Styles>
+                                    <Style Selector="TemplatedControl.Track">
+                                        <Setter Property="Template">
+                                            <ControlTemplate>
+                                                <controls:TrackControl Track="{CompiledBinding}" Margin="5" />
+                                            </ControlTemplate>
+                                        </Setter>
+                                    </Style>
+                                    <Style Selector="TemplatedControl.PlayingTrack">
+                                        <Setter Property="Template">
+                                            <ControlTemplate>
+                                                <StackPanel Orientation="Vertical" Margin="0,10">
+                                                    <TextBlock Text="Сейчас играет" FontSize="16" Margin="5,0" />
+                                                    <controls:TrackControl Track="{CompiledBinding}" Margin="5" />
+                                                </StackPanel>
+                                            </ControlTemplate>
+                                        </Setter>
+                                    </Style>
+                                </TemplatedControl.Styles>
+                            </TemplatedControl>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <TextBlock IsVisible="{CompiledBinding QueueService.CurrentPlaylist.CanGetChunk, FallbackValue=False}"
+                           FontSize="20"
+                           FontWeight="Medium" Margin="5,0,0,0">
+                    <Run>Далее: </Run>
+                    <Run Text="{CompiledBinding QueueService.CurrentPlaylist.Title, FallbackValue={x:Null}}" />
+                </TextBlock>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

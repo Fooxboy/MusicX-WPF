@@ -6,7 +6,7 @@ using VkApi;
 
 namespace MusicX.Avalonia.Audio.Playlists;
 
-public class BlockPlaylist : IPlaylist, INotifyPropertyChanged
+public class BlockPlaylist : IPlaylist
 {
     private readonly Api _api;
     private readonly string _blockId;
@@ -31,6 +31,7 @@ public class BlockPlaylist : IPlaylist, INotifyPropertyChanged
         OnPropertyChanged(nameof(Title));
 
         _nextFrom = response.Section.NextFrom;
+        OnPropertyChanged(nameof(CanGetChunk));
 
         return response.Audios.Select(TrackExtensions.ToTrack);
     }

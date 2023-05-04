@@ -1,4 +1,5 @@
-﻿using MusicX.Shared.Player;
+﻿using System.ComponentModel;
+using MusicX.Shared.Player;
 
 namespace MusicX.Avalonia.Audio.Playlists;
 
@@ -18,4 +19,6 @@ public class SinglePlaylist : IPlaylist
     {
         return new(new[] { _track });
     }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
 }

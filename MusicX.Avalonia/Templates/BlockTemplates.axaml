@@ -17,23 +17,37 @@
                     CommandParameter="{CompiledBinding SectionId}" />
         </templates:KeyedTemplate>
         <templates:KeyedTemplate DataKey="select_sorting" x:DataType="models:CatalogAction">
-            <ui:FAComboBox Items="{CompiledBinding Options}" 
+            <ui:FAComboBox ItemsSource="{CompiledBinding Options}" 
                            SelectedItem="{CompiledBinding Options[0]}">
                 <ui:FAComboBox.ItemTemplate>
                     <DataTemplate DataType="models:CatalogActionOption">
-                        <Grid ColumnDefinitions="Auto,*" Margin="3,0">
-                            <Border Width="16" Height="16">
-                                <Border.Background>
-                                    <ImageBrush extensions:ImageLoader.BrushSource="{CompiledBinding Icon}" />
-                                </Border.Background>
-                            </Border>
-                            <TextBlock Grid.Column="1" Margin="3,0,0,0"
-                                       Text="{CompiledBinding Text}" />
-                        </Grid>
+                        <TextBlock Margin="3,0"
+                                   Text="{CompiledBinding Text}" />
                     </DataTemplate>
                 </ui:FAComboBox.ItemTemplate>
             </ui:FAComboBox>
         </templates:KeyedTemplate>
+    </templates:KeyedElementFactory>
+    
+    <templates:KeyedElementFactory x:Key="ActionElementFactory">
+        <templates:KeyedTemplate DataKey="play_shuffled_audios_from_block" x:DataType="models:CatalogAction">
+            <Button Classes="CardAction" HorizontalAlignment="Stretch"
+                    Command="{CompiledBinding $parent[views:MainWindow].GlobalViewModel.OpenActionCommand}"
+                    CommandParameter="{CompiledBinding}">
+                <TextBlock Text="Перемешать всё" FontSize="20" FontWeight="Medium"
+                           VerticalAlignment="Center" />
+            </Button>
+        </templates:KeyedTemplate>
+        <templates:KeyedElementFactory.FallbackTemplate>
+            <DataTemplate DataType="models:CatalogAction">
+                <Button Classes="CardAction" HorizontalAlignment="Stretch"
+                        Command="{CompiledBinding $parent[views:MainWindow].GlobalViewModel.OpenActionCommand}"
+                        CommandParameter="{CompiledBinding}">
+                    <TextBlock Text="{CompiledBinding Title}" FontSize="20" FontWeight="Medium"
+                               VerticalAlignment="Center" />
+                </Button>
+            </DataTemplate>
+        </templates:KeyedElementFactory.FallbackTemplate>
     </templates:KeyedElementFactory>
 
     <templates:BlockElementFactory x:Key="BlockElementFactory">
@@ -55,7 +69,7 @@
                            FontSize="26"
                            FontWeight="Bold" />
                 <ItemsControl Grid.Column="1" Classes="HorizontalSlider"
-                              Items="{CompiledBinding Actions}"
+                              ItemsSource="{CompiledBinding Actions}"
                               ItemTemplate="{StaticResource HeaderActionsElementFactory}" />
             </Grid>
         </templates:BlockTemplate>
@@ -65,7 +79,7 @@
                            FontSize="24"
                            FontWeight="Medium" />
                 <ItemsControl Grid.Column="1" Classes="HorizontalSlider"
-                              Items="{CompiledBinding Actions}"
+                              ItemsSource="{CompiledBinding Actions}"
                               ItemTemplate="{StaticResource HeaderActionsElementFactory}" />
             </Grid>
         </templates:BlockTemplate>
@@ -76,7 +90,7 @@
         <!-- Playlists -->
         <templates:BlockTemplate x:DataType="blocks:PlaylistsBlock" BlockDataType="music_playlists"
                                  LayoutName="large_slider">
-            <ItemsControl Items="{CompiledBinding Playlists}" Margin="0,0,0,10"
+            <ItemsControl ItemsSource="{CompiledBinding Playlists}" Margin="0,0,0,10"
                           Classes="HorizontalSlider">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="models:CatalogPlaylist">
@@ -94,7 +108,7 @@
         </templates:BlockTemplate>
         <templates:BlockTemplate x:DataType="blocks:PlaylistsBlock" BlockDataType="music_playlists"
                                  LayoutName="music_chart_large_slider">
-            <ItemsControl Items="{CompiledBinding Playlists}" Margin="0,0,0,10"
+            <ItemsControl ItemsSource="{CompiledBinding Playlists}" Margin="0,0,0,10"
                           Classes="HorizontalSlider">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="models:CatalogPlaylist"> <!-- TODO chart position -->
@@ -112,7 +126,7 @@
         </templates:BlockTemplate>
         <templates:BlockTemplate x:DataType="blocks:PlaylistsBlock" BlockDataType="music_playlists"
                                  LayoutName="list">
-            <ItemsControl Items="{CompiledBinding Playlists}" Margin="0,0,0,10">
+            <ItemsControl ItemsSource="{CompiledBinding Playlists}" Margin="0,0,0,10">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="models:CatalogPlaylist">
                         <Button
@@ -147,7 +161,7 @@
         </templates:BlockTemplate>
         <templates:BlockTemplate x:DataType="blocks:PlaylistsBlock" BlockDataType="music_playlists"
                                  LayoutName="music_chart_list">
-            <ItemsControl Items="{CompiledBinding Playlists}" Margin="0,0,0,10">
+            <ItemsControl ItemsSource="{CompiledBinding Playlists}" Margin="0,0,0,10">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="models:CatalogPlaylist"> <!-- TODO chart position -->
                         <Button
@@ -185,7 +199,7 @@
         <templates:BlockTemplate x:DataType="blocks:RecommendedPlaylistsBlock"
                                  BlockDataType="music_recommended_playlists"
                                  LayoutName="large_slider">
-            <ItemsControl Items="{CompiledBinding RecommendedPlaylists}" Margin="0,0,0,10"
+            <ItemsControl ItemsSource="{CompiledBinding RecommendedPlaylists}" Margin="0,0,0,10"
                           Classes="HorizontalSlider">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="blocks:RecommendedPlaylist">
@@ -197,7 +211,7 @@
         <templates:BlockTemplate x:DataType="blocks:RecommendedPlaylistsBlock"
                                  BlockDataType="music_recommended_playlists"
                                  LayoutName="list">
-            <ItemsControl Items="{CompiledBinding RecommendedPlaylists}" Margin="0,0,0,10"
+            <ItemsControl ItemsSource="{CompiledBinding RecommendedPlaylists}" Margin="0,0,0,10"
                           Classes="WrapPanel">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="blocks:RecommendedPlaylist">
@@ -211,7 +225,7 @@
         <!-- Audios -->
         <templates:BlockTemplate x:DataType="blocks:AudiosBlock" BlockDataType="music_audios"
                                  LayoutName="triple_stacked_slider">
-            <ItemsControl Items="{CompiledBinding Audios}" Margin="0,0,0,10"
+            <ItemsControl ItemsSource="{CompiledBinding Audios}" Margin="0,0,0,10"
                           Classes="HorizontalSlider">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -227,7 +241,7 @@
         </templates:BlockTemplate>
         <templates:BlockTemplate x:DataType="blocks:AudiosBlock" BlockDataType="music_audios"
                                  LayoutName="music_chart_triple_stacked_slider">
-            <ItemsControl Items="{CompiledBinding Audios}" Margin="0,0,0,10"
+            <ItemsControl ItemsSource="{CompiledBinding Audios}" Margin="0,0,0,10"
                           Classes="HorizontalSlider">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -243,7 +257,7 @@
         </templates:BlockTemplate>
         <templates:BlockTemplate x:DataType="blocks:AudiosBlock" BlockDataType="music_audios"
                                  LayoutName="list">
-            <ItemsControl Items="{CompiledBinding Audios}" Margin="0,0,0,10">
+            <ItemsControl ItemsSource="{CompiledBinding Audios}" Margin="0,0,0,10">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="models:CatalogAudio">
                         <controls:AudioControl Audio="{CompiledBinding}" Classes="Full" Margin="0,3" />
@@ -253,7 +267,7 @@
         </templates:BlockTemplate>
         <templates:BlockTemplate x:DataType="blocks:AudiosBlock" BlockDataType="music_audios"
                                  LayoutName="music_chart_list">
-            <ItemsControl Items="{CompiledBinding Audios}" Margin="0,0,0,10">
+            <ItemsControl ItemsSource="{CompiledBinding Audios}" Margin="0,0,0,10">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="models:CatalogAudio"> <!-- TODO chart position -->
                         <controls:AudioControl Audio="{CompiledBinding}" Classes="Full" Margin="0,3" />
@@ -265,22 +279,13 @@
         <!-- Action -->
         <templates:BlockTemplate x:DataType="blocks:ActionBlock" BlockDataType="action"
                                  LayoutName="horizontal_buttons">
-            <ItemsControl Items="{CompiledBinding Actions}">
+            <ItemsControl ItemsSource="{CompiledBinding Actions}"
+                          ItemTemplate="{StaticResource ActionElementFactory}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <Panel />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate DataType="models:CatalogAction">
-                        <Button Classes="CardAction" HorizontalAlignment="Stretch"
-                                Command="{CompiledBinding $parent[views:MainWindow].GlobalViewModel.OpenActionCommand}"
-                                CommandParameter="{CompiledBinding}">
-                            <TextBlock Text="{CompiledBinding Title}" FontSize="20" FontWeight="Medium"
-                                       VerticalAlignment="Center" />
-                        </Button>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
             </ItemsControl>
         </templates:BlockTemplate>
 
@@ -293,7 +298,7 @@
         <!-- Links -->
         <templates:BlockTemplate x:DataType="blocks:LinksBlock" BlockDataType="links"
                                  LayoutName="slider">
-            <ItemsControl Items="{CompiledBinding Links}" Classes="HorizontalVirtualizingSlider">
+            <ItemsControl ItemsSource="{CompiledBinding Links}" Classes="HorizontalVirtualizingSlider">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="models:CatalogLink">
                         <controls:LinkButton Margin="5,0"
@@ -308,7 +313,7 @@
         </templates:BlockTemplate>
         <templates:BlockTemplate x:DataType="blocks:LinksBlock" BlockDataType="links"
                                  LayoutName="list">
-            <ItemsControl Items="{CompiledBinding Links}" Classes="WrapPanel">
+            <ItemsControl ItemsSource="{CompiledBinding Links}" Classes="WrapPanel">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="models:CatalogLink">
                         <controls:LinkButton Margin="5"
@@ -323,7 +328,7 @@
         </templates:BlockTemplate>
         <templates:BlockTemplate x:DataType="blocks:LinksBlock" BlockDataType="links"
                                  LayoutName="categories_list">
-            <ItemsControl Items="{CompiledBinding Links}" Margin="0,0,0,10"
+            <ItemsControl ItemsSource="{CompiledBinding Links}" Margin="0,0,0,10"
                           Classes="HorizontalSlider">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -357,7 +362,7 @@
                                FontWeight="Bold"
                                FontSize="64"
                                Margin="0,5" />
-                    <ItemsControl Items="{CompiledBinding Actions}">
+                    <ItemsControl ItemsSource="{CompiledBinding Actions}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <UniformGrid Columns="{CompiledBinding Actions.Count}" />
@@ -376,7 +381,7 @@
         <!-- Artist Videos -->
         <templates:BlockTemplate x:DataType="blocks:VideosBlock" BlockDataType="artist_videos"
                                  LayoutName="slider">
-            <ItemsControl Items="{CompiledBinding Videos}"
+            <ItemsControl ItemsSource="{CompiledBinding Videos}"
                           Classes="HorizontalVirtualizingSlider">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="models:CatalogVideo">

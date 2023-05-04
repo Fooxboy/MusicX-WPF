@@ -10,6 +10,7 @@
         <Version>0.0.1</Version>
         
         <ApplicationIcon>Assets/icon.ico</ApplicationIcon>
+        <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
     </PropertyGroup>
     
     <PropertyGroup Condition=" $(Configuration) == 'Release' ">
@@ -49,11 +50,11 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Avalonia.Desktop" Version="11.0.0-preview6" />
-        <PackageReference Include="Avalonia.Skia" Version="11.0.0-preview6" />
+        <PackageReference Include="Avalonia.Desktop" Version="11.0.999-cibuild0034035-beta" />
+        <PackageReference Include="Avalonia.Skia" Version="11.0.999-cibuild0034035-beta" />
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.0-preview6" />
-        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.0-preview6" />
+        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.999-cibuild0034035-beta" />
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.999-cibuild0034035-beta" />
         <PackageReference Include="Jab" Version="0.8.6" />
         <PackageReference Include="Krafs.Publicizer" Version="2.2.1">
           <PrivateAssets>all</PrivateAssets>

@@ -10,14 +10,6 @@
              x:Class="MusicX.Avalonia.Controls.PlaybackControl"
              x:DataType="viewModels:PlaybackViewModel" Margin="15,10">
     <UserControl.Styles>
-        <Style Selector=":is(Button).PlaybackControls">
-            <Setter Property="Margin" Value="5,0" />
-            <Setter Property="Width" Value="42" />
-            <Setter Property="Height" Value="42" />
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="BorderBrush" Value="Transparent" />
-            <Setter Property="BorderThickness" Value="0" />
-        </Style>
         <Style Selector="ui|SymbolIcon.Play">
             <Setter Property="Symbol" Value="PlayFilled" />
         </Style>
@@ -25,7 +17,7 @@
             <Setter Property="Symbol" Value="PauseFilled" />
         </Style>
     </UserControl.Styles>
-    <Grid ColumnDefinitions="300,*,250">
+    <Grid ColumnDefinitions="300,*,280">
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
             <Border Classes="Card" Width="64" Height="64">
                 <Border.Background>
@@ -44,19 +36,19 @@
 
         <Grid Grid.Column="1" RowDefinitions="*,Auto" MaxWidth="600">
             <UniformGrid Columns="5" HorizontalAlignment="Center">
-                <Button Classes="PlaybackControls">
+                <Button Classes="SquareTransparent">
                     <ui:SymbolIcon Symbol="Sort" FontSize="20" />
                 </Button>
-                <Button Classes="PlaybackControls" Command="{CompiledBinding PrevTrackCommand}">
+                <Button Classes="SquareTransparent" Command="{CompiledBinding PrevTrackCommand}">
                     <ui:SymbolIcon Symbol="PreviousFilled" FontSize="20" />
                 </Button>
-                <Button Classes="PlaybackControls" Command="{CompiledBinding PlayPauseCommand}">
+                <Button Classes="SquareTransparent" Command="{CompiledBinding PlayPauseCommand}">
                     <ui:SymbolIcon FontSize="24" Classes="Play" Classes.Pause="{CompiledBinding PlayerService.IsPlaying}" />
                 </Button>
-                <Button Classes="PlaybackControls" Command="{CompiledBinding NextTrackCommand}">
+                <Button Classes="SquareTransparent" Command="{CompiledBinding NextTrackCommand}">
                     <ui:SymbolIcon Symbol="NextFilled" FontSize="20" />
                 </Button>
-                <ToggleButton Classes="PlaybackControls" IsChecked="{CompiledBinding PlayerService.Repeat}">
+                <ToggleButton Classes="SquareTransparent" IsChecked="{CompiledBinding PlayerService.Repeat}">
                     <ui:SymbolIcon Symbol="RepeatAll" FontSize="20" />
                 </ToggleButton>
             </UniformGrid>
@@ -74,7 +66,10 @@
         </Grid>
 
         <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-            <Button Classes="PlaybackControls" VerticalAlignment="Center">
+            <Button Classes="SquareTransparent" VerticalAlignment="Center" Command="{CompiledBinding OpenQueueCommand}">
+                <ui:SymbolIcon Symbol="List" FontSize="16" />
+            </Button>
+            <Button Classes="SquareTransparent" VerticalAlignment="Center" Margin="5,0,0,0">
                 <ui:SymbolIcon Symbol="Speaker2" FontSize="16" />
             </Button>
             <Slider Margin="5,0" MinWidth="150"

@@ -23,6 +23,7 @@ public class PageFactory : INavigationPageFactory
             SectionTabViewModel => App.Provider.GetService<SectionPage>(),
             PlaylistViewModel => App.Provider.GetService<PlaylistPage>(),
             VideoModalViewModel => App.Provider.GetService<VideoPage>(),
+            QueueViewModel => App.Provider.GetService<QueuePage>(),
             _ => throw new ArgumentOutOfRangeException(nameof(target), target,
                                                        "Target must be an implemented view model type in factory")
         };

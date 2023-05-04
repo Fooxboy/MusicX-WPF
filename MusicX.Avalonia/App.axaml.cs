@@ -41,6 +41,7 @@ public partial class App : Application
 [Transient<PlaylistViewModel>]
 [Singleton<GlobalViewModel>]
 [Transient<VideoModalViewModel>]
+[Singleton<QueueViewModel>]
 [Singleton<IPlayerService>(Factory = nameof(CreatePlayerService))]
 [Singleton<IQueueService>(Factory = nameof(CreateQueueService))]
 [Transient<MainWindow>]
@@ -48,6 +49,7 @@ public partial class App : Application
 [Transient<SectionPage>]
 [Transient<PlaylistPage>]
 [Transient<VideoPage>]
+[Transient<QueuePage>]
 internal partial class ServiceProvider : IServiceModule
 {
     public Api CreateVkApi(ConfigurationService configurationService)
@@ -70,22 +72,24 @@ internal partial class ServiceProvider : IServiceModule
 
     public IQueueService CreateQueueService()
     {
-        return OperatingSystem.IsWindowsVersionAtLeast(10, 0, 19041) ? UseWindowsQueue() : new QueueService(GetService<IPlayerService>());
+        return OperatingSystem.IsWindowsVersionAtLeast(10, 0, 19041) ? UseWindowsQueue() : UseBassQueue();
     }
+
+    private QueueService UseBassQueue() => new(GetService<IPlayerService>());
 
     private static IPlayerService UseBassAudio() => new PlayerService();
     private IPlayerService UseWindowsAudio() =>
 #if WINDOWS
         new Audio.Windows.WindowsPlayerService();
 #else
-        throw new PlatformNotSupportedException();
+        UseBassAudio();
 #endif
 
     private IQueueService UseWindowsQueue() =>
 #if WINDOWS
         new Audio.Windows.WindowsQueueService(GetService<IPlayerService>());
 #else
-        throw new PlatformNotSupportedException();
+        UseBassQueue();
 #endif
 
     public partial class Scope

@@ -40,7 +40,7 @@
                         </Style>
                     </Canvas.Styles>
                     <ToolTip.Tip>
-                        <ItemsControl Items="{Binding}" />
+                        <ItemsControl ItemsSource="{Binding}" />
                     </ToolTip.Tip>
                     <ui:SymbolIcon Symbol="Dismiss"/>
                 </Canvas>

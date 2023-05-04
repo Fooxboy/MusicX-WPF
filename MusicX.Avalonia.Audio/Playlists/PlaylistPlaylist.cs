@@ -1,4 +1,6 @@
-﻿using MusicX.Avalonia.Core.Extensions;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using MusicX.Avalonia.Core.Extensions;
 using MusicX.Avalonia.Core.Models;
 using MusicX.Shared.Player;
 using VkApi;
@@ -28,6 +30,7 @@ public class PlaylistPlaylist : IPlaylist
         if (_playedCount + 40 < _tracks.Count)
         {
             _playedCount += 40;
+            OnPropertyChanged(nameof(CanGetChunk));
             return _tracks.Skip(skip);
         }
 
@@ -37,6 +40,14 @@ public class PlaylistPlaylist : IPlaylist
         _tracks.AddRange(response.Items.Select(TrackExtensions.ToTrack));
         
         _playedCount += Math.Min(40, _tracks.Count - _playedCount);
+        OnPropertyChanged(nameof(CanGetChunk));
         return _tracks.Skip(skip);
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

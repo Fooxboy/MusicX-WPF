@@ -28,5 +28,6 @@
         <StyleInclude Source="Styles/DataValidationStyles.axaml" />
         <StyleInclude Source="Styles/CardStyles.axaml" />
         <StyleInclude Source="Styles/ItemsControlStyles.axaml" />
+        <StyleInclude Source="Styles/ButtonStyles.axaml" />
     </Application.Styles>
 </Application>

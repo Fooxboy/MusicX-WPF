@@ -46,7 +46,7 @@
                     <ScrollViewer Name="PART_BannersScroll" VerticalScrollBarVisibility="Disabled"
                                   HorizontalScrollBarVisibility="Hidden" IsScrollInertiaEnabled="True">
                         <ItemsControl Name="PART_Banners"
-                                      Items="{Binding Block.Banners, RelativeSource={RelativeSource TemplatedParent}}"
+                                      ItemsSource="{Binding Block.Banners, RelativeSource={RelativeSource TemplatedParent}}"
                                       HorizontalAlignment="Stretch"
                                       MinHeight="450">
                             <ItemsControl.ItemsPanel>
@@ -94,7 +94,7 @@
                         </ItemsControl>
                     </ScrollViewer>
                     <ItemsControl Grid.Row="1"
-                                  Items="{Binding Block.Banners, RelativeSource={RelativeSource TemplatedParent}}"
+                                  ItemsSource="{Binding Block.Banners, RelativeSource={RelativeSource TemplatedParent}}"
                                   HorizontalAlignment="Center"
                                   MinHeight="40">
                         <ItemsControl.ItemsPanel>

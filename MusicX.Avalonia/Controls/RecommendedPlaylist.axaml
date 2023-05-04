@@ -25,7 +25,7 @@
                     <StackPanel Orientation="Vertical">
                         <Button Classes="CardActionTransparent"
                                 Command="{CompiledBinding Path=$parent[views:MainWindow].GlobalViewModel.OpenPlaylistCommand}"
-                                CommandParameter="{TemplateBinding Playlist}"
+                                CommandParameter="{CompiledBinding Playlist.Playlist, RelativeSource={RelativeSource TemplatedParent}}"
                                 Padding="0">
                             <Border Width="{TemplateBinding Width}"
                                     Height="120"
@@ -56,7 +56,7 @@
                                 </Panel>
                             </Border>
                         </Button>
-                        <ItemsControl Items="{CompiledBinding Playlist.Audios, RelativeSource={RelativeSource TemplatedParent}}" Padding="12">
+                        <ItemsControl ItemsSource="{CompiledBinding Playlist.Audios, RelativeSource={RelativeSource TemplatedParent}}" Padding="12">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <controls:DynamicUniformGrid Rows="3" />

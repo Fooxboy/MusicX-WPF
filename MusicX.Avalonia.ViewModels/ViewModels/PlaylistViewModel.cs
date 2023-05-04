@@ -19,6 +19,7 @@ public class PlaylistViewModel : ViewModelBase
     private readonly ConfigurationService _configurationService;
     private readonly IQueueService _queueService;
 
+    public bool IsLoading { get; set; }
     public ReactiveCommand<PlaylistTrack?,Unit> PlayTrackCommand { get; }
 
     public PlaylistViewModel(IPlayerService playerService, Api api, GlobalViewModel viewModel, ConfigurationService configurationService, IQueueService queueService)
@@ -59,6 +60,7 @@ public class PlaylistViewModel : ViewModelBase
     public async Task LoadAsync(CatalogPlaylist playlist)
     {
         Playlist = playlist;
+        IsLoading = true;
         var audios = await _api.GetAudioAsync(new((int?)Playlist.OwnerId, null, Playlist.Id, null, true, null, null,
                                                      100, null, null, Playlist.AccessKey, null, null, null));
 
@@ -82,6 +84,18 @@ public class PlaylistViewModel : ViewModelBase
             var profileOrGroup = await _viewModel.GetProfileAsync(Playlist.OwnerId);
             Owner = new(Playlist.OwnerId.ToString(), profileOrGroup.IsT0 ? $"{profileOrGroup.AsT0.FirstName} {profileOrGroup.AsT0.LastName}" : profileOrGroup.AsT1.Name);
         }
+        
+        IsLoading = false;
+    }
+
+    public async Task LoadMoreAsync()
+    {
+        IsLoading = true;
+        var audios = await _api.GetAudioAsync(new((int?)Playlist.OwnerId, null, Playlist.Id, null, true, null, Tracks.Count,
+                                                  50, null, null, Playlist.AccessKey, null, null, null));
+
+        Tracks.AddRange(audios.Items.Select(TrackExtensions.ToTrack));
+        IsLoading = false;
     }
 }
 

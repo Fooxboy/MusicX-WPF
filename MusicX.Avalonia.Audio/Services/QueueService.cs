@@ -47,6 +47,7 @@ public class QueueService : IQueueService
         {
             CurrentPlaylist = null;
             Queue.Clear();
+            _playerService.Stop();
             return;
         }
 

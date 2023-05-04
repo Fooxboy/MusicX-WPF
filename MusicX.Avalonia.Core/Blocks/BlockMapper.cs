@@ -34,6 +34,8 @@ public static class BlockMapper
                 bannersBlock.Banners.ElementAt(0).ClickAction.Action.Url?.Contains("combo") is true => false,
             BannersBlock bannersBlock when bannersBlock.Banners.ElementAt(0).ClickAction.Action.Url
                                                        ?.Contains("https://vk.com/app") is true => false,
+            BannersBlock bannersBlock when bannersBlock.Banners.ElementAt(0).ClickAction.Action.Url
+                                                       ?.Contains("https://vk.com/vk_music") is true => false,
             _ => true
         };
     }

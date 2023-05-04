@@ -6,6 +6,10 @@ using MusicX.Avalonia.Core.Blocks;
 
 namespace MusicX.Avalonia.Templates;
 
+/// <summary>
+/// Builds templates based on block datatype and layout name.
+/// </summary>
+/// <remarks>Should not be used with virtualizing</remarks>
 public class BlockElementFactory : ElementFactory
 {
     private FrozenDictionary<(string DataType, string LayoutName), BlockTemplate>? _templates;

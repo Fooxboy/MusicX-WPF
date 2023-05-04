@@ -11,7 +11,7 @@
                   AllowAutoHide="True"
                   ScrollChanged="ScrollViewer_OnScrollChanged"
                   Name="MainScrollViewer">
-        <ItemsControl Items="{CompiledBinding Blocks}" Margin="5"
+        <ItemsControl ItemsSource="{CompiledBinding Blocks}" Margin="5"
                       ItemTemplate="{DynamicResource BlockElementFactory}"/>
     </ScrollViewer>
 </UserControl>

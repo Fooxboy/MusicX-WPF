@@ -5,6 +5,7 @@ using MusicX.Avalonia.Audio.Playlists;
 using MusicX.Avalonia.Audio.Services;
 using MusicX.Avalonia.Core.Extensions;
 using MusicX.Avalonia.Core.Models;
+using MusicX.Avalonia.Core.Services;
 using MusicX.Shared.Player;
 using OneOf;
 using ReactiveUI;
@@ -28,11 +29,12 @@ public class GlobalViewModel : ViewModelBase
     public ReactiveCommand<CatalogVideo,Unit> OpenVideoPlayerCommand { get; }
     public ReactiveCommand<CatalogAction,Unit> OpenActionCommand { get; }
 
-    public GlobalViewModel(IPlayerService playerService, IQueueService queueService, Api api, IServiceProvider provider)
+    public GlobalViewModel(IPlayerService playerService, IQueueService queueService, Api api, IServiceProvider provider, ConfigurationService configurationService)
     {
         _queueService = queueService;
         _api = api;
         _provider = provider;
+        OwnerId = configurationService.LoginState!.UserId;
         PlayerService = playerService;
         AudioClickCommand = ReactiveCommand.CreateFromTask<CatalogAudio>(PlayAsync);
         TrackClickCommand = ReactiveCommand.CreateFromTask<PlaylistTrack>(PlayAsync);
@@ -44,13 +46,21 @@ public class GlobalViewModel : ViewModelBase
         OpenActionCommand = ReactiveCommand.CreateFromTask<CatalogAction>(OpenActionAsync);
     }
 
-    private Task OpenActionAsync(CatalogAction action)
+    public long OwnerId { get; }
+
+    private Task OpenActionAsync(CatalogAction action, CancellationToken token)
     {
         if (!string.IsNullOrEmpty(action.SectionId))
             return OpenSectionAsync(action.SectionId);
         
         if (!string.IsNullOrEmpty(action.Action.Url))
             OpenUrl(action.Action.Url);
+
+        if (!string.IsNullOrEmpty(action.BlockId))
+        {
+            var playlist = new BlockPlaylist(_api, action.BlockId);
+            return _queueService.PlayPlaylistAsync(playlist, token).AsTask();
+        }
         
         return Task.CompletedTask;
     }
