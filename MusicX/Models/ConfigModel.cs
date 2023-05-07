@@ -56,5 +56,8 @@ namespace MusicX.Models
 
         [JsonProperty("mixer_volume")]
         public int? MixerVolume { get; set; }
+
+        [JsonProperty("minimize_to_tray")]
+        public bool? MinimizeToTray { get; set; }
     }
 }

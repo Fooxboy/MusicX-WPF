@@ -159,35 +159,42 @@ namespace MusicX.Views
 
         private async Task LoadLyrics()
         {
-            var vkService = StaticService.Container.GetRequiredService<VkService>();
-
-            if(playerService.CurrentTrack.Data is VkTrackData track)
+            try
             {
-                if(track.HasLyrics is null || !track.HasLyrics.Value)
-                {
-                    LyricsControlView.SetLines(new List<string>() { "У этого трека", "Нет пока что текста" });
-                }
+                var vkService = StaticService.Container.GetRequiredService<VkService>();
 
-                var vkLyrics = await vkService.GetLyrics(track.Info.OwnerId + "_" + track.Info.Id);
-
-                if(vkLyrics.LyricsInfo.Timestamps is null)
+                if (playerService.CurrentTrack.Data is VkTrackData track)
                 {
-                    LyricsControlView.SetLines(vkLyrics.LyricsInfo.Text);
-                }
+                    if (track.HasLyrics is null || !track.HasLyrics.Value)
+                    {
+                        LyricsControlView.SetLines(new List<string>() { "У этого трека", "Нет пока что текста" });
+                    }
 
-                if(vkLyrics.LyricsInfo.Text is null)
-                {
-                    LyricsControlView.SetLines(vkLyrics.LyricsInfo.Timestamps);
-                }
+                    var vkLyrics = await vkService.GetLyrics(track.Info.OwnerId + "_" + track.Info.Id);
 
-                if (_timer is null)
-                {
-                    _timer = new DispatcherTimer();
-                    _timer.Interval = TimeSpan.FromMilliseconds(500);
-                    _timer.Tick += _timer_Tick;
-                    _timer.Start();
+                    if (vkLyrics.LyricsInfo.Timestamps is null)
+                    {
+                        LyricsControlView.SetLines(vkLyrics.LyricsInfo.Text);
+                    }
+
+                    if (vkLyrics.LyricsInfo.Text is null)
+                    {
+                        LyricsControlView.SetLines(vkLyrics.LyricsInfo.Timestamps);
+                    }
+
+                    if (_timer is null)
+                    {
+                        _timer = new DispatcherTimer();
+                        _timer.Interval = TimeSpan.FromMilliseconds(500);
+                        _timer.Tick += _timer_Tick;
+                        _timer.Start();
+                    }
                 }
+            }catch(Exception ex)
+            {
+                logger.Error(ex, ex.Message);
             }
+           
         }
 
         private void _timer_Tick(object? sender, EventArgs e)

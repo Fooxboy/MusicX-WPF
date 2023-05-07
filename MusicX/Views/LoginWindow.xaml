@@ -7,6 +7,7 @@
     xmlns:local="clr-namespace:MusicX.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wpfui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
+    xmlns:controls="clr-namespace:MusicX.Controls"
     Title="Вход в аккаунт"
     Width="800"
     Height="450"
@@ -19,15 +20,17 @@
     Loaded="Window_Loaded"
     mc:Ignorable="d">
     <Grid x:Name="rootGrid">
-
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
 
         <wpfui:TitleBar x:Name="WpfTitleBar" />
 
         <wpfui:Card
-            Width="400"
-            Height="300"
-            Margin="0,40,0,0">
+            Grid.Row="1" Width="400"
+            Height="300">
             <Grid>
                 <StackPanel
                     x:Name="loading"
@@ -95,7 +98,7 @@
 
         </wpfui:Card>
 
-        <wpfui:Card x:Name="UnsupportOsBlock" Visibility="Collapsed" Margin="0,0,0,20" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+        <wpfui:Card Grid.Row="1" x:Name="UnsupportOsBlock" Visibility="Collapsed" Margin="0,0,0,20" HorizontalAlignment="Center" VerticalAlignment="Bottom">
             <StackPanel>
                 <TextBlock FontWeight="Bold" Text="Ваша операционная система не поддерживается"/>
                 <TextBlock Margin="0, 20, 0, 0" Text="Music X может корректно работать только на Windows 10 выше версии 1607 (build 14383) (Redstone 1)"/>
@@ -103,15 +106,22 @@
             </StackPanel>
         </wpfui:Card>
 
+
         <wpfui:Snackbar
             x:Name="RootSnackbar"
             Title="Hello World!"
-            Grid.Row="0"
+            Grid.Row="1"
             MaxWidth="600"
             Icon="Info24"
             Message="Remember that the Heat Death of Universe is coming someday, no time to explain - let's go!"
             CloseButtonEnabled="True"
             Timeout="5000" />
+        
+        <controls:ModalFrame Grid.Row="1"
+                             x:Name="ModalFrame" />
+
+        <Button HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Bottom" Margin="0,0,0,10" Click="Button_Click_1"  Content="Телеграм канал для решения проблем"/>
+
 
     </Grid>
 </wpfui:UiWindow>

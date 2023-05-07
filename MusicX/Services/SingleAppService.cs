@@ -42,7 +42,7 @@ namespace MusicX.Services
                     pipeServer.Close();
                 }
             });
-            
+
         }
 
         public async Task SendArguments(string[] args)

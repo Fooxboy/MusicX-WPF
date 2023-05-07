@@ -70,7 +70,11 @@ public class DownloaderService
         }
 
         if (File.Exists(fileDownloadPath))
-            File.Delete(fileDownloadPath);
+        {
+            fileDownloadPath.Replace(".mp3", string.Empty);
+
+            fileDownloadPath += $"(1).mp3";
+        }
 
         var conversion = FFmpeg.Conversions.New()
                                .SetOutput(fileDownloadPath)

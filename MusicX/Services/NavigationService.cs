@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using AsyncAwaitBestPractices;
 using Microsoft.Extensions.DependencyInjection;
+using MusicX.Core.Models;
 using MusicX.ViewModels;
+using Newtonsoft.Json.Linq;
+
 namespace MusicX.Services;
 
 public enum SectionType
@@ -74,6 +78,21 @@ public class NavigationService
             BackRequested?.Invoke(this, EventArgs.Empty);
         else
             Application.Current.Dispatcher.BeginInvoke(() => BackRequested?.Invoke(this, EventArgs.Empty));
+    }
+
+    public void OpenBlocks(List<Block> blocks)
+    {
+        var viewModel = ActivatorUtilities.CreateInstance<SectionViewModel>(StaticService.Container);
+
+        viewModel.SectionId = new Random().Next(11111,99999).ToString();
+        viewModel.SectionType = SectionType.None;
+
+        viewModel.LoadBlocks(blocks, null).SafeFireAndForget();
+
+        if (Application.Current.Dispatcher.CheckAccess())
+            ExternalSectionOpened?.Invoke(this, viewModel);
+        else
+            Application.Current.Dispatcher.BeginInvoke(() => ExternalSectionOpened?.Invoke(this, viewModel));
     }
 
     public void OpenModal<TView>(object? dataContext = null) where TView : Page, new()

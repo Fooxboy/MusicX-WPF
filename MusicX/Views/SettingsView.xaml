@@ -321,6 +321,38 @@
                 </Grid>
             </wpfui:Card>
 
+
+            <TextBlock
+                Margin="5,20,0,0"
+                FontFamily="{StaticResource VKSansDemiBold}"
+                FontSize="30"
+                Text="Трей" />
+
+            <wpfui:Card Margin="5,5,5,0">
+                <Grid>
+                    <StackPanel HorizontalAlignment="Left">
+
+                        <StackPanel Margin="0,0,0,0" Orientation="Horizontal">
+                            <wpfui:ToggleSwitch
+                                x:Name="MinimizeToTray"
+                                Checked="MinimizeToTray_Checked"
+                                Unchecked="MinimizeToTray_Unchecked"/>
+
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="18"
+                                Foreground="White"
+                                Text="Всегда сворачивать в трей" />
+
+
+                        </StackPanel>
+
+                        <TextBlock Margin="0,15,0,0" Opacity="0.4" Text="При нажатии на кнопку 'Свернуть' Music X пропадет с панели задач, чтобы открыть его обратно, достаточно нажать на иконку в трее"/>
+
+                    </StackPanel>
+                </Grid>
+            </wpfui:Card>
+
             <TextBlock
                 Margin="5,20,0,0"
                 FontFamily="{StaticResource VKSansDemiBold}"

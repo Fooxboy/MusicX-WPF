@@ -68,13 +68,19 @@ namespace MusicX.Views
 
                 if(config.WinterTheme == null)
                 {
-                    config.WinterTheme = true;
+                    config.WinterTheme = false;
+                }
+
+                if (config.MinimizeToTray == null)
+                {
+                    config.MinimizeToTray = false;
                 }
 
                 ShowRPC.IsChecked = config.ShowRPC.Value;
                 BroacastVK.IsChecked = config.BroadcastVK.Value;
                 ShowAmimatedBackground.IsChecked = config.AmimatedBackground;
                 WinterTheme.IsChecked = config.WinterTheme.Value;
+                MinimizeToTray.IsChecked = config.MinimizeToTray.Value;
 
                 UserName.Text = config.UserName.Split(' ')[0];
 
@@ -183,7 +189,7 @@ namespace MusicX.Views
             var navigation = StaticService.Container.GetRequiredService<Services.NavigationService>();
             var notifications = StaticService.Container.GetRequiredService<Services.NotificationsService>();
 
-            new LoginWindow(vkService, configService, logger).Show();
+            new LoginWindow(vkService, configService, logger, navigation, notifications).Show();
             Window.GetWindow(this)?.Close();
         }
 
@@ -504,6 +510,30 @@ namespace MusicX.Views
 
             StaticService.Container.GetRequiredService<NotificationsService>().Show("Необходим перезапуск", "Перезапустите Music X чтобы зима закончилась :)");
 
+        }
+
+        private async void MinimizeToTray_Checked(object sender, RoutedEventArgs e)
+        {
+            if (config.MinimizeToTray == (sender as ToggleSwitch).IsChecked)
+            {
+                return;
+            }
+
+            config.MinimizeToTray = true;
+
+            await configService.SetConfig(config);
+
+            StaticService.Container.GetRequiredService<NotificationsService>().Show("Необходим перезапуск", "Перезапустите Music X чтобы изменения применились");
+
+        }
+
+        private async void MinimizeToTray_Unchecked(object sender, RoutedEventArgs e)
+        {
+            config.MinimizeToTray = false;
+
+            await configService.SetConfig(config);
+
+            StaticService.Container.GetRequiredService<NotificationsService>().Show("Необходим перезапуск", "Перезапустите Music X чтобы изменения применились");
         }
     }
 }

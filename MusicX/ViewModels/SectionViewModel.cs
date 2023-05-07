@@ -188,9 +188,11 @@ namespace MusicX.ViewModels
                 });
 
                 logger.Info($"Loaded {blocks.Count} blocks");
+                ContentState = ContentState.Loaded;
             }
             catch (Exception ex)
             {
+                ContentState = ContentState.Loaded;
                 var properties = new Dictionary<string, string>
                 {
 #if DEBUG

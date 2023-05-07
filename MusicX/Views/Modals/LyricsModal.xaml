@@ -7,17 +7,17 @@
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       MinWidth="500"
-      Height="500"
+      Height="600"
       Title="Текст песни">
 
     <Grid Margin="15,15,0,15">
 
         <wpfui:ProgressRing IsEnabled="True" IsIndeterminate="True" Visibility="{Binding IsLoading, Converter= {StaticResource BooleanToVisibilityConverter}}"/>
-        <controls:LyricsControl Height="420" VerticalAlignment="Top" x:Name="LyricsControlView"/>
+        <controls:LyricsControl Height="500" VerticalAlignment="Top" x:Name="LyricsControlView"/>
 
         <wpfui:Button x:Name="SyncButton" Click="SyncButton_Click" HorizontalAlignment="Right" VerticalAlignment="Bottom" Content=""/>
 
-        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" Margin="0,0,0,10" VerticalAlignment="Bottom">
+        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" Margin="0,100,0,10" VerticalAlignment="Bottom">
             <TextBlock Opacity="0.6" FontSize="13" Text="{Binding Credits}"/>
         </StackPanel>
     </Grid>

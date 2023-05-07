@@ -730,7 +730,7 @@ namespace MusicX.Controls
                 blocks.Add(title);
                 blocks.Add(block);
 
-                navigation.OpenSection(items.Section.Id);
+                navigation.OpenBlocks(blocks);
             }
             catch (Exception ex)
             {

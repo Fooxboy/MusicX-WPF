@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using VkNet.Abstractions.Core;
 using VkNet.Exception;
 using VkNet.Utils;
-using VkNet.Utils.AntiCaptcha;
 
 namespace VkNet.Extensions.DependencyInjection;
 
@@ -12,11 +11,11 @@ public class AsyncCaptchaHandler : ICaptchaHandler
 {
     private static readonly MethodInfo PerformAsyncMethod = typeof(AsyncCaptchaHandler).GetMethod(nameof(PerformAsync), BindingFlags.Instance | BindingFlags.NonPublic)!;
     
-    private readonly ICaptchaSolver _captchaSolver;
+    private readonly IAsyncCaptchaSolver? _captchaSolver;
     private readonly ILogger<CaptchaHandler>? _logger;
 
     /// <inheritdoc cref="T:CaptchaHandler" />
-    public AsyncCaptchaHandler(ILogger<CaptchaHandler>? logger, ICaptchaSolver captchaSolver)
+    public AsyncCaptchaHandler(ILogger<CaptchaHandler>? logger, IAsyncCaptchaSolver? captchaSolver)
     {
         _logger = logger;
         _captchaSolver = captchaSolver;
@@ -34,79 +33,85 @@ public class AsyncCaptchaHandler : ICaptchaHandler
                 .Invoke(this, new object[] {action});
         }
         
-        var recognitionCount = MaxCaptchaRecognitionCount;
-        var num = MaxCaptchaRecognitionCount + 1;
-        var captchaSidTemp = new ulong?();
-        string? captchaKeyTemp = null;
+        var context = new CaptchaSolveContext(MaxCaptchaRecognitionCount);
         var flag = false;
         var obj = default (T);
         do
         {
             try
             {
-                obj = action(captchaSidTemp, captchaKeyTemp);
-                --num;
+                obj = action(context.CaptchaSidTemp, context.CaptchaKeyTemp);
                 flag = true;
             }
             catch (CaptchaNeededException ex)
             {
-                RepeatSolveCaptchaAsync(ex, ref recognitionCount, ref captchaSidTemp, ref captchaKeyTemp);
+                if (!RepeatSolveCaptchaAsync(ex, context).Result)
+                    break;
             }
         }
-        while (recognitionCount > 0 && !flag);
-        if (flag || !captchaSidTemp.HasValue)
+        while (context.RemainingSolveAttempts > 0 && !flag);
+        if (flag || !context.CaptchaSidTemp.HasValue)
             return obj;
 
         throw new CaptchaNeededException(new()
         {
-            CaptchaSid = captchaSidTemp.Value
+            CaptchaSid = context.CaptchaSidTemp.Value
         });
     }
 
-    private async Task<T> PerformAsync<T, T2>(Func<ulong?, string?, T2> action) where T2 : Task<T>
+    private async Task<T?> PerformAsync<T, T2>(Func<ulong?, string?, T2> action) where T2 : Task<T>
     {
-        var recognitionCount = MaxCaptchaRecognitionCount;
-        var num = MaxCaptchaRecognitionCount + 1;
-        var captchaSidTemp = new ulong?();
-        string? captchaKeyTemp = null;
+        var context = new CaptchaSolveContext(MaxCaptchaRecognitionCount);
         var flag = false;
         var obj = default (T);
         do
         {
             try
             {
-                obj = await action(captchaSidTemp, captchaKeyTemp).ConfigureAwait(false);
-                --num;
+                obj = await action(context.CaptchaSidTemp, context.CaptchaKeyTemp);
                 flag = true;
             }
             catch (CaptchaNeededException ex)
             {
-                RepeatSolveCaptchaAsync(ex, ref recognitionCount, ref captchaSidTemp, ref captchaKeyTemp);
+                if (!await RepeatSolveCaptchaAsync(ex, context))
+                    break;
             }
         }
-        while (recognitionCount > 0 && !flag);
-        if (flag || !captchaSidTemp.HasValue)
-            return obj!;
+        while (context.RemainingSolveAttempts > 0 && !flag);
+        if (flag || !context.CaptchaSidTemp.HasValue)
+            return obj;
 
         throw new CaptchaNeededException(new()
         {
-            CaptchaSid = captchaSidTemp.Value
+            CaptchaSid = context.CaptchaSidTemp.Value
         });
     }
-
-    private void RepeatSolveCaptchaAsync(
+    
+    private async Task<bool> RepeatSolveCaptchaAsync(
         CaptchaNeededException captchaNeededException,
-        ref int numberOfRemainingAttemptsToSolveCaptcha,
-        ref ulong? captchaSidTemp,
-        ref string? captchaKeyTemp)
+        CaptchaSolveContext context)
     {
         _logger?.LogWarning("Повторная обработка капчи");
-        if (numberOfRemainingAttemptsToSolveCaptcha < MaxCaptchaRecognitionCount)
-            _captchaSolver?.CaptchaIsFalse();
-        if (numberOfRemainingAttemptsToSolveCaptcha <= 0)
-            return;
-        captchaSidTemp = captchaNeededException.Sid;
-        captchaKeyTemp = _captchaSolver?.Solve(captchaNeededException.Img?.AbsoluteUri);
-        --numberOfRemainingAttemptsToSolveCaptcha;
+        if (context.RemainingSolveAttempts < MaxCaptchaRecognitionCount && _captchaSolver is not null)
+            await _captchaSolver.SolveFailedAsync();
+        if (context.RemainingSolveAttempts <= 0)
+            return false;
+        context.CaptchaSidTemp = captchaNeededException.Sid;
+        var task = _captchaSolver?.SolveAsync(captchaNeededException.Img!.AbsoluteUri);
+        context.CaptchaKeyTemp =  task.HasValue ? await task.Value : null;
+        context.RemainingSolveAttempts--;
+        return context.CaptchaKeyTemp is not null;
+    }
+
+    private class CaptchaSolveContext
+    {
+        public int RemainingSolveAttempts;
+        public ulong? CaptchaSidTemp;
+        public string? CaptchaKeyTemp;
+
+        public CaptchaSolveContext(int maxSolveAttempts)
+        {
+            RemainingSolveAttempts = maxSolveAttempts;
+        }
     }
 }

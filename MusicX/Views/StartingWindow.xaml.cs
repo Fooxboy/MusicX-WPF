@@ -54,6 +54,8 @@ namespace MusicX.Views
             {
                 var collection = new ServiceCollection();
 
+                collection.AddSingleton<IAsyncCaptchaSolver, CaptchaSolverService>();
+
                 collection.AddAudioBypass();
                 collection.AddVkNet();
 
@@ -85,6 +87,7 @@ namespace MusicX.Views
                 collection.AddSingleton<BoomProfileViewModel>();
                 collection.AddTransient<ListenTogetherControlViewModel>();
                 collection.AddTransient<LyricsViewModel>();
+                collection.AddTransient<CaptchaModalViewModel>();
 
                 collection.AddSingleton<NavigationService>();
                 collection.AddSingleton<ConfigService>();
@@ -143,7 +146,9 @@ namespace MusicX.Views
                     {
                         if (string.IsNullOrEmpty(config.AccessToken))
                         {
-                            var login = new LoginWindow(vkService, configService, logger);
+                            var navigation = StaticService.Container.GetRequiredService<Services.NavigationService>();
+                            var notifications = StaticService.Container.GetRequiredService<Services.NotificationsService>();
+                            var login = new LoginWindow(vkService, configService, logger, navigation, notifications);
                             login.Show();
                             this.Close();
                         }
@@ -180,13 +185,23 @@ namespace MusicX.Views
                                 var navigation = StaticService.Container.GetRequiredService<Services.NavigationService>();
                                 var notifications = StaticService.Container.GetRequiredService<Services.NotificationsService>();
 
-                                new LoginWindow(vkService, configService, logger, true).Show();
+                                new LoginWindow(vkService, configService, logger, navigation, notifications, true).Show();
 
                                 this.Close();
                             }
 
                         }
-                    }catch(Exception ex)
+                    }
+                    catch(System.Net.Http.HttpRequestException ex)
+                    {
+                        logger.Error(ex, ex.Message);
+
+                        var error = new NoInternetWindow();
+
+                        error.Show();
+                        this.Close();
+                    }
+                    catch(Exception ex)
                     {
                         logger.Error(ex, ex.Message);
 
@@ -197,8 +212,6 @@ namespace MusicX.Views
                     }
                     
                 });
-
-                
             });
         }
     }
