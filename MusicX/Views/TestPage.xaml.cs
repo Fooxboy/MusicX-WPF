@@ -17,6 +17,7 @@ using System.Windows.Threading;
 using VkNet.Abstractions.Core;
 using VkNet.Exception;
 using VkNet.Model;
+using Wpf.Ui.Controls;
 
 namespace MusicX.Views
 {
@@ -226,6 +227,12 @@ namespace MusicX.Views
                     CaptchaSid = captchaSid
                 });
             });
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            var notifyIcon = new NotifyIcon();
+
         }
     }
 }

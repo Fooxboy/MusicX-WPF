@@ -35,6 +35,7 @@
     <None Remove="Fonts\VKSansDisplay-Medium.ttf" />
     <None Remove="Fonts\VKSansDisplay-Regular.ttf" />
     <None Remove="NLog.config" />
+    <None Remove="Resources\logo.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -96,16 +97,12 @@
     <PackageReference Include="taglib-sharp-netstandard2.0" Version="2.1.0" />
     <PackageReference Include="WPF-UI" Version="2.0.2" />
     <PackageReference Include="WpfScreenHelper" Version="2.0.0" />
-    <PackageReference Include="Xabe.FFmpeg" Version="5.2.0" />
+    <PackageReference Include="Xabe.FFmpeg" Version="5.2.6" />
     <PackageReference Include="Xabe.FFmpeg.Downloader" Version="5.2.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MusicX.Core\MusicX.Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Resources\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -128,6 +125,7 @@
     <Resource Include="Assets\lottie\play.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resources\logo.png" />
   </ItemGroup>
 
   <ItemGroup>

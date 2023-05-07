@@ -287,8 +287,14 @@ namespace MusicX
                     navigationService.OpenModal<WelcomeToListenTogetherModal>();
                 }
 
+                if(config.MinimizeToTray != null)
+                {
+                    WpfTitleBar.MinimizeToTray = config.MinimizeToTray.Value;
+                }else
+                {
+                    WpfTitleBar.MinimizeToTray = false;
+                }
 
-               
             }
             catch (Exception ex)
             {
@@ -481,6 +487,40 @@ namespace MusicX
             var playerService = StaticService.Container.GetRequiredService<PlayerService>();
             if (playerService.Tracks.Count > 0 && playerService.Tracks.IndexOf(playerService.CurrentTrack) < playerService.Tracks.Count)
                 playerService.NextTrack().SafeFireAndForget();
+        }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            WpfTitleBar.MinimizeToTray = false;
+            this.WindowState = WindowState.Normal;
+
+            this.Show();
+        }
+
+        private void MenuItem_Click_1(object sender, RoutedEventArgs e)
+        {
+            WpfTitleBar.MinimizeToTray = true;
+            this.WindowState = WindowState.Minimized;
+
+            this.Hide();
+        }
+
+        private void MenuItem_Click_2(object sender, RoutedEventArgs e)
+        {
+            //toodo
+        }
+
+        private void MenuItem_Click_3(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
+
+        private void NotifyIcon_LeftClick(NotifyIcon sender, RoutedEventArgs e)
+        {
+            WpfTitleBar.MinimizeToTray = false;
+            this.WindowState = WindowState.Normal;
+
+            this.Show();
         }
     }
 }

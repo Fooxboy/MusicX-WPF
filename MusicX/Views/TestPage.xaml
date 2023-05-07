@@ -231,6 +231,9 @@
                     <music:LyricsControl x:Name="Lyrics"/>
                 </Border>
 
+
+
+                <wpfui:Button Content="GoToTray" Click="Button_Click_1"/>
             </StackPanel>
 
     </Grid>

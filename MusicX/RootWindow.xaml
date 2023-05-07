@@ -142,31 +142,37 @@
             Height="40"
             MinimizeToTray="False"
             UseSnapLayout="True">
-            <!--<wpfui:TitleBar.Tray>
+            <wpfui:TitleBar.Tray>
                 <wpfui:NotifyIcon
+                    x:Name="AppNotifyIcon"
                     FocusOnLeftClick="True"
-                    Icon="pack://application:,,,/Assets/icon.ico"
+                    LeftClick="NotifyIcon_LeftClick"
+                    Icon="pack://application:,,,/Resources/logo.png"
                     MenuOnRightClick="True"
                     TooltipText="MusicX">
                     <wpfui:NotifyIcon.Menu>
                         <ContextMenu>
                             <MenuItem
-                                Header="Home"
-                                Tag="home" />
-                            <MenuItem
-                                Header="Save"
-                                Tag="save" />
-                            <MenuItem
-                                Header="Open"
+                                Click="MenuItem_Click"
+                                Header="Показать"
                                 Tag="open" />
+                            <MenuItem
+                                Click="MenuItem_Click_1"
+                                Header="Свернуть"
+                                Tag="collapse" />
+                            <MenuItem
+                                Click="MenuItem_Click_2"
+                                Header="Включить мою музыку"
+                                Tag="play" />
                             <Separator />
                             <MenuItem
-                                Header="Reload"
-                                Tag="reload" />
+                                Click="MenuItem_Click_3"
+                                Header="Закрыть"
+                                Tag="exit" />
                         </ContextMenu>
                     </wpfui:NotifyIcon.Menu>
                 </wpfui:NotifyIcon>
-            </wpfui:TitleBar.Tray>-->
+            </wpfui:TitleBar.Tray>
         </wpfui:TitleBar>
 
         <!--<Rectangle RadiusX="99" RadiusY="99" HorizontalAlignment="Right" Margin="0 8 150 0" Height="35" Fill="Red" Width="35">
