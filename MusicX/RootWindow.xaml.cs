@@ -295,6 +295,9 @@ namespace MusicX
                     WpfTitleBar.MinimizeToTray = false;
                 }
 
+                this.WindowState = WindowState.Normal;
+
+                AppNotifyIcon.Register();
             }
             catch (Exception ex)
             {
@@ -492,9 +495,10 @@ namespace MusicX
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
             WpfTitleBar.MinimizeToTray = false;
+            this.Show();
+
             this.WindowState = WindowState.Normal;
 
-            this.Show();
         }
 
         private void MenuItem_Click_1(object sender, RoutedEventArgs e)
@@ -518,9 +522,11 @@ namespace MusicX
         private void NotifyIcon_LeftClick(NotifyIcon sender, RoutedEventArgs e)
         {
             WpfTitleBar.MinimizeToTray = false;
-            this.WindowState = WindowState.Normal;
 
             this.Show();
+
+            this.WindowState = WindowState.Normal;
+
         }
     }
 }

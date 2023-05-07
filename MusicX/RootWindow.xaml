@@ -160,10 +160,6 @@
                                 Click="MenuItem_Click_1"
                                 Header="Свернуть"
                                 Tag="collapse" />
-                            <MenuItem
-                                Click="MenuItem_Click_2"
-                                Header="Включить мою музыку"
-                                Tag="play" />
                             <Separator />
                             <MenuItem
                                 Click="MenuItem_Click_3"
