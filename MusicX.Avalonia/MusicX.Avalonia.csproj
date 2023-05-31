@@ -6,6 +6,8 @@
         <!--Avalonia doesen't support TrimMode=link currently,but we are working on that https://github.com/AvaloniaUI/Avalonia/issues/6892 -->
         <TrimMode>copyused</TrimMode>
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+        <Configurations>Debug;Release</Configurations>
+        <Platforms>x64</Platforms>
     </PropertyGroup>
     <ItemGroup>
         <Folder Include="Models\" />
