@@ -7,7 +7,7 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>StoreLogo.scale-400.ico</ApplicationIcon>
-    <Version>0.39</Version>
+    <Version>0.40</Version>
     <NoWin32Manifest>true</NoWin32Manifest>
     <WindowsPackageType>None</WindowsPackageType>
     <EnableMsixTooling>true</EnableMsixTooling>
