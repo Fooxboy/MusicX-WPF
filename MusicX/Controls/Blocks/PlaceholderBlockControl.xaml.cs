@@ -9,6 +9,7 @@ using MusicX.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AppCenter.Crashes;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace MusicX.Controls.Blocks
 {
@@ -64,6 +65,17 @@ namespace MusicX.Controls.Blocks
         {
             try
             {
+                if(buttonAction.Action.Type == "custom_open_browser")
+                {
+                    Process.Start(new ProcessStartInfo()
+                    {
+                        UseShellExecute = true,
+                        FileName = buttonAction.Action.Url
+                    });
+
+                    return;
+                }
+
                 var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
                 var vkService = StaticService.Container.GetRequiredService<VkService>();
 

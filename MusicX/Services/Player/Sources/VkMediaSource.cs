@@ -1,31 +1,32 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Windows.Media.Core;
-using Windows.Media.Streaming.Adaptive;
-using MusicX.Services.Player.Playlists;
+using Windows.Media.Playback;
+using FFmpegInteropX;
 using MusicX.Shared.Player;
 
 namespace MusicX.Services.Player.Sources;
 
 public class VkMediaSource : ITrackMediaSource
 {
-    public async Task<MediaSource?> CreateMediaSourceAsync(PlaylistTrack track, CancellationToken cancellationToken = default)
+    private FFmpegMediaSource? _currentSource; // hold reference so it wont be collected before audio actually ends
+    
+    public async Task<MediaPlaybackItem?> CreateMediaSourceAsync(PlaylistTrack track,
+        CancellationToken cancellationToken = default)
     {
         while (!cancellationToken.IsCancellationRequested)
         {
-            if (track.Data is VkTrackData vkData)
+            if (track.Data is not VkTrackData vkData) break;
+
+            var ffSource = _currentSource = await FFmpegMediaSource.CreateFromUriAsync(vkData.Url, new()
             {
-                var source = await AdaptiveMediaSource.CreateFromUriAsync(new(vkData.Url));
-                
-                if (source.Status != AdaptiveMediaSourceCreationStatus.Success)
-                    continue;
+                FFmpegOptions = new()
+                {
+                    ["http_persistent"] = "false"
+                }
+            });
 
-                var mediaSource = MediaSource.CreateFromAdaptiveMediaSource(source.MediaSource);
-                return mediaSource;
-            }
-
-            break;
+            return ffSource.CreateMediaPlaybackItem();
         }
         
         return null;

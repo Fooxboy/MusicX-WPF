@@ -206,6 +206,10 @@ namespace MusicX
                     catalogs.Catalog.Sections.Insert(catalogs.Catalog.Sections.Count - 1, section);
                 }
 
+                var sectionsService = StaticService.Container.GetRequiredService<ICustomSectionsService>();
+                
+                catalogs.Catalog.Sections.AddRange(await sectionsService.GetSectionsAsync().ToArrayAsync());
+
                 var rand = new Random();
 
                 foreach (var section in catalogs.Catalog.Sections)
@@ -217,6 +221,7 @@ namespace MusicX
                     else if (section.Title.ToLower() == "обзор") icon = Wpf.Ui.Common.SymbolRegular.CompassNorthwest28;
                     else if (section.Title.ToLower() == "подкасты") icon = Wpf.Ui.Common.SymbolRegular.HeadphonesSoundWave20;
                     else if (section.Title.ToLower() == "подписки") icon = Wpf.Ui.Common.SymbolRegular.Feed24;
+                    else if (section.Title.ToLower() == "каталоги") icon = Wpf.Ui.Common.SymbolRegular.Archive20;
                     else
                     {
                         var number = rand.Next(0, icons.Count);
