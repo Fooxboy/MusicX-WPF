@@ -31,10 +31,11 @@ namespace MusicX.Core.Services
         private readonly IVkTokenStore tokenStore;
         private readonly IVkApiAuthAsync auth;
         private readonly IVkApi _api;
+        private readonly ICustomSectionsService _customSectionsService;
 
         public VkService(Logger logger, IVkApiCategories vkApi, IVkApiInvoke apiInvoke,
                          IVkAndroidAuthorization authFlow, IVkApiVersionManager versionManager,
-                         IVkTokenStore tokenStore, IVkApiAuthAsync auth, IVkApi api)
+                         IVkTokenStore tokenStore, IVkApiAuthAsync auth, IVkApi api, ICustomSectionsService customSectionsService)
         {
             this.vkApi = vkApi;
             this.apiInvoke = apiInvoke;
@@ -42,6 +43,7 @@ namespace MusicX.Core.Services
             this.tokenStore = tokenStore;
             this.auth = auth;
             _api = api;
+            _customSectionsService = customSectionsService;
 
             var ver = vkApiVersion.Split('.');
             versionManager.SetVersion(int.Parse(ver[0]), int.Parse(ver[1]));
@@ -154,10 +156,15 @@ namespace MusicX.Core.Services
 
         }
 
-        public async Task<ResponseData> GetSectionAsync(string sectionId, string startFrom = null)
+        public async ValueTask<ResponseData> GetSectionAsync(string sectionId, string startFrom = null)
         {
             try
             {
+                var model = await _customSectionsService.HandleSectionRequest(sectionId, startFrom);
+
+                if (model != null)
+                    return model;
+                
                 logger.Info($"Invoke 'catalog.getSection' with sectionId = '{sectionId}' ");
 
                 var parameters = new VkParameters
@@ -177,7 +184,7 @@ namespace MusicX.Core.Services
                 logger.Debug("RESULT OF 'catalog.getSection'" + json);
 
 
-                var model = JsonConvert.DeserializeObject<ResponseData>(json);
+                model = JsonConvert.DeserializeObject<ResponseData>(json);
 
                  logger.Info("Successful invoke 'catalog.getSection' ");
 
