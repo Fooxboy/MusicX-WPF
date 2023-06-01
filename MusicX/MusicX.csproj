@@ -105,7 +105,7 @@
     <PackageReference Include="WpfScreenHelper" Version="2.0.0" />
     <PackageReference Include="Xabe.FFmpeg" Version="5.2.6" />
     <PackageReference Include="Xabe.FFmpeg.Downloader" Version="5.2.0" />
-    <PackageReference Include="Microsoft.VCRTForwarders.140" Version="1.0.7" />
+    <PackageReference Include="Microsoft.VCRTForwarders.140" Version="1.0.8-pre" />
   </ItemGroup>
 
   <ItemGroup>
