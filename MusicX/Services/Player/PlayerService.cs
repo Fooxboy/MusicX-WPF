@@ -163,7 +163,7 @@ public class PlayerService
         if (CurrentTrack.Data.Url is null) await NextTrack();
 
 
-        MediaSource?[] sources;
+        MediaPlaybackItem?[] sources;
 
         try
         {
