@@ -63,7 +63,7 @@ public class CustomSectionsService : ICustomSectionsService
             ["start_from"] = startFrom
         });
 
-        if (attachments.Length == 0)
+        if (attachments.Length == 0 && startFrom is null)
             return new()
             {
                 Section = new()
@@ -84,6 +84,15 @@ public class CustomSectionsService : ICustomSectionsService
                     }
                 }
             };
+        
+        if (attachments.Length == 0)
+            return new()
+            {
+                Section = new()
+                {
+                    Id = id
+                }
+            }; 
 
         var audios = attachments.Select(b =>
         {
