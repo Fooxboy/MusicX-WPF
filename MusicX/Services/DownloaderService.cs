@@ -77,8 +77,7 @@ public class DownloaderService
         }
 
         var conversion = FFmpeg.Conversions.New()
-                               .SetOutput(fileDownloadPath)
-                               .AddParameter($"-i {audio.Data.Url}");
+            .SetOutput(fileDownloadPath);
 
         conversion.OnDataReceived += Ffmpeg_Data;
         if (progress is not null)
@@ -87,8 +86,11 @@ public class DownloaderService
         conversion.AddParameter(
             audio.Data is VkTrackData
                 ? "-http_persistent false"
-                : $"-headers \"Authorization: {_boomService.Client.DefaultRequestHeaders.Authorization}\"",
-            ParameterPosition.PreInput);
+                : $"-headers \"Authorization: {_boomService.Client.DefaultRequestHeaders.Authorization}\"");
+        
+        conversion.AddParameter($"-i {audio.Data.Url}")
+            .AddParameter("-vcodec copy")
+            .AddParameter("-c copy");
 
         await conversion.Start(cancellationToken);
         await AddMetadataAsync(audio, fileDownloadPath, cancellationToken);
