@@ -221,7 +221,7 @@ namespace MusicX
                     else if (section.Title.ToLower() == "обзор") icon = Wpf.Ui.Common.SymbolRegular.CompassNorthwest28;
                     else if (section.Title.ToLower() == "подкасты") icon = Wpf.Ui.Common.SymbolRegular.HeadphonesSoundWave20;
                     else if (section.Title.ToLower() == "подписки") icon = Wpf.Ui.Common.SymbolRegular.Feed24;
-                    else if (section.Title.ToLower() == "профили") icon = Wpf.Ui.Common.SymbolRegular.People24;
+                    else if (section.Title.ToLower() == "каталоги") icon = Wpf.Ui.Common.SymbolRegular.Archive20;
                     else
                     {
                         var number = rand.Next(0, icons.Count);

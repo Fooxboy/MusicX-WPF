@@ -31,7 +31,7 @@ public class CustomSectionsService : ICustomSectionsService
     {
         yield return new()
         {
-            Title = "Профили",
+            Title = "Каталоги",
             Id = "profiles",
             Url = "https://vk.com/profiles"
         };
@@ -187,7 +187,51 @@ public class CustomSectionsService : ICustomSectionsService
                     },
                     Buttons = buttons
                 },
-                MapLinksBlock(convs)
+                MapLinksBlock(convs),
+
+                new()
+                {
+                    Id = Random.Shared.Next().ToString(),
+                    DataType = "none",
+                    Layout = new()
+                    {
+                        Name = "separator",
+                    },
+                },
+
+                new()
+                {
+                    Id = Random.Shared.Next().ToString(),
+                    DataType = "placeholder",
+                    Placeholders  = new List<Placeholder>()
+                    {
+                        new Placeholder()
+                        {
+                            Text = "Этот раздел будет пополнятся со временем :) Следите за новостями!",
+                            Id = "jksdfksdkf",
+                            Title = "Это ещё не все!",
+                            Icons = new List<Core.Models.Image>()
+                            {
+                                new Core.Models.Image()
+                                {
+                                    Url = "https://sun2-17.userapi.com/O1eJDSj3KbMqaJMxBP46CTWtWTLytlS-4JSrEA/X8a7Q4les5o.png"
+                                }
+                            },
+                            Buttons = new List<Button>
+                            {
+                                new Button()
+                                {
+                                    Title = "Телеграм канал",
+                                    Action = new ActionButton()
+                                    {
+                                        Url = "https://t.me/MusicXPlayer",
+                                        Type = "custom_open_browser"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                }
             }
         };
     }
