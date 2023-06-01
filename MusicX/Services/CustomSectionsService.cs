@@ -1,0 +1,253 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using MusicX.Core.Models;
+using MusicX.Core.Models.General;
+using MusicX.Core.Services;
+using MusicX.Helpers;
+using VkNet.Abstractions;
+using VkNet.Enums.SafetyEnums;
+using VkNet.Model;
+using Button = MusicX.Core.Models.Button;
+
+namespace MusicX.Services;
+
+public class CustomSectionsService : ICustomSectionsService
+{
+    public const string CustomLinkRegex = @"^[c-]?\d*$";
+    
+    private readonly IVkApiCategories _vkService;
+    private readonly IVkApiInvoke _apiInvoke;
+
+    public CustomSectionsService(IVkApiCategories vkService, IVkApiInvoke apiInvoke)
+    {
+        _vkService = vkService;
+        _apiInvoke = apiInvoke;
+    }
+
+    public async IAsyncEnumerable<Section> GetSectionsAsync()
+    {
+        yield return new()
+        {
+            Title = "Профили",
+            Id = "profiles",
+            Url = "https://vk.com/profiles"
+        };
+    }
+
+    public async ValueTask<ResponseData?> HandleSectionRequest(string id, string? nextFrom) =>
+        id switch
+        {
+            "profiles" => new()
+            {
+                Section = await GetProfilesSectionAsync()
+            },
+            "attachments_full" => new()
+            {
+                Section = await GetAttachmentConvsSectionAsync(nextFrom)
+            },
+            _ when Regex.IsMatch(id, CustomLinkRegex) => await GetAttachmentsSectionAsync(id, nextFrom),
+            _ => null
+        };
+
+    private async Task<ResponseData> GetAttachmentsSectionAsync(string id, string? startFrom)
+    {
+        var peerId = long.Parse(id);
+
+        var (attachments, nextFrom) = await _apiInvoke.CallAsync<MessagesGetAttachmentsResponse>("messages.getHistoryAttachments", new()
+        {
+            ["peer_id"] = peerId.ToString(),
+            ["media_type"] = "audio",
+            ["start_from"] = startFrom
+        });
+
+        if (attachments.Length == 0)
+            return new()
+            {
+                Section = new()
+                {
+                    Id = id,
+                    Blocks = new()
+                    {
+                        new()
+                        {
+                            Id = Random.Shared.Next().ToString(),
+                            DataType = "none",
+                            Layout = new()
+                            {
+                                Name = "header_extended",
+                                Title = "Ничего не найдено"
+                            }
+                        },
+                    }
+                }
+            };
+
+        var audios = attachments.Select(b =>
+        {
+            b.Attachment.Audio.ParentBlockId = id;
+            return b.Attachment.Audio;
+        }).ToList();
+        
+        var response = new ResponseData
+        {
+            Section = new()
+            {
+                Id = id,
+                Blocks = new()
+                {
+                    new()
+                    {
+                        DataType = "music_audios",
+                        Layout = new()
+                        {
+                            Name = "list"
+                        },
+                        Audios = audios
+                    }
+                },
+                NextFrom = nextFrom!
+            },
+            Audios = audios
+        };
+        
+        if (startFrom is null)
+            response.Section.Blocks.Insert(0, new()
+            {
+                Id = Random.Shared.Next().ToString(),
+                DataType = "none",
+                Layout = new()
+                {
+                    Name = "header",
+                    Title = "Треки из вложений"
+                }
+            });
+
+        return response;
+    }
+
+    private async Task<Section> GetAttachmentConvsSectionAsync(string? startFrom)
+    {
+        ulong? offset = startFrom is null ? null : ulong.Parse(startFrom);
+        
+        var convs = await _vkService.Messages.GetConversationsAsync(new()
+        {
+            Extended = true,
+            Offset = offset
+        });
+
+        return new()
+        {
+            Id = "attachments_full",
+            NextFrom = offset.GetValueOrDefault() + (ulong)convs.Items.Count < (ulong)convs.Count
+                ? (offset.GetValueOrDefault() + (ulong)convs.Items.Count).ToString()
+                : null!,
+            Blocks = new()
+            {
+                MapLinksBlock(convs, true)
+            }
+        };
+    }
+
+    private async Task<Section> GetProfilesSectionAsync()
+    {
+        var convs = await _vkService.Messages.GetConversationsAsync(new()
+        {
+            Extended = true,
+            Count = 10
+        });
+
+        var buttons = convs.Count > 10
+            ? new()
+            {
+                new()
+                {
+                    Title = "Показать все",
+                    SectionId = "attachments_full"
+                }
+            }
+            : new List<Button>();
+
+        return new()
+        {
+            Title = "Профили",
+            Id = "profiles",
+            Blocks = new()
+            {
+                new()
+                {
+                    Id = Random.Shared.Next().ToString(),
+                    DataType = "none",
+                    Layout = new()
+                    {
+                        Name = "header_extended",
+                        Title = "Вложения"
+                    },
+                    Buttons = buttons
+                },
+                MapLinksBlock(convs)
+            }
+        };
+    }
+
+    private static Block MapLinksBlock(GetConversationsResult convs, bool full = false)
+    {
+        return new()
+        {
+            Id = Random.Shared.Next().ToString(),
+            DataType = "links",
+            Layout = new()
+            {
+                Name = full ? "list" : "large_slider"
+            },
+            Links = convs.Items.Where(b => b.Conversation.CanWrite.Allowed).Select(b =>
+            {
+                var type = b.Conversation.Peer.Type;
+                var id = b.Conversation.Peer.Id.ToString();
+
+                var name = true switch
+                {
+                    _ when type == ConversationPeerType.Chat => b.Conversation.ChatSettings.Title,
+                    _ when type == ConversationPeerType.Group => convs.Groups.Single(g =>
+                        g.Id == b.Conversation.Peer.LocalId).Name,
+                    _ when type == ConversationPeerType.User => convs.Profiles.Single(g =>
+                        g.Id == b.Conversation.Peer.Id).GetFullName(),
+                    _ => "<unnamed>"
+                };
+
+                return new Link
+                {
+                    Id = id,
+                    Url = $"https://vk.com/history{id}_audio",
+                    Title = name,
+                    Meta = new()
+                    {
+                        ContentType = true switch
+                        {
+                            _ when type == ConversationPeerType.Chat => "chat",
+                            _ when type == ConversationPeerType.Group => "group",
+                            _ when type == ConversationPeerType.User => "user",
+                            _ => string.Empty
+                        }
+                    },
+                    Image = true switch
+                    {
+                        _ when type == ConversationPeerType.Chat => b.Conversation.ChatSettings
+                            .ToImageList(convs.Profiles),
+                        _ when type == ConversationPeerType.Group => convs.Groups.Single(g =>
+                            g.Id == b.Conversation.Peer.LocalId).ToImageList(),
+                        _ when type == ConversationPeerType.User => convs.Profiles.Single(g =>
+                            g.Id == b.Conversation.Peer.Id).ToImageList(),
+                        _ => new()
+                    }
+                };
+            }).ToList()
+        };
+    }
+}
+
+public record MessagesGetAttachmentsResponse(MessagesGetAttachments[] Items, string? NextFrom);
+public record MessagesGetAttachments(MessagesGetAttachmentsAttachment Attachment);
+public record MessagesGetAttachmentsAttachment(Audio Audio);

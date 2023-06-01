@@ -97,6 +97,7 @@ namespace MusicX.Views
                 collection.AddSingleton<BannerService>();
                 collection.AddTransient<RegistryPatchManager>();
                 collection.AddSingleton<WindowsAudioMixerService>();
+                collection.AddSingleton<ICustomSectionsService, CustomSectionsService>();
 
                 var container = StaticService.Container = collection.BuildServiceProvider();
 

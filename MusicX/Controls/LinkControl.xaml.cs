@@ -66,7 +66,7 @@ namespace MusicX.Controls
                     this.Height = 80;
                 }
 
-                if (Link.Meta.ContentType == "group" || Link.Meta.ContentType == "user")
+                if (Link.Meta.ContentType is "group" or "user" or "chat")
                 {
                     if (Link.Image != null) LinkImage.ImageSource = new BitmapImage(new Uri(Link.Image[1].Url));
 
@@ -86,7 +86,7 @@ namespace MusicX.Controls
                     LinkText.Margin = new Thickness(10, 0, 0, 0);
                     LinkText.VerticalAlignment = VerticalAlignment.Center;
 
-                    if (Link.Meta.ContentType == "group" || Link.Meta.ContentType == "user")
+                    if (Link.Meta.ContentType is "group" or "user" or "chat")
                     {
                         Card.Icon = Wpf.Ui.Common.SymbolRegular.Link48;
                     }
@@ -137,8 +137,14 @@ namespace MusicX.Controls
                     navigationService.OpenSection(url.Segments.LastOrDefault(), SectionType.Artist);
                 }
 
-                if (Link.Meta.ContentType == "group" || Link.Meta.ContentType == "user")
+                if (Link.Meta.ContentType is "group" or "user" or "chat")
                 {
+                    if (Regex.IsMatch(Link.Id, CustomSectionsService.CustomLinkRegex))
+                    {
+                        navigationService.OpenSection(Link.Id);
+                        return;
+                    }
+                    
                     var match = Regex.Match(Link.Url, "https://vk.com/audios[0-9]+$");
                     if(match.Success)
                     {
