@@ -213,7 +213,7 @@ namespace MusicX.Views
                 }
                 else
                 {
-                    navigation.OpenModal<AvalibleNewUpdateModal>(release);
+                    navigation.OpenModal<AvailableNewUpdateModal>(release);
                 }
             }
             catch (Exception ex)

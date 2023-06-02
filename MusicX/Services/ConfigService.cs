@@ -8,16 +8,27 @@ namespace MusicX.Services
 {
     public class ConfigService
     {
-        private readonly string path = $"{AppDomain.CurrentDomain.BaseDirectory}";
-        private readonly string name = "config.json";
+        private readonly string _configPath;
+
+        public ConfigService()
+        {
+            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MusicX");
+            
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+            
+            _configPath = Path.Combine(path, Name);
+        }
+
+        private const string Name = "config.json";
 
         public ConfigModel Config { get; private set; } = null!;
 
         public async Task<ConfigModel> GetConfig()
         {
-            if(File.Exists(path + name))
+            if(File.Exists(_configPath))
             {
-                var file = await File.ReadAllTextAsync(path + name);
+                var file = await File.ReadAllTextAsync(_configPath);
 
                 var model = JsonConvert.DeserializeObject<ConfigModel>(file)!;
 
@@ -40,7 +51,7 @@ namespace MusicX.Services
             Config = config;
             var json= JsonConvert.SerializeObject(config);
 
-            await File.WriteAllTextAsync(path + name, json);
+            await File.WriteAllTextAsync(_configPath, json);
         }
     }
 }

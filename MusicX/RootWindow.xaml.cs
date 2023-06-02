@@ -26,6 +26,9 @@ using MusicX.Core.Models;
 using MusicX.Shared.Player;
 using Microsoft.AppCenter.Analytics;
 using MusicX.Helpers;
+using MusicX.ViewModels.Modals;
+using Squirrel;
+using Squirrel.Sources;
 
 namespace MusicX
 {
@@ -252,9 +255,10 @@ namespace MusicX
                 navigationBar.Items.Add(item2);
 
                 navigationBar.Items[0].RaiseEvent(new(ButtonBase.ClickEvent));
-                
-                var thread = new Thread(CheckUpdatesInStart);
-                thread.Start();
+
+#if !DEBUG
+                CheckUpdatesInStart().SafeFireAndForget();
+#endif
 
                 var config = await configService.GetConfig();
 
@@ -427,18 +431,35 @@ namespace MusicX
             }
         }
 
-        private async void CheckUpdatesInStart()
+        private async Task CheckUpdatesInStart()
         {
 
             try
             {
                 await Task.Delay(2000);
-                var github = StaticService.Container.GetRequiredService<GithubService>();
+                /*var github = StaticService.Container.GetRequiredService<GithubService>();
 
                 var release = await github.GetLastRelease();
 
                 if (release.TagName != StaticService.Version)
-                    navigationService.OpenModal<AvalibleNewUpdateModal>(release);
+                    navigationService.OpenModal<AvalibleNewUpdateModal>(release);*/
+
+                var manager = new UpdateManager(new GithubSource("https://github.com/fooxboy/musicxreleases",
+                    string.Empty, true, new HttpClientFileDownloader()));
+
+                var updateInfo = await manager.CheckForUpdate();
+                
+                if (updateInfo.ReleasesToApply.Count == 0)
+                {
+                    manager.Dispose();
+                    return;
+                }
+
+                var releaseNotes = updateInfo.FetchReleaseNotes(ReleaseNotesFormat.Markdown);
+                
+                var viewModel = new AvailableNewUpdateModalViewModel(manager, updateInfo, releaseNotes);
+
+                navigationService.OpenModal<AvailableNewUpdateModal>(viewModel);
             }catch(Exception ex)
             {
                 var properties = new Dictionary<string, string>

@@ -91,6 +91,7 @@
 
   <ItemGroup>
     <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="6.0.5" />
+    <PackageReference Include="Clowd.Squirrel" Version="3.0.210-g5f9f594" />
     <PackageReference Include="FFmpegInteropX" Version="1.1.0-pre42" />
     <PackageReference Include="HandyControl" Version="3.3.0" />
     <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.5.1" />
