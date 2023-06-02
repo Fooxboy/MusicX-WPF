@@ -89,7 +89,7 @@ namespace MusicX.Views
                 if (usr.Photo200 != null) UserImage.ImageSource = new BitmapImage(usr.Photo200);
 
 
-                var path = $"{AppDomain.CurrentDomain.BaseDirectory}/logs";
+                var path = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/MusicX/logs";
 
                 DirectoryInfo di = new DirectoryInfo(path);
 
