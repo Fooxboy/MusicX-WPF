@@ -146,7 +146,7 @@ namespace MusicX.Controls
 
                     if (Block.Layout.Name == "recomms_slider")
                     {
-                        BlocksPanel.Children.Add(new ListPlaylists() { Content = Block.Playlists, ShowFull = false });
+                        BlocksPanel.Children.Add(new RecommsPlaylistBlock() { Playlists = Block.Playlists });
                         logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
 
                         return;
