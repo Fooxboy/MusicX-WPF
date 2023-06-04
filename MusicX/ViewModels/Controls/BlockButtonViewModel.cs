@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows.Input;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
+using MusicX.Helpers;
 using MusicX.Services;
 using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
@@ -103,10 +105,16 @@ public class BlockButtonViewModel : BaseViewModel
                 }
                 case "create_playlist":
                 {
-                    var notificationService = StaticService.Container.GetRequiredService<NotificationsService>();
+                    var vkService = StaticService.Container.GetRequiredService<VkService>();
                     var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
                     var viewModel = StaticService.Container.GetRequiredService<CreatePlaylistModalViewModel>();
                     viewModel.IsEdit = false;
+                    
+                    if (!string.IsNullOrEmpty(Action.BlockId))
+                    {
+                        viewModel.Tracks.AddRange(await vkService.LoadFullAudiosAsync(Action.BlockId).ToArrayAsync());
+                        viewModel.CreateIsEnable = true;
+                    }
                     
                     navigationService.OpenModal<CreatePlaylistModal>(viewModel);
                     break;

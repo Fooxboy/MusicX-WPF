@@ -12,6 +12,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using MusicX.Helpers;
 using Wpf.Ui.Common;
 
 namespace MusicX.ViewModels.Modals
@@ -26,7 +27,7 @@ namespace MusicX.ViewModels.Modals
 
         public string Description { get; set; }
 
-        public ObservableCollection<Audio> Tracks { get; set; } = new ObservableCollection<Audio>();
+        public ObservableRangeCollection<Audio> Tracks { get; set; } = new();
 
         public bool CreateIsEnable { get; set; } = false;
 
@@ -138,7 +139,7 @@ namespace MusicX.ViewModels.Modals
                     playlistId = editPlaylistId;
                 }else
                 {
-                    playlistId = await vkService.CreatePlaylistAsync(config.UserId, this.Title, this.Description, Tracks.ToList());
+                    playlistId = await vkService.CreatePlaylistAsync(config.UserId, this.Title, this.Description, Tracks);
 
                 }
 

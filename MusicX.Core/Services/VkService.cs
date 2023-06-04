@@ -977,11 +977,11 @@ namespace MusicX.Core.Services
             }
          }
 
-        public async Task<long> CreatePlaylistAsync(long ownerId, string title, string description, List<Audio> tracks)
+        public async Task<long> CreatePlaylistAsync(long ownerId, string title, string description, IEnumerable<Audio> tracks)
         {
             try
             {
-                var audios = tracks.Select(t => t.OwnerId + "_" + t.Id);
+                var audios = tracks.Select(t => t.OwnerId + "_" + t.Id).ToList();
 
                 var result = await vkApi.Audio.CreatePlaylistAsync(ownerId, title, description, audios);
 
