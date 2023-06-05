@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <wpfui:Card Height="100">
+        <wpfui:Card Height="100" Margin="0,0,0,13">
             <StackPanel Orientation="Horizontal">
                 <Image>
                     <Image.Source>
