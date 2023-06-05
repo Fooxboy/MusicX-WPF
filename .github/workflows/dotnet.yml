@@ -14,11 +14,15 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.version }}
-      previous-version: ${{ steps.version.outputs.previous-version }}
+      previous-version: ${{ steps.previous-version.outputs.previous-version }}
     steps:
       - uses: actions/checkout@master
         with:
           fetch-depth: 0
+          
+      - name: Get previous version
+        id: previous-version
+        run: echo "previous-version=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
 
       - name: Git Version
         id: version

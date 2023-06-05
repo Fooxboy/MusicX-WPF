@@ -42,7 +42,7 @@ public sealed class AvailableNewUpdateModalViewModel : BaseViewModel, IDisposabl
 
             Changelog = sb.ToString();
         }
-        else Changelog = releaseNotes.First().Value;
+        else Changelog = releaseNotes.FirstOrDefault().Value ?? "Нет информации.";
     }
 
     private async Task Execute()
