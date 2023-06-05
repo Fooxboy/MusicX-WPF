@@ -1,5 +1,7 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Runtime.Serialization;
+using System.Windows;
 using MusicX.Services;
 using MusicX.ViewModels;
 using System.Windows.Controls;
@@ -92,5 +94,21 @@ public partial class SectionView : Page, IProvideCustomContentState, IMenuPage
     {
         if (e.Key == Key.F5)
             ((SectionViewModel)DataContext).LoadAsync().SafeFireAndForget();
+    }
+
+    private void SectionView_OnLoaded(object sender, RoutedEventArgs e)
+    {
+        ((SectionViewModel)DataContext).PropertyChanged += OnPropertyChanged;
+    }
+
+    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == "Next")
+            Dispatcher.BeginInvoke(async () =>
+            {
+                var scroll = (ScrollViewer)BlocksScrollView.Template.FindName("Scroll", BlocksScrollView);
+                if (!_loading && scroll.ScrollableHeight < scroll.ViewportHeight)
+                    await ((SectionViewModel)DataContext).LoadMore();
+            });
     }
 }
