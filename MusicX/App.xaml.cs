@@ -18,7 +18,7 @@ namespace MusicX
         protected async override void OnStartup(StartupEventArgs e)
         {
 #if !DEBUG
-            SquirrelAwareApp.HandleEvents((_, tools) => tools.CreateShortcutForThisExe());
+            SquirrelAwareApp.HandleEvents((_, tools) => tools.CreateShortcutForThisExe(), onAppUninstall: (_, tool) => tool.RemoveShortcutForThisExe());
             
             if (!InstanceCheck())
             {

@@ -2,7 +2,7 @@ name: .NET
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, develop ]
 
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
@@ -14,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.version }}
+      previous-version: ${{ steps.version.outputs.previous-version }}
     steps:
       - uses: actions/checkout@master
         with:
@@ -23,6 +24,8 @@ jobs:
       - name: Git Version
         id: version
         uses: codacy/git-version@2.7.1
+        with:
+          dev-branch: develop
   
   build:
 
@@ -44,10 +47,29 @@ jobs:
       run: dotnet restore MusicX/MusicX.csproj --locked-mode
         
     - name: Build
-      run: dotnet publish MusicX/MusicX.csproj --no-restore -o pub -p:Platform=x64 -p:Version=${{ needs.compute-version.outputs.version }} -c Release -r win10-x64 --sc
-    
+      run: dotnet publish MusicX/MusicX.csproj --no-restore -o pub -p:Platform=x64 -p:InformationalVersion=${{ needs.compute-version.outputs.version }} -c Release -r win10-x64 --sc
+
+    - name: Build Changelog
+      if: ${{ github.ref == 'refs/heads/develop' }}
+      uses: mikepenz/release-changelog-builder-action@v3
+      with:
+        outputFile: notes.md
+        configurationJson: |
+          {
+            "template": "#{{UNCATEGORIZED}}"
+          }
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
     - name: Install csq
       run: dotnet tool install --global csq
+      
+    - run: mkdir rel
+      
+    - run: curl -sLO https://github.com/Fooxboy/musicxreleases/releases/download/${{ needs.compute-version.outputs.previous-version }}/RELEASES && curl -sLO https://github.com/Fooxboy/musicxreleases/releases/download/${{ needs.compute-version.outputs.previous-version }}/MusicX.WPF-${{ needs.compute-version.outputs.previous-version }}-full.nupkg
+      continue-on-error: true
+      working-directory: ./rel
+      name: Download previous release
       
     - name: Build package
       run: csq --csq-version=3.0.210-g5f9f594 pack -r rel -p pub -u MusicX.WPF -v ${{ needs.compute-version.outputs.version }} --packTitle "MusicX Player" -e MusicX.exe -i MusicX/StoreLogo.scale-400.ico --appIcon MusicX/StoreLogo.scale-400.ico --msi x64 --includePdb --packAuthors "Fooxboy, zznty and testers" --releaseNotes notes.md -s MusicX/StoreLogo.scale-400.png
