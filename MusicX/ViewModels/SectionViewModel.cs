@@ -117,23 +117,14 @@ namespace MusicX.ViewModels
                 logger.Info("Replace blocks...");
                 var replaces = await vkService.ReplaceBlockAsync(replaceId).ConfigureAwait(false);
 
-                foreach (var replace in replaces.Replacements.ReplacementsModels)
+                var toReplaceBlockIds = replaces.Replacements.ReplacementsModels.SelectMany(b => b.FromBlockIds)
+                    .ToHashSet();
+
+                await Application.Current.Dispatcher.InvokeAsync(() =>
                 {
-                    var startIndex = Blocks.IndexOf(Blocks.SingleOrDefault(b => b.Id == replace.FromBlockIds.First()));
-
-                    if (startIndex == -1)
-                    {
-                        break;
-                    }
-
-                    await Application.Current.Dispatcher.InvokeAsync(() =>
-                    {
-                        Blocks.RemoveRange(Blocks.ToArray()[startIndex..]);
-                        Blocks.AddRange(replace.ToBlocks, NotifyCollectionChangedAction.Reset);
-                    });
-                }
-
-
+                    Blocks.RemoveRange(Blocks.Where(b => toReplaceBlockIds.Contains(b.Id)).ToArray());
+                    Blocks.AddRangeSequential(replaces.Replacements.ReplacementsModels.SelectMany(b => b.ToBlocks));
+                });
             }
             catch (Exception ex)
             {
