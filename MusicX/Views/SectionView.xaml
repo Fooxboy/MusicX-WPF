@@ -15,7 +15,8 @@
     d:DataContext="{d:DesignInstance {x:Type viewModels:SectionViewModel}, IsDesignTimeCreatable=True}"
     Style="{StaticResource UiPage}"
     mc:Ignorable="d"
-    KeyUp="SectionView_OnKeyUp">
+    KeyUp="SectionView_OnKeyUp"
+    Loaded="SectionView_OnLoaded">
     <Page.Resources>
         <Storyboard x:Key="LoadedAnimation">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
@@ -142,6 +143,7 @@
                 <ListBox.Template>
                     <ControlTemplate TargetType="{x:Type ListBox}">
                         <hc:ScrollViewer
+                            x:Name="Scroll"
                             Margin="0"
                             hc:ScrollViewerAttach.AutoHide="True"
                             Focusable="False"
