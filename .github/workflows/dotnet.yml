@@ -70,7 +70,7 @@ jobs:
       
     - run: mkdir rel
       
-    - run: curl -sLO https://github.com/Fooxboy/musicxreleases/releases/download/${{ needs.compute-version.outputs.previous-version }}/RELEASES && curl -sLO https://github.com/Fooxboy/musicxreleases/releases/download/${{ needs.compute-version.outputs.previous-version }}/MusicX.WPF-${{ needs.compute-version.outputs.previous-version }}-full.nupkg
+    - run: curl --remove-on-error -sLO https://github.com/Fooxboy/musicxreleases/releases/download/${{ needs.compute-version.outputs.previous-version }}/RELEASES && curl --remove-on-error -sLO https://github.com/Fooxboy/musicxreleases/releases/download/${{ needs.compute-version.outputs.previous-version }}/MusicX.WPF-${{ needs.compute-version.outputs.previous-version }}-full.nupkg
       continue-on-error: true
       working-directory: ./rel
       name: Download previous release
