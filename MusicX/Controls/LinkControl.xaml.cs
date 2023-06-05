@@ -68,7 +68,8 @@ namespace MusicX.Controls
 
                 if (Link.Meta.ContentType is "group" or "user" or "chat")
                 {
-                    if (Link.Image != null) LinkImage.ImageSource = new BitmapImage(new Uri(Link.Image[1].Url));
+                    if (Link.Image is not (null or { Count: 0 }))
+                        LinkImage.ImageSource = new BitmapImage(new(Link.Image[1].Url));
 
                 }else
                 {

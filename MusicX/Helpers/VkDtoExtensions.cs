@@ -46,7 +46,7 @@ public static class VkDtoExtensions
 
     public static List<Image> ToImageList(this ConversationChatSettings chatSettings, IEnumerable<User> users) =>
         chatSettings.Photo is null
-            ? users.Single(b => b.Id == chatSettings.OwnerId).ToImageList()
+            ? users.SingleOrDefault(b => b.Id == chatSettings.OwnerId)?.ToImageList() ?? new List<Image>()
             : new()
             {
                 new()
