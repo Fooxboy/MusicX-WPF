@@ -26,6 +26,11 @@ jobs:
         uses: codacy/git-version@2.7.1
         with:
           dev-branch: develop
+
+      - uses: actions-ecosystem/action-push-tag@v1
+        name: Push new tag
+        with:
+          tag: ${{ steps.version.outputs.version }}
   
   build:
 
@@ -62,7 +67,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
     - name: Install csq
-      run: dotnet tool install --global csq
+      run: dotnet tool install --global csq --version 3.0.210-g5f9f594
       
     - run: mkdir rel
       
