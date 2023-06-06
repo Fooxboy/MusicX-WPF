@@ -22,7 +22,13 @@ jobs:
           
       - name: Get previous version
         id: previous-version
-        run: echo "previous-version=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
+        shell: bash
+        run: |
+          if [ ${{ github.ref }} == 'refs/heads/master' ]; then
+            echo "previous-version=${{ steps.version.outputs.previous-version }}" >> $GITHUB_OUTPUT
+          else
+            echo "previous-version=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
+          fi
 
       - name: Git Version
         id: version

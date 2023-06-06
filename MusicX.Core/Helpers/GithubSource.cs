@@ -183,7 +183,7 @@ public class GithubSource : IUpdateSource
             .DownloadString(getReleasesUri.ToString(), Authorization, "application/vnd.github.v3+json")
             .ConfigureAwait(false);
         var releases = JsonConvert.DeserializeObject<List<GithubRelease>>(response)!;
-        return releases.OrderByDescending(d => d.PublishedAt).Where(x => includePrereleases || !x.Prerelease).ToArray();
+        return releases.OrderByDescending(d => d.PublishedAt).Where(x => includePrereleases ? x.Prerelease : !x.Prerelease).ToArray();
     }
 
     /// <summary>
