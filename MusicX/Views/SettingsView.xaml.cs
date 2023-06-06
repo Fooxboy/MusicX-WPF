@@ -29,6 +29,8 @@ namespace MusicX.Views
         private readonly ConfigService configService;
         private ConfigModel config;
         private readonly VkService vkService;
+        private readonly string _logsDirPath = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/MusicX/logs";
+
         public SettingsView()
         {
             InitializeComponent();
@@ -89,9 +91,7 @@ namespace MusicX.Views
                 if (usr.Photo200 != null) UserImage.ImageSource = new BitmapImage(usr.Photo200);
 
 
-                var path = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/MusicX/logs";
-
-                DirectoryInfo di = new DirectoryInfo(path);
+                DirectoryInfo di = new DirectoryInfo(_logsDirPath);
 
                 double memory = 0;
 
@@ -235,20 +235,16 @@ namespace MusicX.Views
 
         private void OpenLogs_Click(object sender, RoutedEventArgs e)
         {
-            var path = $"{AppDomain.CurrentDomain.BaseDirectory}/logs";
-
             Process.Start(new ProcessStartInfo
             {
-                FileName = path,
+                FileName = _logsDirPath,
                 UseShellExecute = true
             });
         }
 
         private void RemoveLogs_Click(object sender, RoutedEventArgs e)
         {
-            var path = $"{AppDomain.CurrentDomain.BaseDirectory}/logs";
-
-            DirectoryInfo di = new DirectoryInfo(path);
+            DirectoryInfo di = new DirectoryInfo(_logsDirPath);
 
             foreach (FileInfo file in di.GetFiles())
             {
