@@ -30,6 +30,7 @@ using Wpf.Ui.Appearance;
 using Wpf.Ui.Common;
 using Wpf.Ui.Controls;
 using Wpf.Ui.Extensions;
+using GithubSource = MusicX.Core.Helpers.GithubSource;
 
 namespace MusicX
 {

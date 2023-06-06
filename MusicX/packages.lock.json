@@ -538,11 +538,13 @@
       "musicx.core": {
         "type": "Project",
         "dependencies": {
+          "Clowd.Squirrel": "[3.0.210-g5f9f594, )",
           "DiscordRPC": "[1.0.0, )",
           "Microsoft.AspNetCore.SignalR.Client": "[6.0.10, )",
           "MusicX.Shared": "[1.0.0, )",
           "NLog": "[4.7.14, )",
           "NLog.Schema": "[5.0.0-rc2, )",
+          "System.Linq.Async": "[6.0.1, )",
           "VkNet": "[1.70.0, )",
           "VkNet.AudioBypassService": "[1.7.2, )",
           "VkNet.Extensions.DependencyInjection": "[1.0.0, )"
