@@ -77,12 +77,18 @@ namespace MusicX.Views
                 {
                     config.MinimizeToTray = false;
                 }
+                
+                if (config.GetBetaUpdates == null)
+                {
+                    config.GetBetaUpdates = false;
+                }
 
                 ShowRPC.IsChecked = config.ShowRPC.Value;
                 BroacastVK.IsChecked = config.BroadcastVK.Value;
                 ShowAmimatedBackground.IsChecked = config.AmimatedBackground;
                 WinterTheme.IsChecked = config.WinterTheme.Value;
                 MinimizeToTray.IsChecked = config.MinimizeToTray.Value;
+                GetBetaUpdates.IsChecked = config.GetBetaUpdates.Value;
 
                 UserName.Text = config.UserName.Split(' ')[0];
 
@@ -526,6 +532,29 @@ namespace MusicX.Views
         private async void MinimizeToTray_Unchecked(object sender, RoutedEventArgs e)
         {
             config.MinimizeToTray = false;
+
+            await configService.SetConfig(config);
+
+            StaticService.Container.GetRequiredService<NotificationsService>().Show("Необходим перезапуск", "Перезапустите Music X чтобы изменения применились");
+        }
+
+        private async void GetBetaUpdates_OnChecked(object sender, RoutedEventArgs e)
+        {
+            if (config.GetBetaUpdates == (sender as ToggleSwitch).IsChecked)
+            {
+                return;
+            }
+            
+            config.GetBetaUpdates = true;
+
+            await configService.SetConfig(config);
+
+            StaticService.Container.GetRequiredService<NotificationsService>().Show("Необходим перезапуск", "Перезапустите Music X чтобы изменения применились");
+        }
+
+        private async void GetBetaUpdates_OnUnchecked(object sender, RoutedEventArgs e)
+        {
+            config.GetBetaUpdates = false;
 
             await configService.SetConfig(config);
 

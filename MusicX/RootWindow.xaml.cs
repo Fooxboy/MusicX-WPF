@@ -445,8 +445,10 @@ namespace MusicX
                 if (release.TagName != StaticService.Version)
                     navigationService.OpenModal<AvalibleNewUpdateModal>(release);*/
 
+                var config = await configService.GetConfig();
+                
                 var manager = new UpdateManager(new GithubSource("https://github.com/fooxboy/musicxreleases",
-                    string.Empty, true, new HttpClientFileDownloader()));
+                    string.Empty, config.GetBetaUpdates.GetValueOrDefault(false), new HttpClientFileDownloader()));
 
                 var updateInfo = await manager.CheckForUpdate();
                 
