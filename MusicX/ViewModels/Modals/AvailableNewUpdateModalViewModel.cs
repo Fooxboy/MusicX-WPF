@@ -1,19 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
+using Microsoft.AppCenter.Crashes;
+using Microsoft.Extensions.DependencyInjection;
+using MusicX.Core.Services;
+using MusicX.Services;
+using NLog;
 using Squirrel;
-using Squirrel.Sources;
 
 namespace MusicX.ViewModels.Modals;
 
 public sealed class AvailableNewUpdateModalViewModel : BaseViewModel, IDisposable
 {
     private readonly UpdateManager _updateManager;
-    
+    private readonly GithubService _githubService;
+
     public UpdateInfo UpdateInfo { get; set; }
     
     public ICommand ApplyUpdatesCommand { get; }
@@ -21,28 +26,46 @@ public sealed class AvailableNewUpdateModalViewModel : BaseViewModel, IDisposabl
     public bool IsUpdating { get; set; }
     
     public int Progress { get; set; }
-    
-    public string Changelog { get; }
+
+    public string Changelog { get; private set; } = "Нет информации.";
 
     public AvailableNewUpdateModalViewModel(UpdateManager updateManager, UpdateInfo updateInfo,
-        Dictionary<ReleaseEntry, string> releaseNotes)
+        GithubService githubService)
     {
         _updateManager = updateManager;
+        _githubService = githubService;
         UpdateInfo = updateInfo;
         ApplyUpdatesCommand = new AsyncCommand(Execute);
-
-        if (releaseNotes.Count > 1)
+        LoadChangelogAsync().SafeFireAndForget(ex =>
         {
-            var sb = new StringBuilder();
-
-            foreach (var (key, value) in releaseNotes)
+            var notificationService = StaticService.Container.GetRequiredService<NotificationsService>();
+            var logger = StaticService.Container.GetRequiredService<Logger>();
+            
+            var properties = new Dictionary<string, string>
             {
-                sb.AppendLine($"- {key.Version}: ").AppendLine(value);
-            }
+#if DEBUG
+                { "IsDebug", "True" },
+#endif
+                {"Version", StaticService.Version }
+            };
+            Crashes.TrackError(ex, properties);
+            logger.Error(ex, ex.Message);
+            
+            notificationService.Show("Неудалось получить список изменений", $"Произошла ошибка при получении списка изменений: {ex.GetType().FullName}");
+        });
+    }
 
-            Changelog = sb.ToString();
+    private async Task LoadChangelogAsync()
+    {
+        var sb = new StringBuilder();
+        foreach (var entry in UpdateInfo.ReleasesToApply)
+        {
+            var release = await _githubService.GetReleaseByTag(entry.Version.ToFullString());
+
+            sb.AppendLine($"- {entry.Version.ToFullString()}:").AppendLine(release.Body);
         }
-        else Changelog = releaseNotes.FirstOrDefault().Value ?? "Нет информации.";
+
+        Changelog = sb.ToString();
     }
 
     private async Task Execute()
@@ -54,6 +77,8 @@ public sealed class AvailableNewUpdateModalViewModel : BaseViewModel, IDisposabl
             
             await _updateManager.DownloadReleases(UpdateInfo.ReleasesToApply, ProgressHandler);
             await _updateManager.ApplyReleases(UpdateInfo, ProgressHandler);
+            
+            UpdateManager.RestartApp();
         }
         finally
         {

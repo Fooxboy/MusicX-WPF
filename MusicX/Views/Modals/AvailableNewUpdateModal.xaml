@@ -8,10 +8,15 @@
            xmlns:wpfui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
            xmlns:controls="clr-namespace:MusicX.Controls"
            xmlns:modals="using:MusicX.ViewModels.Modals"
+           xmlns:hc="https://handyorg.github.io/handycontrol"
            d:DesignHeight="450" d:DesignWidth="800"
-           Width="350" Height="450"
+           Width="550" Height="450"
            Title="Доступно обновление"
            d:DataContext="{d:DesignInstance modals:AvailableNewUpdateModalViewModel}">
+
+    <Page.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </Page.Resources>
 
     <Grid>
         <StackPanel Margin="0 30 0 0">
@@ -21,12 +26,32 @@
                 <TextBlock FontSize="18" Foreground="White" Text="{Binding UpdateInfo.FutureReleaseEntry.Version, FallbackValue=1.1}"/>
             </StackPanel>
 
-            <TextBlock Foreground="White" Margin="20 20" TextWrapping="Wrap" Text="{Binding Changelog}"/>
+            <hc:ScrollViewer
+                x:Name="Scroll"
+                Margin="20 20"
+                hc:ScrollViewerAttach.AutoHide="True"
+                Focusable="False"
+                HorizontalScrollBarVisibility="Disabled"
+                IsInertiaEnabled="True"
+                VerticalScrollBarVisibility="Auto">
+                <TextBlock Foreground="White" TextWrapping="Wrap" Text="{Binding Changelog}" />
+            </hc:ScrollViewer>
 
         </StackPanel>
-        
-        <StackPanel VerticalAlignment="Bottom" Margin="20 0 20 30">
-            <wpfui:Button x:Name="Update" Appearance="Secondary" Command="{Binding ApplyUpdatesCommand}" Content="Обновить сейчас"/>
-        </StackPanel>
+
+        <Grid VerticalAlignment="Bottom" Margin="20 30">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <ProgressBar Visibility="{Binding IsUpdating, Converter={StaticResource BooleanToVisibilityConverter}}"
+                         Value="{Binding Progress}"
+                         Maximum="100"
+                         Minimum="0"
+                         Margin="10 0"/>
+            <wpfui:Button Grid.Column="1" x:Name="Update" Appearance="Secondary"
+                          Command="{Binding ApplyUpdatesCommand}" Content="Обновить сейчас" />
+        </Grid>
     </Grid>
 </Page>
