@@ -12,6 +12,7 @@ jobs:
   compute-version:
     name: Compute Version
     runs-on: ubuntu-latest
+    if: ${{ contains(github.event.commits[0].message, '[skip ci]') }}
     outputs:
       version: ${{ steps.version.outputs.version }}
       previous-version: ${{ steps.previous-version.outputs.previous-version }}
@@ -42,10 +43,10 @@ jobs:
           tag: ${{ steps.version.outputs.version }}
   
   build:
-
+    name: Build and Package
     runs-on: windows-latest
     needs: [compute-version]
-
+    if: ${{ contains(github.event.commits[0].message, '[skip ci]') }}
     steps:
     - uses: actions/checkout@v3
       with:
