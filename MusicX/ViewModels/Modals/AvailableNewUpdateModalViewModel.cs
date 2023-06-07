@@ -27,7 +27,7 @@ public sealed class AvailableNewUpdateModalViewModel : BaseViewModel, IDisposabl
     
     public int Progress { get; set; }
 
-    public string Changelog { get; private set; } = "Нет информации.";
+    public string Changelog { get; private set; } = "Загрузка...";
 
     public AvailableNewUpdateModalViewModel(UpdateManager updateManager, UpdateInfo updateInfo,
         GithubService githubService)
@@ -52,6 +52,7 @@ public sealed class AvailableNewUpdateModalViewModel : BaseViewModel, IDisposabl
             logger.Error(ex, ex.Message);
             
             notificationService.Show("Неудалось получить список изменений", $"Произошла ошибка при получении списка изменений: {ex.GetType().FullName}");
+            Changelog = "Нет информации.";
         });
     }
 
