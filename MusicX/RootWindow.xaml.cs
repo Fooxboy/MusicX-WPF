@@ -447,11 +447,12 @@ namespace MusicX
                     navigationService.OpenModal<AvalibleNewUpdateModal>(release);*/
 
                 var config = await configService.GetConfig();
-                
-                var manager = new UpdateManager(new GithubSource("https://github.com/fooxboy/musicxreleases",
-                    string.Empty, config.GetBetaUpdates.GetValueOrDefault(false), new HttpClientFileDownloader()));
 
-                var updateInfo = await manager.CheckForUpdate();
+                var getBetaUpdates = config.GetBetaUpdates.GetValueOrDefault(false);
+                var manager = new UpdateManager(new GithubSource("https://github.com/fooxboy/musicxreleases",
+                    string.Empty, getBetaUpdates, new HttpClientFileDownloader()));
+
+                var updateInfo = await manager.CheckForUpdate(manager.Config.CurrentlyInstalledVersion.HasMetadata ? !getBetaUpdates : getBetaUpdates);
                 
                 if (updateInfo.ReleasesToApply.Count == 0)
                 {
