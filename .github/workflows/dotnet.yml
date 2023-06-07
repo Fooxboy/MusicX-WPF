@@ -20,6 +20,12 @@ jobs:
       - uses: actions/checkout@master
         with:
           fetch-depth: 0
+
+      - name: Git Version
+        id: version
+        uses: codacy/git-version@2.7.1
+        with:
+          dev-branch: develop
           
       - name: Get previous version
         id: previous-version
@@ -30,12 +36,6 @@ jobs:
           else
             echo "previous-version=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
           fi
-
-      - name: Git Version
-        id: version
-        uses: codacy/git-version@2.7.1
-        with:
-          dev-branch: develop
 
       - uses: thejeff77/action-push-tag@v1.0.0
         name: Push new tag
