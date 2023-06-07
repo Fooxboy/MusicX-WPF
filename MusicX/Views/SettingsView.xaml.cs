@@ -29,6 +29,8 @@ namespace MusicX.Views
         private readonly ConfigService configService;
         private ConfigModel config;
         private readonly VkService vkService;
+        private readonly string _logsDirPath = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/MusicX/logs";
+
         public SettingsView()
         {
             InitializeComponent();
@@ -75,12 +77,18 @@ namespace MusicX.Views
                 {
                     config.MinimizeToTray = false;
                 }
+                
+                if (config.GetBetaUpdates == null)
+                {
+                    config.GetBetaUpdates = false;
+                }
 
                 ShowRPC.IsChecked = config.ShowRPC.Value;
                 BroacastVK.IsChecked = config.BroadcastVK.Value;
                 ShowAmimatedBackground.IsChecked = config.AmimatedBackground;
                 WinterTheme.IsChecked = config.WinterTheme.Value;
                 MinimizeToTray.IsChecked = config.MinimizeToTray.Value;
+                GetBetaUpdates.IsChecked = config.GetBetaUpdates.Value;
 
                 UserName.Text = config.UserName.Split(' ')[0];
 
@@ -89,9 +97,7 @@ namespace MusicX.Views
                 if (usr.Photo200 != null) UserImage.ImageSource = new BitmapImage(usr.Photo200);
 
 
-                var path = $"{AppDomain.CurrentDomain.BaseDirectory}/logs";
-
-                DirectoryInfo di = new DirectoryInfo(path);
+                DirectoryInfo di = new DirectoryInfo(_logsDirPath);
 
                 double memory = 0;
 
@@ -213,7 +219,7 @@ namespace MusicX.Views
                 }
                 else
                 {
-                    navigation.OpenModal<AvalibleNewUpdateModal>(release);
+                    navigation.OpenModal<AvailableNewUpdateModal>(release);
                 }
             }
             catch (Exception ex)
@@ -235,20 +241,16 @@ namespace MusicX.Views
 
         private void OpenLogs_Click(object sender, RoutedEventArgs e)
         {
-            var path = $"{AppDomain.CurrentDomain.BaseDirectory}/logs";
-
             Process.Start(new ProcessStartInfo
             {
-                FileName = path,
+                FileName = _logsDirPath,
                 UseShellExecute = true
             });
         }
 
         private void RemoveLogs_Click(object sender, RoutedEventArgs e)
         {
-            var path = $"{AppDomain.CurrentDomain.BaseDirectory}/logs";
-
-            DirectoryInfo di = new DirectoryInfo(path);
+            DirectoryInfo di = new DirectoryInfo(_logsDirPath);
 
             foreach (FileInfo file in di.GetFiles())
             {
@@ -530,6 +532,29 @@ namespace MusicX.Views
         private async void MinimizeToTray_Unchecked(object sender, RoutedEventArgs e)
         {
             config.MinimizeToTray = false;
+
+            await configService.SetConfig(config);
+
+            StaticService.Container.GetRequiredService<NotificationsService>().Show("Необходим перезапуск", "Перезапустите Music X чтобы изменения применились");
+        }
+
+        private async void GetBetaUpdates_OnChecked(object sender, RoutedEventArgs e)
+        {
+            if (config.GetBetaUpdates == (sender as ToggleSwitch).IsChecked)
+            {
+                return;
+            }
+            
+            config.GetBetaUpdates = true;
+
+            await configService.SetConfig(config);
+
+            StaticService.Container.GetRequiredService<NotificationsService>().Show("Необходим перезапуск", "Перезапустите Music X чтобы изменения применились");
+        }
+
+        private async void GetBetaUpdates_OnUnchecked(object sender, RoutedEventArgs e)
+        {
+            config.GetBetaUpdates = false;
 
             await configService.SetConfig(config);
 

@@ -123,14 +123,37 @@ public class CustomSectionsService : ICustomSectionsService
         };
         
         if (startFrom is null)
-            response.Section.Blocks.Insert(0, new()
+            response.Section.Blocks.InsertRange(0, new Block[]
             {
-                Id = Random.Shared.Next().ToString(),
-                DataType = "none",
-                Layout = new()
+                new()
                 {
-                    Name = "header",
-                    Title = "Треки из вложений"
+                    Id = Random.Shared.Next().ToString(),
+                    DataType = "none",
+                    Layout = new()
+                    {
+                        Name = "header",
+                        Title = "Треки из вложений"
+                    }
+                },
+                new()
+                {
+                    Id = Random.Shared.Next().ToString(),
+                    DataType = "action",
+                    Layout = new()
+                    {
+                        Name = "horizontal"
+                    },
+                    Actions = new()
+                    {
+                        new()
+                        {
+                            BlockId = id,
+                            Action = new()
+                            {
+                                Type = "create_playlist"
+                            }
+                        }
+                    }
                 }
             });
 

@@ -59,5 +59,8 @@ namespace MusicX.Models
 
         [JsonProperty("minimize_to_tray")]
         public bool? MinimizeToTray { get; set; }
+        
+        [JsonProperty("get_beta_updates")]
+        public bool? GetBetaUpdates { get; set; }
     }
 }

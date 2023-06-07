@@ -6,6 +6,7 @@ using MusicX.Views;
 using System.Collections.Generic;
 using System.Threading;
 using System.Windows;
+using Squirrel;
 
 namespace MusicX
 {
@@ -17,6 +18,8 @@ namespace MusicX
         protected async override void OnStartup(StartupEventArgs e)
         {
 #if !DEBUG
+            SquirrelAwareApp.HandleEvents((_, tools) => tools.CreateShortcutForThisExe(), onAppUninstall: (_, tool) => tool.RemoveShortcutForThisExe());
+            
             if (!InstanceCheck())
             {
                 if (e.Args != null && e.Args.Length > 0) //открытие не нового приложения, а передача агрументов уже в открытое

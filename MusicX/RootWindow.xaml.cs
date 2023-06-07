@@ -1,31 +1,36 @@
-﻿using MusicX.Core.Services;
-using MusicX.Services;
-using MusicX.Views;
-using MusicX.Views.Modals;
-using NLog;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using AsyncAwaitBestPractices;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Controls;
+using MusicX.Core.Models;
+using MusicX.Core.Services;
+using MusicX.Helpers;
+using MusicX.Models;
+using MusicX.Services;
 using MusicX.Services.Player;
+using MusicX.Shared.Player;
 using MusicX.ViewModels;
+using MusicX.ViewModels.Modals;
+using MusicX.Views;
+using MusicX.Views.Modals;
+using NLog;
+using Squirrel;
+using Squirrel.Sources;
 using Wpf.Ui.Appearance;
+using Wpf.Ui.Common;
 using Wpf.Ui.Controls;
 using Wpf.Ui.Extensions;
-using NavigationService = MusicX.Services.NavigationService;
-using Microsoft.AppCenter.Crashes;
-using MusicX.Core.Models;
-using MusicX.Shared.Player;
-using Microsoft.AppCenter.Analytics;
-using MusicX.Helpers;
+using GithubSource = MusicX.Core.Helpers.GithubSource;
 
 namespace MusicX
 {
@@ -122,7 +127,7 @@ namespace MusicX
           
         }
 
-        private async void RootWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
+        private async void RootWindow_Closing(object? sender, CancelEventArgs e)
         {
             try
             {
@@ -182,17 +187,17 @@ namespace MusicX
 
                 var catalogs = await vkService.GetAudioCatalogAsync();
 
-                var icons = new List<Wpf.Ui.Common.SymbolRegular>()
+                var icons = new List<SymbolRegular>()
                 {
-                    Wpf.Ui.Common.SymbolRegular.MusicNote120,
-                    Wpf.Ui.Common.SymbolRegular.Headphones20,
-                    Wpf.Ui.Common.SymbolRegular.MusicNote2Play20,
-                    Wpf.Ui.Common.SymbolRegular.FoodPizza20,
-                    Wpf.Ui.Common.SymbolRegular.Play12,
-                    Wpf.Ui.Common.SymbolRegular.Star16,
-                    Wpf.Ui.Common.SymbolRegular.PlayCircle48,
-                    Wpf.Ui.Common.SymbolRegular.HeadphonesSoundWave20,
-                    Wpf.Ui.Common.SymbolRegular.Speaker228,
+                    SymbolRegular.MusicNote120,
+                    SymbolRegular.Headphones20,
+                    SymbolRegular.MusicNote2Play20,
+                    SymbolRegular.FoodPizza20,
+                    SymbolRegular.Play12,
+                    SymbolRegular.Star16,
+                    SymbolRegular.PlayCircle48,
+                    SymbolRegular.HeadphonesSoundWave20,
+                    SymbolRegular.Speaker228,
 
 
                 };
@@ -214,14 +219,14 @@ namespace MusicX
 
                 foreach (var section in catalogs.Catalog.Sections)
                 {
-                    Wpf.Ui.Common.SymbolRegular icon;
+                    SymbolRegular icon;
 
-                    if (section.Title.ToLower() == "главная") icon = Wpf.Ui.Common.SymbolRegular.Home24;
-                    else if (section.Title.ToLower() == "моя музыка") icon = Wpf.Ui.Common.SymbolRegular.MusicNote120;
-                    else if (section.Title.ToLower() == "обзор") icon = Wpf.Ui.Common.SymbolRegular.CompassNorthwest28;
-                    else if (section.Title.ToLower() == "подкасты") icon = Wpf.Ui.Common.SymbolRegular.HeadphonesSoundWave20;
-                    else if (section.Title.ToLower() == "подписки") icon = Wpf.Ui.Common.SymbolRegular.Feed24;
-                    else if (section.Title.ToLower() == "каталоги") icon = Wpf.Ui.Common.SymbolRegular.Archive20;
+                    if (section.Title.ToLower() == "главная") icon = SymbolRegular.Home24;
+                    else if (section.Title.ToLower() == "моя музыка") icon = SymbolRegular.MusicNote120;
+                    else if (section.Title.ToLower() == "обзор") icon = SymbolRegular.CompassNorthwest28;
+                    else if (section.Title.ToLower() == "подкасты") icon = SymbolRegular.HeadphonesSoundWave20;
+                    else if (section.Title.ToLower() == "подписки") icon = SymbolRegular.Feed24;
+                    else if (section.Title.ToLower() == "каталоги") icon = SymbolRegular.Archive20;
                     else
                     {
                         var number = rand.Next(0, icons.Count);
@@ -241,20 +246,21 @@ namespace MusicX
                 }
 
 #if DEBUG
-                var item = new NavigationBarItem() { Tag = "test", Icon = Wpf.Ui.Common.SymbolRegular.AppFolder24, Content = "TEST", PageType = typeof(TestPage) };
+                var item = new NavigationBarItem() { Tag = "test", Icon = SymbolRegular.AppFolder24, Content = "TEST", PageType = typeof(TestPage) };
                 navigationBar.Items.Add(item);
 #endif
-                navigationBar.Items.Add(new NavigationBarItem() { Tag = "vkmix", PageDataContext = StaticService.Container.GetRequiredService<VKMixViewModel>(), Icon = Wpf.Ui.Common.SymbolRegular.Stream24, Content = "Микс", PageType = typeof(VKMixView) });
-                navigationBar.Items.Add(new NavigationBarItem() { Tag = "boomprofile", PageDataContext = StaticService.Container.GetRequiredService<BoomProfileViewModel>(), Icon = Wpf.Ui.Common.SymbolRegular.Person16, Content = "Профиль", PageType = typeof(BoomProfileView) });
-                navigationBar.Items.Add(new NavigationBarItem() { Tag = "downloads", PageDataContext = StaticService.Container.GetRequiredService<DownloaderViewModel>(), Icon = Wpf.Ui.Common.SymbolRegular.ArrowDownload48, Content = "Загрузки", PageType = typeof(DownloadsView) });
-                var item2 = new NavigationBarItem() { Tag = "settings", Icon = Wpf.Ui.Common.SymbolRegular.Settings24, Content = "Настройки", PageType = typeof(SettingsView) };
+                navigationBar.Items.Add(new NavigationBarItem() { Tag = "vkmix", PageDataContext = StaticService.Container.GetRequiredService<VKMixViewModel>(), Icon = SymbolRegular.Stream24, Content = "Микс", PageType = typeof(VKMixView) });
+                navigationBar.Items.Add(new NavigationBarItem() { Tag = "boomprofile", PageDataContext = StaticService.Container.GetRequiredService<BoomProfileViewModel>(), Icon = SymbolRegular.Person16, Content = "Профиль", PageType = typeof(BoomProfileView) });
+                navigationBar.Items.Add(new NavigationBarItem() { Tag = "downloads", PageDataContext = StaticService.Container.GetRequiredService<DownloaderViewModel>(), Icon = SymbolRegular.ArrowDownload48, Content = "Загрузки", PageType = typeof(DownloadsView) });
+                var item2 = new NavigationBarItem() { Tag = "settings", Icon = SymbolRegular.Settings24, Content = "Настройки", PageType = typeof(SettingsView) };
 
                 navigationBar.Items.Add(item2);
 
                 navigationBar.Items[0].RaiseEvent(new(ButtonBase.ClickEvent));
-                
-                var thread = new Thread(CheckUpdatesInStart);
-                thread.Start();
+
+#if !DEBUG
+                CheckUpdatesInStart().SafeFireAndForget();
+#endif
 
                 var config = await configService.GetConfig();
 
@@ -283,7 +289,7 @@ namespace MusicX
                     WinterBackground.Visibility = Visibility.Visible;
                 }
 
-                if (config.NotifyMessages is null) config.NotifyMessages = new Models.NotifyMessagesConfig() { ShowListenTogetherModal = true, LastShowedTelegramBlock = null };
+                if (config.NotifyMessages is null) config.NotifyMessages = new NotifyMessagesConfig() { ShowListenTogetherModal = true, LastShowedTelegramBlock = null };
 
                 await configService.SetConfig(config);
 
@@ -427,18 +433,37 @@ namespace MusicX
             }
         }
 
-        private async void CheckUpdatesInStart()
+        private async Task CheckUpdatesInStart()
         {
 
             try
             {
                 await Task.Delay(2000);
-                var github = StaticService.Container.GetRequiredService<GithubService>();
+                /*var github = StaticService.Container.GetRequiredService<GithubService>();
 
                 var release = await github.GetLastRelease();
 
                 if (release.TagName != StaticService.Version)
-                    navigationService.OpenModal<AvalibleNewUpdateModal>(release);
+                    navigationService.OpenModal<AvalibleNewUpdateModal>(release);*/
+
+                var config = await configService.GetConfig();
+
+                var getBetaUpdates = config.GetBetaUpdates.GetValueOrDefault(false);
+                var manager = new UpdateManager(new GithubSource("https://github.com/fooxboy/musicxreleases",
+                    string.Empty, getBetaUpdates, new HttpClientFileDownloader()));
+
+                var updateInfo = await manager.CheckForUpdate(manager.Config.CurrentlyInstalledVersion.HasMetadata ? !getBetaUpdates : getBetaUpdates);
+                
+                if (updateInfo.ReleasesToApply.Count == 0)
+                {
+                    manager.Dispose();
+                    return;
+                }
+
+                var viewModel = new AvailableNewUpdateModalViewModel(manager, updateInfo,
+                    StaticService.Container.GetRequiredService<GithubService>());
+
+                navigationService.OpenModal<AvailableNewUpdateModal>(viewModel);
             }catch(Exception ex)
             {
                 var properties = new Dictionary<string, string>

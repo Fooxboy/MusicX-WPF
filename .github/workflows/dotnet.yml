@@ -3,32 +3,91 @@ name: .NET
 on:
   push:
     branches: [ master, develop ]
-  pull_request:
-    branches: [ master ]
 
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true
 
 jobs:
+  compute-version:
+    name: Compute Version
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.commits[0].message, '[skip ci]')"
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      previous-version: ${{ steps.previous-version.outputs.previous-version }}
+    steps:
+      - uses: actions/checkout@master
+        with:
+          fetch-depth: 0
+          
+      - name: Get previous version
+        id: previous-version
+        shell: bash
+        run: |
+          if [ ${{ github.ref }} == 'refs/heads/master' ]; then
+            echo "previous-version=${{ steps.version.outputs.previous-version }}" >> $GITHUB_OUTPUT
+          else
+            echo "previous-version=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Git Version
+        id: version
+        uses: codacy/git-version@2.7.1
+        with:
+          dev-branch: develop
+
+      - uses: thejeff77/action-push-tag@v1.0.0
+        name: Push new tag
+        with:
+          tag: ${{ steps.version.outputs.version }}
+  
   build:
-
+    name: Build and Package
     runs-on: windows-latest
-
+    needs: [compute-version]
+    if: "!contains(github.event.commits[0].message, '[skip ci]')"
     steps:
     - uses: actions/checkout@v3
+      with:
+        ref: ${{ github.head_ref }}
+        fetch-depth: 0
+        
     - name: Setup .NET
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: 6.0.x
-    - uses: actions/cache@v1
-      with:
-        path: ~/.nuget/packages
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-nuget-
+        
     - name: Restore dependencies
-      run: dotnet restore MusicX/MusicX.csproj --use-lock-file
+      run: dotnet restore MusicX/MusicX.csproj --locked-mode
+        
     - name: Build
-      run: dotnet build MusicX/MusicX.csproj --no-restore
+      run: dotnet publish MusicX/MusicX.csproj --no-restore -o pub -p:Platform=x64 -p:InformationalVersion=${{ needs.compute-version.outputs.version }} -c Release -r win10-x64 --sc
 
+    - name: Build Changelog
+      if: ${{ github.ref == 'refs/heads/develop' }}
+      uses: mikepenz/release-changelog-builder-action@v3
+      with:
+        outputFile: notes.md
+        configurationJson: |
+          {
+            "template": "#{{UNCATEGORIZED}}"
+          }
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+    - name: Install csq
+      run: dotnet tool install --global csq --version 3.0.210-g5f9f594
+      
+    - run: mkdir rel
+      
+    - run: curl.exe --remove-on-error -sfLO https://github.com/Fooxboy/musicxreleases/releases/download/${{ needs.compute-version.outputs.previous-version }}/RELEASES && curl.exe --remove-on-error -sfLO https://github.com/Fooxboy/musicxreleases/releases/download/${{ needs.compute-version.outputs.previous-version }}/MusicX.WPF-${{ needs.compute-version.outputs.previous-version }}-full.nupkg
+      continue-on-error: true
+      working-directory: ./rel
+      name: Download previous release
+      
+    - name: Build package
+      run: csq --csq-version=3.0.210-g5f9f594 pack -r rel -p pub -u MusicX.WPF -v ${{ needs.compute-version.outputs.version }} --packTitle "MusicX Player" -e MusicX.exe -i MusicX/StoreLogo.scale-400.ico --appIcon MusicX/StoreLogo.scale-400.ico --msi x64 --includePdb --packAuthors "Fooxboy, zznty and testers" --releaseNotes notes.md -s MusicX/StoreLogo.scale-400.png
+      
+    - name: Push package
+      run: csq --csq-version=3.0.210-g5f9f594 github-up -r rel --repoUrl https://github.com/fooxboy/musicxreleases --publish --token ${{ secrets.RELEASES_TOKEN }}

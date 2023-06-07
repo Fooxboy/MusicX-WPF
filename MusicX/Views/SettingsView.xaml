@@ -60,14 +60,6 @@
                             Click="DeleteAccount_Click"
                             Content="Выйти с аккаунта"
                             Icon="PersonDelete16" />
-                        <wpfui:Button
-                            x:Name="CheckUpdates"
-                            Width="250"
-                            Margin="0,10,0,0"
-                            Appearance="Secondary"
-                            Click="CheckUpdates_Click"
-                            Content="Проверить обновления"
-                            Icon="ArrowSync12" />
                     </StackPanel>
 
 
@@ -314,6 +306,35 @@
                                 Appearance="Secondary"
                                 Content="Отправить"
                                 IsEnabled="False" />
+
+                        </StackPanel>
+
+                    </StackPanel>
+                </Grid>
+            </wpfui:Card>
+            
+            <TextBlock
+                Margin="5,20,0,0"
+                FontFamily="{StaticResource VKSansDemiBold}"
+                FontSize="30"
+                Text="Обновления" />
+
+            <wpfui:Card Margin="5,5,5,0">
+                <Grid>
+                    <StackPanel HorizontalAlignment="Left">
+
+                        <StackPanel Margin="0,0,0,0" Orientation="Horizontal">
+                            <wpfui:ToggleSwitch
+                                x:Name="GetBetaUpdates"
+                                Checked="GetBetaUpdates_OnChecked"
+                                Unchecked="GetBetaUpdates_OnUnchecked"/>
+
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                FontSize="18"
+                                Foreground="White"
+                                Text="Получать бета версии" />
+
 
                         </StackPanel>
 
