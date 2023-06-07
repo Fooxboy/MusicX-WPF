@@ -36,11 +36,6 @@ jobs:
           else
             echo "previous-version=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
           fi
-
-      - uses: thejeff77/action-push-tag@v1.0.0
-        name: Push new tag
-        with:
-          tag: ${{ steps.version.outputs.version }}
   
   build:
     name: Build and Package
@@ -81,13 +76,13 @@ jobs:
       
     - run: mkdir rel
       
-    - run: curl.exe --remove-on-error -sfLO https://github.com/Fooxboy/musicxreleases/releases/download/${{ needs.compute-version.outputs.previous-version }}/RELEASES && curl.exe --remove-on-error -sfLO https://github.com/Fooxboy/musicxreleases/releases/download/${{ needs.compute-version.outputs.previous-version }}/MusicX.WPF-${{ needs.compute-version.outputs.previous-version }}-full.nupkg
+    - run: curl.exe --remove-on-error -sfLO https://github.com/Fooxboy/MusicX-WPF/releases/download/${{ needs.compute-version.outputs.previous-version }}/RELEASES && curl.exe --remove-on-error -sfLO https://github.com/Fooxboy/MusicX-WPF/releases/download/${{ needs.compute-version.outputs.previous-version }}/MusicX.WPF-${{ needs.compute-version.outputs.previous-version }}-full.nupkg
       continue-on-error: true
       working-directory: ./rel
       name: Download previous release
       
     - name: Build package
-      run: csq --csq-version=3.0.210-g5f9f594 pack -r rel -p pub -u MusicX.WPF -v ${{ needs.compute-version.outputs.version }} --packTitle "MusicX Player" -e MusicX.exe -i MusicX/StoreLogo.scale-400.ico --appIcon MusicX/StoreLogo.scale-400.ico --msi x64 --includePdb --packAuthors "Fooxboy, zznty and testers" --releaseNotes notes.md -s MusicX/StoreLogo.scale-400.png
+      run: csq --csq-version=3.0.210-g5f9f594 pack -r rel -p pub -u MusicX.WPF -v ${{ needs.compute-version.outputs.version }} --packTitle "MusicX Player" -e MusicX.exe -i MusicX/StoreLogo.scale-400.ico --appIcon MusicX/StoreLogo.scale-400.ico --msi x64 --includePdb --packAuthors "Fooxboy, zznty" --releaseNotes notes.md -s MusicX/StoreLogo.scale-400.png
       
     - name: Push package
-      run: csq --csq-version=3.0.210-g5f9f594 github-up -r rel --repoUrl https://github.com/fooxboy/musicxreleases --publish --token ${{ secrets.RELEASES_TOKEN }}
+      run: csq --csq-version=3.0.210-g5f9f594 github-up -r rel --repoUrl https://github.com/Fooxboy/MusicX-WPF --publish --token ${{ secrets.GITHUB_TOKEN }}

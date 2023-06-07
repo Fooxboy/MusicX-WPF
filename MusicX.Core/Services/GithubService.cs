@@ -10,7 +10,7 @@ namespace MusicX.Core.Services
 
         private readonly HttpClient _client = new()
         {
-            BaseAddress = new("https://api.github.com/repos/fooxboy/musicxreleases/"),
+            BaseAddress = new("https://api.github.com/repos/fooxboy/MusicX-WPF/"),
             DefaultRequestHeaders =
             {
                 UserAgent =
