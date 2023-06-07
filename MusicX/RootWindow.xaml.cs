@@ -449,7 +449,7 @@ namespace MusicX
                 var config = await configService.GetConfig();
 
                 var getBetaUpdates = config.GetBetaUpdates.GetValueOrDefault(false);
-                var manager = new UpdateManager(new GithubSource("https://github.com/fooxboy/musicxreleases",
+                var manager = new UpdateManager(new GithubSource("https://github.com/Fooxboy/MusicX-WPF",
                     string.Empty, getBetaUpdates, new HttpClientFileDownloader()));
 
                 var updateInfo = await manager.CheckForUpdate(manager.Config.CurrentlyInstalledVersion.HasMetadata ? !getBetaUpdates : getBetaUpdates);
