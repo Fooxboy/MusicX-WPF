@@ -74,11 +74,29 @@ public sealed class AvailableNewUpdateModalViewModel : BaseViewModel, IDisposabl
         try
         {
             void ProgressHandler(int i) => Progress = i;
-            
+
             await _updateManager.DownloadReleases(UpdateInfo.ReleasesToApply, ProgressHandler);
             await _updateManager.ApplyReleases(UpdateInfo, ProgressHandler);
-            
+
             UpdateManager.RestartApp();
+        }
+        catch (Exception ex)
+        {
+            var notificationService = StaticService.Container.GetRequiredService<NotificationsService>();
+            var logger = StaticService.Container.GetRequiredService<Logger>();
+
+            var properties = new Dictionary<string, string>
+            {
+#if DEBUG
+                { "IsDebug", "True" },
+#endif
+                { "Version", StaticService.Version }
+            };
+            Crashes.TrackError(ex, properties);
+            logger.Error(ex, ex.Message);
+
+            notificationService.Show("Неудалось обновить приложение",
+                $"Произошла ошибка при обновлении приложения: {ex.GetType().FullName}");
         }
         finally
         {
