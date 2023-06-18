@@ -14,6 +14,7 @@
     Width="1440"
     KeyDown="Window_KeyDown"
     Loaded="Window_Loaded"
+    Closing="RootWindow_OnClosing"
     Title="MusicX"
     WindowStartupLocation="CenterScreen"
     Background="#202020"

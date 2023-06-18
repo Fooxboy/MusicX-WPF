@@ -1,23 +1,23 @@
-﻿using MusicX.Core.Services;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media.Imaging;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
+using Microsoft.Extensions.DependencyInjection;
+using MusicX.Controls;
+using MusicX.Core.Services;
 using MusicX.Models;
 using MusicX.Services;
 using MusicX.Views.Modals;
 using NLog;
-using System;
-using System.Diagnostics;
-using System.IO;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media.Imaging;
-using Microsoft.Extensions.DependencyInjection;
-using MusicX.Controls;
 using Ookii.Dialogs.Wpf;
-using System.Collections.Generic;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
-using System.Linq;
 using Wpf.Ui.Controls;
-using MusicX.Helpers;
+using Button = Wpf.Ui.Controls.Button;
 
 namespace MusicX.Views
 {
@@ -85,7 +85,7 @@ namespace MusicX.Views
 
                 ShowRPC.IsChecked = config.ShowRPC.Value;
                 BroacastVK.IsChecked = config.BroadcastVK.Value;
-                ShowAmimatedBackground.IsChecked = config.AmimatedBackground;
+                ShowAmimatedBackground.IsChecked = config.AnimatedBackground;
                 WinterTheme.IsChecked = config.WinterTheme.Value;
                 MinimizeToTray.IsChecked = config.MinimizeToTray.Value;
                 GetBetaUpdates.IsChecked = config.GetBetaUpdates.Value;
@@ -192,8 +192,8 @@ namespace MusicX.Views
             await configService.SetConfig(config);
 
             var logger = StaticService.Container.GetRequiredService<Logger>();
-            var navigation = StaticService.Container.GetRequiredService<Services.NavigationService>();
-            var notifications = StaticService.Container.GetRequiredService<Services.NotificationsService>();
+            var navigation = StaticService.Container.GetRequiredService<NavigationService>();
+            var notifications = StaticService.Container.GetRequiredService<NotificationsService>();
 
             new LoginWindow(vkService, configService, logger, navigation, notifications).Show();
             Window.GetWindow(this)?.Close();
@@ -201,11 +201,11 @@ namespace MusicX.Views
 
         private async void CheckUpdates_Click(object sender, RoutedEventArgs e)
         {
-            var notifications = StaticService.Container.GetRequiredService<Services.NotificationsService>();
+            var notifications = StaticService.Container.GetRequiredService<NotificationsService>();
 
             try
             {
-                var navigation = StaticService.Container.GetRequiredService<Services.NavigationService>();
+                var navigation = StaticService.Container.GetRequiredService<NavigationService>();
                 var github = StaticService.Container.GetRequiredService<GithubService>();
 
                 var release = await github.GetLastRelease();
@@ -387,7 +387,7 @@ namespace MusicX.Views
                     config.IgnoredArtists = new List<string>();
                 }
 
-                var selectedArtistName = (sender as Wpf.Ui.Controls.Button).Tag;
+                var selectedArtistName = (sender as Button).Tag;
                 var selectedArtist = config.IgnoredArtists.SingleOrDefault(x => x == selectedArtistName);
 
                 if (selectedArtist != null)
@@ -460,12 +460,12 @@ namespace MusicX.Views
 
         private async void ShowAmimatedBackground_Checked(object sender, RoutedEventArgs e)
         {
-            if (config.AmimatedBackground == (sender as ToggleSwitch).IsChecked)
+            if (config.AnimatedBackground == (sender as ToggleSwitch).IsChecked)
             {
                 return;
             }
 
-            config.AmimatedBackground = true;
+            config.AnimatedBackground = true;
 
             await configService.SetConfig(config);
 
@@ -481,8 +481,7 @@ namespace MusicX.Views
 
         private async void ShowAmimatedBackground_Unchecked(object sender, RoutedEventArgs e)
         {
-
-            config.AmimatedBackground = false;
+            config.AnimatedBackground = false;
 
             RootWindow.SnowEngine.Stop();
 
