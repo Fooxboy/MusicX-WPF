@@ -331,15 +331,17 @@ public class PlayerService
                     await Application.Current.Dispatcher.InvokeAsync(() => Tracks.AddRangeSequential(array));
             }
             
+            PlaylistTrack? nextTrack = null;
             if (CurrentIndex + 1 > Tracks.Count - 1)
             {
-                if (CurrentPlaylist?.CanLoad == false)
-                    return;
-                await LoadMore();
+                if (CurrentPlaylist?.CanLoad == true)
+                    await LoadMore();
+                else
+                    nextTrack = Tracks[0];
             }
-
-            var nextTrack = Tracks[CurrentIndex + 1];
-            CurrentIndex += 1;
+            
+            nextTrack ??= Tracks[CurrentIndex + 1];
+            CurrentIndex = Tracks.IndexOf(nextTrack);
             
             // its last track and we can load more
             if (CurrentIndex == Tracks.Count - 1 && CurrentPlaylist?.CanLoad == true)
@@ -425,6 +427,9 @@ public class PlayerService
         try
         {
             if (_listenTogetherService.PlayerMode == PlayerMode.Listener && !sync) return;
+            if (position == TimeSpan.Zero)
+                position = TimeSpan.FromSeconds(0.5);
+            
             player.PlaybackSession.Position = position;
 
            await Task.WhenAll(
