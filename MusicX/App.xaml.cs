@@ -6,7 +6,6 @@ using MusicX.Views;
 using System.Collections.Generic;
 using System.Threading;
 using System.Windows;
-using Squirrel;
 
 namespace MusicX
 {

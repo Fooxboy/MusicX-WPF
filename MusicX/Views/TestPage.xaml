@@ -3,11 +3,8 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:hc="https://handyorg.github.io/handycontrol"
-    xmlns:local="clr-namespace:MusicX.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:music="clr-namespace:MusicX.Controls"
-    xmlns:uwp="clr-namespace:System.Windows.Controls;assembly=PresentationFramework"
     xmlns:wpfui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
     Title="TestPage"
     d:DesignHeight="450"
@@ -200,11 +197,9 @@
                         Appearance="Secondary"
                         Click="RaiseCaptcha_OnClick"
                         Content="Вызвать капчу" />
-                <StackPanel>
-                    
-                </StackPanel>
+            <StackPanel />
 
-                <TextBlock Text="Управление мишекром"/>
+            <TextBlock Text="Управление мишекром" />
                 <TextBlock x:Name="CurrentMixer" Text="Текущее значение"/>
 
                 <TextBox x:Name="ValueMixer"/>

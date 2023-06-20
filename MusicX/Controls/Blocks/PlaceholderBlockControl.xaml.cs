@@ -1,15 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using MusicX.Core.Models;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using Microsoft.AppCenter.Crashes;
+using Microsoft.Extensions.DependencyInjection;
+using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Services;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AppCenter.Crashes;
-using System.Collections.Generic;
-using System.Diagnostics;
+using Wpf.Ui.Contracts;
+using Button = MusicX.Core.Models.Button;
 
 namespace MusicX.Controls.Blocks
 {
@@ -27,7 +29,7 @@ namespace MusicX.Controls.Blocks
             
         }
 
-        private Core.Models.Button buttonAction;
+        private Button buttonAction;
 
         private void PlaceholderBlockControl_Loaded(object sender, RoutedEventArgs e)
         {
@@ -76,7 +78,7 @@ namespace MusicX.Controls.Blocks
                     return;
                 }
 
-                var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
+                var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
                 var vkService = StaticService.Container.GetRequiredService<VkService>();
 
                 var music = await vkService.GetAudioCatalogAsync(buttonAction.Action.Url);
@@ -93,9 +95,9 @@ namespace MusicX.Controls.Blocks
                 };
                 Crashes.TrackError(ex, properties);
 
-                var notificationService = StaticService.Container.GetRequiredService<Services.NotificationsService>();
+                var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
 
-                notificationService.Show("Ошибка", "Music X не смог открыть контент");
+                snackbarService.Show("Ошибка", "Music X не смог открыть контент");
             }
 
         }

@@ -1,9 +1,7 @@
 ﻿using MusicX.ViewModels.Modals;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 
 namespace MusicX.Views.Modals

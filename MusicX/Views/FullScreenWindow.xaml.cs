@@ -1,18 +1,19 @@
-﻿using MusicX.Services;
-using NLog;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using MusicX.Services.Player;
-using MusicX.Services.Player.Playlists;
-using System.Collections.Generic;
+using System.Windows.Threading;
 using Microsoft.AppCenter.Analytics;
-using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Services;
+using MusicX.Services;
+using MusicX.Services.Player;
+using MusicX.Services.Player.Playlists;
 using MusicX.Shared.Player;
-using System.Windows.Threading;
+using NLog;
+using Wpf.Ui.Contracts;
 
 namespace MusicX.Views
 {
@@ -23,16 +24,16 @@ namespace MusicX.Views
     {
         private readonly Logger logger;
         private readonly PlayerService playerService;
-        private readonly NotificationsService notificationsService;
+        private readonly ISnackbarService _snackbarService;
 
-        public FullScreenWindow(Logger logger, PlayerService playerService, NotificationsService notificationsService)
+        public FullScreenWindow(Logger logger, PlayerService playerService, ISnackbarService snackbarService)
         {
             InitializeComponent();
 
             this.Loaded += FullScreenWindow_Loaded;
             this.logger = logger;
             this.playerService = playerService;
-            this.notificationsService = notificationsService;
+            _snackbarService = snackbarService;
 
             this.playerService.TrackChangedEvent += PlayerService_TrackChangedEvent;
             playerService.PositionTrackChangedEvent += PlayerService_PositionTrackChangedEvent;
@@ -147,7 +148,7 @@ namespace MusicX.Views
             catch (Exception ex)
             {
                 logger.Error(ex, ex.Message);
-                notificationsService.Show("Произошла ошибка", "MusicX не смог запустить полноэкранный режим");
+                _snackbarService.Show("Произошла ошибка", "MusicX не смог запустить полноэкранный режим");
 
                 this.Close();
 

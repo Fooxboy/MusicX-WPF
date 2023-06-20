@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Win32;
 using MusicX.Models;
 using NLog;
+using Wpf.Ui.Contracts;
 
 namespace MusicX.Services
 {
@@ -18,7 +19,7 @@ namespace MusicX.Services
         private readonly Logger _logger;
         private readonly string _configPath;
 
-        public ConfigService(Logger logger, NotificationsService notificationsService)
+        public ConfigService(Logger logger, ISnackbarService snackbarService)
         {
             _logger = logger;
             var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MusicX");
@@ -34,7 +35,8 @@ namespace MusicX.Services
             catch (Exception e)
             {
                 logger.Error(e, "Failed to migrate config");
-                notificationsService.Show("Ошибка миграции!", "Неудалось использовать настройки из прошлой установки приложения.");
+                snackbarService.Show("Ошибка миграции!",
+                    "Неудалось использовать настройки из прошлой установки приложения.");
             }
         }
 

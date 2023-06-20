@@ -6,9 +6,9 @@
     xmlns:controls="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:hc="https://handyorg.github.io/handycontrol"
-    xmlns:local="clr-namespace:MusicX.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:behaviors="clr-namespace:MusicX.Behaviors"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="PlaylistView"
     d:DesignHeight="720"
     d:DesignWidth="1280"
@@ -17,10 +17,7 @@
 
     <Page.Resources>
         <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDark.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
-            </ResourceDictionary.MergedDictionaries>
+            
             <Storyboard x:Key="LoadedPlaylist">
                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="rectangle" Storyboard.TargetProperty="(Shape.Fill).(Brush.Opacity)">
                     <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
@@ -115,9 +112,9 @@
                                 Opacity="0.2"
                                 RadiusX="5"
                                 RadiusY="5" />
-                            <controls:SymbolIcon
-                                HorizontalContentAlignment="Center"
-                                VerticalContentAlignment="Center"
+                            <ui:SymbolIcon
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
                                 FontSize="70"
                                 Symbol="NavigationPlay20" />
 

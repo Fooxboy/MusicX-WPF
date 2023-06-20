@@ -25,15 +25,12 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition x:Name="ChevronColumn" Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <ui:SymbolIcon
+                            <ContentPresenter
                                 x:Name="ControlIcon"
                                 Grid.Column="0"
                                 Margin="{StaticResource CardActionIconMargin}"
                                 VerticalAlignment="Center"
-                                Filled="{TemplateBinding IconFilled}"
-                                FontSize="{StaticResource CardActionIconSize}"
-                                Foreground="{TemplateBinding IconForeground}"
-                                Symbol="{TemplateBinding Icon}" />
+                                Content="{TemplateBinding Icon}" />
                             <ContentPresenter
                                 x:Name="ContentPresenter"
                                 Grid.Column="1"
@@ -50,7 +47,7 @@
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="ShowChevron" Value="False">
+                        <Trigger Property="IsChevronVisible" Value="False">
                             <Setter TargetName="ChevronColumn" Property="Width" Value="0" />
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
@@ -60,14 +57,14 @@
                             <Setter Property="Background" Value="{DynamicResource ControlFillColorDisabledBrush}" />
                             <Setter Property="BorderBrush" Value="{DynamicResource ControlStrokeColorDefaultBrush}" />
                             <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
-                            <Setter TargetName="ControlIcon" Property="Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
+                            <!--<Setter TargetName="ControlIcon" Property="Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />-->
                             <Setter TargetName="ChevronIcon" Property="Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
                             <Setter Property="Background" Value="{DynamicResource ControlFillColorTertiaryBrush}" />
                             <Setter Property="BorderBrush" Value="{DynamicResource ControlStrokeColorDefaultBrush}" />
                             <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
-                            <Setter TargetName="ControlIcon" Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+                            <!--<Setter TargetName="ControlIcon" Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />-->
                             <Setter TargetName="ChevronIcon" Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
                         </Trigger>
                         <Trigger Property="Content" Value="{x:Null}">

@@ -5,11 +5,11 @@
     xmlns:controls="clr-namespace:MusicX.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:hc="https://handyorg.github.io/handycontrol"
-    xmlns:local="clr-namespace:MusicX.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wpfui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
     xmlns:viewModels="clr-namespace:MusicX.ViewModels"
     xmlns:converters="clr-namespace:MusicX.Converters"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="DownloadsView"
     d:DesignHeight="450"
     d:DesignWidth="800"
@@ -29,7 +29,7 @@
             VerticalAlignment="Center"
             Visibility="Collapsed">
             <StackPanel>
-                <wpfui:SymbolIcon
+                <ui:SymbolIcon
                     Margin="0,0,0,0"
                     FontSize="80"
                     Symbol="Warning20" />
@@ -67,7 +67,7 @@
             VerticalAlignment="Center"
             Visibility="Collapsed">
             <StackPanel>
-                <wpfui:SymbolIcon
+                <ui:SymbolIcon
                     Margin="0,0,0,0"
                     FontSize="80"
                     Symbol="ArrowDownload48" />

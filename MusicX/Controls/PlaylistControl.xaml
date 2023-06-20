@@ -4,8 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:MusicX.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     d:DesignHeight="200"
     d:DesignWidth="150"
     Loaded="UserControl_Loaded"
@@ -69,7 +69,7 @@
             Foreground="White">
 
             <StackPanel x:Name="AddToLibrary" MouseDown="AddToLibrary_MouseDown" Orientation="Horizontal">
-                <controls:SymbolIcon Symbol="Add28" />
+                <ui:SymbolIcon Symbol="Add28" />
                 <TextBlock
                     Margin="10,0,0,0"
                     Foreground="White"
@@ -78,7 +78,7 @@
 
 
             <StackPanel x:Name="AddToQueue" MouseDown="AddToQueue_MouseDown" Orientation="Horizontal">
-                <controls:SymbolIcon Symbol="AlbumAdd20" />
+                <ui:SymbolIcon Symbol="AlbumAdd20" />
                 <TextBlock
                     Margin="10,0,0,0"
                     Foreground="White"
@@ -96,7 +96,7 @@
                 MouseEnter="cardAction_MouseEnter"
                 MouseLeave="cardAction_MouseLeave"
                 RenderTransformOrigin="0.5,0.5"
-                ShowChevron="False">
+                IsChevronVisible="False">
                 <controls:CardAction.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform />
@@ -123,9 +123,9 @@
                         Opacity="0.1"
                         RadiusX="5"
                         RadiusY="5" />
-                    <controls:SymbolIcon
-                        HorizontalContentAlignment="Center"
-                        VerticalContentAlignment="Center"
+                    <ui:SymbolIcon
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
                         FontSize="50"
                         Symbol="NavigationPlay20" />
 
@@ -203,7 +203,7 @@
                                     Color="Black" />
                             </Rectangle.Effect>
                         </Rectangle>
-                        <controls:SymbolIcon
+                        <ui:SymbolIcon
                             x:Name="iconPlay"
                             FontSize="23"
                             Symbol="Play24" />
@@ -257,9 +257,9 @@
                         Opacity="0.1"
                         RadiusX="5"
                         RadiusY="5" />
-                    <controls:SymbolIcon
-                        HorizontalContentAlignment="Center"
-                        VerticalContentAlignment="Center"
+                    <ui:SymbolIcon
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
                         FontSize="30"
                         Symbol="NavigationPlay20" />
 

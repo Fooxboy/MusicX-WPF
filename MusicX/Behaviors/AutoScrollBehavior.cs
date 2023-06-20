@@ -2,7 +2,8 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
-using Wpf.Ui.Common;
+using Wpf.Ui.Controls;
+
 namespace MusicX.Behaviors;
 
 public static class AutoScrollBehavior

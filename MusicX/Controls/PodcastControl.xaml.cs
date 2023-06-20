@@ -1,11 +1,12 @@
-﻿using MusicX.Core.Models;
-using MusicX.Services;
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Extensions.DependencyInjection;
+using MusicX.Core.Models;
+using MusicX.Services;
+using Wpf.Ui.Contracts;
 
 namespace MusicX.Controls
 {
@@ -40,9 +41,10 @@ namespace MusicX.Controls
 
         private void Play_Click(object sender, RoutedEventArgs e)
         {
-            var notificationService = StaticService.Container.GetRequiredService<Services.NotificationsService>();
+            var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
 
-            notificationService.Show("Невозможно воспроизвести подкаст", $"Music X пока что не умеет воспроизводить подкасты.");
+            snackbarService.Show("Невозможно воспроизвести подкаст",
+                "Music X пока что не умеет воспроизводить подкасты.");
         }
     }
 }

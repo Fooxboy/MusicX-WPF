@@ -6,7 +6,6 @@ using AsyncAwaitBestPractices;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Models;
 using MusicX.ViewModels;
-using Newtonsoft.Json.Linq;
 
 namespace MusicX.Services;
 

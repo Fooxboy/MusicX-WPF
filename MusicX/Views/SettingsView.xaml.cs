@@ -16,6 +16,7 @@ using MusicX.Services;
 using MusicX.Views.Modals;
 using NLog;
 using Ookii.Dialogs.Wpf;
+using Wpf.Ui.Contracts;
 using Wpf.Ui.Controls;
 using Button = Wpf.Ui.Controls.Button;
 
@@ -193,15 +194,15 @@ namespace MusicX.Views
 
             var logger = StaticService.Container.GetRequiredService<Logger>();
             var navigation = StaticService.Container.GetRequiredService<NavigationService>();
-            var notifications = StaticService.Container.GetRequiredService<NotificationsService>();
+            var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
 
-            new LoginWindow(vkService, configService, logger, navigation, notifications).Show();
+            new LoginWindow(vkService, configService, logger, navigation, snackbarService).Show();
             Window.GetWindow(this)?.Close();
         }
 
         private async void CheckUpdates_Click(object sender, RoutedEventArgs e)
         {
-            var notifications = StaticService.Container.GetRequiredService<NotificationsService>();
+            var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
 
             try
             {
@@ -214,7 +215,8 @@ namespace MusicX.Views
 
                 if (release.TagName == StaticService.Version)
                 {
-                    notifications.Show("Уже обновлено!", "У Вас установлена последняя версия MusicX! Обновлений пока что нет");
+                    snackbarService.Show("Уже обновлено!",
+                        "У Вас установлена последняя версия MusicX! Обновлений пока что нет");
 
                 }
                 else
@@ -224,7 +226,7 @@ namespace MusicX.Views
             }
             catch (Exception ex)
             {
-                notifications.Show("Ошибка", "Произошла ошибка при проверке обновлений");
+                snackbarService.Show("Ошибка", "Произошла ошибка при проверке обновлений");
 
             }
 
@@ -366,7 +368,7 @@ namespace MusicX.Views
         {
             if (string.IsNullOrEmpty(config.DownloadDirectory) || !Directory.Exists(config.DownloadDirectory))
             {
-                StaticService.Container.GetRequiredService<NotificationsService>().Show("Ошибка", "Сначала выберите папку");
+                StaticService.Container.GetRequiredService<ISnackbarService>().Show("Ошибка", "Сначала выберите папку");
                 return;
             }
             
@@ -471,7 +473,8 @@ namespace MusicX.Views
 
             if(RootWindow.SnowEngine is null)
             {
-                StaticService.Container.GetRequiredService<NotificationsService>().Show("Необходим перезапуск", "Перезапустите Music X чтобы пошел снег :)");
+                StaticService.Container.GetRequiredService<ISnackbarService>().Show("Необходим перезапуск",
+                    "Перезапустите Music X чтобы пошел снег :)");
 
                 return;
             }
@@ -500,7 +503,8 @@ namespace MusicX.Views
 
             await configService.SetConfig(config);
 
-            StaticService.Container.GetRequiredService<NotificationsService>().Show("Необходим перезапуск", "Перезапустите Music X чтобы началась зима :)");
+            StaticService.Container.GetRequiredService<ISnackbarService>().Show("Необходим перезапуск",
+                "Перезапустите Music X чтобы началась зима :)");
         }
 
         private async void WinterTheme_Unchecked(object sender, RoutedEventArgs e)
@@ -509,7 +513,8 @@ namespace MusicX.Views
 
             await configService.SetConfig(config);
 
-            StaticService.Container.GetRequiredService<NotificationsService>().Show("Необходим перезапуск", "Перезапустите Music X чтобы зима закончилась :)");
+            StaticService.Container.GetRequiredService<ISnackbarService>().Show("Необходим перезапуск",
+                "Перезапустите Music X чтобы зима закончилась :)");
 
         }
 
@@ -524,7 +529,8 @@ namespace MusicX.Views
 
             await configService.SetConfig(config);
 
-            StaticService.Container.GetRequiredService<NotificationsService>().Show("Необходим перезапуск", "Перезапустите Music X чтобы изменения применились");
+            StaticService.Container.GetRequiredService<ISnackbarService>().Show("Необходим перезапуск",
+                "Перезапустите Music X чтобы изменения применились");
 
         }
 
@@ -534,7 +540,8 @@ namespace MusicX.Views
 
             await configService.SetConfig(config);
 
-            StaticService.Container.GetRequiredService<NotificationsService>().Show("Необходим перезапуск", "Перезапустите Music X чтобы изменения применились");
+            StaticService.Container.GetRequiredService<ISnackbarService>().Show("Необходим перезапуск",
+                "Перезапустите Music X чтобы изменения применились");
         }
 
         private async void GetBetaUpdates_OnChecked(object sender, RoutedEventArgs e)
@@ -548,7 +555,8 @@ namespace MusicX.Views
 
             await configService.SetConfig(config);
 
-            StaticService.Container.GetRequiredService<NotificationsService>().Show("Необходим перезапуск", "Перезапустите Music X чтобы изменения применились");
+            StaticService.Container.GetRequiredService<ISnackbarService>().Show("Необходим перезапуск",
+                "Перезапустите Music X чтобы изменения применились");
         }
 
         private async void GetBetaUpdates_OnUnchecked(object sender, RoutedEventArgs e)
@@ -557,7 +565,8 @@ namespace MusicX.Views
 
             await configService.SetConfig(config);
 
-            StaticService.Container.GetRequiredService<NotificationsService>().Show("Необходим перезапуск", "Перезапустите Music X чтобы изменения применились");
+            StaticService.Container.GetRequiredService<ISnackbarService>().Show("Необходим перезапуск",
+                "Перезапустите Music X чтобы изменения применились");
         }
     }
 }

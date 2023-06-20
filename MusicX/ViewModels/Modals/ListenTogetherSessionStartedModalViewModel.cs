@@ -1,15 +1,10 @@
-﻿using MusicX.Services.Player;
-using MusicX.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Windows;
 using System.Windows.Input;
-using Wpf.Ui.Common;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Services;
-using MusicX.Views.Modals;
+using MusicX.Services;
+using Wpf.Ui.Common;
+using Wpf.Ui.Contracts;
 
 namespace MusicX.ViewModels.Modals
 {
@@ -25,23 +20,22 @@ namespace MusicX.ViewModels.Modals
 
         public ICommand CloseCommand { get; set; }
 
-
         public ListenTogetherSessionStartedModalViewModel(ListenTogetherService service)
         {
             _service = service;
-            var notificationService = StaticService.Container.GetRequiredService<NotificationsService>();
+            var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
             var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
             this.CopyUrlCommand = new RelayCommand(()=>
             {
                 Clipboard.SetText(Url);
 
-                notificationService.Show("Успешно скопировано", "Url адресс добавлен в буфер обмена!");
+                snackbarService.Show("Успешно скопировано", "Url адресс добавлен в буфер обмена!");
             });
             this.CopySessionCommand = new RelayCommand(() =>
             {
                 Clipboard.SetText(SessionId);
 
-                notificationService.Show("Успешно скопировано", "ID сессии добавлен в буфер обмена!");
+                snackbarService.Show("Успешно скопировано", "ID сессии добавлен в буфер обмена!");
 
             });
 

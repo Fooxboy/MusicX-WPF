@@ -1,15 +1,16 @@
-﻿using Microsoft.AppCenter.Crashes;
-using MusicX.Core.Models;
-using MusicX.Core.Services;
-using MusicX.Services;
-using NLog;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Microsoft.AppCenter.Crashes;
+using MusicX.Core.Models;
+using MusicX.Core.Services;
+using MusicX.Services;
+using NLog;
 using Wpf.Ui.Common;
+using Wpf.Ui.Contracts;
 
 namespace MusicX.ViewModels.Modals
 {
@@ -31,7 +32,7 @@ namespace MusicX.ViewModels.Modals
 
         private readonly NavigationService navigationService;
 
-        private readonly NotificationsService notificationsService;
+        private readonly ISnackbarService _snackbarService;
 
         private readonly VkService vkService;
 
@@ -39,11 +40,12 @@ namespace MusicX.ViewModels.Modals
 
         private bool allLoaded = false;
 
-        public TracksSelectorModalViewModel(NavigationService navigationService, VkService vkService, Logger logger, NotificationsService notificationsService)
+        public TracksSelectorModalViewModel(NavigationService navigationService, VkService vkService, Logger logger,
+            ISnackbarService snackbarService)
         {
             this.navigationService = navigationService;
             this.vkService = vkService;
-            this.notificationsService = notificationsService;
+            _snackbarService = snackbarService;
             this.navigationService = navigationService;
             this.logger = logger;
             this.ConfirmCommand = new RelayCommand(Confirm);
@@ -94,7 +96,7 @@ namespace MusicX.ViewModels.Modals
 
                 logger.Error(ex, ex.Message);
 
-                notificationsService.Show("Ошибка", "Music X не смог загрузить список Ваших треков. Попробуйте ещё раз");
+                _snackbarService.Show("Ошибка", "Music X не смог загрузить список Ваших треков. Попробуйте ещё раз");
             }
            
         }

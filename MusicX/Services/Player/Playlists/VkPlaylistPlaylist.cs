@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Helpers;

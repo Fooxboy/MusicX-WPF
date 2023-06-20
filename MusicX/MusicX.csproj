@@ -104,7 +104,7 @@
     <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
     <PackageReference Include="System.Text.Json" Version="8.0.0-preview.5.23280.8" />
     <PackageReference Include="taglib-sharp-netstandard2.0" Version="2.1.0" />
-    <PackageReference Include="WPF-UI" Version="2.0.2" />
+    <PackageReference Include="WPF-UI" Version="3.0.0-preview.3"/>
     <PackageReference Include="WpfScreenHelper" Version="2.0.0" />
     <PackageReference Include="Xabe.FFmpeg" Version="5.2.6" />
     <PackageReference Include="Xabe.FFmpeg.Downloader" Version="5.2.0" />

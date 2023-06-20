@@ -4,8 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:MusicX.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:iconElements="http://schemas.lepo.co/wpfui/2022/xaml"
     d:DesignHeight="100"
     d:DesignWidth="800"
     Loaded="UserControl_Loaded"
@@ -60,15 +60,12 @@
     </UserControl.Triggers>-->
 
     <UserControl.ContextMenu>
-        <ContextMenu
-            Background="#414141"
-            BorderBrush="#646464"
-            Foreground="White">
+        <ContextMenu>
             <StackPanel
                 x:Name="AddRemove"
                 MouseDown="AddRemove_MouseDown"
                 Orientation="Horizontal">
-                <ui:SymbolIcon x:Name="AddRemoveIcon" />
+                <iconElements:SymbolIcon x:Name="AddRemoveIcon" Foreground="White" />
                 <TextBlock
                     x:Name="AddRemoveText"
                     Margin="10,0,0,0"
@@ -81,7 +78,7 @@
                 Header="Перейти к артисту" />
 
             <StackPanel x:Name="AddToPlaylist" MouseDown="AddToPlaylist_MouseDown"  Orientation="Horizontal">
-                <ui:SymbolIcon Symbol="AlbumAdd20" />
+                <iconElements:SymbolIcon Symbol="AlbumAdd20" Foreground="White" />
                 <TextBlock
                     Margin="10,0,0,0"
                     Foreground="White"
@@ -89,7 +86,7 @@
             </StackPanel>
 
             <StackPanel x:Name="AddArtistIgnore" MouseDown="AddArtistIgnore_MouseDown"  Orientation="Horizontal">
-                <ui:SymbolIcon Symbol="PresenceBlocked24" />
+                <iconElements:SymbolIcon Symbol="PresenceDnd24" Foreground="White" />
                 <TextBlock
                     Margin="10,0,0,0"
                     Foreground="White"
@@ -97,7 +94,7 @@
             </StackPanel>
 
             <StackPanel MouseDown="Download_MouseDown" Orientation="Horizontal">
-                <ui:SymbolIcon Symbol="ArrowDownload24" />
+                <iconElements:SymbolIcon Symbol="ArrowDownload24" Foreground="White" />
                 <TextBlock
                     Margin="10,0,0,0"
                     Foreground="White"
@@ -105,7 +102,7 @@
             </StackPanel>
             
             <StackPanel MouseDown="PlayNext_MouseDown" Orientation="Horizontal">
-                <ui:SymbolIcon Symbol="TextAddSpaceBefore24" />
+                <iconElements:SymbolIcon Symbol="TextAddSpaceBefore24" Foreground="White" />
                 <TextBlock
                     Margin="10,0,0,0"
                     Foreground="White"
@@ -113,7 +110,7 @@
             </StackPanel>
 
             <StackPanel MouseDown="AddToQueue_MouseDown" Orientation="Horizontal">
-                <ui:SymbolIcon Symbol="TextAddSpaceAfter24" />
+                <iconElements:SymbolIcon Symbol="TextAddSpaceAfter24" Foreground="White" />
                 <TextBlock
                     Margin="10,0,0,0"
                     Foreground="White"
@@ -203,10 +200,11 @@
                         Opacity="0.1"
                         RadiusX="5"
                         RadiusY="5" />
-                    <ui:SymbolIcon
-                        HorizontalContentAlignment="Center"
-                        VerticalContentAlignment="Center"
+                    <iconElements:SymbolIcon
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
                         FontSize="20"
+                        Foreground="White"
                         Symbol="MusicNote124" />
 
                     <Rectangle
@@ -237,11 +235,12 @@
                             Opacity="0.6"
                             RadiusX="3"
                             RadiusY="3" />
-                        <ui:SymbolIcon
+                        <iconElements:SymbolIcon
                             x:Name="IconPlay"
-                            HorizontalContentAlignment="Center"
-                            VerticalContentAlignment="Center"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
                             FontSize="20"
+                            Foreground="White"
                             Symbol="Play24" />
 
                     </Grid>
@@ -339,9 +338,11 @@
                 ForceCursor="True"
                 Click="RecommendedAudio_Click"
                 FontSize="20"
-                Icon="Sparkle48"
                 Appearance="Transparent"
                 Visibility="Collapsed">
+                <ui:Button.Icon>
+                    <iconElements:SymbolIcon Symbol="Sparkle48" />
+                </ui:Button.Icon>
                 <ui:Button.ToolTip>
                     <ToolTip Content="Показать похожие треки" />
                 </ui:Button.ToolTip>

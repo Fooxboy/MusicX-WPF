@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
 using Microsoft.AppCenter.Analytics;
@@ -17,7 +18,7 @@ using MusicX.Views.Modals;
 using NLog;
 using VkNet.Abstractions;
 using VkNet.Enums.Filters;
-using Wpf.Ui.Common;
+using Wpf.Ui.Contracts;
 
 namespace MusicX.ViewModels.Controls;
 
@@ -25,7 +26,7 @@ public class ListenTogetherControlViewModel : BaseViewModel
 {
     private readonly ListenTogetherService _service;
     private readonly IUsersCategory _vkUsers;
-    private readonly NotificationsService _notificationsService;
+    private readonly ISnackbarService _snackbarService;
     private readonly Logger _logger;
     private readonly ConfigService _configService;
     private readonly PlayerService _playerService;
@@ -44,12 +45,13 @@ public class ListenTogetherControlViewModel : BaseViewModel
 
     public bool IsLoading { get; set; } = false;
 
-    public ListenTogetherControlViewModel(ListenTogetherService service, IUsersCategory vkUsers, NotificationsService notificationsService,
+    public ListenTogetherControlViewModel(ListenTogetherService service, IUsersCategory vkUsers,
+        ISnackbarService snackbarService,
                                           Logger logger, ConfigService configService, PlayerService playerSerivce, NavigationService navigationService)
     {
         _service = service;
         _vkUsers = vkUsers;
-        _notificationsService = notificationsService;
+        _snackbarService = snackbarService;
         _logger = logger;
         _configService = configService;
         _playerService = playerSerivce;
@@ -104,7 +106,7 @@ public class ListenTogetherControlViewModel : BaseViewModel
             Clipboard.SetText(sessionId);
 
             _navigationService.OpenModal<ListenTogetherSessionStartedModal>(new ListenTogetherSessionStartedModalViewModel(_service));
-            _notificationsService.Show("Успешно", "Сессия успешно создана. Id скопирован в буффер обмена");
+            _snackbarService.Show("Успешно", "Сессия успешно создана. Id скопирован в буффер обмена");
 
             IsLoading = false;
             OnPropertyChanged("IsLoading");
@@ -115,7 +117,7 @@ public class ListenTogetherControlViewModel : BaseViewModel
             IsLoading = false;
             OnPropertyChanged("IsLoading");
 
-            _notificationsService.Show("Ошибка", "Ошибка создания сессии");
+            _snackbarService.Show("Ошибка", "Ошибка создания сессии");
             _logger.Error(e, e.Message);
         }
     }
@@ -124,7 +126,7 @@ public class ListenTogetherControlViewModel : BaseViewModel
     {
         if (string.IsNullOrEmpty(sessionId))
         {
-            _notificationsService.Show("Ошибка", "Введите id сессии");
+            _snackbarService.Show("Ошибка", "Введите id сессии");
             return;
         }
 
@@ -141,12 +143,12 @@ public class ListenTogetherControlViewModel : BaseViewModel
 
             await _service.ConnectToServerAsync(_configService.Config.UserId);
             await _service.JoinToSesstionAsync(sessionId);
-            _notificationsService.Show("Подключено", "Успешное подключение к сессии");
+            _snackbarService.Show("Подключено", "Успешное подключение к сессии");
 
         }
         catch (Exception e)
         {
-            _notificationsService.Show("Ошибка подключении к сессии", e.Message);
+            _snackbarService.Show("Ошибка подключении к сессии", e.Message);
             _logger.Error(e, e.Message);
         }
 

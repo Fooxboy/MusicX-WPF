@@ -1,40 +1,40 @@
-﻿using MusicX.Core.Services;
-using MusicX.Services;
-using MusicX.ViewModels;
-using MusicX.ViewModels.Modals;
-using NLog;
-using System;
-using System.ComponentModel;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
+using Microsoft.AppCenter.Analytics;
 using Microsoft.Extensions.DependencyInjection;
+using MusicX.Core.Services;
+using MusicX.RegistryPatches;
+using MusicX.Services;
 using MusicX.Services.Player;
 using MusicX.Services.Player.Sources;
 using MusicX.Services.Player.TrackStats;
-using VkNet.AudioBypassService.Extensions;
-using VkNet.Extensions.DependencyInjection;
-using Wpf.Ui.Appearance;
-using Wpf.Ui.Controls;
-using System.Collections.Generic;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AspNetCore.SignalR.Client;
+using MusicX.ViewModels;
 using MusicX.ViewModels.Controls;
-using MusicX.RegistryPatches;
+using MusicX.ViewModels.Modals;
+using NLog;
+using VkNet.AudioBypassService.Extensions;
+using VkNet.Exception;
+using VkNet.Extensions.DependencyInjection;
+using Wpf.Ui.Contracts;
+using Wpf.Ui.Services;
+using NavigationService = MusicX.Services.NavigationService;
 
 namespace MusicX.Views
 {
     /// <summary>
     /// Логика взаимодействия для StartingWindow.xaml
     /// </summary>
-    public partial class StartingWindow : UiWindow
+    public partial class StartingWindow
     {
         private readonly string[] _args;
 
         public StartingWindow(string[] args)
         {
             InitializeComponent();
-            Accent.Apply(Accent.GetColorizationColor(), ThemeType.Dark);
             _args = args;
         }
 
@@ -93,12 +93,12 @@ namespace MusicX.Views
                 collection.AddSingleton<NavigationService>();
                 collection.AddSingleton<ConfigService>();
                 collection.AddSingleton<PlayerService>();
-                collection.AddSingleton<NotificationsService>();
                 collection.AddSingleton<DownloaderService>();
                 collection.AddSingleton<BannerService>();
                 collection.AddTransient<RegistryPatchManager>();
                 collection.AddSingleton<WindowsAudioMixerService>();
                 collection.AddSingleton<ICustomSectionsService, CustomSectionsService>();
+                collection.AddSingleton<ISnackbarService, SnackbarService>();
 
                 var container = StaticService.Container = collection.BuildServiceProvider();
 
@@ -148,9 +148,9 @@ namespace MusicX.Views
                     {
                         if (string.IsNullOrEmpty(config.AccessToken))
                         {
-                            var navigation = StaticService.Container.GetRequiredService<Services.NavigationService>();
-                            var notifications = StaticService.Container.GetRequiredService<Services.NotificationsService>();
-                            var login = new LoginWindow(vkService, configService, logger, navigation, notifications);
+                            var navigation = StaticService.Container.GetRequiredService<NavigationService>();
+                            var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
+                            var login = new LoginWindow(vkService, configService, logger, navigation, snackbarService);
                             login.Show();
                             this.Close();
                         }
@@ -175,7 +175,7 @@ namespace MusicX.Views
 
                                 this.Close();
                             }
-                            catch (VkNet.Exception.VkApiMethodInvokeException e) when (e.ErrorCode is 5 or 1117)
+                            catch (VkApiMethodInvokeException e) when (e.ErrorCode is 5 or 1117)
                             {
                                 config.AccessToken = null;
                                 config.UserName = null;
@@ -184,17 +184,18 @@ namespace MusicX.Views
                                 await configService.SetConfig(config);
 
                                 var logger = StaticService.Container.GetRequiredService<Logger>();
-                                var navigation = StaticService.Container.GetRequiredService<Services.NavigationService>();
-                                var notifications = StaticService.Container.GetRequiredService<Services.NotificationsService>();
+                                var navigation = StaticService.Container.GetRequiredService<NavigationService>();
+                                var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
 
-                                new LoginWindow(vkService, configService, logger, navigation, notifications, true).Show();
+                                new LoginWindow(vkService, configService, logger, navigation, snackbarService, true)
+                                    .Show();
 
                                 this.Close();
                             }
 
                         }
                     }
-                    catch(System.Net.Http.HttpRequestException ex)
+                    catch (HttpRequestException ex)
                     {
                         logger.Error(ex, ex.Message);
 

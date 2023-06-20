@@ -7,9 +7,9 @@
     xmlns:local="clr-namespace:MusicX.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wpfui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
-    xmlns:models="clr-namespace:MusicX.Core.Models;assembly=MusicX.Core"
     xmlns:converters="clr-namespace:MusicX.Converters"
     xmlns:player="clr-namespace:MusicX.Shared.Player;assembly=MusicX.Shared"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Loaded="UserControl_Loaded"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance player:PlaylistTrack}"
@@ -122,16 +122,6 @@
                         <ColumnDefinition Width="Auto" />
 
                     </Grid.ColumnDefinitions>
-                    <Grid.Resources>
-                        <ResourceDictionary>
-                            <ResourceDictionary.MergedDictionaries>
-                                <ResourceDictionary
-                                    Source="pack://application:,,,/HandyControl;component/Themes/SkinDark.xaml" />
-                                <ResourceDictionary
-                                    Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
-                            </ResourceDictionary.MergedDictionaries>
-                        </ResourceDictionary>
-                    </Grid.Resources>
 
                     <TextBlock
                         x:Name="CurrentPosition"
@@ -174,9 +164,9 @@
                                 RadiusX="5"
                                 RadiusY="5" />
 
-                            <wpfui:SymbolIcon
-                                HorizontalContentAlignment="Center"
-                                VerticalContentAlignment="Center"
+                            <ui:SymbolIcon
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
                                 FontSize="20"
                                 Foreground="White"
                                 Symbol="MusicNote124" />
@@ -285,7 +275,7 @@
                             Appearance="Transparent"
                             Click="LikeTrack_Click">
 
-                            <wpfui:SymbolIcon x:Name="LikeIcon" Symbol="Heart20" />
+                            <ui:SymbolIcon x:Name="LikeIcon" Symbol="Heart20" />
 
                             <wpfui:Button.ToolTip>
                                 <ToolTip Content="Добавить/убрать в библиотеку" />
@@ -317,8 +307,10 @@
                             Height="40"
                             Margin="0,0,10,0"
                             Click="ShuffleButton_Click"
-                            Icon="ArrowWrap20"
                             Appearance="Transparent">
+                            <wpfui:Button.Icon>
+                                <ui:SymbolIcon Symbol="ArrowWrap20" />
+                            </wpfui:Button.Icon>
                             <wpfui:Button.ToolTip>
                                 <ToolTip Content="В рандомном порядке" />
                             </wpfui:Button.ToolTip>
@@ -334,7 +326,7 @@
                             Appearance="Transparent"
                             Click="PrevButton_Click">
 
-                            <wpfui:SymbolIcon Symbol="Previous48" />
+                            <ui:SymbolIcon Symbol="Previous48" />
 
                             <wpfui:Button.ToolTip>
                                 <ToolTip Content="Предыдущий трек" />
@@ -359,7 +351,7 @@
                                         <Setter.Value>
                                             <ControlTemplate>
                                                 <Border Style="{StaticResource TransparentBorderStyle}">
-                                                    <wpfui:SymbolIcon
+                                                    <ui:SymbolIcon
                                                         FontSize="20"
                                                         Symbol="Play32" />
                                                 </Border>
@@ -373,7 +365,7 @@
                                                 <Setter.Value>
                                                     <ControlTemplate>
                                                         <Border Style="{StaticResource TransparentBorderStyle}">
-                                                            <wpfui:SymbolIcon
+                                                            <ui:SymbolIcon
                                                                 FontSize="20"
                                                                 Symbol="Pause32" />
                                                         </Border>
@@ -414,7 +406,7 @@
                             HorizontalContentAlignment="Center"
                             Appearance="Transparent"
                             Click="NextButton_Click">
-                            <wpfui:SymbolIcon Symbol="Next48" />
+                            <ui:SymbolIcon Symbol="Next48" />
 
                             <wpfui:Button.ToolTip>
                                 <ToolTip Content="Следующий трек" />
@@ -432,7 +424,7 @@
                             HorizontalContentAlignment="Center"
                             Style="{StaticResource TransparentToggleButtonStyle}"
                             Click="RepeatButton_Click">
-                            <wpfui:SymbolIcon Symbol="ArrowRepeatAll16" />
+                            <ui:SymbolIcon Symbol="ArrowRepeatAll16" />
                             <ToggleButton.ToolTip>
                                 <ToolTip Content="Повтор трека" />
                             </ToggleButton.ToolTip>
@@ -441,16 +433,6 @@
                     </StackPanel>
 
                     <Grid Grid.Column="2">
-                        <Grid.Resources>
-                            <ResourceDictionary>
-                                <ResourceDictionary.MergedDictionaries>
-                                    <ResourceDictionary
-                                        Source="pack://application:,,,/HandyControl;component/Themes/SkinDark.xaml" />
-                                    <ResourceDictionary
-                                        Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
-                                </ResourceDictionary.MergedDictionaries>
-                            </ResourceDictionary>
-                        </Grid.Resources>
                         <StackPanel
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
@@ -465,7 +447,7 @@
                                 HorizontalContentAlignment="Center"
                                 Appearance="Transparent"
                                 Click="DownloadButton_Click">
-                                <wpfui:SymbolIcon Symbol="ArrowDownload24" />
+                                <ui:SymbolIcon Symbol="ArrowDownload24" />
 
                                 <wpfui:Button.ToolTip>
                                     <ToolTip Content="Скачать трек" />
@@ -483,7 +465,7 @@
                                     <ToolTip Content="Очередь" />
                                 </ToggleButton.ToolTip>
                                 <ToggleButton.Content>
-                                    <wpfui:SymbolIcon Symbol="List24" />
+                                    <ui:SymbolIcon Symbol="List24" />
                                 </ToggleButton.Content>
                                 <ToggleButton.Triggers>
                                     <EventTrigger RoutedEvent="ToggleButton.Unchecked">
@@ -505,7 +487,7 @@
                                     <ToolTip Content="Слушать вместе" />
                                 </ToggleButton.ToolTip>
                                 <ToggleButton.Content>
-                                    <wpfui:SymbolIcon Symbol="People24" />
+                                    <ui:SymbolIcon Symbol="People24" />
                                 </ToggleButton.Content>
                                 <ToggleButton.Triggers>
                                     <EventTrigger RoutedEvent="ToggleButton.Unchecked">
@@ -573,7 +555,7 @@
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <wpfui:SymbolIcon Symbol="ReOrderDotsVertical24" MouseDown="ReorderButton_OnMouseDown" />
+                                <ui:SymbolIcon Symbol="ReOrderDotsVertical24" MouseDown="ReorderButton_OnMouseDown" />
                                 <local:QueueTrackControl Grid.Column="1" IsInPlayer="True" />
                                 <wpfui:Button Grid.Column="2"
                                               Icon="Dismiss24"

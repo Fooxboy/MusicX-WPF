@@ -1,24 +1,25 @@
-﻿using MusicX.Core.Services;
-using MusicX.Services;
-using NLog;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using MusicX.Services.Player;
-using MusicX.Services.Player.Playlists;
-using MusicX.Core.Exceptions.Boom;
 using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
-using Microsoft.AppCenter.Crashes;
 using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
+using MusicX.Core.Exceptions.Boom;
+using MusicX.Core.Services;
+using MusicX.Services;
+using MusicX.Services.Player;
+using MusicX.Services.Player.Playlists;
+using NLog;
+using Wpf.Ui.Contracts;
 
 namespace MusicX.ViewModels
 {
     public class VKMixViewModel : BoomViewModelBase
     {
         public VKMixViewModel(BoomService boomService, ConfigService configService, VkService vkService, Logger logger,
-                              NotificationsService notificationsService, PlayerService playerService) : 
-            base(boomService, configService, vkService, logger, notificationsService, playerService)
+            ISnackbarService snackbarService, PlayerService playerService) :
+            base(boomService, configService, vkService, logger, snackbarService, playerService)
         {
             PlayPersonalMixCommand = new AsyncCommand(PlayPersonalMixAsync);
         }
@@ -98,7 +99,7 @@ namespace MusicX.ViewModels
                 };
                 Crashes.TrackError(ex, properties);
 
-                NotificationsService.Show("Ошибка загрузки микса", "Мы не смогли загрузить микс, попробуйте ещё раз");
+                SnackbarService.Show("Ошибка загрузки микса", "Мы не смогли загрузить микс, попробуйте ещё раз");
 
                 IsLoaded = true;
 
@@ -158,7 +159,7 @@ namespace MusicX.ViewModels
                 Crashes.TrackError(ex, properties);
 
 
-                NotificationsService.Show("Ошибка загрузки микса", "Мы не смогли загрузить микс, попробуйте ещё раз");
+                SnackbarService.Show("Ошибка загрузки микса", "Мы не смогли загрузить микс, попробуйте ещё раз");
 
                 Logger.Error(ex, ex.Message);
             }

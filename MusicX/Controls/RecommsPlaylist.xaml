@@ -65,8 +65,8 @@
                             </EventTrigger.Actions>
                         </EventTrigger>
                     </Border.Triggers>
-                    <ui:SymbolIcon FontSize="48"
-                                   Symbol="Play48"
+                    <ui:SymbolIcon Symbol="Play24"
+                                   Foreground="White"
                                    Name="PlayPauseIcon"
                                    HorizontalAlignment="Center" VerticalAlignment="Center"
                                    MouseLeftButtonUp="PlayPause_OnMouseLeftButtonUp"/>

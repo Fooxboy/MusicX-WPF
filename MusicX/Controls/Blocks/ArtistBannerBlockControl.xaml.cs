@@ -1,5 +1,4 @@
-﻿using MusicX.Core.Models;
-using System;
+﻿using System;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -7,11 +6,13 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
+using MusicX.Core.Models;
 using MusicX.Helpers;
 using MusicX.ViewModels;
 using MusicX.ViewModels.Controls;
 using MusicX.Views;
 using Wpf.Ui.Controls;
+using TextBlock = System.Windows.Controls.TextBlock;
 
 namespace MusicX.Controls.Blocks
 {
@@ -75,7 +76,7 @@ namespace MusicX.Controls.Blocks
                     Margin = new Thickness(0, 10, 15, 10),
                     Content = text,
                     DataContext = new BlockButtonViewModel(action, sectionViewModel.Artist, Block),
-                    ShowChevron = false,
+                    IsChevronVisible = false,
                     Height = 45
                 };
 

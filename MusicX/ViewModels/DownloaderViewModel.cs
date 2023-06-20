@@ -19,7 +19,9 @@ using MusicX.Services.Player.Playlists;
 using MusicX.Shared.Player;
 using NLog;
 using Wpf.Ui.Common;
+using Wpf.Ui.Contracts;
 using Xabe.FFmpeg.Events;
+
 namespace MusicX.ViewModels;
 
 public class DownloaderViewModel : BaseViewModel
@@ -38,16 +40,17 @@ public class DownloaderViewModel : BaseViewModel
 
     private CancellationTokenSource? tokenSource;
     private readonly DownloaderService downloaderService;
-    private readonly NotificationsService notificationsService;
+    private readonly ISnackbarService _snackbarService;
     private readonly Logger logger;
     private readonly VkService vkService;
     private readonly ConfigService configService;
     private readonly IProgress<ConversionProgressEventArgs> progress;
 
-    public DownloaderViewModel(DownloaderService downloaderService, NotificationsService notificationsService, Logger logger, VkService vkService, ConfigService configService)
+    public DownloaderViewModel(DownloaderService downloaderService, ISnackbarService snackbarService, Logger logger,
+        VkService vkService, ConfigService configService)
     {
         this.downloaderService = downloaderService;
-        this.notificationsService = notificationsService;
+        _snackbarService = snackbarService;
         this.logger = logger;
         this.vkService = vkService;
         this.configService = configService;
@@ -73,7 +76,7 @@ public class DownloaderViewModel : BaseViewModel
             DownloadQueue.AddRange(tracks, NotifyCollectionChangedAction.Reset);
         else
             await Application.Current.Dispatcher.InvokeAsync(() => DownloadQueue.AddRange(tracks));
-        notificationsService.Show("Скачивание начато", $"{title} добавлен в очередь");
+        _snackbarService.Show("Скачивание начато", $"{title} добавлен в очередь");
     }
     public async Task AddPlaylistToQueueAsync(long playlistId, long ownerId, string accessKey)
     {
@@ -116,7 +119,7 @@ public class DownloaderViewModel : BaseViewModel
 
         }catch(Exception ex)
         {
-            notificationsService.Show("Ошибка", "Мы не смогли получить все ваши треки :( ");
+            _snackbarService.Show("Ошибка", "Мы не смогли получить все ваши треки :( ");
         }
         
     }
@@ -187,7 +190,7 @@ public class DownloaderViewModel : BaseViewModel
             }
             catch (OperationCanceledException)
             {
-                notificationsService.Show("Скачивание прервано", "Скачивание очереди было прервано");
+                _snackbarService.Show("Скачивание прервано", "Скачивание очереди было прервано");
             }
             catch (Exception e)
             {
@@ -201,7 +204,7 @@ public class DownloaderViewModel : BaseViewModel
                 Crashes.TrackError(e, properties);
 
                 logger.Error(e);
-                notificationsService.Show("Ошибка загрузки", "Мы не смогли загрузить трек");
+                _snackbarService.Show("Ошибка загрузки", "Мы не смогли загрузить трек");
             }
         }
 

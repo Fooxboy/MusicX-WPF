@@ -1,18 +1,18 @@
-﻿using MusicX.Core.Models;
-using MusicX.Core.Services;
-using MusicX.Services;
-using NLog;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using AsyncAwaitBestPractices;
-using MusicX.Controls;
-using MusicX.Helpers;
-using VkNet.Exception;
 using Microsoft.AppCenter.Crashes;
+using MusicX.Controls;
+using MusicX.Core.Models;
+using MusicX.Core.Services;
+using MusicX.Helpers;
+using MusicX.Services;
+using NLog;
+using VkNet.Exception;
+using Wpf.Ui.Contracts;
 
 namespace MusicX.ViewModels
 {
@@ -26,7 +26,7 @@ namespace MusicX.ViewModels
     {
         private readonly VkService vkService;
         private readonly Logger logger;
-        private readonly NotificationsService notificationsService;
+        private readonly ISnackbarService _snackbarService;
         private readonly ConfigService configService;
 
         public ContentState ContentState { get; set; }
@@ -40,11 +40,12 @@ namespace MusicX.ViewModels
 
         public ObservableRangeCollection<Block> Blocks { get; set; } = new();
 
-        public SectionViewModel(VkService vkService, Logger logger, NotificationsService notificationsService, ConfigService configService)
+        public SectionViewModel(VkService vkService, Logger logger, ISnackbarService snackbarService,
+            ConfigService configService)
         {
             this.vkService = vkService;
             this.logger = logger;
-            this.notificationsService = notificationsService;
+            _snackbarService = snackbarService;
             this.configService = configService;
         }
 
@@ -105,7 +106,7 @@ namespace MusicX.ViewModels
 
                 logger.Error(ex, ex.Message);
 
-                notificationsService.Show("Произошла ошибка", "MusicX не смог подргрузить контент");
+                _snackbarService.Show("Произошла ошибка", "MusicX не смог подргрузить контент");
             }
         }
 
@@ -137,7 +138,7 @@ namespace MusicX.ViewModels
                 };
                 Crashes.TrackError(ex, properties);
                 logger.Error(ex, ex.Message);
-                notificationsService.Show("Произошла ошибка", "MusicX не смог заменить блоки");
+                _snackbarService.Show("Произошла ошибка", "MusicX не смог заменить блоки");
             }
         }
 
@@ -148,7 +149,8 @@ namespace MusicX.ViewModels
 
             var config = await configService.GetConfig();
 
-            if (config.NotifyMessages is null) config.NotifyMessages = new Models.NotifyMessagesConfig() { ShowListenTogetherModal = true, LastShowedTelegramBlock = null };
+            if (config.NotifyMessages is null)
+                config.NotifyMessages = new() { ShowListenTogetherModal = true, LastShowedTelegramBlock = null };
 
             if(config.NotifyMessages.LastShowedTelegramBlock is null || config.NotifyMessages.LastShowedTelegramBlock - DateTime.Now > TimeSpan.FromDays(2))
             {
@@ -174,7 +176,7 @@ namespace MusicX.ViewModels
                     catch (Exception ex)
                     {
                         logger.Error(ex, ex.Message);
-                        notificationsService.Show("Произошла ошибка", "MusicX не смог подргрузить контент");
+                        _snackbarService.Show("Произошла ошибка", "MusicX не смог подргрузить контент");
                     }
                 });
 
@@ -194,7 +196,7 @@ namespace MusicX.ViewModels
                 Crashes.TrackError(ex, properties);
                 logger.Error(ex, ex.Message);
 
-                notificationsService.Show("Произошла ошибка", "MusicX не смог загрузить контент");
+                _snackbarService.Show("Произошла ошибка", "MusicX не смог загрузить контент");
             }
         }
 
@@ -237,7 +239,7 @@ namespace MusicX.ViewModels
 
                 logger.Error(ex, ex.Message);
 
-                notificationsService.Show("Произошла ошибка", "MusicX не смог загрузить контент");
+                _snackbarService.Show("Произошла ошибка", "MusicX не смог загрузить контент");
             }
         }
 
@@ -261,7 +263,7 @@ namespace MusicX.ViewModels
                 logger.Error($"Fatal error in Load artist section with artistId = {artistId}");
                 logger.Error(ex, ex.Message);
 
-                notificationsService.Show("Произошла ошибка", "MusicX не смог загрузить контент");
+                _snackbarService.Show("Произошла ошибка", "MusicX не смог загрузить контент");
             }
         }
 
@@ -309,7 +311,7 @@ namespace MusicX.ViewModels
 
                 logger.Error(ex, ex.Message);
 
-                notificationsService.Show("Произошла ошибка", "MusicX не смог загрузить контент");
+                _snackbarService.Show("Произошла ошибка", "MusicX не смог загрузить контент");
 
             }
         }

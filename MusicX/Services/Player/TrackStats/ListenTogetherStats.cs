@@ -1,5 +1,4 @@
-﻿using MusicX.Helpers;
-using MusicX.Models.Enums;
+﻿using MusicX.Models.Enums;
 using MusicX.Shared.Player;
 using System;
 using System.Threading.Tasks;

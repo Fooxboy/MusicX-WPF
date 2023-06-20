@@ -1,11 +1,10 @@
-﻿<wpfui:UiWindow
+﻿<ui:FluentWindow
     x:Class="MusicX.Views.FatalErrorView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:MusicX.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:wpfui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="Ошибка запуска"
     Width="800"
     Height="450"
@@ -18,7 +17,7 @@
 
 
     <Grid>
-        <wpfui:TitleBar/>
+        <ui:TitleBar />
         <ScrollViewer Margin="0,40,0,0" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
             <StackPanel>
                 <TextBlock
@@ -46,4 +45,4 @@
             </StackPanel>
         </ScrollViewer>
     </Grid>
-</wpfui:UiWindow>
+</ui:FluentWindow>

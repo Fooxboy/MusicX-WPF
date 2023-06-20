@@ -1,22 +1,21 @@
-﻿using MusicX.Core.Models;
-using MusicX.Services;
-using MusicX.Views.Modals;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Interop;
+using Windows.UI.Popups;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Controls;
-using MusicX.Services.Player;
+using MusicX.Core.Models;
+using MusicX.Core.Services;
+using MusicX.Services;
 using MusicX.Services.Player.Playlists;
 using MusicX.ViewModels;
 using MusicX.ViewModels.Modals;
-using System;
-using System.Windows.Interop;
-using MusicX.Core.Services;
-using Newtonsoft.Json.Linq;
-using System.Windows.Threading;
+using MusicX.Views.Modals;
 using VkNet.Abstractions.Core;
 using VkNet.Exception;
-using VkNet.Model;
+using WinRT.Interop;
+using Wpf.Ui.Contracts;
 using Wpf.Ui.Controls;
 
 namespace MusicX.Views
@@ -76,28 +75,28 @@ namespace MusicX.Views
 
             await brr.ShowAsync();*/
 
-            var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
+            var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
 
             navigationService.OpenModal<TestModal>();
         }
 
         private void OpenSectionButton_Click(object sender, RoutedEventArgs e)
         {
-            var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
+            var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
             navigationService.OpenSection(section.Text);
         }
 
         private void openArtist_Click(object sender, RoutedEventArgs e)
         {
-            var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
+            var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
             navigationService.OpenSection(artist.Text, SectionType.Artist);
         }
 
         private void showNotification_Click(object sender, RoutedEventArgs e)
         {
-            var notificationsService = StaticService.Container.GetRequiredService<Services.NotificationsService>();
+            var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
 
-            notificationsService.Show("Заголовок", "Сообщение");
+            snackbarService.Show("Заголовок", "Сообщение");
 
         }
 
@@ -117,7 +116,7 @@ namespace MusicX.Views
 
         private void OpenPlaylistSelector_Click(object sender, RoutedEventArgs e)
         {
-            var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
+            var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
             var viewModel = StaticService.Container.GetRequiredService<PlaylistSelectorModalViewModel>();
 
             navigationService.OpenModal<PlaylistSelectorModal>(viewModel);
@@ -125,7 +124,7 @@ namespace MusicX.Views
 
         private void OpenPlaylistModal_Click(object sender, RoutedEventArgs e)
         {
-            var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
+            var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
             var viewModel = StaticService.Container.GetRequiredService<CreatePlaylistModalViewModel>();
 
             navigationService.OpenModal<CreatePlaylistModal>(viewModel);
@@ -166,8 +165,8 @@ namespace MusicX.Views
 
                 IntPtr hwnd = new WindowInteropHelper(window).Handle;
 
-                var brr = new Windows.UI.Popups.MessageDialog($"{ex.Message} \n \n \n {ex.StackTrace}", "Ошибка");
-                WinRT.Interop.InitializeWithWindow.Initialize(brr, hwnd);
+                var brr = new MessageDialog($"{ex.Message} \n \n \n {ex.StackTrace}", "Ошибка");
+                InitializeWithWindow.Initialize(brr, hwnd);
 
                 await brr.ShowAsync();
             }
@@ -187,8 +186,8 @@ namespace MusicX.Views
 
                 IntPtr hwnd = new WindowInteropHelper(window).Handle;
 
-                var brr = new Windows.UI.Popups.MessageDialog($"{ex.Message} \n \n \n {ex.StackTrace}", "Ошибка");
-                WinRT.Interop.InitializeWithWindow.Initialize(brr, hwnd);
+                var brr = new MessageDialog($"{ex.Message} \n \n \n {ex.StackTrace}", "Ошибка");
+                InitializeWithWindow.Initialize(brr, hwnd);
 
                 await brr.ShowAsync();
             }
@@ -215,8 +214,8 @@ namespace MusicX.Views
             {
                 if (sid.HasValue)
                 {
-                    var notificationService = StaticService.Container.GetRequiredService<NotificationsService>();
-                    notificationService.Show("Капча", $"Вы ввели '{key}'");
+                    var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
+                    snackbarService.Show("Капча", $"Вы ввели '{key}'");
                     return 0;
                 }
                 

@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using System.Windows.Controls;
 using MusicX.Controls;
 using MusicX.ViewModels.Modals;
 

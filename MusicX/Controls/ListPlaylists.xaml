@@ -17,10 +17,7 @@
 
     <UserControl.Resources>
         <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDark.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
-            </ResourceDictionary.MergedDictionaries>
+            
             
             <DataTemplate DataType="{x:Type models:Playlist}" x:Key="FullPlaylistTemplate">
                 <local:PlaylistControl Margin="0,5" Width="200" Playlist="{Binding}" ShowFull="False" />

@@ -1,13 +1,14 @@
-﻿using MusicX.Core.Models;
-using MusicX.Core.Services;
-using MusicX.Services;
-using NLog;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
-using MusicX.Helpers;
 using Microsoft.AppCenter.Crashes;
-using System.Collections.Generic;
+using MusicX.Core.Models;
+using MusicX.Core.Services;
+using MusicX.Helpers;
+using MusicX.Services;
+using NLog;
+using Wpf.Ui.Contracts;
 
 namespace MusicX.ViewModels
 {
@@ -40,17 +41,18 @@ namespace MusicX.ViewModels
 
         private readonly VkService vkService;
         private readonly Logger logger;
-        private readonly NotificationsService notificationsService;
+        private readonly ISnackbarService _snackbarService;
 
         public ConfigService ConfigService { get; set; }
 
-        public PlaylistViewModel(VkService vkService, Logger logger, ConfigService configService, NotificationsService notificationsService)
+        public PlaylistViewModel(VkService vkService, Logger logger, ConfigService configService,
+            ISnackbarService snackbarService)
         {
             this.vkService = vkService;
             this.ConfigService = configService;
             this.logger = logger;
 
-            this.notificationsService = notificationsService;
+            _snackbarService = snackbarService;
         }
         public async ValueTask LoadMore()
         {
@@ -85,7 +87,7 @@ namespace MusicX.ViewModels
                 logger.Error("Fatal error in load playlist");
                 logger.Error(ex, ex.Message);
 
-                notificationsService.Show("Произошла ошибка", "MusicX не смог загрузить плейлист, попробуйте ещё раз");
+                _snackbarService.Show("Произошла ошибка", "MusicX не смог загрузить плейлист, попробуйте ещё раз");
 
                 VisibleLoadingMore = Visibility.Collapsed;
             }
@@ -220,7 +222,7 @@ namespace MusicX.ViewModels
                 logger.Error("Fatal error in load playlist");
                 logger.Error(ex, ex.Message);
 
-                notificationsService.Show("Произошла ошибка", "MusicX не смог загрузить контент");
+                _snackbarService.Show("Произошла ошибка", "MusicX не смог загрузить контент");
 
                 PlaylistNotLoaded?.Invoke(this, this.Playlist);
 
@@ -254,7 +256,7 @@ namespace MusicX.ViewModels
                 logger.Error("Fatal error in load playlist from data");
                 logger.Error(ex, ex.Message);
 
-                notificationsService.Show("Произошла ошибка", "MusicX не смог загрузить контент");
+                _snackbarService.Show("Произошла ошибка", "MusicX не смог загрузить контент");
 
             }
 
@@ -285,7 +287,7 @@ namespace MusicX.ViewModels
 
                 logger.Error("Error in add playlist");
                 logger.Error(ex, ex.Message);
-                notificationsService.Show("Произошла ошибка", "MusicX не смог добавить плейлист");
+                _snackbarService.Show("Произошла ошибка", "MusicX не смог добавить плейлист");
 
                 return false;
             }
@@ -312,7 +314,7 @@ namespace MusicX.ViewModels
 
                 logger.Error("Error in remove playlist");
                 logger.Error(ex, ex.Message);
-                notificationsService.Show("Произошла ошибка", "MusicX не смог удалить плейлист");
+                _snackbarService.Show("Произошла ошибка", "MusicX не смог удалить плейлист");
 
                 return false;
             }

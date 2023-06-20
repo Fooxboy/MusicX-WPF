@@ -1,17 +1,19 @@
-﻿using MusicX.Core.Models;
-using MusicX.Core.Services;
-using MusicX.Services;
-using NLog;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using Microsoft.Extensions.DependencyInjection;
-using System.Collections.Generic;
 using Microsoft.AppCenter.Crashes;
+using Microsoft.Extensions.DependencyInjection;
+using MusicX.Core.Models;
+using MusicX.Core.Services;
+using MusicX.Services;
+using NLog;
+using Wpf.Ui.Common;
+using Wpf.Ui.Controls.IconElements;
 
 namespace MusicX.Controls
 {
@@ -21,14 +23,14 @@ namespace MusicX.Controls
     public partial class LinkControl : UserControl
     {
         private readonly VkService vkService;
-        private readonly Services.NavigationService navigationService;
+        private readonly NavigationService navigationService;
         private readonly Logger logger;
 
         public LinkControl()
         {
             InitializeComponent();
             vkService = StaticService.Container.GetRequiredService<VkService>();
-            navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
+            navigationService = StaticService.Container.GetRequiredService<NavigationService>();
             logger = StaticService.Container.GetRequiredService<Logger>();
 
         }
@@ -89,7 +91,7 @@ namespace MusicX.Controls
 
                     if (Link.Meta.ContentType is "group" or "user" or "chat")
                     {
-                        Card.Icon = Wpf.Ui.Common.SymbolRegular.Link48;
+                        Card.Icon = new SymbolIcon(SymbolRegular.Link48);
                     }
                 }
             }catch (Exception ex)

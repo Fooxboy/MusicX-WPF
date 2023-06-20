@@ -1,24 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
-using Windows.Media.Core;
+using Windows.Media;
 using Windows.Media.Playback;
 using Windows.Storage.Streams;
 using AsyncAwaitBestPractices;
-using MusicX.Helpers;
-using MusicX.Services.Player.Playlists;
-using MusicX.Services.Player.TrackStats;
-using NLog;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
-using MusicX.Shared.Player;
+using MusicX.Helpers;
 using MusicX.Models.Enums;
-using System.Threading;
+using MusicX.Services.Player.Playlists;
+using MusicX.Services.Player.TrackStats;
+using MusicX.Shared.Player;
+using NLog;
+using Wpf.Ui.Contracts;
 
 namespace MusicX.Services.Player;
 
@@ -53,7 +54,7 @@ public class PlayerService
     public event EventHandler<PlayerLoadingEventArgs>? TrackLoadingStateChanged;
 
     private readonly Logger logger;
-    private readonly NotificationsService notificationsService;
+    private readonly ISnackbarService _snackbarService;
     private readonly IEnumerable<ITrackMediaSource> _mediaSources;
     private readonly IEnumerable<ITrackStatsListener> _statsListeners;
     private readonly ListenTogetherService _listenTogetherService;
@@ -64,7 +65,7 @@ public class PlayerService
 
     public IPlaylist? CurrentPlaylist { get; set; }
 
-    public PlayerService(Logger logger, NotificationsService notificationsService,
+    public PlayerService(Logger logger, ISnackbarService snackbarService,
                          IEnumerable<ITrackMediaSource> mediaSources, IEnumerable<ITrackStatsListener> statsListeners, ListenTogetherService listenTogetherService, ConfigService configService)
     {
         this.logger = logger;
@@ -75,7 +76,7 @@ public class PlayerService
         _positionTimer = new DispatcherTimer();
         _positionTimer.Interval = TimeSpan.FromMilliseconds(500);
         _positionTimer.Tick += PositionTimerOnTick;
-        this.notificationsService = notificationsService;
+        _snackbarService = snackbarService;
         _mediaSources = mediaSources;
         _statsListeners = statsListeners;
         this._listenTogetherService = listenTogetherService;
@@ -150,7 +151,8 @@ public class PlayerService
                 if ((CurrentTrack.MainArtists != null && CurrentTrack.MainArtists.Any(a => a.Name == ignoreArtist)) 
                     || (CurrentTrack.FeaturedArtists != null && (CurrentTrack.FeaturedArtists.Any(a => a.Name == ignoreArtist)) ))
                 {
-                    notificationsService.Show("Трек пропущен", $"В этом треке был артист из вашего черного списка: {ignoreArtist}. Настроить пропуск треков можно в настройках");
+                    _snackbarService.Show("Трек пропущен",
+                        $"В этом треке был артист из вашего черного списка: {ignoreArtist}. Настроить пропуск треков можно в настройках");
                     await NextTrack();
                 }
             }
@@ -270,7 +272,7 @@ public class PlayerService
                 };
             Crashes.TrackError(e, properties);
             logger.Error(e);
-            notificationsService.Show("Ошибка", "Произошла ошибка при воспроизведении");
+            _snackbarService.Show("Ошибка", "Произошла ошибка при воспроизведении");
         }
         finally
         {
@@ -376,7 +378,7 @@ public class PlayerService
             logger.Error("Error in playerService => NextTrack");
             logger.Error(ex, ex.Message);
 
-            notificationsService.Show("Ошибка", "Произошла ошибка при воспроизведении");
+            _snackbarService.Show("Ошибка", "Произошла ошибка при воспроизведении");
 
         }
     }
@@ -486,7 +488,7 @@ public class PlayerService
             logger.Error("Error in playerService => PreviousTrack");
             logger.Error(e, e.Message);
 
-            notificationsService.Show("Ошибка", "Произошла ошибка при воспроизведении");
+            _snackbarService.Show("Ошибка", "Произошла ошибка при воспроизведении");
         }
 
     }
@@ -519,7 +521,7 @@ public class PlayerService
 
             logger.Error(e, e.Message);
 
-            notificationsService.Show("Ошибка", "Произошла ошибка при воспроизведении");
+            _snackbarService.Show("Ошибка", "Произошла ошибка при воспроизведении");
 
         }
 
@@ -551,7 +553,7 @@ public class PlayerService
                 };
             Crashes.TrackError(e, properties);
 
-            notificationsService.Show("Ошибка", "Произошла ошибка при воспроизведении");
+            _snackbarService.Show("Ошибка", "Произошла ошибка при воспроизведении");
 
             logger.Error(e, e.Message);
         }
@@ -590,7 +592,7 @@ public class PlayerService
                 };
             Crashes.TrackError(ex, properties);
 
-            notificationsService.Show("Ошибка", "Произошла ошибка при перемешивании");
+            _snackbarService.Show("Ошибка", "Произошла ошибка при перемешивании");
 
             logger.Error(ex, ex.Message);
         }
@@ -611,7 +613,7 @@ public class PlayerService
         {
             logger.Error("Error SourceNotSupported player");
 
-            notificationsService.Show("Ошибка", "Произошла ошибкба SourceNotSupported");
+            _snackbarService.Show("Ошибка", "Произошла ошибкба SourceNotSupported");
 
             if(CurrentTrack is not null && CurrentTrack.Data.Url.EndsWith(".mp3"))
             {
@@ -662,7 +664,7 @@ public class PlayerService
         }
         else if (args.Error == MediaPlayerError.NetworkError)
         {
-            notificationsService.Show("Ошибка", "Мы не смогли воспроизвести трек из-за проблем с сетью");
+            _snackbarService.Show("Ошибка", "Мы не смогли воспроизвести трек из-за проблем с сетью");
 
             logger.Error("Network Error player");
         }
@@ -749,7 +751,7 @@ public class PlayerService
             player.CommandManager.NextBehavior.EnablingRule = MediaCommandEnablingRule.Always;
             player.CommandManager.PreviousBehavior.EnablingRule = MediaCommandEnablingRule.Always;
 
-            player.SystemMediaTransportControls.DisplayUpdater.Type = Windows.Media.MediaPlaybackType.Music;
+            player.SystemMediaTransportControls.DisplayUpdater.Type = MediaPlaybackType.Music;
             player.CommandManager.NextReceived += async (c, e) => await NextTrack();
             player.CommandManager.PreviousReceived += async (c, e) => await PreviousTrack();
             player.CommandManager.PlayReceived += (c, e) => Play();

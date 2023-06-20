@@ -1,8 +1,4 @@
-﻿using MusicX.Controls.Blocks;
-using MusicX.Core.Models;
-using MusicX.Services;
-using NLog;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -11,10 +7,17 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using Microsoft.Extensions.DependencyInjection;
-using MusicX.ViewModels.Controls;
-using Wpf.Ui.Controls;
 using Microsoft.AppCenter.Crashes;
+using Microsoft.Extensions.DependencyInjection;
+using MusicX.Controls.Blocks;
+using MusicX.Core.Models;
+using MusicX.Services;
+using MusicX.ViewModels.Controls;
+using NLog;
+using Wpf.Ui.Contracts;
+using Wpf.Ui.Controls;
+using Button = MusicX.Core.Models.Button;
+using TextBlock = System.Windows.Controls.TextBlock;
 
 namespace MusicX.Controls
 {
@@ -23,12 +26,12 @@ namespace MusicX.Controls
     /// </summary>
     public partial class BlockControl : UserControl
     {
-        private readonly Services.NavigationService navigationService;
+        private readonly NavigationService navigationService;
         public BlockControl()
         {
             InitializeComponent();
 
-            navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
+            navigationService = StaticService.Container.GetRequiredService<NavigationService>();
             this.Unloaded += BlockControl_Unloaded;
         }
 
@@ -282,8 +285,7 @@ namespace MusicX.Controls
 
                 if (Block.DataType == "action")
                 {
-
-                    List<Core.Models.Button> buttons = new List<Core.Models.Button>();
+                    var buttons = new List<Button>();
 
                     if(Block.Buttons == null)
                     {
@@ -481,9 +483,9 @@ namespace MusicX.Controls
                 logger.Error("Fatal error show block content:");
                 logger.Error(ex);
 
-                var notificationService = StaticService.Container.GetRequiredService<Services.NotificationsService>();
+                var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
 
-                notificationService.Show("Произошла ошибка", $"Music X не смог показать блок {Block.DataType}");
+                snackbarService.Show("Произошла ошибка", $"Music X не смог показать блок {Block.DataType}");
 
             }
         }

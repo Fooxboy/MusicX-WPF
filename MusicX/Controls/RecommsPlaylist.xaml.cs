@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using AsyncAwaitBestPractices;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Models;
@@ -14,7 +13,7 @@ using MusicX.Services.Player.Playlists;
 using MusicX.ViewModels;
 using MusicX.Views;
 using Wpf.Ui.Common;
-using Wpf.Ui.Controls;
+using Wpf.Ui.Controls.IconElements;
 
 namespace MusicX.Controls;
 

@@ -1,17 +1,18 @@
-﻿using MusicX.Services;
-using NLog;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using Microsoft.AppCenter.Analytics;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Controls;
+using MusicX.Services;
 using MusicX.ViewModels;
+using NLog;
+using Wpf.Ui.Contracts;
 using Xabe.FFmpeg;
 using Xabe.FFmpeg.Downloader;
-using System.Collections.Generic;
-using Microsoft.AppCenter.Analytics;
 
 namespace MusicX.Views;
 
@@ -73,9 +74,10 @@ public partial class DownloadsView : Page, IMenuPage
         }
 
         await FFmpegDownloader.GetLatestVersion(FFmpegVersion.Official, ffmpegPath, new Progress<ProgressInfo>(Client_DownloadProgressChanged));
-            
-        var notifications = StaticService.Container.GetRequiredService<Services.NotificationsService>();
-        notifications.Show("Загрузка завершена", "Дополнительный компонент был загружен. Теперь Вы можете скачивать музыку!");
+
+        var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
+        snackbarService.Show("Загрузка завершена",
+            "Дополнительный компонент был загружен. Теперь Вы можете скачивать музыку!");
 
         ContentGrid.Visibility = Visibility.Visible;
         DownloadFfmpeg.Visibility = Visibility.Collapsed;
@@ -115,8 +117,9 @@ public partial class DownloadsView : Page, IMenuPage
         }
         catch (Exception ex)
         {
-            var notifications = StaticService.Container.GetRequiredService<Services.NotificationsService>();
-            notifications.Show("Произошла ошибка", "Мы не смогли скачать дополнительный компонент, попробуйте перезапустить приложение.");
+            var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
+            snackbarService.Show("Произошла ошибка",
+                "Мы не смогли скачать дополнительный компонент, попробуйте перезапустить приложение.");
 
             var logger = StaticService.Container.GetRequiredService<Logger>();
 

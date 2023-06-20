@@ -1,8 +1,5 @@
-﻿using MusicX.Core.Models;
-using MusicX.Services;
-using MusicX.ViewModels;
-using NLog;
-using System;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Windows;
@@ -11,13 +8,18 @@ using System.Windows.Media.Animation;
 using System.Windows.Navigation;
 using AsyncAwaitBestPractices;
 using Microsoft.Extensions.DependencyInjection;
-using NavigationService = System.Windows.Navigation.NavigationService;
-using MusicX.ViewModels.Modals;
-using MusicX.Views.Modals;
-using System.Diagnostics;
+using MusicX.Core.Models;
 using MusicX.Core.Services;
+using MusicX.Services;
 using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
+using MusicX.ViewModels;
+using MusicX.ViewModels.Modals;
+using MusicX.Views.Modals;
+using NLog;
+using Wpf.Ui.Common;
+using Wpf.Ui.Controls.IconElements;
+using NavigationService = System.Windows.Navigation.NavigationService;
 
 namespace MusicX.Views
 {
@@ -73,7 +75,7 @@ namespace MusicX.Views
             if (this.playlist.Permissions.Delete)
             {
                 this.AddPlaylist.Content = "Удалить плейлист";
-                this.AddPlaylist.Icon = Wpf.Ui.Common.SymbolRegular.Delete24;
+                AddPlaylist.Icon = new SymbolIcon(SymbolRegular.Delete24);
             }
 
             if(!this.playlist.Permissions.Edit)
@@ -103,7 +105,7 @@ namespace MusicX.Views
                     if (playlist.OwnerId == currentUserId)
                     {
                         this.AddPlaylist.Content = "Удалить плейлист";
-                        this.AddPlaylist.Icon = Wpf.Ui.Common.SymbolRegular.Delete24;
+                        AddPlaylist.Icon = new SymbolIcon(SymbolRegular.Delete24);
                     }
                 }
 
@@ -138,36 +140,36 @@ namespace MusicX.Views
             if(playlist.OwnerId != currentUserId)
             {
                 this.AddPlaylist.Content = "Добавление...";
-                this.AddPlaylist.Icon = Wpf.Ui.Common.SymbolRegular.Timer12;
+                AddPlaylist.Icon = new SymbolIcon(SymbolRegular.Timer12);
 
                 var res = await ViewModel.AddPlaylist();
 
                 if (res)
                 {
                     this.AddPlaylist.Content = "Удалить плейлист";
-                    this.AddPlaylist.Icon = Wpf.Ui.Common.SymbolRegular.Delete24;
+                    AddPlaylist.Icon = new SymbolIcon(SymbolRegular.Delete24);
                 }
                 else
                 {
                     this.AddPlaylist.Content = "Ошибка";
-                    this.AddPlaylist.Icon = Wpf.Ui.Common.SymbolRegular.ErrorCircle20;
+                    AddPlaylist.Icon = new SymbolIcon(SymbolRegular.ErrorCircle20);
                 }
             }else
             {
                 this.AddPlaylist.Content = "Удаление...";
-                this.AddPlaylist.Icon = Wpf.Ui.Common.SymbolRegular.Timer12;
+                AddPlaylist.Icon = new SymbolIcon(SymbolRegular.Timer12);
 
                 var res = await ViewModel.RemovePlaylist();
 
                 if (res)
                 {
                     this.AddPlaylist.Content = "Добавить к себе";
-                    this.AddPlaylist.Icon = Wpf.Ui.Common.SymbolRegular.Add28;
+                    AddPlaylist.Icon = new SymbolIcon(SymbolRegular.Add28);
                 }
                 else
                 {
                     this.AddPlaylist.Content = "Ошибка";
-                    this.AddPlaylist.Icon = Wpf.Ui.Common.SymbolRegular.ErrorCircle20;
+                    AddPlaylist.Icon = new SymbolIcon(SymbolRegular.ErrorCircle20);
                 }
             }
         }
@@ -183,7 +185,7 @@ namespace MusicX.Views
                     _nowPlay = false;
 
                     PlayPlaylist.Content = "Возпроизвести";
-                    PlayPlaylist.Icon = Wpf.Ui.Common.SymbolRegular.Play20;
+                    PlayPlaylist.Icon = new SymbolIcon(SymbolRegular.Play20);
 
 
                     player.Pause();
@@ -193,7 +195,7 @@ namespace MusicX.Views
                     _nowPlay = true;
 
                     PlayPlaylist.Content = "Остановить воспроизведение";
-                    PlayPlaylist.Icon = Wpf.Ui.Common.SymbolRegular.Pause20;
+                    PlayPlaylist.Icon = new SymbolIcon(SymbolRegular.Pause20);
 
                     await player.PlayAsync(
                         new VkPlaylistPlaylist(StaticService.Container.GetRequiredService<VkService>(),

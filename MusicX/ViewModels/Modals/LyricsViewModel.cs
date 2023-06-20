@@ -1,25 +1,22 @@
-﻿using Microsoft.AppCenter.Analytics;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Windows.Threading;
 using Microsoft.AppCenter.Crashes;
-using Microsoft.Extensions.Logging;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Services;
 using MusicX.Services.Player;
 using MusicX.Shared.Player;
 using NLog;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Threading;
+using Wpf.Ui.Contracts;
 
 namespace MusicX.ViewModels.Modals
 {
     public class LyricsViewModel : BaseViewModel
     {
         private readonly VkService _vkService;
-        private readonly NotificationsService _notificationsService;
+        private readonly ISnackbarService _snackbarService;
         private readonly PlayerService _playerService;
 
         private readonly Logger _logger;
@@ -40,10 +37,11 @@ namespace MusicX.ViewModels.Modals
 
         private DispatcherTimer _timer { get; set; }
 
-        public LyricsViewModel(VkService vkService, NotificationsService notificationsService, PlayerService playerService, Logger logger)
+        public LyricsViewModel(VkService vkService, ISnackbarService snackbarService, PlayerService playerService,
+            Logger logger)
         {
             this._vkService = vkService;
-            this._notificationsService = notificationsService;
+            _snackbarService = snackbarService;
             this._playerService = playerService;
             this._logger = logger;
 
@@ -102,7 +100,7 @@ namespace MusicX.ViewModels.Modals
                 {
                     _logger.Info("Текст песни из бума не поддерживается");
 
-                    _notificationsService.Show("Ошибка", "Треки из миксов не поддерживаются.");
+                    _snackbarService.Show("Ошибка", "Треки из миксов не поддерживаются.");
                 }
             }
             catch(Exception ex)
@@ -114,7 +112,7 @@ namespace MusicX.ViewModels.Modals
                 Crashes.TrackError(ex, properties);
 
                 _logger.Error(ex.Message, ex);
-                _notificationsService.Show("Ошибка", "Мы не смогли загрузить текст песни :(");
+                _snackbarService.Show("Ошибка", "Мы не смогли загрузить текст песни :(");
             }
             
         }
