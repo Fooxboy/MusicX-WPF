@@ -1,7 +1,7 @@
 {
   "version": 1,
   "dependencies": {
-    "net6.0-windows10.0.22000": {
+    "net7.0-windows10.0.22000": {
       "AsyncAwaitBestPractices.MVVM": {
         "type": "Direct",
         "requested": "[6.0.5, )",
@@ -109,7 +109,6 @@
         "resolved": "8.0.0-preview.5.23280.8",
         "contentHash": "pIbWMzNEuUrO0DAe2T17rloNfrYsHg8MHhmxLOlyPHZgrAXEr3smeZvHaxNGkrJHYPoO7hgmWI9tuTI/kiJT8Q==",
         "dependencies": {
-          "System.Runtime.CompilerServices.Unsafe": "6.0.0",
           "System.Text.Encodings.Web": "8.0.0-preview.5.23280.8"
         }
       },
@@ -499,10 +498,7 @@
       "System.Text.Encodings.Web": {
         "type": "Transitive",
         "resolved": "8.0.0-preview.5.23280.8",
-        "contentHash": "g4I3rXyyQj4AmsooE1z1nCYjXY712foWowYdCep13QajdgNiVOXSBTij2CbqR6+gryMj/x/cInk2TGcBS79ubw==",
-        "dependencies": {
-          "System.Runtime.CompilerServices.Unsafe": "6.0.0"
-        }
+        "contentHash": "g4I3rXyyQj4AmsooE1z1nCYjXY712foWowYdCep13QajdgNiVOXSBTij2CbqR6+gryMj/x/cInk2TGcBS79ubw=="
       },
       "System.Threading.Channels": {
         "type": "Transitive",
@@ -579,7 +575,7 @@
         }
       }
     },
-    "net6.0-windows10.0.22000/win10-arm64": {
+    "net7.0-windows10.0.22000/win10-arm64": {
       "FFmpegInteropX": {
         "type": "Direct",
         "requested": "[1.1.0-pre42, )",
@@ -686,10 +682,7 @@
       "System.Text.Encodings.Web": {
         "type": "Transitive",
         "resolved": "8.0.0-preview.5.23280.8",
-        "contentHash": "g4I3rXyyQj4AmsooE1z1nCYjXY712foWowYdCep13QajdgNiVOXSBTij2CbqR6+gryMj/x/cInk2TGcBS79ubw==",
-        "dependencies": {
-          "System.Runtime.CompilerServices.Unsafe": "6.0.0"
-        }
+        "contentHash": "g4I3rXyyQj4AmsooE1z1nCYjXY712foWowYdCep13QajdgNiVOXSBTij2CbqR6+gryMj/x/cInk2TGcBS79ubw=="
       },
       "System.Windows.Extensions": {
         "type": "Transitive",
@@ -700,7 +693,7 @@
         }
       }
     },
-    "net6.0-windows10.0.22000/win10-x64": {
+    "net7.0-windows10.0.22000/win10-x64": {
       "FFmpegInteropX": {
         "type": "Direct",
         "requested": "[1.1.0-pre42, )",
@@ -807,10 +800,7 @@
       "System.Text.Encodings.Web": {
         "type": "Transitive",
         "resolved": "8.0.0-preview.5.23280.8",
-        "contentHash": "g4I3rXyyQj4AmsooE1z1nCYjXY712foWowYdCep13QajdgNiVOXSBTij2CbqR6+gryMj/x/cInk2TGcBS79ubw==",
-        "dependencies": {
-          "System.Runtime.CompilerServices.Unsafe": "6.0.0"
-        }
+        "contentHash": "g4I3rXyyQj4AmsooE1z1nCYjXY712foWowYdCep13QajdgNiVOXSBTij2CbqR6+gryMj/x/cInk2TGcBS79ubw=="
       },
       "System.Windows.Extensions": {
         "type": "Transitive",
@@ -821,7 +811,7 @@
         }
       }
     },
-    "net6.0-windows10.0.22000/win10-x86": {
+    "net7.0-windows10.0.22000/win10-x86": {
       "FFmpegInteropX": {
         "type": "Direct",
         "requested": "[1.1.0-pre42, )",
@@ -928,10 +918,7 @@
       "System.Text.Encodings.Web": {
         "type": "Transitive",
         "resolved": "8.0.0-preview.5.23280.8",
-        "contentHash": "g4I3rXyyQj4AmsooE1z1nCYjXY712foWowYdCep13QajdgNiVOXSBTij2CbqR6+gryMj/x/cInk2TGcBS79ubw==",
-        "dependencies": {
-          "System.Runtime.CompilerServices.Unsafe": "6.0.0"
-        }
+        "contentHash": "g4I3rXyyQj4AmsooE1z1nCYjXY712foWowYdCep13QajdgNiVOXSBTij2CbqR6+gryMj/x/cInk2TGcBS79ubw=="
       },
       "System.Windows.Extensions": {
         "type": "Transitive",
