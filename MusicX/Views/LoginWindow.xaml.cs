@@ -10,7 +10,6 @@ using MusicX.Models;
 using MusicX.Services;
 using NLog;
 using VkNet.AudioBypassService.Exceptions;
-using Wpf.Ui.Appearance;
 using Wpf.Ui.Contracts;
 
 namespace MusicX.Views
@@ -38,8 +37,7 @@ namespace MusicX.Views
             _navigationService = navigationService;
             _snackbarService = snackbarService;
             this.tokenRefresh = tokenRefresh;
-            this.WpfTitleBar.MaximizeClicked += WpfTitleBar_MaximizeClicked;
-            Accent.Apply(Accent.GetColorizationColor(), ThemeType.Dark);
+            WpfTitleBar.MaximizeClicked += WpfTitleBar_MaximizeClicked;
 
             if(Environment.OSVersion.Version.Build < WindowsBuild.Windows10_1607)
             {

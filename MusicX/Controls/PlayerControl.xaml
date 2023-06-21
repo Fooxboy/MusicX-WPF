@@ -132,6 +132,14 @@
                         Grid.Column="1"
                         Margin="5,0,5,0"
                         ValueChanged="PositionSlider_ValueChanged">
+                        <hc:PreviewSlider.Resources>
+                            <ResourceDictionary>
+                                <ResourceDictionary.MergedDictionaries>
+                                    <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml"/>
+                                    <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml"/>
+                                </ResourceDictionary.MergedDictionaries>
+                            </ResourceDictionary>
+                        </hc:PreviewSlider.Resources>
                         <hc:PreviewSlider.Background>
                             <SolidColorBrush Opacity="0.3" Color="White" />
                         </hc:PreviewSlider.Background>
@@ -513,6 +521,14 @@
                                 MouseEnter="Volume_MouseEnter"
                                 MouseLeave="Volume_MouseLeave"
                                 ValueChanged="Slider_ValueChanged">
+                                <hc:PreviewSlider.Resources>
+                                    <ResourceDictionary>
+                                        <ResourceDictionary.MergedDictionaries>
+                                            <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml"/>
+                                            <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml"/>
+                                        </ResourceDictionary.MergedDictionaries>
+                                    </ResourceDictionary>
+                                </hc:PreviewSlider.Resources>
                                 <hc:PreviewSlider.Background>
                                     <SolidColorBrush Opacity="0.3" Color="White" />
                                 </hc:PreviewSlider.Background>

@@ -25,7 +25,6 @@ using MusicX.Views.Modals;
 using NLog;
 using Squirrel;
 using Squirrel.Sources;
-using Wpf.Ui.Appearance;
 using Wpf.Ui.Common;
 using Wpf.Ui.Contracts;
 using Wpf.Ui.Controls;
@@ -66,7 +65,7 @@ namespace MusicX
 
             playerSerivce.TrackChangedEvent += PlayerSerivce_TrackChangedEvent;
 
-            this.Closing += RootWindow_Closing;
+            Closing += RootWindow_Closing;
 
             SingleAppService.Instance.RunWitchArgs += Instance_RunWitchArgs;
             
@@ -74,6 +73,8 @@ namespace MusicX
 
             Width = configService.Config.Width;
             Height = configService.Config.Height;
+
+            _snackbarService.SetSnackbarPresenter(RootSnackbar);
         }
 
         private async Task TogetherServiceOnConnectedToSession(PlaylistTrack arg)
@@ -231,7 +232,7 @@ namespace MusicX
                     {
                         icon = SymbolRegular.Feed24;
                     }
-                    else if (section.Title.ToLower() == "профили")
+                    else if (section.Title.ToLower() == "каталоги")
                     {
                         icon = SymbolRegular.People24;
                     }

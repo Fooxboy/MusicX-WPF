@@ -32,6 +32,7 @@
                 <ui:SymbolIcon
                     Margin="0,0,0,0"
                     FontSize="80"
+                    Foreground="White"
                     Symbol="Warning20" />
                 <TextBlock
                     Margin="0,30,0,0"
@@ -70,6 +71,7 @@
                 <ui:SymbolIcon
                     Margin="0,0,0,0"
                     FontSize="80"
+                    Foreground="White"
                     Symbol="ArrowDownload48" />
                 <TextBlock
                     Margin="0,30,0,0"

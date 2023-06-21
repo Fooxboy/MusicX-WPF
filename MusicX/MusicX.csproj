@@ -4,17 +4,18 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0-windows10.0.22000.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
+    <SupportedOSPlatform>10.0.19041.0</SupportedOSPlatform>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>StoreLogo.scale-400.ico</ApplicationIcon>
     <Version>0.40</Version>
-    <NoWin32Manifest>true</NoWin32Manifest>
     <WindowsPackageType>None</WindowsPackageType>
+    <WindowsAppSDKBootstrapAutoInitializeOptions_OnNoMatch_ShowUI>true</WindowsAppSDKBootstrapAutoInitializeOptions_OnNoMatch_ShowUI>
     <EnableMsixTooling>true</EnableMsixTooling>
-    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
     <Platforms>x86;x64;arm64</Platforms>
     <RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 
   <ItemGroup>
@@ -88,6 +89,10 @@
 	  <None Remove="Assets\icons\ic_fluent_video_play_pause_24_regular.png" />
 
 	  <Resource Include="Assets\icons\ic_fluent_video_play_pause_24_regular.png" />
+
+	  <None Remove="StoreLogo.scale-400.png" />
+
+	  <Resource Include="StoreLogo.scale-400.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -104,7 +109,7 @@
     <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
     <PackageReference Include="System.Text.Json" Version="8.0.0-preview.5.23280.8" />
     <PackageReference Include="taglib-sharp-netstandard2.0" Version="2.1.0" />
-    <PackageReference Include="WPF-UI" Version="3.0.0-preview.3"/>
+    <PackageReference Include="WPF-UI" Version="3.0.0-preview.3" />
     <PackageReference Include="WpfScreenHelper" Version="2.0.0" />
     <PackageReference Include="Xabe.FFmpeg" Version="5.2.6" />
     <PackageReference Include="Xabe.FFmpeg.Downloader" Version="5.2.0" />
@@ -151,6 +156,10 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Manifest Include="app.manifest" />
   </ItemGroup>
 
 </Project>

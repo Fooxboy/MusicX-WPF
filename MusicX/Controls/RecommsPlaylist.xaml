@@ -68,6 +68,7 @@
                     <ui:SymbolIcon Symbol="Play24"
                                    Foreground="White"
                                    Name="PlayPauseIcon"
+                                   FontSize="48"
                                    HorizontalAlignment="Center" VerticalAlignment="Center"
                                    MouseLeftButtonUp="PlayPause_OnMouseLeftButtonUp"/>
                 </Border>

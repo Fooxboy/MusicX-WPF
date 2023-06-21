@@ -1,11 +1,13 @@
-﻿using Microsoft.AppCenter;
+﻿// ReSharper disable once RedundantUsingDirective
+using System.Collections.Generic;
+using System.Threading;
+using System.Windows;
+using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using MusicX.Services;
 using MusicX.Views;
-using System.Collections.Generic;
-using System.Threading;
-using System.Windows;
+using Squirrel;
 
 namespace MusicX
 {
