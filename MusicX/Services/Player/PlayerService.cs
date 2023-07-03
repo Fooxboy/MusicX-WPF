@@ -170,14 +170,14 @@ public class PlayerService
 
             MediaPlaybackItem?[] sources;
 
-            try
-            {
-                sources = await Task.WhenAll(_mediaSources.Select(b => b.CreateMediaSourceAsync(track, _tokenSource.Token)));
-            }
-            catch (TaskCanceledException)
-            {
-                return;
-            }
+        try
+        {
+            sources = await Task.WhenAll(_mediaSources.Select(b => b.CreateMediaSourceAsync(player.PlaybackSession, track, _tokenSource.Token)));
+        }
+        catch (TaskCanceledException)
+        {
+            return;
+        }
 
             if (sources.FirstOrDefault(m => m is { }) is not { } source)
             {

@@ -18,7 +18,8 @@ public class BoomMediaSource : ITrackMediaSource
         _boomService = boomService;
     }
 
-    public async Task<MediaPlaybackItem?> CreateMediaSourceAsync(PlaylistTrack track,
+    public async Task<MediaPlaybackItem?> CreateMediaSourceAsync(MediaPlaybackSession playbackSession,
+        PlaylistTrack track,
         CancellationToken cancellationToken = default)
     {
         if (track.Data is VkTrackData)
@@ -26,11 +27,16 @@ public class BoomMediaSource : ITrackMediaSource
 
         var ffSource = _currentSource = await FFmpegMediaSource.CreateFromUriAsync(track.Data.Url, new()
         {
+            DefaultBufferTimeUri = TimeSpan.FromMinutes(5),
+            ReadAheadBufferEnabled = true,
             FFmpegOptions = new()
             {
                 ["headers"] = $"Authorization: {_boomService.Client.DefaultRequestHeaders.Authorization}"
             }
         });
+        
+        ffSource.PlaybackSession = playbackSession;
+        ffSource.StartBuffering();
 
         return ffSource.CreateMediaPlaybackItem();
     }

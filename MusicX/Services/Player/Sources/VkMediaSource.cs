@@ -23,7 +23,8 @@ public class VkMediaSource : ITrackMediaSource
         FFmpegInteropLogging.SetLogProvider(new NLogLogProvider(logger));
     }
     
-    public async Task<MediaPlaybackItem?> CreateMediaSourceAsync(PlaylistTrack track,
+    public async Task<MediaPlaybackItem?> CreateMediaSourceAsync(MediaPlaybackSession playbackSession,
+        PlaylistTrack track,
         CancellationToken cancellationToken = default)
     {
         while (!cancellationToken.IsCancellationRequested)
@@ -32,12 +33,17 @@ public class VkMediaSource : ITrackMediaSource
 
             var ffSource = _currentSource = await FFmpegMediaSource.CreateFromUriAsync(vkData.Url, new()
             {
+                DefaultBufferTimeUri = TimeSpan.FromMinutes(5),
+                ReadAheadBufferEnabled = true,
                 FFmpegOptions = new()
                 {
                     ["http_persistent"] = "false"
                 }
             });
 
+            ffSource.PlaybackSession = playbackSession;
+            ffSource.StartBuffering();
+            
             return ffSource.CreateMediaPlaybackItem();
         }
         
