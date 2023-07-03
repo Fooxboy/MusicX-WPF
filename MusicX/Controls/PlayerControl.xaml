@@ -542,8 +542,10 @@
                                 Appearance="Transparent"
                                 BorderThickness="0"
                                 Click="OpenFullScreen_Click"
-                                FontSize="17"
-                                Icon="ArrowMaximize16">
+                                FontSize="17">
+                                <wpfui:Button.Icon>
+                                    <ui:SymbolIcon Symbol="ArrowMaximize16" />
+                                </wpfui:Button.Icon>
                                 <wpfui:Button.ToolTip>
                                     <ToolTip Content="Открыть полноэкранный режим" />
                                 </wpfui:Button.ToolTip>
@@ -574,9 +576,11 @@
                                 <ui:SymbolIcon Symbol="ReOrderDotsVertical24" MouseDown="ReorderButton_OnMouseDown" />
                                 <local:QueueTrackControl Grid.Column="1" IsInPlayer="True" />
                                 <wpfui:Button Grid.Column="2"
-                                              Icon="Dismiss24"
                                               Appearance="Transparent"
                                               Click="DeleteFromQueue_OnClick">
+                                    <wpfui:Button.Icon>
+                                        <ui:SymbolIcon Symbol="Dismiss24" />
+                                    </wpfui:Button.Icon>
                                     <wpfui:Button.ToolTip>
                                         <ToolTip Content="Удалить из очереди" />
                                     </wpfui:Button.ToolTip>
