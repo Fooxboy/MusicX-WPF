@@ -61,6 +61,7 @@ namespace MusicX.Views
 
                 collection.AddSingleton<VkService>();
                 collection.AddSingleton<ListenTogetherService>();
+                collection.AddSingleton<UserRadioService>();
                 collection.AddSingleton<GithubService>();
                 collection.AddSingleton<DiscordService>();
                 collection.AddSingleton<BoomService>();

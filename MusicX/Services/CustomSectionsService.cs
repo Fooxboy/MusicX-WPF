@@ -7,6 +7,8 @@ using MusicX.Core.Models;
 using MusicX.Core.Models.General;
 using MusicX.Core.Services;
 using MusicX.Helpers;
+using MusicX.Shared.ListenTogether.Radio;
+using NLog;
 using VkNet.Abstractions;
 using VkNet.Enums.SafetyEnums;
 using VkNet.Model;
@@ -20,11 +22,15 @@ public class CustomSectionsService : ICustomSectionsService
     
     private readonly IVkApiCategories _vkService;
     private readonly IVkApiInvoke _apiInvoke;
+    private readonly UserRadioService _userRadioService;
+    private readonly Logger _logger;
 
-    public CustomSectionsService(IVkApiCategories vkService, IVkApiInvoke apiInvoke)
+    public CustomSectionsService(IVkApiCategories vkService, IVkApiInvoke apiInvoke, UserRadioService userRadioService, Logger logger)
     {
         _vkService = vkService;
         _apiInvoke = apiInvoke;
+        _userRadioService = userRadioService;
+        _logger = logger;
     }
 
     public async IAsyncEnumerable<Section> GetSectionsAsync()
@@ -42,7 +48,7 @@ public class CustomSectionsService : ICustomSectionsService
         {
             "profiles" => new()
             {
-                Section = await GetProfilesSectionAsync()
+                Section = await GetCatalogsSectionAsync()
             },
             "attachments_full" => new()
             {
@@ -183,13 +189,24 @@ public class CustomSectionsService : ICustomSectionsService
         };
     }
 
-    private async Task<Section> GetProfilesSectionAsync()
+    private async Task<Section> GetCatalogsSectionAsync()
     {
         var convs = await _vkService.Messages.GetConversationsAsync(new()
         {
             Extended = true,
             Count = 10
         });
+
+        List<Station> stations = null;
+        try
+        {
+            stations = await _userRadioService.GetStationsList();
+
+        }catch(Exception ex)
+        {
+            _logger.Info($"Ошибка получения списка радиостанций: {ex}");
+            _logger.Error(ex);
+        }
 
         var buttons = convs.Count > 10
             ? new()
@@ -201,6 +218,21 @@ public class CustomSectionsService : ICustomSectionsService
                 }
             }
             : new List<Button>();
+
+        var buttonsRadio = convs.Count > 10
+           ? new()
+           {
+                new()
+                {
+                    Title = "Открыть полную страницу",
+                    Action = new ActionButton()
+                                    {
+                                        Url = "",
+                                        Type = "custom_open_radio_full"
+                                    }
+                }
+           }
+           : new List<Button>();
 
         return new()
         {
@@ -231,11 +263,35 @@ public class CustomSectionsService : ICustomSectionsService
                     },
                 },
 
+
                 new()
                 {
                     Id = Random.Shared.Next().ToString(),
-                    DataType = "placeholder",
-                    Placeholders  = new List<Placeholder>()
+                    DataType = "none",
+                    Layout = new()
+                    {
+                        Name = "header_extended",
+                        Title = "Радиостанции пользователей"
+                    },
+                    Buttons = buttonsRadio
+                },
+
+                MapStationsBlock(stations),
+
+                GetPlaceholderBlock(),
+
+
+            }
+        };
+    }
+
+    private Block GetPlaceholderBlock()
+    {
+        return new()
+        {
+            Id = Random.Shared.Next().ToString(),
+            DataType = "placeholder",
+            Placeholders = new List<Placeholder>()
                     {
                         new Placeholder()
                         {
@@ -263,8 +319,34 @@ public class CustomSectionsService : ICustomSectionsService
                             }
                         }
                     },
-                }
-            }
+        };
+    }
+
+
+    private Block MapStationsBlock(List<Station> stations)
+    {
+        if(stations is null)
+        {
+            return new()
+            {
+                Id = Random.Shared.Next().ToString(),
+
+                //todo: что ннибудь придумать
+            };
+        }
+
+        return new()
+        {
+            Id = Random.Shared.Next().ToString(),
+
+            DataType = "stations",
+
+            Layout = new()
+            {
+                Name = "large_slider"
+            },
+
+            Stations = stations
         };
     }
 

@@ -42,12 +42,14 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+builder.Services.AddSingleton<RadioManager>();
+builder.Services.AddTransient<RadioService>();
 builder.Services.AddSingleton<SessionService>();
 builder.Services.AddTransient<ListenTogetherService>();
 
 var app = builder.Build();
 
-app.Urls.Add("http://0.0.0.0:5000");
+app.Urls.Add("http://0.0.0.0:2023");
 //app.Urls.Add("https://0.0.0.0:5001");
 
 // Configure the HTTP request pipeline.
