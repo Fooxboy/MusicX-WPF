@@ -219,21 +219,6 @@ public class CustomSectionsService : ICustomSectionsService
             }
             : new List<Button>();
 
-        var buttonsRadio = convs.Count > 10
-           ? new()
-           {
-                new()
-                {
-                    Title = "Открыть полную страницу",
-                    Action = new ActionButton()
-                                    {
-                                        Url = "",
-                                        Type = "custom_open_radio_full"
-                                    }
-                }
-           }
-           : new List<Button>();
-
         return new()
         {
             Title = "Профили",
@@ -272,15 +257,22 @@ public class CustomSectionsService : ICustomSectionsService
                     {
                         Name = "header_extended",
                         Title = "Радиостанции пользователей"
-                    },
-                    Buttons = buttonsRadio
+                    }
                 },
 
                 MapStationsBlock(stations),
 
+                new()
+                {
+                    Id = Random.Shared.Next().ToString(),
+                    DataType = "none",
+                    Layout = new()
+                    {
+                        Name = "separator",
+                    },
+                },
+
                 GetPlaceholderBlock(),
-
-
             }
         };
     }
@@ -325,16 +317,6 @@ public class CustomSectionsService : ICustomSectionsService
 
     private Block MapStationsBlock(List<Station> stations)
     {
-        if(stations is null)
-        {
-            return new()
-            {
-                Id = Random.Shared.Next().ToString(),
-
-                //todo: что ннибудь придумать
-            };
-        }
-
         return new()
         {
             Id = Random.Shared.Next().ToString(),

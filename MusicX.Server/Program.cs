@@ -49,7 +49,8 @@ builder.Services.AddTransient<ListenTogetherService>();
 
 var app = builder.Build();
 
-app.Urls.Add("http://0.0.0.0:2023");
+//app.Urls.Add("http://0.0.0.0:2023");
+app.Urls.Add("http://localhost:2023");
 //app.Urls.Add("https://0.0.0.0:5001");
 
 // Configure the HTTP request pipeline.

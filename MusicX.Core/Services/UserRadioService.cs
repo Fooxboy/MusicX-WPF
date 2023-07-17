@@ -17,6 +17,11 @@ namespace MusicX.Core.Services
 
         private string _host;
 
+        public UserRadioService(Logger logger)
+        {
+            _logger = logger;
+        }
+
         public async Task<List<Station>> GetStationsList()
         {
             _logger.Info("Получение списка всех доступных станций");
@@ -28,7 +33,7 @@ namespace MusicX.Core.Services
             return stations;
         }
 
-        public Task<Station> CreateStationAsync(string sessionId, string title, string cover, long ownerId, string ownerName, string ownerPhoto)
+        public Task<Station> CreateStationAsync(string sessionId, string title, string cover, string decription, long ownerId, string ownerName, string ownerPhoto)
         {
             _logger.Info($"Создание пользовательской радиостанции с ID {sessionId}");
 
@@ -37,6 +42,7 @@ namespace MusicX.Core.Services
                 {"sessionId", sessionId },
                 {"title", title},
                 {"cover", cover },
+                {"decription", decription },
                 {"ownerId", ownerId.ToString() },
                 {"ownerName", ownerName },
                 {"ownerPhoto", ownerPhoto}
@@ -66,7 +72,7 @@ namespace MusicX.Core.Services
                     httpClient.BaseAddress = new Uri(await GetHostNameAsync());
                     var p = parameters.Select(x => x.Key + "=" + x.Value);
 
-                    var result = await httpClient.GetAsync(method + "?" + string.Join("&", p));
+                    var result = await httpClient.GetAsync("/radio/" + method + "?" + string.Join("&", p));
 
                     result.EnsureSuccessStatusCode();
 
@@ -112,6 +118,7 @@ namespace MusicX.Core.Services
             catch (Exception ex)
             {
                 _logger.Error(ex);
+                return "127.0.0.1:2023";
             }
         }
     }

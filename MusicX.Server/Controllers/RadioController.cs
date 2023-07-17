@@ -4,6 +4,7 @@ using MusicX.Shared.ListenTogether.Radio;
 
 namespace MusicX.Server.Controllers
 {
+    [Route("radio")]
     public class RadioController : Controller
     {
         private readonly RadioService _radioService;
@@ -22,9 +23,11 @@ namespace MusicX.Server.Controllers
         }
 
         [HttpGet("createStation")]
-        public Station CreateStation(string sessionId, string title, string cover, long ownerId, string ownerName, string ownerPhoto)
+        public Station CreateStation(string sessionId, string title, string cover, string description, long ownerId, string ownerName, string ownerPhoto)
         {
-            var station = _radioService.CreateStation(sessionId, title, cover, ownerId, ownerName, ownerPhoto);
+            var station = _radioService.CreateStation(sessionId, title, cover, description, ownerId, ownerName, ownerPhoto);
+
+
 
             return station;
         }

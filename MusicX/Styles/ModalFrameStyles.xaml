@@ -1,9 +1,10 @@
-<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:controls="clr-namespace:MusicX.Controls"
-                    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
-    
-    <FontFamily x:Key="VKSansDemiBold" >pack://application:,,,/;component/Fonts/VKSansDisplay-DemiBold.ttf#VK Sans Display DemiBold</FontFamily>
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:MusicX.Controls"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
+
+    <FontFamily x:Key="VKSansDemiBold">pack://application:,,,/;component/Fonts/VKSansDisplay-DemiBold.ttf#VK Sans Display DemiBold</FontFamily>
     <Style TargetType="{x:Type controls:ModalFrame}">
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="OverridesDefaultStyle" Value="True" />
@@ -11,20 +12,21 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type controls:ModalFrame}">
                     <Grid x:Name="ContentGrid" Visibility="Collapsed">
-                        <Rectangle Fill="Black"
-                                   Opacity="0"
-                                   IsHitTestVisible="False"
-                                   x:Name="BackgroundRectangle"
-                                   HorizontalAlignment="Stretch"
-                                   VerticalAlignment="Stretch" />
+                        <Rectangle
+                            x:Name="BackgroundRectangle"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            Fill="Black"
+                            IsHitTestVisible="False"
+                            Opacity="0" />
                         <Border
-                            BorderBrush="{DynamicResource ControlElevationBorderBrush}"
-                            BorderThickness="{StaticResource CardBorderThemeThickness}"
-                            CornerRadius="{DynamicResource ControlCornerRadius}"
+                            x:Name="ModalContent"
                             Padding="{StaticResource CardPadding}"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            x:Name="ModalContent"
+                            BorderBrush="{DynamicResource ControlElevationBorderBrush}"
+                            BorderThickness="{StaticResource CardBorderThemeThickness}"
+                            CornerRadius="{DynamicResource ControlCornerRadius}"
                             Opacity="0">
                             <Border.Background>
                                 <SolidColorBrush Color="{DynamicResource SystemFillColorSolidNeutralBackground}" />
@@ -39,17 +41,20 @@
                             </Border.Effect>
                             <StackPanel>
                                 <Grid MinWidth="150">
-                                    <TextBlock FontFamily="{StaticResource VKSansDemiBold}"
-                                               FontSize="20"
-                                               VerticalAlignment="Center"
-                                               HorizontalAlignment="Center"
-                                               Text="{Binding ModalContent.Title, RelativeSource={RelativeSource TemplatedParent}, FallbackValue=content}"/>
-                                    <Button Command="{TemplateBinding CloseCommand}"
-                                            HorizontalAlignment="Right">
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        FontFamily="{StaticResource VKSansDemiBold}"
+                                        FontSize="20"
+                                        Text="{Binding ModalContent.Title, RelativeSource={RelativeSource TemplatedParent}, FallbackValue=content}" />
+                                    <Button HorizontalAlignment="Right" Command="{TemplateBinding CloseCommand}">
                                         <ui:SymbolIcon Symbol="Dismiss24" />
                                     </Button>
                                 </Grid>
-                                <Frame Margin="0,15,0,0" NavigationUIVisibility="Hidden" Content="{TemplateBinding ModalContent}"/>
+                                <Frame
+                                    Margin="0,15,0,0"
+                                    Content="{TemplateBinding ModalContent}"
+                                    NavigationUIVisibility="Hidden" />
                             </StackPanel>
                         </Border>
                     </Grid>
@@ -57,25 +62,27 @@
                         <EventTrigger RoutedEvent="Opened">
                             <BeginStoryboard>
                                 <Storyboard>
-                                    <DoubleAnimation Storyboard.TargetName="BackgroundRectangle"
-                                                     Storyboard.TargetProperty="Opacity"
-                                                     From="0"
-                                                     To="0.6"
-                                                     Duration="0:0:.5" />
-                                    <DoubleAnimation Storyboard.TargetName="ModalContent"
-                                                     Storyboard.TargetProperty="Opacity"
-                                                     From="0"
-                                                     To="1"
-                                                     Duration="0:0:.16" />
+                                    <DoubleAnimation
+                                        Storyboard.TargetName="BackgroundRectangle"
+                                        Storyboard.TargetProperty="Opacity"
+                                        From="0"
+                                        To="0.6"
+                                        Duration="0:0:.5" />
+                                    <DoubleAnimation
+                                        Storyboard.TargetName="ModalContent"
+                                        Storyboard.TargetProperty="Opacity"
+                                        From="0"
+                                        To="1"
+                                        Duration="0:0:.16" />
                                 </Storyboard>
                             </BeginStoryboard>
                             <BeginStoryboard>
                                 <Storyboard>
-                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentGrid"
-                                                                   Storyboard.TargetProperty="Visibility"
-                                                                   Duration="0:0:.5">
-                                        <DiscreteObjectKeyFrame KeyTime="00:00:00"
-                                                                Value="{x:Static Visibility.Visible}" />
+                                    <ObjectAnimationUsingKeyFrames
+                                        Storyboard.TargetName="ContentGrid"
+                                        Storyboard.TargetProperty="Visibility"
+                                        Duration="0:0:.5">
+                                        <DiscreteObjectKeyFrame KeyTime="00:00:00" Value="{x:Static Visibility.Visible}" />
                                     </ObjectAnimationUsingKeyFrames>
                                 </Storyboard>
                             </BeginStoryboard>
@@ -83,25 +90,27 @@
                         <EventTrigger RoutedEvent="Closed">
                             <BeginStoryboard>
                                 <Storyboard>
-                                    <DoubleAnimation Storyboard.TargetName="BackgroundRectangle"
-                                                     Storyboard.TargetProperty="Opacity"
-                                                     From="0.6"
-                                                     To="0"
-                                                     Duration="0:0:.5" />
-                                    <DoubleAnimation Storyboard.TargetName="ModalContent"
-                                                     Storyboard.TargetProperty="Opacity"
-                                                     From="1"
-                                                     To="0"
-                                                     Duration="0:0:0" />
+                                    <DoubleAnimation
+                                        Storyboard.TargetName="BackgroundRectangle"
+                                        Storyboard.TargetProperty="Opacity"
+                                        From="0.6"
+                                        To="0"
+                                        Duration="0:0:.5" />
+                                    <DoubleAnimation
+                                        Storyboard.TargetName="ModalContent"
+                                        Storyboard.TargetProperty="Opacity"
+                                        From="1"
+                                        To="0"
+                                        Duration="0:0:0" />
                                 </Storyboard>
                             </BeginStoryboard>
                             <BeginStoryboard>
                                 <Storyboard>
-                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentGrid"
-                                                                   Storyboard.TargetProperty="Visibility"
-                                                                   Duration="0:0:.5">
-                                        <DiscreteObjectKeyFrame KeyTime="0:0:.5"
-                                                                Value="{x:Static Visibility.Collapsed}" />
+                                    <ObjectAnimationUsingKeyFrames
+                                        Storyboard.TargetName="ContentGrid"
+                                        Storyboard.TargetProperty="Visibility"
+                                        Duration="0:0:.5">
+                                        <DiscreteObjectKeyFrame KeyTime="0:0:.5" Value="{x:Static Visibility.Collapsed}" />
                                     </ObjectAnimationUsingKeyFrames>
                                 </Storyboard>
                             </BeginStoryboard>

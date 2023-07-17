@@ -1,17 +1,12 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using MusicX.Core.Models;
+using MusicX.Services;
+using MusicX.Shared.ListenTogether.Radio;
+using MusicX.ViewModels;
+using MusicX.Views;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace MusicX.Controls.Blocks
 {
@@ -22,16 +17,33 @@ namespace MusicX.Controls.Blocks
     {
         public UserRadioBlockControl()
         {
+            this.DataContext = this;
             this.Loaded += UserRadioBlockControl_Loaded;
             InitializeComponent();
         }
 
         private void UserRadioBlockControl_Loaded(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            if(Block.Stations is null)
+            {
+                Block.Stations = new List<Station>();
+            }
+
+            foreach (var station in Block.Stations)
+            {
+                ListStations.Items.Add( new UserStationControl() { Station = station});
+            }
         }
 
         public Block Block { get; set; }
 
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var navigation = StaticService.Container.GetRequiredService<NavigationService>();
+
+            var radioView = new UserRadioView();
+            radioView.DataContext = new UserRadioViewModel();
+            navigation.OpenExternalPage(radioView);
+        }
     }
 }

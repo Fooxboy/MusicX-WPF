@@ -1,0 +1,138 @@
+﻿<Page
+    x:Class="MusicX.Views.UserRadioView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:covnerters="clr-namespace:MusicX.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:local="clr-namespace:MusicX.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Title="UserRadioView"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+
+        <ResourceDictionary>
+            <DataTemplate x:Key="StationResource">
+                <Grid Margin="0,0,0,10">
+                    <wpfui:Card
+                        x:Name="RadioCard"
+                        Margin="0,0,20,0"
+                        Padding="0"
+                        MouseEnter="RadioCard_MouseEnter"
+                        MouseLeave="RadioCard_MouseLeave">
+                        <Grid Height="120">
+                            <Border
+                                Width="120"
+                                HorizontalAlignment="Left"
+                                CornerRadius="5">
+                                <Border.Background>
+                                    <ImageBrush
+                                        x:Name="Cover"
+                                        ImageSource="{Binding Cover}"
+                                        Stretch="UniformToFill" />
+                                </Border.Background>
+                            </Border>
+
+                            <StackPanel Margin="130,0,0,0">
+                                <TextBlock
+                                    x:Name="Title"
+                                    Margin="0,5,0,0"
+                                    FontFamily="{StaticResource VKSansBold}"
+                                    FontSize="18"
+                                    Text="{Binding Title}"
+                                    TextTrimming="CharacterEllipsis" />
+
+                                <TextBlock
+                                    x:Name="Author"
+                                    Opacity="0.9"
+                                    Text="{Binding Owner.Name}" />
+
+                                <TextBlock
+                                    x:Name="Description"
+                                    Opacity="0.4"
+                                    Text="{Binding Description}"
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="Wrap" />
+                            </StackPanel>
+
+                        </Grid>
+                    </wpfui:Card>
+                </Grid>
+            </DataTemplate>
+            <covnerters:ListToVisibilityConverter x:Key="ListToVisibilityConverter" />
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <hc:ScrollViewer IsInertiaEnabled="True">
+        <Grid>
+            <TextBlock
+                FontFamily="{StaticResource VKSansBold}"
+                FontSize="26"
+                Text="Радостанции пользователей" />
+
+            <StackPanel Margin="0,40,0,0">
+                <wpfui:Card Margin="0,0,20,0">
+                    <TextBlock
+                        Opacity="0.7"
+                        Text="В этом разделе находятся публичные сессии совместного прослушивания. Вы можете сами создать свою радиостанцию или подключиться к уже созданной. Автор радиостанции самостоятельно указывает название, описание и картинку радиостанции. Доступность этой возможности зависит от доступности сервера совместного прослушивания Music X."
+                        TextWrapping="Wrap" />
+                </wpfui:Card>
+
+                <wpfui:Button
+                    Margin="0,20,20,0"
+                    HorizontalAlignment="Right"
+                    Content="Создать радиостанцию" />
+
+                <TextBlock
+                    FontFamily="{StaticResource VKSansBold}"
+                    FontSize="20"
+                    Text="От разработчиков" />
+
+                <ItemsControl
+                    Margin="0,10,0,0"
+                    ItemTemplate="{StaticResource StationResource}"
+                    ItemsSource="{Binding Developers}" />
+
+                <TextBlock
+                    Opacity="0.7"
+                    Text="Никто из разработчиков не запустил радиостанцию :("
+                    Visibility="{Binding Developers, Converter={StaticResource ListToVisibilityConverter}, ConverterParameter=True}" />
+
+                <TextBlock
+                    Margin="0,10,0,0"
+                    FontFamily="{StaticResource VKSansBold}"
+                    FontSize="20"
+                    Text="Рекомендуемые" />
+
+                <ItemsControl
+                    Margin="0,10,0,0"
+                    ItemTemplate="{StaticResource StationResource}"
+                    ItemsSource="{Binding Recommended}" />
+
+                <TextBlock
+                    Opacity="0.7"
+                    Text="Пока тут ничего нет"
+                    Visibility="{Binding Recommended, Converter={StaticResource ListToVisibilityConverter}, ConverterParameter=True}" />
+                <TextBlock
+                    Margin="0,10,0,0"
+                    FontFamily="{StaticResource VKSansBold}"
+                    FontSize="20"
+                    Text="Все радиостанции" />
+
+                <TextBlock
+                    Opacity="0.7"
+                    Text="Пока тут ничего нет"
+                    Visibility="{Binding UserStations, Converter={StaticResource ListToVisibilityConverter}, ConverterParameter=True}" />
+
+                <ItemsControl
+                    Margin="0,10,0,0"
+                    ItemTemplate="{StaticResource StationResource}"
+                    ItemsSource="{Binding UserStations}" />
+            </StackPanel>
+        </Grid>
+    </hc:ScrollViewer>
+</Page>

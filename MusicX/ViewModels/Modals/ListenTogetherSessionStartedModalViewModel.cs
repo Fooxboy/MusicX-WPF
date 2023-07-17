@@ -9,6 +9,7 @@ using System.Windows.Input;
 using Wpf.Ui.Common;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Services;
+using MusicX.Views.Modals;
 
 namespace MusicX.ViewModels.Modals
 {
@@ -23,6 +24,7 @@ namespace MusicX.ViewModels.Modals
         public ICommand CopySessionCommand { get; set; }
 
         public ICommand CloseCommand { get; set; }
+
 
         public ListenTogetherSessionStartedModalViewModel(ListenTogetherService service)
         {

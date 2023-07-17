@@ -2,8 +2,8 @@
     x:Class="MusicX.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:MusicX"
-    xmlns:convertes="clr-namespace:MusicX.Converters">
+    xmlns:convertes="clr-namespace:MusicX.Converters"
+    xmlns:local="clr-namespace:MusicX">
     <Application.Resources>
 
         <ResourceDictionary>
@@ -20,7 +20,7 @@
             </ResourceDictionary.MergedDictionaries>
 
             <FontFamily x:Key="SegoeFluentIcons">pack://application:,,,/;component/Fonts/#Segoe Fluent Icons</FontFamily>
-            <FontFamily x:Key="VKSansDemiBold" >pack://application:,,,/;component/Fonts/VKSansDisplay-DemiBold.ttf#VK Sans Display DemiBold</FontFamily>
+            <FontFamily x:Key="VKSansDemiBold">pack://application:,,,/;component/Fonts/VKSansDisplay-DemiBold.ttf#VK Sans Display DemiBold</FontFamily>
             <FontFamily x:Key="VKSansMedium">pack://application:,,,/;component/Fonts/VKSansDisplay-Medium.ttf#VK Sans Display Medium</FontFamily>
             <FontFamily x:Key="VKSansBold">pack://application:,,,/;component/Fonts/VKSansDisplay-Bold.ttf#VK Sans Display Bold</FontFamily>
             <FontFamily x:Key="VKSansRegular">pack://application:,,,/;component/Fonts/VKSansDisplay-Regular.ttf#VK Sans Display Regular</FontFamily>

@@ -1,9 +1,9 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:controls="clr-namespace:MusicX.Controls"
     xmlns:converters="clr-namespace:MusicX.Converters"
-    xmlns:controls="clr-namespace:MusicX.Controls">
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
 
     <converters:IconNotEmptyConverter x:Key="IconNotEmptyConverter" />
 
@@ -137,6 +137,7 @@
                                     <Grid Grid.Column="1">
                                         <ScrollViewer
                                             x:Name="PART_ContentHost"
+                                            Margin="0"
                                             VerticalAlignment="Center"
                                             CanContentScroll="{TemplateBinding ScrollViewer.CanContentScroll}"
                                             HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
@@ -144,8 +145,7 @@
                                             IsTabStop="{TemplateBinding ScrollViewer.IsTabStop}"
                                             Style="{StaticResource DefaultTextBoxScrollViewerStyle}"
                                             TextElement.Foreground="{TemplateBinding Foreground}"
-                                            VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
-                                            Margin="0" />
+                                            VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}" />
                                         <TextBlock
                                             x:Name="Placeholder"
                                             Margin="0"

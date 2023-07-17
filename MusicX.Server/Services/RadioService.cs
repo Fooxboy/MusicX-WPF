@@ -23,14 +23,14 @@ namespace MusicX.Server.Services
             return _radioManager.GetStations();
         }
 
-        public Station CreateStation(string sessionId, string title, string cover, long ownerId, string ownerName, string ownerPhoto)
+        public Station CreateStation(string sessionId, string title, string cover, string description, long ownerId, string ownerName, string ownerPhoto)
         {
-            if(_listenTogetherService.CheckExsistSession(sessionId))
+            if(!_listenTogetherService.CheckExsistSession(sessionId))
             {
                 throw new Exception("Такой сессии не существует");
             }
 
-            var session = _radioManager.AddStation(sessionId, title, cover, ownerId, ownerName, ownerPhoto);
+            var session = _radioManager.AddStation(sessionId, title, cover, description, ownerId, ownerName, ownerPhoto);
 
             _logger.LogInformation($"Создана новая радиостанция: '{title}', владелец: '{ownerName}'");
 

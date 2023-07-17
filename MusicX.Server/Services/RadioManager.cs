@@ -1,18 +1,29 @@
-﻿using MusicX.Shared.ListenTogether.Radio;
+﻿using Microsoft.Win32;
+using MusicX.Shared.ListenTogether.Radio;
 using System.Linq.Expressions;
 
 namespace MusicX.Server.Services
 {
     public class RadioManager
     {
+        private readonly IConfiguration _configuration;
+
+        public RadioManager(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _stations = new Dictionary<string, Station>();
+
+        }
         private readonly Dictionary<string, Station> _stations;
 
-        public Station AddStation(string sessionId, string title, string cover, long ownerId, string ownerName, string ownerPhoto)
+        public Station AddStation(string sessionId, string title, string cover, string description, long ownerId, string ownerName, string ownerPhoto)
         {
             if (_stations.ContainsKey(sessionId))
             {
                 throw new Exception("Радиостанция с таким ID сессии уже существует");
             }
+
+            var userCategory = _configuration["UsersCategories:UsersCategories:Developers"];
 
             var station = new Station()
             {
@@ -23,7 +34,8 @@ namespace MusicX.Server.Services
                 {
                     Name = ownerName,
                     Photo = ownerPhoto,
-                    VkId = ownerId
+                    VkId = ownerId,
+                    OwnerCategory = GetOwnerCategory(ownerId)
                 }
             };
 
@@ -48,6 +60,18 @@ namespace MusicX.Server.Services
             }
 
             return _stations.Select(x=> x.Value).Where(filter).ToList();
+        }
+
+        private OwnerCategory GetOwnerCategory(long vkId)
+        {
+            var developers = _configuration.GetSection("UsersCategories:Developers").Get<long[]>().ToList();
+            var recoms = _configuration.GetSection("UsersCategories:Recoms").Get<long[]>().ToList();
+
+            if (developers.Contains(vkId)) return OwnerCategory.Developer;
+
+            if (recoms.Contains(vkId)) return OwnerCategory.Recoms;
+
+            return OwnerCategory.User;
         }
     }
 }

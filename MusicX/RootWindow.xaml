@@ -8,32 +8,35 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:views="clr-namespace:MusicX.Views"
     xmlns:wpfui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
+    Title="MusicX"
+    Width="1440"
+    Height="960"
     d:DesignHeight="720"
     d:DesignWidth="1280"
-    Height="960"
-    Width="1440"
-    KeyDown="Window_KeyDown"
-    Loaded="Window_Loaded"
-    Title="MusicX"
-    WindowStartupLocation="CenterScreen"
     Background="#202020"
     ExtendsContentIntoTitleBar="True"
+    KeyDown="Window_KeyDown"
+    Loaded="Window_Loaded"
     WindowBackdropType="Mica"
     WindowCornerPreference="Round"
+    WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
-    
+
     <Window.TaskbarItemInfo>
         <TaskbarItemInfo>
             <TaskbarItemInfo.ThumbButtonInfos>
-                <ThumbButtonInfo Description="Назад"
-                                 ImageSource="Assets/icons/ic_fluent_previous_24_regular.png"
-                                 Click="Previous_OnClick"/>
-                <ThumbButtonInfo Description="Воспроизвести/Пауза"
-                                 ImageSource="Assets/icons/ic_fluent_video_play_pause_24_regular.png"
-                                 Click="PlayPause_OnClick"/>
-                <ThumbButtonInfo Description="Вперед"
-                                 ImageSource="Assets/icons/ic_fluent_next_24_regular.png"
-                                 Click="Next_OnClick"/>
+                <ThumbButtonInfo
+                    Click="Previous_OnClick"
+                    Description="Назад"
+                    ImageSource="Assets/icons/ic_fluent_previous_24_regular.png" />
+                <ThumbButtonInfo
+                    Click="PlayPause_OnClick"
+                    Description="Воспроизвести/Пауза"
+                    ImageSource="Assets/icons/ic_fluent_video_play_pause_24_regular.png" />
+                <ThumbButtonInfo
+                    Click="Next_OnClick"
+                    Description="Вперед"
+                    ImageSource="Assets/icons/ic_fluent_next_24_regular.png" />
             </TaskbarItemInfo.ThumbButtonInfos>
         </TaskbarItemInfo>
     </Window.TaskbarItemInfo>
@@ -96,9 +99,22 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Image Visibility="Collapsed" x:Name="WinterBackground" Grid.RowSpan="2" Stretch="UniformToFill" Opacity="0.1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Source="pack://application:,,,/Assets/newyear/snowfall.png"/>
+        <Image
+            x:Name="WinterBackground"
+            Grid.RowSpan="2"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Opacity="0.1"
+            Source="pack://application:,,,/Assets/newyear/snowfall.png"
+            Stretch="UniformToFill"
+            Visibility="Collapsed" />
 
-        <Canvas Opacity="0.2" Grid.RowSpan="2" Name="canvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        <Canvas
+            Name="canvas"
+            Grid.RowSpan="2"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Opacity="0.2" />
 
 
         <Grid Grid.Row="1" Margin="5,10,0,0">
@@ -134,7 +150,7 @@
             </Rectangle.Fill>
         </Rectangle>
 
-        
+
 
         <wpfui:TitleBar
             x:Name="WpfTitleBar"
@@ -146,8 +162,8 @@
                 <wpfui:NotifyIcon
                     x:Name="AppNotifyIcon"
                     FocusOnLeftClick="True"
-                    LeftClick="NotifyIcon_LeftClick"
                     Icon="pack://application:,,,/Resources/logo.png"
+                    LeftClick="NotifyIcon_LeftClick"
                     MenuOnRightClick="True"
                     TooltipText="MusicX">
                     <wpfui:NotifyIcon.Menu>
@@ -206,17 +222,22 @@
 
         <StackPanel Grid.Row="1" VerticalAlignment="Bottom">
             <StackPanel.Resources>
-                <Thickness x:Key="ListenTogetherShownThickness"
-                           Right="250"
-                           Bottom="10" />
-                <Thickness x:Key="ListenTogetherHiddenThickness"
-                           Right="250"
-                           Bottom="-2000" />
+                <Thickness
+                    x:Key="ListenTogetherShownThickness"
+                    Bottom="10"
+                    Right="250" />
+                <Thickness
+                    x:Key="ListenTogetherHiddenThickness"
+                    Bottom="-2000"
+                    Right="250" />
 
                 <Storyboard x:Key="ListenTogetherHideAnimation">
-                    <DoubleAnimation Storyboard.Target="{Binding ElementName=ListenTogetherCard}"
-                                     Storyboard.TargetProperty="Height" From="220"
-                                     To="0" Duration="0:0:0.3">
+                    <DoubleAnimation
+                        Storyboard.Target="{Binding ElementName=ListenTogetherCard}"
+                        Storyboard.TargetProperty="Height"
+                        From="220"
+                        To="0"
+                        Duration="0:0:0.3">
                         <DoubleAnimation.EasingFunction>
                             <PowerEase EasingMode="EaseIn" />
                         </DoubleAnimation.EasingFunction>
@@ -225,16 +246,17 @@
                         BeginTime="00:00:00"
                         Storyboard.Target="{Binding ElementName=ListenTogetherCard}"
                         Storyboard.TargetProperty="Margin">
-                        <SplineThicknessKeyFrame KeyTime="00:00:00"
-                                                 Value="{StaticResource ListenTogetherShownThickness}" />
-                        <SplineThicknessKeyFrame KeyTime="00:00:.2"
-                                                 Value="{StaticResource ListenTogetherHiddenThickness}" />
+                        <SplineThicknessKeyFrame KeyTime="00:00:00" Value="{StaticResource ListenTogetherShownThickness}" />
+                        <SplineThicknessKeyFrame KeyTime="00:00:.2" Value="{StaticResource ListenTogetherHiddenThickness}" />
                     </ThicknessAnimationUsingKeyFrames>
                 </Storyboard>
                 <Storyboard x:Key="ListenTogetherShowAnimation">
-                    <DoubleAnimation Storyboard.Target="{Binding ElementName=ListenTogetherCard}"
-                                     Storyboard.TargetProperty="Height" From="0"
-                                     To="220" Duration="0:0:0.3">
+                    <DoubleAnimation
+                        Storyboard.Target="{Binding ElementName=ListenTogetherCard}"
+                        Storyboard.TargetProperty="Height"
+                        From="0"
+                        To="220"
+                        Duration="0:0:0.3">
                         <DoubleAnimation.EasingFunction>
                             <PowerEase EasingMode="EaseIn" />
                         </DoubleAnimation.EasingFunction>
@@ -243,10 +265,8 @@
                         BeginTime="00:00:00"
                         Storyboard.Target="{Binding ElementName=ListenTogetherCard}"
                         Storyboard.TargetProperty="Margin">
-                        <SplineThicknessKeyFrame KeyTime="00:00:00"
-                                                 Value="{StaticResource ListenTogetherHiddenThickness}" />
-                        <SplineThicknessKeyFrame KeyTime="00:00:.1"
-                                                 Value="{StaticResource ListenTogetherShownThickness}" />
+                        <SplineThicknessKeyFrame KeyTime="00:00:00" Value="{StaticResource ListenTogetherHiddenThickness}" />
+                        <SplineThicknessKeyFrame KeyTime="00:00:.1" Value="{StaticResource ListenTogetherShownThickness}" />
                     </ThicknessAnimationUsingKeyFrames>
                 </Storyboard>
             </StackPanel.Resources>
@@ -256,25 +276,26 @@
                     x:Name="RootSnackbar"
                     MaxWidth="600"
                     Margin="0,0,0,20"
-                    Icon="Info20"
-                    CloseButtonEnabled="True"
-                    Timeout="5000"
                     HorizontalAlignment="Center"
-                    VerticalAlignment="Bottom" />
-                <wpfui:Card Margin="{StaticResource ListenTogetherHiddenThickness}"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Bottom"
-                            Name="ListenTogetherCard"
-                            Background="#232323">
+                    VerticalAlignment="Bottom"
+                    CloseButtonEnabled="True"
+                    Icon="Info20"
+                    Timeout="5000" />
+                <wpfui:Card
+                    Name="ListenTogetherCard"
+                    Margin="{StaticResource ListenTogetherHiddenThickness}"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Background="#232323">
                     <controls:ListenTogetherControl />
                 </wpfui:Card>
             </Grid>
 
             <controls:PlayerControl
                 x:Name="playerControl"
+                Margin="18,0,12,10"
                 MouseDoubleClick="playerControl_MouseDoubleClick"
                 RenderTransformOrigin="0.5,0.5"
-                Margin="18,0,12,10"
                 Visibility="Collapsed">
                 <controls:PlayerControl.RenderTransform>
                     <TransformGroup>
@@ -300,8 +321,7 @@
             </Button.Content>
         </wpfui:Button>
 
-        <controls:ModalFrame Grid.Row="1"
-                             x:Name="ModalFrame" />
+        <controls:ModalFrame x:Name="ModalFrame" Grid.Row="1" />
 
     </Grid>
 </wpfui:UiWindow>
