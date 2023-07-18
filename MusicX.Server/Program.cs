@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using MusicX.Server.Hubs;
 using MusicX.Server.Services;
@@ -49,8 +50,12 @@ builder.Services.AddTransient<ListenTogetherService>();
 
 var app = builder.Build();
 
-//app.Urls.Add("http://0.0.0.0:2023");
-app.Urls.Add("http://localhost:2023");
+#if DEBUG
+app.Urls.Add("http://localhost:2024");
+#else
+app.Urls.Add("http://0.0.0.0:2024");
+#endif
+
 //app.Urls.Add("https://0.0.0.0:5001");
 
 // Configure the HTTP request pipeline.
@@ -63,6 +68,14 @@ if (app.Environment.IsDevelopment())
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseMvc(routeBuilder => routeBuilder.MapRoute("default", "{controller}/{action=Index}"));
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+           Path.Combine(builder.Environment.ContentRootPath, "files")),
+    RequestPath = "/files"
+});
+
 
 app.MapControllers();
 app.MapRazorPages();

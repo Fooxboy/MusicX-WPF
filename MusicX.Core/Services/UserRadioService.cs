@@ -17,6 +17,8 @@ namespace MusicX.Core.Services
 
         private string _host;
 
+        public bool IsStarted { get; private set; }
+
         public UserRadioService(Logger logger)
         {
             _logger = logger;
@@ -48,6 +50,8 @@ namespace MusicX.Core.Services
                 {"ownerPhoto", ownerPhoto}
             };
 
+            IsStarted = true;
+
             return HttpRequestAsync<Station>("createStation", p);
         }
 
@@ -59,6 +63,8 @@ namespace MusicX.Core.Services
             {
                 {"sessionId", sessionId }
             };
+
+            IsStarted = false;
 
             return HttpRequestAsync<bool>("deleteStation", p);
         }

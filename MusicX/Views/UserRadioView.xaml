@@ -18,6 +18,12 @@
         <ResourceDictionary>
             <DataTemplate x:Key="StationResource">
                 <Grid Margin="0,0,0,10">
+                    <Grid.InputBindings>
+                        <MouseBinding
+                            Command="{Binding ConnectToRadioCommand}"
+                            CommandParameter="{Binding}"
+                            MouseAction="LeftClick" />
+                    </Grid.InputBindings>
                     <wpfui:Card
                         x:Name="RadioCard"
                         Margin="0,0,20,0"
@@ -48,6 +54,7 @@
 
                                 <TextBlock
                                     x:Name="Author"
+                                    Margin="0,5,0,0"
                                     Opacity="0.9"
                                     Text="{Binding Owner.Name}" />
 
@@ -85,6 +92,7 @@
                 <wpfui:Button
                     Margin="0,20,20,0"
                     HorizontalAlignment="Right"
+                    Command="{Binding CreateStationCommand}"
                     Content="Создать радиостанцию" />
 
                 <TextBlock

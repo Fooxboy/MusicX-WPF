@@ -14,5 +14,7 @@ namespace MusicX.Shared.ListenTogether.Radio
 
         Recoms,
 
+        Banned,
+
     }
 }

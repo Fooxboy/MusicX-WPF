@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using MusicX.Server.Services;
 using MusicX.Shared.ListenTogether.Radio;
 
@@ -27,8 +28,6 @@ namespace MusicX.Server.Controllers
         {
             var station = _radioService.CreateStation(sessionId, title, cover, description, ownerId, ownerName, ownerPhoto);
 
-
-
             return station;
         }
 
@@ -36,6 +35,19 @@ namespace MusicX.Server.Controllers
         public bool DeleteStation(string connectId)
         {
             return _radioService.DeleteStation(connectId);
+        }
+
+        [HttpPost("uploadImage")]
+        public async Task<string> UploadImage(IFormFile image)
+        {
+            var filePath = Path.Combine("files", $"station_{Guid.NewGuid()}.jpg");
+
+            using (var stream = System.IO.File.Create(filePath))
+            {
+                await image.CopyToAsync(stream);
+            }
+
+            return filePath;
         }
     }
 }

@@ -73,6 +73,14 @@ public class ListenTogetherControlViewModel : BaseViewModel
     private async Task CreateNewUserStation()
     {
         var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
+        var userRadioService = StaticService.Container.GetRequiredService<UserRadioService>();
+        var notificationsService = StaticService.Container.GetRequiredService<NotificationsService>();
+
+        if(userRadioService.IsStarted)
+        {
+            notificationsService.Show("Стоп стоп стоп", "У Вас уже запущена радиостанция. Зачем создавать ещё одну?");
+            return;
+        }
 
         navigationService.OpenModal<CreateUserRadioModal>(new CreateUserRadioModalViewModel());
     }

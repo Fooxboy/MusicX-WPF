@@ -60,12 +60,28 @@ namespace MusicX.ViewModels.Modals
                 return;
             }
 
+            if(listenTogetherService.IsConnectedToServer && listenTogetherService.PlayerMode == Core.Models.PlayerMode.Listener)
+            {
+                notificationsService.Show("Ошибка", "Сначала Вам необходимо отключиться от совместного просшуливания");
+                return;
+            }
+
             try
             {
                 IsLoading = true;
 
                 var config = await configService.GetConfig();
-                var session = await listenTogetherService.StartSessionAsync(config.UserId);
+
+                var session = string.Empty;
+
+                if (listenTogetherService.IsConnectedToServer && listenTogetherService.PlayerMode == Core.Models.PlayerMode.Owner)
+                {
+                    session = listenTogetherService.SessionId;
+                }else
+                {
+                    session = await listenTogetherService.StartSessionAsync(config.UserId);
+
+                }
 
                 var station = await radioService.CreateStationAsync(session,
                     TitleRadio,

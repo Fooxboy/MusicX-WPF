@@ -15,7 +15,7 @@
     <Grid Width="400">
         <Grid>
 
-            <StackPanel>
+            <StackPanel Visibility="{Binding IsLoading, Converter={StaticResource InversionBooleanToVisibilityConverter}}">
                 <Grid
                     Width="140"
                     Height="140"
@@ -71,6 +71,20 @@
                     Command="{Binding CreateRadioCommand}"
                     Content="Запустить" />
             </StackPanel>
+
+            <StackPanel Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <wpfui:ProgressRing
+                    Width="80"
+                    Height="80"
+                    IsEnabled="True"
+                    IsIndeterminate="True" />
+
+                <TextBlock
+                    Margin="0,10,0,0"
+                    HorizontalAlignment="Center"
+                    Text="Делаем магию" />
+            </StackPanel>
+
         </Grid>
     </Grid>
 </Page>

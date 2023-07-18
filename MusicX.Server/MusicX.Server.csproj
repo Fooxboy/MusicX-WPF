@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <Folder Include="Exceptions\" />
+    <Folder Include="files\" />
   </ItemGroup>
 
 </Project>

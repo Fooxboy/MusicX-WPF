@@ -39,6 +39,11 @@ namespace MusicX.Server.Services
                 }
             };
 
+            if(station.Owner.OwnerCategory == OwnerCategory.Banned)
+            {
+                throw new Exception("Забаненный пользователь попытался создать сессию");
+            }
+
             _stations.Add(sessionId, station);
 
             return station;
@@ -66,10 +71,13 @@ namespace MusicX.Server.Services
         {
             var developers = _configuration.GetSection("UsersCategories:Developers").Get<long[]>().ToList();
             var recoms = _configuration.GetSection("UsersCategories:Recoms").Get<long[]>().ToList();
+            var banned = _configuration.GetSection("UsersCategories:Banned").Get<long[]>().ToList();
 
             if (developers.Contains(vkId)) return OwnerCategory.Developer;
 
             if (recoms.Contains(vkId)) return OwnerCategory.Recoms;
+
+            if (banned.Contains(vkId)) return OwnerCategory.Banned;
 
             return OwnerCategory.User;
         }

@@ -2,6 +2,7 @@
 using MusicX.Core.Services;
 using MusicX.Services;
 using MusicX.Shared.ListenTogether.Radio;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,8 +59,26 @@ namespace MusicX.Controls
         private async void RadioCard_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             var listenTogetherService = StaticService.Container.GetRequiredService<ListenTogetherService>();
+            var userRadioService = StaticService.Container.GetRequiredService<UserRadioService>();
+            var notificationsService = StaticService.Container.GetRequiredService<NotificationsService>();
 
-            await listenTogetherService.JoinToSesstionAsync(Station.SessionId);
+            if(userRadioService.IsStarted)
+            {
+                notificationsService.Show("Стоп стоп стоп", "Вы не можете подключиться к радиостанции, потому что вы сами владелец радиостанции :)");
+                return;
+            }
+
+            try
+            {
+                await listenTogetherService.JoinToSesstionAsync(Station.SessionId);
+
+            }catch(Exception ex)
+            {
+                var logger = StaticService.Container.GetRequiredService<Logger>();
+                logger.Error(ex);
+
+                notificationsService.Show("Ошибка", "Мы не смогли подключиться к радиостанции");
+            }
         }
     }
 }
