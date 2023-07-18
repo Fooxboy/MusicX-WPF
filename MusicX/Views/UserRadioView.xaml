@@ -20,7 +20,7 @@
                 <Grid Margin="0,0,0,10">
                     <Grid.InputBindings>
                         <MouseBinding
-                            Command="{Binding ConnectToRadioCommand}"
+                            Command="{Binding ConnectToStationCommand}"
                             CommandParameter="{Binding}"
                             MouseAction="LeftClick" />
                     </Grid.InputBindings>

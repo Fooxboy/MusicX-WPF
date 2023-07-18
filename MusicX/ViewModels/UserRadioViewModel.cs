@@ -90,16 +90,21 @@ namespace MusicX.ViewModels
         {
             var userRadioService = StaticService.Container.GetRequiredService<UserRadioService>();
             var notificationsService = StaticService.Container.GetRequiredService<NotificationsService>();
+            var configService = StaticService.Container.GetRequiredService<ConfigService>();
 
             try
             {
+
                 if(userRadioService.IsStarted)
                 {
                     notificationsService.Show("Стоп стоп стоп", "Вы не можете подключиться к радиостанции, потому что вы сами владелец радиостанции :)");
                     return;
                 }
 
+                var config = await configService.GetConfig();
                 var listenTogetherService = StaticService.Container.GetRequiredService<ListenTogetherService>();
+
+                await listenTogetherService.ConnectToServerAsync(config.UserId);
 
                 await listenTogetherService.JoinToSesstionAsync(station.SessionId);
             }catch(Exception ex)

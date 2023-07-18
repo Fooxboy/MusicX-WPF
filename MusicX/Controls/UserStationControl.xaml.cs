@@ -61,8 +61,9 @@ namespace MusicX.Controls
             var listenTogetherService = StaticService.Container.GetRequiredService<ListenTogetherService>();
             var userRadioService = StaticService.Container.GetRequiredService<UserRadioService>();
             var notificationsService = StaticService.Container.GetRequiredService<NotificationsService>();
+            var configService = StaticService.Container.GetRequiredService<ConfigService>();
 
-            if(userRadioService.IsStarted)
+            if (userRadioService.IsStarted)
             {
                 notificationsService.Show("Стоп стоп стоп", "Вы не можете подключиться к радиостанции, потому что вы сами владелец радиостанции :)");
                 return;
@@ -70,6 +71,8 @@ namespace MusicX.Controls
 
             try
             {
+                var config = await configService.GetConfig();
+                await listenTogetherService.ConnectToServerAsync(config.UserId);
                 await listenTogetherService.JoinToSesstionAsync(Station.SessionId);
 
             }catch(Exception ex)
