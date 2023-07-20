@@ -101,12 +101,26 @@ namespace MusicX.ViewModels
                     return;
                 }
 
+
                 var config = await configService.GetConfig();
                 var listenTogetherService = StaticService.Container.GetRequiredService<ListenTogetherService>();
+
+                if(listenTogetherService.IsConnectedToServer && listenTogetherService.PlayerMode == Core.Models.PlayerMode.Listener)
+                {
+                    notificationsService.Show("Стоп стоп стоп", "Ты уже подключен к серверу совместного прослушивания");
+
+                    return;
+                }
+
+                if (listenTogetherService.IsConnectedToServer && listenTogetherService.PlayerMode == Core.Models.PlayerMode.Owner)
+                {
+                    notificationsService.Show("Стоп стоп стоп", "У тебя уже запущена сессия совместного прослушивания");
+                }
 
                 await listenTogetherService.ConnectToServerAsync(config.UserId);
 
                 await listenTogetherService.JoinToSesstionAsync(station.SessionId);
+
             }catch(Exception ex)
             {
                 var logger = StaticService.Container.GetRequiredService<Logger>();

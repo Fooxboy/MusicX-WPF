@@ -69,6 +69,18 @@ namespace MusicX.Controls
                 return;
             }
 
+            if (listenTogetherService.IsConnectedToServer && listenTogetherService.PlayerMode == Core.Models.PlayerMode.Listener)
+            {
+                notificationsService.Show("Стоп стоп стоп", "Ты уже подключен к серверу совместного прослушивания");
+
+                return;
+            }
+
+            if (listenTogetherService.IsConnectedToServer && listenTogetherService.PlayerMode == Core.Models.PlayerMode.Owner)
+            {
+                notificationsService.Show("Стоп стоп стоп", "У тебя уже запущена сессия совместного прослушивания");
+            }
+
             try
             {
                 var config = await configService.GetConfig();
