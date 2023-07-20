@@ -302,18 +302,18 @@ namespace MusicX.Core.Services
                     var servers = JsonConvert.DeserializeObject<ListenTogetherServersModel>(contents);
 
                     return _host = servers.Production;
-                    
-//                    return _host =
-//#if DEBUG
-//                    servers.Test;
-//#else
-//                    servers.Production;
-//#endif
+
+                    return _host =
+#if DEBUG
+                    servers.Test;
+#else
+                    servers.Production;
+#endif
                 }
-            }catch(Exception)
+            }
+            catch(Exception)
             {
                 return "http://212.192.40.71:5000";
-                //return "https://localhost:7253";
             }
             
         }
