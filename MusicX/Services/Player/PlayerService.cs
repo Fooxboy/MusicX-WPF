@@ -117,75 +117,83 @@ public class PlayerService
     
     private async Task PlayTrackAsync(PlaylistTrack track)
     {
-        if (CurrentTrack == track)
-        {
-            player.Play();
-            return;
-        }
-        
-        _tokenSource?.Cancel();
-        _tokenSource?.Dispose();
-        _tokenSource = new();
-
-        
-        player.PlaybackSession.Position = TimeSpan.Zero;
-        player.Pause();
-
-        if (track is null) return;
-
-        CurrentTrack = track;
-        CurrentIndex = Tracks.IndexOf(track);
-        NextPlayTrack = Tracks.ElementAtOrDefault(CurrentIndex + 1);
-
-
-        var config = await _configService.GetConfig();
-
-        if (config.IgnoredArtists is null) config.IgnoredArtists = new List<string>();
-
-        foreach(var ignoreArtist in config.IgnoredArtists)
-        {
-
-            if((CurrentTrack.MainArtists != null && CurrentTrack.MainArtists.Any(a=> a.Name == ignoreArtist)) || (CurrentTrack.FeaturedArtists.Any(a => a.Name == ignoreArtist) && CurrentTrack.FeaturedArtists != null))
-            {
-                notificationsService.Show("Трек пропущен", $"В этом треке был артист из вашего черного списка: {ignoreArtist}. Настроить пропуск треков можно в настройках");
-                await NextTrack();
-            }
-        }
-
-        Application.Current.Dispatcher.BeginInvoke(() =>
-        {
-            TrackChangedEvent?.Invoke(this, EventArgs.Empty);
-            NextTrackChanged?.Invoke(this, EventArgs.Empty);
-            PlayStateChangedEvent?.Invoke(this, EventArgs.Empty);
-            TrackLoadingStateChanged?.Invoke(this, new(PlayerLoadingState.Started));
-        });
-
-        if (CurrentTrack.Data.Url is null) await NextTrack();
-
-
-        MediaPlaybackItem?[] sources;
-
         try
         {
-            sources = await Task.WhenAll(_mediaSources.Select(b => b.CreateMediaSourceAsync(track, _tokenSource.Token)));
-        }
-        catch (TaskCanceledException)
-        {
-            return;
-        }
+            if (CurrentTrack == track)
+            {
+                player.Play();
+                return;
+            }
 
-        if (sources.FirstOrDefault(m => m is { }) is not { } source)
+            _tokenSource?.Cancel();
+            _tokenSource?.Dispose();
+            _tokenSource = new();
+
+
+            player.PlaybackSession.Position = TimeSpan.Zero;
+            player.Pause();
+
+            if (track is null) return;
+
+            CurrentTrack = track;
+            CurrentIndex = Tracks.IndexOf(track);
+            NextPlayTrack = Tracks.ElementAtOrDefault(CurrentIndex + 1);
+
+
+            var config = await _configService.GetConfig();
+
+            if (config.IgnoredArtists is null) config.IgnoredArtists = new List<string>();
+
+            foreach (var ignoreArtist in config.IgnoredArtists)
+            {
+
+                if ((CurrentTrack.MainArtists != null && CurrentTrack.MainArtists.Any(a => a.Name == ignoreArtist)) 
+                    || (CurrentTrack.FeaturedArtists != null && (CurrentTrack.FeaturedArtists.Any(a => a.Name == ignoreArtist)) ))
+                {
+                    notificationsService.Show("Трек пропущен", $"В этом треке был артист из вашего черного списка: {ignoreArtist}. Настроить пропуск треков можно в настройках");
+                    await NextTrack();
+                }
+            }
+
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                TrackChangedEvent?.Invoke(this, EventArgs.Empty);
+                NextTrackChanged?.Invoke(this, EventArgs.Empty);
+                PlayStateChangedEvent?.Invoke(this, EventArgs.Empty);
+                TrackLoadingStateChanged?.Invoke(this, new(PlayerLoadingState.Started));
+            });
+
+            if (CurrentTrack.Data.Url is null) await NextTrack();
+
+
+            MediaPlaybackItem?[] sources;
+
+            try
+            {
+                sources = await Task.WhenAll(_mediaSources.Select(b => b.CreateMediaSourceAsync(track, _tokenSource.Token)));
+            }
+            catch (TaskCanceledException)
+            {
+                return;
+            }
+
+            if (sources.FirstOrDefault(m => m is { }) is not { } source)
+            {
+                await NextTrack();
+                return;
+            }
+
+            player.Source = source;
+            player.Play();
+            UpdateWindowsData().SafeFireAndForget();
+
+            Application.Current.Dispatcher.BeginInvoke(
+                () => TrackLoadingStateChanged?.Invoke(this, new(PlayerLoadingState.Finished)));
+        }catch(Exception ex)
         {
-            await NextTrack();
-            return;
+
         }
-        
-        player.Source = source;
-        player.Play();
-        UpdateWindowsData().SafeFireAndForget();
-        
-        Application.Current.Dispatcher.BeginInvoke(
-            () => TrackLoadingStateChanged?.Invoke(this, new(PlayerLoadingState.Finished)));
+       
     }
 
     public async Task PlayAsync(IPlaylist playlist, PlaylistTrack? firstTrack = null)

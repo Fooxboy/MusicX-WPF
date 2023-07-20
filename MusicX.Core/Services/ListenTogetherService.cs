@@ -300,13 +300,15 @@ namespace MusicX.Core.Services
                     var contents = await response.Content.ReadAsStringAsync();
 
                     var servers = JsonConvert.DeserializeObject<ListenTogetherServersModel>(contents);
+
+                    return _host = servers.Production;
                     
-                    return _host =
-#if DEBUG
-                    servers.Test;
-#else
-                    servers.Production;
-#endif
+//                    return _host =
+//#if DEBUG
+//                    servers.Test;
+//#else
+//                    servers.Production;
+//#endif
                 }
             }catch(Exception)
             {
