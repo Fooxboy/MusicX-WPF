@@ -78,6 +78,8 @@ namespace MusicX
             
             togetherService.ConnectedToSession += TogetherServiceOnConnectedToSession;
 
+            Width = configService.Config.Width;
+            Height = configService.Config.Height;
         }
 
         private async Task TogetherServiceOnConnectedToSession(PlaylistTrack arg)
@@ -266,9 +268,9 @@ namespace MusicX
 
                 var config = await configService.GetConfig();
 
-                if (config.AmimatedBackground is null) config.AmimatedBackground = false;
+                if (config.AnimatedBackground is null) config.AnimatedBackground = false;
 
-                if(config.AmimatedBackground == true)
+                if (config.AnimatedBackground == true)
                 {
                     SnowEngine = new SnowEngine(canvas, "pack://application:,,,/Assets/newyear/snow1.png",
                                               "pack://application:,,,/Assets/newyear/snow2.png",
@@ -451,7 +453,7 @@ namespace MusicX
                 var config = await configService.GetConfig();
 
                 var getBetaUpdates = config.GetBetaUpdates.GetValueOrDefault(false);
-                var manager = new UpdateManager(new GithubSource("https://github.com/fooxboy/musicxreleases",
+                var manager = new UpdateManager(new GithubSource("https://github.com/Fooxboy/MusicX-WPF",
                     string.Empty, getBetaUpdates, new HttpClientFileDownloader()));
 
                 var updateInfo = await manager.CheckForUpdate(manager.Config.CurrentlyInstalledVersion.HasMetadata ? !getBetaUpdates : getBetaUpdates);
@@ -557,6 +559,13 @@ namespace MusicX
 
             this.WindowState = WindowState.Normal;
 
+        }
+
+        private void RootWindow_OnClosing(object? sender, CancelEventArgs e)
+        {
+            configService.Config.Width = Width;
+            configService.Config.Height = Height;
+            configService.SetConfig(configService.Config).SafeFireAndForget(continueOnCapturedContext: true);
         }
     }
 }
