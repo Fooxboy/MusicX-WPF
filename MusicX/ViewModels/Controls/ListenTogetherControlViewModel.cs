@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
 using Microsoft.AppCenter.Analytics;
+using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Services;
 using MusicX.Helpers;
 using MusicX.Services;
@@ -38,6 +39,9 @@ public class ListenTogetherControlViewModel : BaseViewModel
     public ICommand StartSessionCommand { get; }
     public ICommand OpenModalLink { get; set; }
 
+    public ICommand CreateNewUserStationCommand { get; set; }
+
+
     public bool IsLoading { get; set; } = false;
 
     public ListenTogetherControlViewModel(ListenTogetherService service, IUsersCategory vkUsers, NotificationsService notificationsService,
@@ -55,6 +59,7 @@ public class ListenTogetherControlViewModel : BaseViewModel
         ConnectCommand = new AsyncCommand<string>(ConnectAsync);
         StartSessionCommand = new AsyncCommand(StartedSessionAsync);
         OpenModalLink = new AsyncCommand(OpenLinkModalAsync);
+        CreateNewUserStationCommand = new AsyncCommand(CreateNewUserStation);
 
         service.LeaveSession += OnDisconnected;
         service.SessionStoped += OnDisconnected;
@@ -63,6 +68,21 @@ public class ListenTogetherControlViewModel : BaseViewModel
         service.ConnectedToSession += OnSessionConnected;
         service.ListenerConnected += OnListenerConnected;
         service.ListenerDisconnected += OnListenerDisconnected;
+    }
+
+    private async Task CreateNewUserStation()
+    {
+        var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
+        var userRadioService = StaticService.Container.GetRequiredService<UserRadioService>();
+        var notificationsService = StaticService.Container.GetRequiredService<NotificationsService>();
+
+        if(userRadioService.IsStarted)
+        {
+            notificationsService.Show("Стоп стоп стоп", "У Вас уже запущена радиостанция. Зачем создавать ещё одну?");
+            return;
+        }
+
+        navigationService.OpenModal<CreateUserRadioModal>(new CreateUserRadioModalViewModel());
     }
 
     private async Task StartedSessionAsync()

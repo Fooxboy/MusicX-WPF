@@ -44,6 +44,7 @@ namespace MusicX
         private readonly Logger logger;
         private readonly ConfigService configService;
         private readonly NotificationsService notificationsService;
+        private readonly UserRadioService userRadioService;
 
         public static SnowEngine SnowEngine = null;
 
@@ -54,7 +55,7 @@ namespace MusicX
 
         public RootWindow(NavigationService navigationService, VkService vkService, Logger logger,
                           ConfigService configService, NotificationsService notificationsService,
-                          ListenTogetherService togetherService)
+                          ListenTogetherService togetherService, UserRadioService userRadioService)
         {
             InitializeComponent();     
             this.navigationService = navigationService;
@@ -62,6 +63,7 @@ namespace MusicX
             this.logger = logger;
             this.configService = configService;
             this.notificationsService = notificationsService;
+            this.userRadioService = userRadioService;
             var playerSerivce = StaticService.Container.GetRequiredService<PlayerService>();
 
             playerSerivce.TrackChangedEvent += PlayerSerivce_TrackChangedEvent;
@@ -481,8 +483,6 @@ namespace MusicX
 
                 notificationsService.Show("Ошибка проверки обновлений", "Мы не смогли проверить доступные обновления");
             }
-           
-
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)

@@ -1,7 +1,8 @@
-<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:controls="clr-namespace:MusicX.Controls"
-                    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:MusicX.Controls"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
     <Style x:Key="NavigationBarItem" TargetType="{x:Type controls:NavigationBarItem}">
         <Setter Property="Width" Value="60" />
         <Setter Property="Height" Value="60" />
@@ -66,15 +67,15 @@
                                     <RowDefinition Height="*" />
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
-                                
+
                                 <ui:SymbolIcon
                                     x:Name="ElementIcon"
                                     Grid.Row="0"
                                     Margin="0"
+                                    Filled="{TemplateBinding IsSelected}"
                                     FontSize="24"
                                     Foreground="{TemplateBinding IconForeground}"
-                                    Symbol="{TemplateBinding Icon}"
-                                    Filled="{TemplateBinding IsSelected}"/>
+                                    Symbol="{TemplateBinding Icon}" />
 
                                 <Grid
                                     x:Name="ContentGrid"
@@ -215,7 +216,7 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-    
+
     <Style TargetType="{x:Type controls:NavigationBar}">
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="OverridesDefaultStyle" Value="True" />
@@ -226,8 +227,11 @@
                     <ItemsControl ItemsSource="{TemplateBinding Items}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <StackPanel Orientation="Vertical" HorizontalAlignment="Left" CanHorizontallyScroll="False"
-                                            IsItemsHost="True" />
+                                <StackPanel
+                                    HorizontalAlignment="Left"
+                                    CanHorizontallyScroll="False"
+                                    IsItemsHost="True"
+                                    Orientation="Vertical" />
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
                     </ItemsControl>
@@ -235,7 +239,7 @@
             </Setter.Value>
         </Setter>
         <Style.Resources>
-            <Style BasedOn="{StaticResource NavigationBarItem}" TargetType="{x:Type controls:NavigationBarItem}"/>
+            <Style BasedOn="{StaticResource NavigationBarItem}" TargetType="{x:Type controls:NavigationBarItem}" />
         </Style.Resources>
     </Style>
 </ResourceDictionary>

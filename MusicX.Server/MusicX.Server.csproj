@@ -19,4 +19,9 @@
     <ProjectReference Include="..\MusicX.Shared\MusicX.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Exceptions\" />
+    <Folder Include="files\" />
+  </ItemGroup>
+
 </Project>

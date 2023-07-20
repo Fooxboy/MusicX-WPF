@@ -1,55 +1,70 @@
-﻿<UserControl x:Class="MusicX.Controls.ListenTogetherControl"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:MusicX.Controls"
-             xmlns:controls="clr-namespace:MusicX.ViewModels.Controls"
-             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-             xmlns:converters="clr-namespace:MusicX.Converters"
-             mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300"
-             d:DataContext="{d:DesignInstance controls:ListenTogetherControlViewModel}">
+﻿<UserControl
+    x:Class="MusicX.Controls.ListenTogetherControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:MusicX.ViewModels.Controls"
+    xmlns:converters="clr-namespace:MusicX.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:MusicX.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    d:DataContext="{d:DesignInstance controls:ListenTogetherControlViewModel}"
+    d:DesignHeight="300"
+    d:DesignWidth="300"
+    mc:Ignorable="d">
 
     <UserControl.Resources>
         <converters:PluralizationConverter x:Key="PluralizationConverter" />
 
         <ControlTemplate x:Key="ConnectedTemplate">
             <StackPanel>
-                <StackPanel
-                    Visibility="{Binding IsSessionHost, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <TextBlock Text="С вами слушают" FontFamily="{StaticResource VKSansMedium}"
-                               HorizontalAlignment="Center" />
+                <StackPanel Visibility="{Binding IsSessionHost, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        FontFamily="{StaticResource VKSansMedium}"
+                        Text="С вами слушают" />
 
-                    <StackPanel Orientation="Horizontal" Margin="0,10,0,0" HorizontalAlignment="Center">
-                        <TextBlock Text="{Binding Sessions.Count}"
-                                   FontSize="19" FontFamily="{StaticResource VKSansDemiBold}"
-                                   HorizontalAlignment="Center" />
-                        <TextBlock Margin="5,0,0,0"
-                                   Text="{Binding Sessions.Count, ConverterParameter=Человек, Converter={StaticResource PluralizationConverter}}"
-                                   FontSize="19" FontFamily="{StaticResource VKSansMedium}"
-                                   HorizontalAlignment="Center" />
+                    <StackPanel
+                        Margin="0,10,0,0"
+                        HorizontalAlignment="Center"
+                        Orientation="Horizontal">
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            FontFamily="{StaticResource VKSansDemiBold}"
+                            FontSize="19"
+                            Text="{Binding Sessions.Count}" />
+                        <TextBlock
+                            Margin="5,0,0,0"
+                            HorizontalAlignment="Center"
+                            FontFamily="{StaticResource VKSansMedium}"
+                            FontSize="19"
+                            Text="{Binding Sessions.Count, ConverterParameter=Человек, Converter={StaticResource PluralizationConverter}}" />
                     </StackPanel>
 
-                    <ItemsControl ItemsSource="{Binding Sessions}"
-                                  Margin="10,5,0,10" HorizontalAlignment="Center">
+                    <ItemsControl
+                        Margin="10,5,0,10"
+                        HorizontalAlignment="Center"
+                        ItemsSource="{Binding Sessions}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <StackPanel Orientation="Horizontal" IsItemsHost="True" />
+                                <StackPanel IsItemsHost="True" Orientation="Horizontal" />
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="{x:Type controls:ListenTogetherSession}">
-                                <Border BorderThickness="2"
-                                        BorderBrush="White"
-                                        CornerRadius="35"
-                                        Margin="-10,0,0,0">
+                                <Border
+                                    Margin="-10,0,0,0"
+                                    BorderBrush="White"
+                                    BorderThickness="2"
+                                    CornerRadius="35">
                                     <Border.ToolTip>
                                         <ToolTip Content="{Binding Name}" />
                                     </Border.ToolTip>
-                                    <Rectangle Width="35" Height="35"
-                                               RadiusX="34"
-                                               RadiusY="34">
+                                    <Rectangle
+                                        Width="35"
+                                        Height="35"
+                                        RadiusX="34"
+                                        RadiusY="34">
                                         <Rectangle.Fill>
                                             <ImageBrush ImageSource="{Binding AvatarUrl}" />
                                         </Rectangle.Fill>
@@ -60,34 +75,38 @@
                     </ItemsControl>
                 </StackPanel>
 
-                <ui:Button Width="200" Margin="0,0,0,5" Command="{Binding OpenModalLink}" Appearance="Secondary" Content="Ссылка на сессию" Icon="Link28">
+                <ui:Button
+                    Width="200"
+                    Margin="0,0,0,5"
+                    Appearance="Secondary"
+                    Command="{Binding OpenModalLink}"
+                    Content="Ссылка на сессию"
+                    Icon="Link28">
                     <ui:Button.Style>
-                        <Style TargetType="{x:Type ui:Button}"
-                               BasedOn="{StaticResource {x:Type ui:Button}}">
+                        <Style BasedOn="{StaticResource {x:Type ui:Button}}" TargetType="{x:Type ui:Button}">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsSessionHost}"
-                                             Value="True">
+                                <DataTrigger Binding="{Binding IsSessionHost}" Value="True">
                                     <Setter Property="Visibility" Value="Visible" />
                                 </DataTrigger>
 
-                                <DataTrigger Binding="{Binding IsSessionHost}"
-                                             Value="False">
+                                <DataTrigger Binding="{Binding IsSessionHost}" Value="False">
                                     <Setter Property="Visibility" Value="Collapsed" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </ui:Button.Style>
                 </ui:Button>
-                <ui:Button Height="30" Width="200" Appearance="Secondary"
-                           Command="{Binding StopCommand}">
+                <ui:Button
+                    Width="200"
+                    Height="30"
+                    Appearance="Secondary"
+                    Command="{Binding StopCommand}">
                     <ui:Button.Style>
-                        <Style TargetType="{x:Type ui:Button}"
-                               BasedOn="{StaticResource {x:Type ui:Button}}">
+                        <Style BasedOn="{StaticResource {x:Type ui:Button}}" TargetType="{x:Type ui:Button}">
                             <Setter Property="Content" Value="Отключится" />
                             <Setter Property="Icon" Value="PlugDisconnected24" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsSessionHost}"
-                                             Value="True">
+                                <DataTrigger Binding="{Binding IsSessionHost}" Value="True">
                                     <Setter Property="Content" Value="Остановить" />
                                     <Setter Property="Icon" Value="PlugDisconnected24" />
                                 </DataTrigger>
@@ -97,33 +116,67 @@
                 </ui:Button>
             </StackPanel>
         </ControlTemplate>
-        
+
         <ControlTemplate x:Key="DisconnectedTemplate">
             <Grid>
-                <Grid Width="100" Height="100" Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <ui:ProgressRing HorizontalAlignment="Center" VerticalAlignment="Center" IsIndeterminate="True"  IsEnabled="True" />
+                <Grid
+                    Width="100"
+                    Height="100"
+                    Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ui:ProgressRing
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        IsEnabled="True"
+                        IsIndeterminate="True" />
                 </Grid>
                 <StackPanel Visibility="{Binding IsLoading, Converter={StaticResource InversionBooleanToVisibilityConverter}}">
-                    
-                    <TextBlock Text="Совместное прослушивание" FontFamily="{StaticResource VKSansBold}" HorizontalAlignment="Center" />
-                    <StackPanel HorizontalAlignment="Center" Margin="0,15,0,15" Orientation="Horizontal">
-                        <ui:SymbolIcon 
-                                   Symbol="PlugDisconnected28"
-                                   FontSize="28"/>
-                        <TextBlock Margin="10,5,0,0" FontFamily="{StaticResource VKSansMedium}" Text="Не подключено"/>
+
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        FontFamily="{StaticResource VKSansBold}"
+                        Text="Совместное прослушивание" />
+                    <StackPanel
+                        Margin="0,15,0,15"
+                        HorizontalAlignment="Center"
+                        Orientation="Horizontal">
+                        <ui:SymbolIcon FontSize="28" Symbol="PlugDisconnected28" />
+                        <TextBlock
+                            Margin="10,5,0,0"
+                            FontFamily="{StaticResource VKSansMedium}"
+                            Text="Не подключено" />
                     </StackPanel>
-               
-                
-                    <ui:Button Appearance="Secondary" Content="Создать сессию" Icon="Add24"
-                               Margin="0,5"
-                               HorizontalAlignment="Stretch"
-                               Command="{Binding StartSessionCommand}"/>
-                
+
+
+                    <ui:Button
+                        Margin="0,5"
+                        HorizontalAlignment="Stretch"
+                        Appearance="Secondary"
+                        Command="{Binding StartSessionCommand}"
+                        Content="Создать сессию"
+                        Icon="Add24" />
+
+                    <ui:Button
+                        Margin="0,5"
+                        HorizontalAlignment="Stretch"
+                        Appearance="Secondary"
+                        Command="{Binding CreateNewUserStationCommand}"
+                        Content="Создать радиостанцию"
+                        Icon="Add24" />
+
                     <StackPanel Orientation="Horizontal">
-                        <ui:TextBox PlaceholderText="Id сессии" MinWidth="180" Name="SessionIdBox" HorizontalAlignment="Center" />
-                        <ui:Button Margin="5,0,0,0" Height="35" Appearance="Secondary" Icon="Play28"
-                                   Command="{Binding ConnectCommand}"
-                                   CommandParameter="{Binding Text, ElementName=SessionIdBox}" HorizontalAlignment="Center" />
+                        <ui:TextBox
+                            Name="SessionIdBox"
+                            MinWidth="180"
+                            HorizontalAlignment="Center"
+                            PlaceholderText="Id сессии" />
+                        <ui:Button
+                            Height="35"
+                            Margin="5,0,0,0"
+                            HorizontalAlignment="Center"
+                            Appearance="Secondary"
+                            Command="{Binding ConnectCommand}"
+                            CommandParameter="{Binding Text, ElementName=SessionIdBox}"
+                            Icon="Play28" />
                     </StackPanel>
                 </StackPanel>
             </Grid>
@@ -134,8 +187,7 @@
         <Style TargetType="{x:Type UserControl}">
             <Setter Property="Template" Value="{StaticResource DisconnectedTemplate}" />
             <Style.Triggers>
-                <DataTrigger Binding="{Binding IsConnected}"
-                             Value="True">
+                <DataTrigger Binding="{Binding IsConnected}" Value="True">
                     <Setter Property="Template" Value="{StaticResource ConnectedTemplate}" />
                 </DataTrigger>
             </Style.Triggers>

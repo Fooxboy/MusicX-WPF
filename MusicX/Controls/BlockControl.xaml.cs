@@ -450,6 +450,16 @@ namespace MusicX.Controls
                     }
                 }
 
+                if(Block.DataType == "stations")
+                {
+                    BlocksPanel.Children.Add(new UserRadioBlockControl()
+                    {
+                        Block = Block
+                    });
+
+                    return;
+                }
+
                 NotFoundBlock.Visibility = Visibility.Visible;
                 DataTypeName.Text = Block.DataType;
                 LayoutName.Text = Block.Layout.Name;
