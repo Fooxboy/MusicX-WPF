@@ -212,7 +212,14 @@
 
         <ui:TitleBar
             x:Name="WpfTitleBar"
-            Grid.Row="0" Height="40" />
+            Grid.Row="0"
+            Title="Music X Player"
+            ShowMaximize="False"
+            Height="35">
+            <ui:TitleBar.Icon>
+                <ui:ImageIcon Source="/StoreLogo.scale-400.png" />
+            </ui:TitleBar.Icon>
+        </ui:TitleBar>
 
         <!--<Rectangle RadiusX="99" RadiusY="99" HorizontalAlignment="Right" Margin="0 8 150 0" Height="35" Fill="Red" Width="35">
             <Rectangle.ContextMenu >
