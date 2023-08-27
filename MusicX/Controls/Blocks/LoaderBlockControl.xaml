@@ -19,7 +19,7 @@
                 IsIndeterminate="True" />
             <TextBlock
                 Margin="0,5,0,0"
-                Foreground="White"
+                
                 Text="Стучусь к серверам ВКонтакте..." />
         </StackPanel>
 

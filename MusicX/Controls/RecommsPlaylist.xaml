@@ -38,7 +38,8 @@
                 
                 <Border Width="198" Height="240" CornerRadius="12"
                            Background="Black" Opacity="0" Name="PlayPauseOverlay"
-                           MouseLeftButtonUp="PlayPauseOverlay_OnMouseLeftButtonUp">
+                           MouseLeftButtonUp="PlayPauseOverlay_OnMouseLeftButtonUp"
+                           TextElement.FontSize="48"> <!-- startup FontSize for icons sets here because it doesnt work directly on SymbolIcon -->
                     <Border.Resources>
                         <Storyboard x:Key="EnterStoryboard">
                             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PlayPauseOverlay" Storyboard.TargetProperty="(UIElement.Opacity)">

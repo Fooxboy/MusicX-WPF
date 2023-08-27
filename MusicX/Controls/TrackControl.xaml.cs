@@ -23,8 +23,10 @@ using MusicX.ViewModels.Modals;
 using MusicX.Views;
 using MusicX.Views.Modals;
 using NLog;
-using Wpf.Ui.Common;
-using Wpf.Ui.Contracts;
+using Wpf.Ui;
+using Wpf.Ui.Controls;
+using NavigationService = MusicX.Services.NavigationService;
+using TextBlock = System.Windows.Controls.TextBlock;
 
 namespace MusicX.Controls
 {

@@ -47,7 +47,7 @@
 
                         <StackPanel Margin="0 15 0 0" Orientation="Horizontal">
                             <wpfui:ToggleSwitch IsChecked="{Binding HideFromSearch, Mode=TwoWay}" />
-                            <TextBlock Margin="5 2 0 0" Foreground="White" Text="Скрыть из поиска и рекомендаций" />
+                            <TextBlock Margin="5 2 0 0"  Text="Скрыть из поиска и рекомендаций" />
                         </StackPanel>
 
                     </StackPanel>
@@ -57,7 +57,7 @@
 
             </wpfui:Card>
 
-            <TextBlock Margin="0 15 0 0" Foreground="White" FontSize="18" FontFamily="{StaticResource VKSansMedium}"
+            <TextBlock Margin="0 15 0 0"  FontSize="18" FontFamily="{StaticResource VKSansMedium}"
                        Text="Список треков" />
 
             <wpfui:Button Margin="0 10 0 0" HorizontalAlignment="Stretch" Appearance="Secondary"
@@ -120,7 +120,7 @@
 
         <wpfui:Button HorizontalAlignment="Right" VerticalAlignment="Bottom" Command="{Binding CreateCommand}"
                       IsEnabled="{Binding CreateIsEnable}"
-                      Appearance="Primary" Foreground="White" Margin="0 20 0 0" >
+                      Appearance="Primary"  Margin="0 20 0 0" >
 
             <wpfui:Button.Style>
                 <Style TargetType="wpfui:Button" BasedOn="{StaticResource {x:Type wpfui:Button}}">

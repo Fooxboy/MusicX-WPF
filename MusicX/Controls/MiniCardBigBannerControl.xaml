@@ -136,7 +136,7 @@
                     VerticalAlignment="Center"
                     FontFamily="{StaticResource VKSansMedium}"
                     FontSize="16"
-                    Foreground="White"
+                    
                     Text="Имя альбома"
                     TextTrimming="CharacterEllipsis" />
             </Grid>

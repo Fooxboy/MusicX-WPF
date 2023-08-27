@@ -8,7 +8,7 @@ using MusicX.Core.Services;
 using MusicX.Helpers;
 using MusicX.Services;
 using NLog;
-using Wpf.Ui.Contracts;
+using Wpf.Ui;
 
 namespace MusicX.ViewModels
 {

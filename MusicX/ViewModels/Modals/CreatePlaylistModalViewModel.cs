@@ -13,8 +13,9 @@ using MusicX.Helpers;
 using MusicX.Models;
 using MusicX.Services;
 using MusicX.Views.Modals;
+using Wpf.Ui;
 using Wpf.Ui.Common;
-using Wpf.Ui.Contracts;
+using NavigationService = MusicX.Services.NavigationService;
 
 namespace MusicX.ViewModels.Modals
 {

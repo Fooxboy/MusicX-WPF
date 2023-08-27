@@ -25,11 +25,11 @@ using MusicX.Views.Modals;
 using NLog;
 using Squirrel;
 using Squirrel.Sources;
-using Wpf.Ui.Common;
-using Wpf.Ui.Contracts;
+using Wpf.Ui;
 using Wpf.Ui.Controls;
 using Wpf.Ui.Extensions;
 using GithubSource = MusicX.Core.Helpers.GithubSource;
+using NavigationService = MusicX.Services.NavigationService;
 
 namespace MusicX
 {
@@ -327,17 +327,17 @@ namespace MusicX
                     navigationService.OpenModal<WelcomeToListenTogetherModal>();
                 }
 
-                if(config.MinimizeToTray != null)
+                /*if(config.MinimizeToTray != null) // TODO tray
                 {
                     WpfTitleBar.MinimizeToTray = config.MinimizeToTray.Value;
                 }else
                 {
                     WpfTitleBar.MinimizeToTray = false;
-                }
+                }*/
 
                 this.WindowState = WindowState.Normal;
 
-                AppNotifyIcon.Register();
+                // AppNotifyIcon.Register();
             }
             catch (Exception ex)
             {
@@ -550,7 +550,7 @@ namespace MusicX
                 playerService.NextTrack().SafeFireAndForget();
         }
 
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        /*private void MenuItem_Click(object sender, RoutedEventArgs e) // TODO tray
         {
             WpfTitleBar.MinimizeToTray = false;
             this.Show();
@@ -585,7 +585,7 @@ namespace MusicX
 
             this.WindowState = WindowState.Normal;
 
-        }
+        }*/
 
         private void RootWindow_OnClosing(object? sender, CancelEventArgs e)
         {

@@ -176,7 +176,7 @@
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 FontSize="20"
-                                Foreground="White"
+                                
                                 Symbol="MusicNote124" />
 
                             <Rectangle
@@ -253,7 +253,7 @@
                                         VerticalAlignment="Center"
                                         FontFamily="{StaticResource VKSansBold}"
                                         FontSize="12"
-                                        Foreground="White"
+                                        
                                         Text="E" />
                                 </Border>
 

@@ -6,7 +6,7 @@ using MusicX.Core.Services;
 using MusicX.Models.Enums;
 using MusicX.Shared.Player;
 using NLog;
-using Wpf.Ui.Contracts;
+using Wpf.Ui;
 
 namespace MusicX.Services.Player.TrackStats;
 

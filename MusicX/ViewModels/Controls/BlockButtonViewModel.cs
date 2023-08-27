@@ -13,6 +13,9 @@ using MusicX.ViewModels.Modals;
 using MusicX.Views.Modals;
 using NLog;
 using Wpf.Ui.Common;
+using Wpf.Ui.Controls;
+using Button = MusicX.Core.Models.Button;
+
 namespace MusicX.ViewModels.Controls;
 
 public class BlockButtonViewModel : BaseViewModel

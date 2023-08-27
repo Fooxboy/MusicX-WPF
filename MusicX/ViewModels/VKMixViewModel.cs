@@ -11,7 +11,7 @@ using MusicX.Services;
 using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
 using NLog;
-using Wpf.Ui.Contracts;
+using Wpf.Ui;
 
 namespace MusicX.ViewModels
 {

@@ -15,8 +15,8 @@ using MusicX.Views.Modals;
 using VkNet.Abstractions.Core;
 using VkNet.Exception;
 using WinRT.Interop;
-using Wpf.Ui.Contracts;
-using Wpf.Ui.Controls;
+using Wpf.Ui;
+using NavigationService = MusicX.Services.NavigationService;
 
 namespace MusicX.Views
 {
@@ -230,8 +230,6 @@ namespace MusicX.Views
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            var notifyIcon = new NotifyIcon();
-
         }
     }
 }

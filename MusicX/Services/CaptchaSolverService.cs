@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MusicX.ViewModels.Modals;
 using MusicX.Views.Modals;
 using VkNet.Extensions.DependencyInjection;
-using Wpf.Ui.Contracts;
+using Wpf.Ui;
 
 namespace MusicX.Services;
 

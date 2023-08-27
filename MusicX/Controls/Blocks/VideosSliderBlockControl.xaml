@@ -19,11 +19,11 @@
             
             <DataTemplate DataType="{x:Type models:Video}" x:Key="FullVideoTemplate">
                 <ui:Card Margin="0,0,0,10">
-                    <controls:VideoControl Height="200" Width="300" Video="{Binding}" />
+                    <controls:VideoControl MinHeight="200" Width="300" Video="{Binding}" />
                 </ui:Card>
             </DataTemplate>
             <DataTemplate DataType="{x:Type models:Video}" x:Key="VideoTemplate">
-                <controls:VideoControl Margin="0,0,10,0" Height="200" Width="300" Video="{Binding}" />
+                <controls:VideoControl Margin="0,0,10,0" MinHeight="200" Width="300" Video="{Binding}" />
             </DataTemplate>
             
             <ItemsPanelTemplate x:Key="FullVideoPanelTemplate">

@@ -16,9 +16,10 @@ using MusicX.Services;
 using MusicX.Views.Modals;
 using NLog;
 using Ookii.Dialogs.Wpf;
-using Wpf.Ui.Contracts;
+using Wpf.Ui;
 using Wpf.Ui.Controls;
 using Button = Wpf.Ui.Controls.Button;
+using NavigationService = MusicX.Services.NavigationService;
 
 namespace MusicX.Views
 {

@@ -17,6 +17,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Wpf.Ui;
 
 namespace MusicX.Controls
 {
@@ -60,25 +61,25 @@ namespace MusicX.Controls
         {
             var listenTogetherService = StaticService.Container.GetRequiredService<ListenTogetherService>();
             var userRadioService = StaticService.Container.GetRequiredService<UserRadioService>();
-            var notificationsService = StaticService.Container.GetRequiredService<NotificationsService>();
+            var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
             var configService = StaticService.Container.GetRequiredService<ConfigService>();
 
             if (userRadioService.IsStarted)
             {
-                notificationsService.Show("Стоп стоп стоп", "Вы не можете подключиться к радиостанции, потому что вы сами владелец радиостанции :)");
+                snackbarService.Show("Стоп стоп стоп", "Вы не можете подключиться к радиостанции, потому что вы сами владелец радиостанции :)");
                 return;
             }
 
             if (listenTogetherService.IsConnectedToServer && listenTogetherService.PlayerMode == Core.Models.PlayerMode.Listener)
             {
-                notificationsService.Show("Стоп стоп стоп", "Ты уже подключен к серверу совместного прослушивания");
+                snackbarService.Show("Стоп стоп стоп", "Ты уже подключен к серверу совместного прослушивания");
 
                 return;
             }
 
             if (listenTogetherService.IsConnectedToServer && listenTogetherService.PlayerMode == Core.Models.PlayerMode.Owner)
             {
-                notificationsService.Show("Стоп стоп стоп", "У тебя уже запущена сессия совместного прослушивания");
+                snackbarService.Show("Стоп стоп стоп", "У тебя уже запущена сессия совместного прослушивания");
             }
 
             try
@@ -92,7 +93,7 @@ namespace MusicX.Controls
                 var logger = StaticService.Container.GetRequiredService<Logger>();
                 logger.Error(ex);
 
-                notificationsService.Show("Ошибка", "Мы не смогли подключиться к радиостанции");
+                snackbarService.Show("Ошибка", "Мы не смогли подключиться к радиостанции");
             }
         }
     }

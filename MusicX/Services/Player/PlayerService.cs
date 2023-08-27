@@ -19,7 +19,7 @@ using MusicX.Services.Player.Playlists;
 using MusicX.Services.Player.TrackStats;
 using MusicX.Shared.Player;
 using NLog;
-using Wpf.Ui.Contracts;
+using Wpf.Ui;
 
 namespace MusicX.Services.Player;
 

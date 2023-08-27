@@ -13,7 +13,7 @@ using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
 using MusicX.Shared.Player;
 using NLog;
-using Wpf.Ui.Contracts;
+using Wpf.Ui;
 
 namespace MusicX.ViewModels
 {

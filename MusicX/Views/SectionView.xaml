@@ -85,7 +85,7 @@
                     VerticalAlignment="Center"
                     FontSize="16"
                     FontWeight="DemiBold"
-                    Foreground="White"
+                    
                     Text="Стучусь к серверам ВКонтакте..." />
             </StackPanel>
         </Grid>

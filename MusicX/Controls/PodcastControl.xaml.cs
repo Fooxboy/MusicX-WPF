@@ -6,7 +6,7 @@ using System.Windows.Media.Imaging;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Models;
 using MusicX.Services;
-using Wpf.Ui.Contracts;
+using Wpf.Ui;
 
 namespace MusicX.Controls
 {

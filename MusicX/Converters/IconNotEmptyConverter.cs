@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Data;
-using Wpf.Ui.Common;
+using Wpf.Ui.Controls;
+
 namespace MusicX.Converters;
 
 /// <summary>

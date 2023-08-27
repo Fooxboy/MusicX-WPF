@@ -25,7 +25,7 @@
                 FontFamily="{StaticResource VKSansDemiBold}"
                 FontSize="30"
                 FontWeight="DemiBold"
-                Foreground="White"
+                
                 Text="Title block" />
             <TextBlock
                 x:Name="BadgeHeader"
@@ -33,7 +33,7 @@
                 Margin="10,5,0,0"
                 VerticalAlignment="Center"
                 FontSize="20"
-                Foreground="White"
+                
                 Opacity="0.3"
                 Text="123"
                 Visibility="Collapsed" />
@@ -57,7 +57,7 @@
             <TextBlock
                 x:Name="TitleButtons"
                 Margin="10,5,0,0"
-                Foreground="White"
+                
                 Text="brr" />
 
 
@@ -67,7 +67,7 @@
                 VerticalContentAlignment="Center"
                 Background="Transparent"
                 BorderBrush="#424242"
-                Foreground="White" />
+                 />
 
 
         </Grid>

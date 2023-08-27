@@ -43,7 +43,7 @@
             HorizontalAlignment="Center"
             FontFamily="{StaticResource VKSansDemiBold}"
             FontSize="30"
-            Foreground="White"
+            
             Opacity="0.7"
             Text="Сейчас играет" />
 
@@ -105,13 +105,13 @@
                     x:Name="TrackName"
                     FontFamily="{StaticResource VKSansDemiBold}"
                     FontSize="60"
-                    Foreground="White"
+                    
                     Text="Название трека" />
                 <TextBlock
                     x:Name="ArtistName"
                     FontFamily="{StaticResource VKSansMedium}"
                     FontSize="40"
-                    Foreground="White"
+                    
                     Opacity="0.6"
                     Text="Имя исполнителя" />
 
@@ -140,7 +140,7 @@
             VerticalAlignment="Bottom"
             FontFamily="{StaticResource VKSansRegular}"
             FontSize="18"
-            Foreground="White"
+            
             Opacity="0.6"
             Text="Далее" />
 

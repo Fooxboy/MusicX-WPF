@@ -22,10 +22,10 @@ using MusicX.ViewModels.Modals;
 using MusicX.Views;
 using MusicX.Views.Modals;
 using NLog;
-using Wpf.Ui.Common;
-using Wpf.Ui.Contracts;
-using Wpf.Ui.Controls.IconElements;
+using Wpf.Ui;
+using Wpf.Ui.Controls;
 using WpfScreenHelper;
+using NavigationService = MusicX.Services.NavigationService;
 
 namespace MusicX.Controls
 {

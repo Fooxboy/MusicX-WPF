@@ -18,8 +18,8 @@ using MusicX.Services;
 using MusicX.Services.Player.Playlists;
 using MusicX.Shared.Player;
 using NLog;
+using Wpf.Ui;
 using Wpf.Ui.Common;
-using Wpf.Ui.Contracts;
 using Xabe.FFmpeg.Events;
 
 namespace MusicX.ViewModels;

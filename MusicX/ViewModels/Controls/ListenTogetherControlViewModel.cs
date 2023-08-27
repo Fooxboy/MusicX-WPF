@@ -18,7 +18,8 @@ using MusicX.Views.Modals;
 using NLog;
 using VkNet.Abstractions;
 using VkNet.Enums.Filters;
-using Wpf.Ui.Contracts;
+using Wpf.Ui;
+using NavigationService = MusicX.Services.NavigationService;
 
 namespace MusicX.ViewModels.Controls;
 
@@ -76,11 +77,11 @@ public class ListenTogetherControlViewModel : BaseViewModel
     {
         var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
         var userRadioService = StaticService.Container.GetRequiredService<UserRadioService>();
-        var notificationsService = StaticService.Container.GetRequiredService<NotificationsService>();
+        var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
 
         if(userRadioService.IsStarted)
         {
-            notificationsService.Show("Стоп стоп стоп", "У Вас уже запущена радиостанция. Зачем создавать ещё одну?");
+            snackbarService.Show("Стоп стоп стоп", "У Вас уже запущена радиостанция. Зачем создавать ещё одну?");
             return;
         }
 

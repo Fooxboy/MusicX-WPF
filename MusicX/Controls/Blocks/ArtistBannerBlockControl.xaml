@@ -96,7 +96,7 @@
                 FontFamily="{StaticResource VKSansBold}"
                 FontSize="50"
                 FontWeight="Bold"
-                Foreground="White"
+                
                 Text="Artist text" />
             <Grid x:Name="ActionsGrid" />
         </StackPanel>

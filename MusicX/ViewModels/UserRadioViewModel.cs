@@ -15,6 +15,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Wpf.Ui;
+using NavigationService = MusicX.Services.NavigationService;
 
 namespace MusicX.ViewModels
 {
@@ -72,11 +74,11 @@ namespace MusicX.ViewModels
             }
             catch (Exception ex)
             {
-                var notificationsService = StaticService.Container.GetRequiredService<NotificationsService>();
+                var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
                 var logger = StaticService.Container.GetRequiredService<Logger>();
 
                 logger.Error(ex);
-                notificationsService.Show("Ошибка", "Мы не смогли загрузить список станций пользователей");
+                snackbarService.Show("Ошибка", "Мы не смогли загрузить список станций пользователей");
 
                 var properties = new Dictionary<string, string>
                 {
@@ -89,7 +91,7 @@ namespace MusicX.ViewModels
         private async Task ConnectToStation(Station? station)
         {
             var userRadioService = StaticService.Container.GetRequiredService<UserRadioService>();
-            var notificationsService = StaticService.Container.GetRequiredService<NotificationsService>();
+            var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
             var configService = StaticService.Container.GetRequiredService<ConfigService>();
 
             try
@@ -97,7 +99,7 @@ namespace MusicX.ViewModels
 
                 if(userRadioService.IsStarted)
                 {
-                    notificationsService.Show("Стоп стоп стоп", "Вы не можете подключиться к радиостанции, потому что вы сами владелец радиостанции :)");
+                    snackbarService.Show("Стоп стоп стоп", "Вы не можете подключиться к радиостанции, потому что вы сами владелец радиостанции :)");
                     return;
                 }
 
@@ -107,14 +109,14 @@ namespace MusicX.ViewModels
 
                 if(listenTogetherService.IsConnectedToServer && listenTogetherService.PlayerMode == Core.Models.PlayerMode.Listener)
                 {
-                    notificationsService.Show("Стоп стоп стоп", "Ты уже подключен к серверу совместного прослушивания");
+                    snackbarService.Show("Стоп стоп стоп", "Ты уже подключен к серверу совместного прослушивания");
 
                     return;
                 }
 
                 if (listenTogetherService.IsConnectedToServer && listenTogetherService.PlayerMode == Core.Models.PlayerMode.Owner)
                 {
-                    notificationsService.Show("Стоп стоп стоп", "У тебя уже запущена сессия совместного прослушивания");
+                    snackbarService.Show("Стоп стоп стоп", "У тебя уже запущена сессия совместного прослушивания");
                 }
 
                 await listenTogetherService.ConnectToServerAsync(config.UserId);
@@ -126,7 +128,7 @@ namespace MusicX.ViewModels
                 var logger = StaticService.Container.GetRequiredService<Logger>();
 
                 logger.Error(ex);
-                notificationsService.Show("Ошибка", "Мы не смогли подключиться к радиостанции :(");
+                snackbarService.Show("Ошибка", "Мы не смогли подключиться к радиостанции :(");
             }
            
         }
@@ -134,20 +136,20 @@ namespace MusicX.ViewModels
         private async Task CreateStation()
         {
             var playerService = StaticService.Container.GetRequiredService<PlayerService>();
-            var notificationsService = StaticService.Container.GetRequiredService<NotificationsService>();
+            var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
             var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
             var userRadioService = StaticService.Container.GetRequiredService<UserRadioService>();
 
             if (!playerService.IsPlaying)
             {
-                notificationsService.Show("Притормози-ка!", "Сначала запусти трек. Можешь запустить радиостанцию через меню совместного прослушивания :)");
+                snackbarService.Show("Притормози-ка!", "Сначала запусти трек. Можешь запустить радиостанцию через меню совместного прослушивания :)");
 
                 return;
             }
 
             if (userRadioService.IsStarted)
             {
-                notificationsService.Show("Стоп стоп стоп", "У Вас уже запущена радиостанция. Зачем создавать ещё одну?");
+                snackbarService.Show("Стоп стоп стоп", "У Вас уже запущена радиостанция. Зачем создавать ещё одну?");
                 return;
             }
 

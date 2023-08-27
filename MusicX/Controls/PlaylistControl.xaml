@@ -66,13 +66,13 @@
         <ContextMenu
             Background="#414141"
             BorderBrush="#646464"
-            Foreground="White">
+            >
 
             <StackPanel x:Name="AddToLibrary" MouseDown="AddToLibrary_MouseDown" Orientation="Horizontal">
                 <ui:SymbolIcon Symbol="Add28" />
                 <TextBlock
                     Margin="10,0,0,0"
-                    Foreground="White"
+                    
                     Text="Добавить к себе" />
             </StackPanel>
 
@@ -81,7 +81,7 @@
                 <ui:SymbolIcon Symbol="AlbumAdd20" />
                 <TextBlock
                     Margin="10,0,0,0"
-                    Foreground="White"
+                    
                     Text="Добавить в очередь" />
             </StackPanel>
             
@@ -235,7 +235,7 @@
                     VerticalAlignment="Center"
                     FontFamily="{StaticResource VKSansBold}"
                     FontSize="20"
-                    Foreground="White"
+                    
                     Text="1" />
             </Grid>
 
@@ -292,27 +292,27 @@
                         FontFamily="{StaticResource VKSansBold}"
                         FontSize="18"
                         FontWeight="Bold"
-                        Foreground="White"
+                        
                         Text="Album title"
                         TextTrimming="CharacterEllipsis" />
                     <TextBlock
                         x:Name="Artist"
                         FontSize="15"
-                        Foreground="White"
+                        
                         Opacity="0.6"
                         Text="Artist"
                         TextTrimming="CharacterEllipsis" />
                     <TextBlock
                         x:Name="Year"
                         FontSize="12"
-                        Foreground="White"
+                        
                         Opacity="0.3"
                         Text="1997"
                         TextTrimming="CharacterEllipsis" />
                     <TextBlock
                         x:Name="Genres"
                         FontSize="12"
-                        Foreground="White"
+                        
                         Opacity="0.3"
                         Text="1997"
                         TextTrimming="CharacterEllipsis" />

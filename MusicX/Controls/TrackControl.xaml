@@ -65,55 +65,55 @@
                 x:Name="AddRemove"
                 MouseDown="AddRemove_MouseDown"
                 Orientation="Horizontal">
-                <iconElements:SymbolIcon x:Name="AddRemoveIcon" Foreground="White" />
+                <iconElements:SymbolIcon x:Name="AddRemoveIcon"  />
                 <TextBlock
                     x:Name="AddRemoveText"
                     Margin="10,0,0,0"
-                    Foreground="White" />
+                     />
             </StackPanel>
 
             <MenuItem
                 x:Name="GoToArtistMenu"
-                Foreground="White"
+                
                 Header="Перейти к артисту" />
 
             <StackPanel x:Name="AddToPlaylist" MouseDown="AddToPlaylist_MouseDown"  Orientation="Horizontal">
-                <iconElements:SymbolIcon Symbol="AlbumAdd20" Foreground="White" />
+                <iconElements:SymbolIcon Symbol="AlbumAdd20"  />
                 <TextBlock
                     Margin="10,0,0,0"
-                    Foreground="White"
+                    
                     Text="Добавить в плейлист" />
             </StackPanel>
 
             <StackPanel x:Name="AddArtistIgnore" MouseDown="AddArtistIgnore_MouseDown"  Orientation="Horizontal">
-                <iconElements:SymbolIcon Symbol="PresenceDnd24" Foreground="White" />
+                <iconElements:SymbolIcon Symbol="PresenceDnd24"  />
                 <TextBlock
                     Margin="10,0,0,0"
-                    Foreground="White"
+                    
                     Text="Пропускать треки исполнителя" />
             </StackPanel>
 
             <StackPanel MouseDown="Download_MouseDown" Orientation="Horizontal">
-                <iconElements:SymbolIcon Symbol="ArrowDownload24" Foreground="White" />
+                <iconElements:SymbolIcon Symbol="ArrowDownload24"  />
                 <TextBlock
                     Margin="10,0,0,0"
-                    Foreground="White"
+                    
                     Text="Скачать" />
             </StackPanel>
             
             <StackPanel MouseDown="PlayNext_MouseDown" Orientation="Horizontal">
-                <iconElements:SymbolIcon Symbol="TextAddSpaceBefore24" Foreground="White" />
+                <iconElements:SymbolIcon Symbol="TextAddSpaceBefore24"  />
                 <TextBlock
                     Margin="10,0,0,0"
-                    Foreground="White"
+                    
                     Text="Возпроизвести следующим" />
             </StackPanel>
 
             <StackPanel MouseDown="AddToQueue_MouseDown" Orientation="Horizontal">
-                <iconElements:SymbolIcon Symbol="TextAddSpaceAfter24" Foreground="White" />
+                <iconElements:SymbolIcon Symbol="TextAddSpaceAfter24"  />
                 <TextBlock
                     Margin="10,0,0,0"
-                    Foreground="White"
+                    
                     Text="Добавить в очередь" />
             </StackPanel>
 
@@ -260,7 +260,7 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         FontWeight="ExtraBlack"
-                        Foreground="White"
+                        
                         Text="1" />
                 </Grid>
                 <StackPanel Margin="5,0,0,0" VerticalAlignment="Center" MaxWidth="170" x:Name="TextsPanel">
@@ -270,7 +270,7 @@
                             x:Name="Title"
                             FontSize="16"
                             FontWeight="DemiBold"
-                            Foreground="White"
+                            
                             MouseEnter="Title_MouseEnter"
                             MouseLeave="Title_MouseLeave"
                             MouseLeftButtonDown="Title_MouseLeftButtonDown"
@@ -283,7 +283,7 @@
                         <TextBlock
                             x:Name="Subtitle"
                             Margin="5,3,2,0"
-                            Foreground="White"
+                            
                             Opacity="0.3"
                             Text="Subtitle"
                             TextTrimming="CharacterEllipsis" />
@@ -304,7 +304,7 @@
                                 VerticalAlignment="Center"
                                 FontFamily="{StaticResource VKSansBold}"
                                 FontSize="12"
-                                Foreground="White"
+                                
                                 Text="E" />
                         </Border>
 
@@ -315,7 +315,7 @@
                             x:Name="Artists"
                             Margin="0,2,0,0"
                             FontSize="11"
-                            Foreground="White"
+                            
                             Opacity="0.6"
                             Text="Artist"
                             TextWrapping="NoWrap"
@@ -357,7 +357,7 @@
                 Margin="3,0,25,0"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
-                Foreground="White"
+                
                 Opacity="0.5"
                 Text="02:20" />
         </Grid>

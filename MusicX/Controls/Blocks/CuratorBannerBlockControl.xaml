@@ -54,7 +54,7 @@
                 <TextBlock
                     FontSize="14"
                     FontWeight="DemiBold"
-                    Foreground="White"
+                    
                     Opacity="0.7"
                     Text="Сообщество-куратор" />
 
@@ -63,7 +63,7 @@
                     FontFamily="{StaticResource VKSansBold}"
                     FontSize="40"
                     FontWeight="Black"
-                    Foreground="White"
+                    
                     Text="Curator name" />
                 <wpfui:Button
                     x:Name="ActionCuratorButton"

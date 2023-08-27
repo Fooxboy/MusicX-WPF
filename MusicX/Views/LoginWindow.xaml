@@ -53,7 +53,7 @@
                         Margin="5,0,5,0"
                         FontFamily="{StaticResource VKSansDemiBold}"
                         FontSize="20"
-                        Foreground="White"
+                        
                         Text="Введите код двухфакторной авторизации"
                         TextWrapping="Wrap" />
                     <TextBox x:Name="Code" Margin="5,20,0,5" />
@@ -63,27 +63,27 @@
                         Appearance="Secondary"
                         Click="TwoFactorAccept_Click"
                         Content="Подтвердить"
-                        Foreground="White" />
+                         />
                 </StackPanel>
                 <StackPanel x:Name="content" Visibility="Visible">
                     <TextBlock
                         HorizontalAlignment="Center"
                         FontFamily="{StaticResource VKSansDemiBold}"
                         FontSize="25"
-                        Foreground="White"
+                        
                         Text="Вход в аккаунт ВКонтакте"
                         TextWrapping="Wrap" />
                     <TextBlock
                         Margin="5,20,5,2"
                         FontFamily="{StaticResource VKSansRegular}"
-                        Foreground="White"
+                        
                         Opacity="0.4"
                         Text="Логин" />
                     <TextBox x:Name="Login" />
                     <TextBlock
                         Margin="5,20,5,2"
                         FontFamily="{StaticResource VKSansRegular}"
-                        Foreground="White"
+                        
                         Opacity="0.4"
                         Text="Пароль" />
                     <PasswordBox x:Name="Password" />

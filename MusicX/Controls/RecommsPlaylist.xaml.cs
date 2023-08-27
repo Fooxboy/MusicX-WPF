@@ -12,8 +12,7 @@ using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
 using MusicX.ViewModels;
 using MusicX.Views;
-using Wpf.Ui.Common;
-using Wpf.Ui.Controls.IconElements;
+using Wpf.Ui.Controls;
 
 namespace MusicX.Controls;
 

@@ -17,6 +17,7 @@ using MusicX.Services.Player.Playlists;
 using System.Collections.Generic;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
+using Wpf.Ui.Controls;
 
 namespace MusicX.Controls
 {
@@ -95,7 +96,7 @@ namespace MusicX.Controls
                 if (player.CurrentPlaylist is VkPlaylistPlaylist {Data: {} data} && data.PlaylistId == Playlist.Id)
                 {
                     nowPlay = true;
-                    Icons.Symbol = Wpf.Ui.Common.SymbolRegular.Pause24;
+                    Icons.Symbol = SymbolRegular.Pause24;
                 }
             }catch (Exception ex)
             {
@@ -123,11 +124,11 @@ namespace MusicX.Controls
             if (service.CurrentPlaylist is VkPlaylistPlaylist {Data: {} data} && data.PlaylistId == Playlist.Id)
             {
                 nowPlay = true;
-                Icons.Symbol = Wpf.Ui.Common.SymbolRegular.Pause24;
+                Icons.Symbol = SymbolRegular.Pause24;
             }
             else
             {
-                Icons.Symbol = Wpf.Ui.Common.SymbolRegular.Play24;
+                Icons.Symbol = SymbolRegular.Play24;
             }
         }
 
@@ -173,14 +174,14 @@ namespace MusicX.Controls
                 {
                     nowPlay = true;
 
-                    Icons.Symbol = Wpf.Ui.Common.SymbolRegular.Timer20;
+                    Icons.Symbol = SymbolRegular.Timer20;
                     
                     await playerService.PlayAsync(new VkPlaylistPlaylist(
                                                       vkService,
                                                       new(Playlist.Playlist.Id, Playlist.Playlist.OwnerId,
                                                           Playlist.Playlist.AccessKey)), Playlist.Audios[0].ToTrack(Playlist.Playlist));
 
-                    Icons.Symbol = Wpf.Ui.Common.SymbolRegular.Pause24;
+                    Icons.Symbol = SymbolRegular.Pause24;
 
                     nowLoad = false;
 
@@ -188,7 +189,7 @@ namespace MusicX.Controls
                 else
                 {
                     playerService.Pause();
-                    Icons.Symbol = Wpf.Ui.Common.SymbolRegular.Play24;
+                    Icons.Symbol = SymbolRegular.Play24;
 
                     await Task.Delay(400);
                     nowLoad = false;

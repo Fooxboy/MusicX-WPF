@@ -37,7 +37,7 @@
         <Grid HorizontalAlignment="Center" Visibility="Collapsed" VerticalAlignment="Center">
             <StackPanel>
                 <wpfui:SymbolIcon Symbol="NotebookError20" FontSize="50"/>
-                <TextBlock Foreground="White" Margin="0 20 0 0" FontFamily="{StaticResource VKSansMedium}" FontSize="15" Text="У Вас пока что нет плейлистов"/>
+                <TextBlock  Margin="0 20 0 0" FontFamily="{StaticResource VKSansMedium}" FontSize="15" Text="У Вас пока что нет плейлистов"/>
 
             </StackPanel>
         </Grid>
@@ -51,7 +51,7 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
-            <wpfui:Button Command="{Binding SelectCommand}" HorizontalAlignment="Stretch" IsEnabled="{Binding CreateIsEnable}" Grid.Column="2" Appearance="Primary"  Foreground="White"  Content="Выбрать"/>
+            <wpfui:Button Command="{Binding SelectCommand}" HorizontalAlignment="Stretch" IsEnabled="{Binding CreateIsEnable}" Grid.Column="2" Appearance="Primary"    Content="Выбрать"/>
         </Grid>
     </StackPanel>
 </Page>

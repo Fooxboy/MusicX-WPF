@@ -32,13 +32,13 @@
                 <ui:SymbolIcon
                     Margin="0,0,0,0"
                     FontSize="80"
-                    Foreground="White"
+                    
                     Symbol="Warning20" />
                 <TextBlock
                     Margin="0,30,0,0"
                     FontFamily="{StaticResource VKSansDemiBold}"
                     FontSize="20"
-                    Foreground="White"
+                    
                     Text="Для загрузки треков необходимо загрузить дополнительный компонент"
                     TextWrapping="Wrap" />
                 <TextBlock
@@ -46,7 +46,7 @@
                     HorizontalAlignment="Center"
                     FontFamily="{StaticResource VKSansRegular}"
                     FontSize="18"
-                    Foreground="White"
+                    
                     Opacity="0.7"
                     Text="Размер: 222МБ"
                     TextWrapping="Wrap" />
@@ -71,14 +71,14 @@
                 <ui:SymbolIcon
                     Margin="0,0,0,0"
                     FontSize="80"
-                    Foreground="White"
+                    
                     Symbol="ArrowDownload48" />
                 <TextBlock
                     Margin="0,30,0,0"
                     HorizontalAlignment="Center"
                     FontFamily="{StaticResource VKSansDemiBold}"
                     FontSize="23"
-                    Foreground="White"
+                    
                     Text="Выполняется загрузка компонента"
                     TextWrapping="Wrap" />
                 <TextBlock
@@ -86,21 +86,21 @@
                     HorizontalAlignment="Center"
                     FontFamily="{StaticResource VKSansRegular}"
                     FontSize="18"
-                    Foreground="White"
+                    
                     Opacity="0.7"
                     Text="Мы сообщим Вам о результате"
                     TextWrapping="Wrap" />
 
                 <StackPanel Margin="0,30,0,0" Orientation="Horizontal">
-                    <TextBlock Foreground="White" Text="Осталось: " />
+                    <TextBlock  Text="Осталось: " />
                     <TextBlock
                         x:Name="DownloadedCount"
-                        Foreground="White"
+                        
                         Opacity="0.7"
                         Text="0" />
                     <TextBlock
                         x:Name="DownloadedKind"
-                        Foreground="White"
+                        
                         Opacity="0.7"
                         Text="МБ" />
 
@@ -124,7 +124,7 @@
                         <TextBlock
                             FontFamily="{StaticResource VKSansDemiBold}"
                             FontSize="29"
-                            Foreground="White"
+                            
                             Text="Сейчас загружается" />
 
                         <StackPanel Margin="8,10,8,0">
@@ -144,13 +144,13 @@
                                         <TextBlock
                                             FontFamily="{StaticResource VKSansDemiBold}"
                                             FontSize="18"
-                                            Foreground="White"
+                                            
                                             Text="{Binding CurrentDownloadingAudio.Title, FallbackValue=Название аудио}" />
                                         <TextBlock
                                             x:Name="NowDownloadArtist"
                                             FontFamily="{StaticResource VKSansMedium}"
                                             FontSize="16"
-                                            Foreground="White"
+                                            
                                             Opacity="0.7"
                                             Text="{Binding CurrentDownloadingAudio, Converter={StaticResource ArtistsToStringConverter}, FallbackValue=Имя исполнителя}" />
 
@@ -176,7 +176,7 @@
                         <TextBlock
                             FontFamily="{StaticResource VKSansDemiBold}"
                             FontSize="29"
-                            Foreground="White"
+                            
                             Text="Действия" />
 
                         <hc:ScrollViewer
@@ -228,7 +228,7 @@
                             Margin="0,20,0,0"
                             FontFamily="{StaticResource VKSansDemiBold}"
                             FontSize="29"
-                            Foreground="White"
+                            
                             Text="Очередь загрузки" />
 
                         <ItemsControl ItemsSource="{Binding DownloadQueue}" Margin="5,10">
@@ -250,7 +250,7 @@
                             Margin="0,20,0,0"
                             FontFamily="{StaticResource VKSansDemiBold}"
                             FontSize="29"
-                            Foreground="White"
+                            
                             Text="Загруженные треки" />
 
                         <StackPanel x:Name="DownloadedTracks" />

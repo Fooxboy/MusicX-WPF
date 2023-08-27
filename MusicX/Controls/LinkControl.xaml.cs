@@ -12,8 +12,7 @@ using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Services;
 using NLog;
-using Wpf.Ui.Common;
-using Wpf.Ui.Controls.IconElements;
+using Wpf.Ui.Controls;
 
 namespace MusicX.Controls
 {

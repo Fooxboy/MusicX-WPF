@@ -62,7 +62,7 @@
                                     <SolidColorBrush Color="{DynamicResource SystemAccentColorSecondary}" />
                                 </Rectangle.Fill>
                             </Rectangle>
-                            <Grid HorizontalAlignment="Stretch">
+                            <Grid HorizontalAlignment="Stretch" TextElement.FontSize="24"> <!-- startup FontSize for icons sets here because it doesnt work directly on SymbolIcon -->
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*" />
                                     <RowDefinition Height="Auto" />
@@ -220,7 +220,7 @@
     <Style TargetType="{x:Type controls:NavigationBar}">
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="OverridesDefaultStyle" Value="True" />
-        <Setter Property="Width" Value="250" />
+        <Setter Property="Width" Value="60" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type controls:NavigationBar}">

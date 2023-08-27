@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Input;
+using Wpf.Ui.Input;
 
 namespace Wpf.Ui.Common;
 

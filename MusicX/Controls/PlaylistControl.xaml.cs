@@ -16,8 +16,9 @@ using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
 using MusicX.Views;
 using NLog;
-using Wpf.Ui.Common;
-using Wpf.Ui.Contracts;
+using Wpf.Ui;
+using Wpf.Ui.Controls;
+using NavigationService = MusicX.Services.NavigationService;
 
 namespace MusicX.Controls
 {

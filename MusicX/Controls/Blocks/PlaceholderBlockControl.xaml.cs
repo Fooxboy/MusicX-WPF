@@ -10,8 +10,9 @@ using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Services;
-using Wpf.Ui.Contracts;
+using Wpf.Ui;
 using Button = MusicX.Core.Models.Button;
+using NavigationService = MusicX.Services.NavigationService;
 
 namespace MusicX.Controls.Blocks
 {

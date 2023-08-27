@@ -10,7 +10,7 @@ using MusicX.Controls;
 using MusicX.Services;
 using MusicX.ViewModels;
 using NLog;
-using Wpf.Ui.Contracts;
+using Wpf.Ui;
 using Xabe.FFmpeg;
 using Xabe.FFmpeg.Downloader;
 

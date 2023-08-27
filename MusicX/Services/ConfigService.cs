@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Win32;
 using MusicX.Models;
 using NLog;
-using Wpf.Ui.Contracts;
+using Wpf.Ui;
 
 namespace MusicX.Services
 {

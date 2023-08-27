@@ -81,7 +81,7 @@
                     Margin="0,30,0,0"
                     FontFamily="{StaticResource VKSansBold}"
                     FontSize="20"
-                    Foreground="White"
+                    
                     Text="Открыть секцию по id" />
                 <TextBox
                     x:Name="section"
@@ -102,7 +102,7 @@
                     Margin="0,30,0,0"
                     FontFamily="{StaticResource VKSansBold}"
                     FontSize="20"
-                    Foreground="White"
+                    
                     Text="Открыть страницу исполнителя по id" />
                 <TextBox
                     x:Name="artist"
@@ -130,7 +130,7 @@
                     Margin="0,30,0,0"
                     FontFamily="{StaticResource VKSansBold}"
                     FontSize="20"
-                    Foreground="White"
+                    
                     Text="Скачать трек по ссылке" />
                 <TextBox
                     x:Name="url"

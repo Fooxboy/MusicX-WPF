@@ -14,9 +14,10 @@ using MusicX.Core.Models;
 using MusicX.Services;
 using MusicX.ViewModels.Controls;
 using NLog;
-using Wpf.Ui.Contracts;
+using Wpf.Ui;
 using Wpf.Ui.Controls;
 using Button = MusicX.Core.Models.Button;
+using NavigationService = MusicX.Services.NavigationService;
 using TextBlock = System.Windows.Controls.TextBlock;
 
 namespace MusicX.Controls

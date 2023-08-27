@@ -10,7 +10,7 @@
     <Grid x:Name="TextsGroup" Margin="10">
         <TextBlock
             x:Name="TextsValue"
-            Foreground="White"
+            
             Opacity="0.7"
             TextWrapping="Wrap" />
     </Grid>

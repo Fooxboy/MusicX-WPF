@@ -36,18 +36,18 @@
                                 x:Name="Percent"
                                 FontFamily="{StaticResource VKSansDemiBold}"
                                 FontSize="17"
-                                Foreground="White"
+                                
                                 Text="98%" />
                             <TextBlock
                                 Margin="5,0,0,0"
-                                Foreground="White"
+                                
                                 Text="•" />
                             <TextBlock
                                 x:Name="Subtitle"
                                 Margin="5,0,0,0"
                                 FontFamily="{StaticResource VKSansRegular}"
                                 FontSize="15"
-                                Foreground="White"
+                                
                                 Text="совпадение с вашим вкусом" />
                         </StackPanel>
 
@@ -58,14 +58,14 @@
                             HorizontalAlignment="Left"
                             FontFamily="{StaticResource VKSansDemiBold}"
                             FontSize="20"
-                            Foreground="White"
+                            
                             Text="Название плейлиста пользователя"
                             TextTrimming="CharacterEllipsis" />
                         <TextBlock
                             x:Name="OwnerName"
                             MaxWidth="205"
                             HorizontalAlignment="Left"
-                            Foreground="White"
+                            
                             Opacity="0.7"
                             Text="Владелец плейлиста или группа или ещё что то"
                             TextTrimming="CharacterEllipsis" />

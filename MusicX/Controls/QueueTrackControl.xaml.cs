@@ -10,6 +10,7 @@ using MusicX.Services;
 using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
 using MusicX.Shared.Player;
+using Wpf.Ui.Controls;
 
 namespace MusicX.Controls;
 
@@ -55,7 +56,7 @@ public partial class QueueTrackControl : UserControl
         if (DataContext is not PlaylistTrack track) return;
 
         IsCurrentlyPlaying = _player.CurrentTrack == track;
-        IconPlay.Symbol = _player.IsPlaying && IsCurrentlyPlaying ? Wpf.Ui.Common.SymbolRegular.Pause24 : Wpf.Ui.Common.SymbolRegular.Play24;
+        IconPlay.Symbol = _player.IsPlaying && IsCurrentlyPlaying ? SymbolRegular.Pause24 : SymbolRegular.Play24;
     }
 
     private void Track_OnClick(object sender, MouseButtonEventArgs e)

@@ -26,21 +26,21 @@
                         x:Name="GroupName"
                         FontSize="23"
                         FontWeight="DemiBold"
-                        Foreground="White"
+                        
                         Text="Group Name" />
                     <TextBlock
                         x:Name="GroupSub"
                         Margin="15,0,0,3"
                         VerticalAlignment="Bottom"
                         FontSize="14"
-                        Foreground="White"
+                        
                         Opacity="0.5"
                         Text="0" />
                     <TextBlock
                         Margin="5,0,0,3"
                         VerticalAlignment="Bottom"
                         FontSize="14"
-                        Foreground="White"
+                        
                         Opacity="0.5"
                         Text="подписчиков" />
 

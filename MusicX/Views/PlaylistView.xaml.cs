@@ -17,8 +17,7 @@ using MusicX.ViewModels;
 using MusicX.ViewModels.Modals;
 using MusicX.Views.Modals;
 using NLog;
-using Wpf.Ui.Common;
-using Wpf.Ui.Controls.IconElements;
+using Wpf.Ui.Controls;
 using NavigationService = System.Windows.Navigation.NavigationService;
 
 namespace MusicX.Views

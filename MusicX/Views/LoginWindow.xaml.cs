@@ -10,7 +10,8 @@ using MusicX.Models;
 using MusicX.Services;
 using NLog;
 using VkNet.AudioBypassService.Exceptions;
-using Wpf.Ui.Contracts;
+using Wpf.Ui;
+using NavigationService = MusicX.Services.NavigationService;
 
 namespace MusicX.Views
 {

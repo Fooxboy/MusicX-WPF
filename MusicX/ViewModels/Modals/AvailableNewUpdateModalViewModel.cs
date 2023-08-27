@@ -11,7 +11,7 @@ using MusicX.Core.Services;
 using MusicX.Services;
 using NLog;
 using Squirrel;
-using Wpf.Ui.Contracts;
+using Wpf.Ui;
 
 namespace MusicX.ViewModels.Modals;
 

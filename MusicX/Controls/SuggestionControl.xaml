@@ -49,16 +49,16 @@
             Margin="15,0,15,0"
             VerticalAlignment="Center"
             Orientation="Horizontal">
-            <ui:SymbolIcon Margin="0,0,0,0" Symbol="Search20" Foreground="White" />
+            <ui:SymbolIcon Margin="0,0,0,0" Symbol="Search20"  />
             <TextBlock
                 x:Name="Title"
                 Margin="5,0,0,0"
-                Foreground="White"
+                
                 Text="Title" />
             <TextBlock
                 x:Name="Subtitle"
                 Margin="5,0,0,0"
-                Foreground="White"
+                
                 Opacity="0.7"
                 Text="Subtitle" />
         </StackPanel>

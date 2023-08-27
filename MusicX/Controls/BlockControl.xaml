@@ -18,8 +18,8 @@
 
                 <wpfui:Card>
                     <StackPanel HorizontalAlignment="Center">
-                        <TextBlock x:Name="DataTypeName" Foreground="White" />
-                        <TextBlock x:Name="LayoutName" Foreground="White" />
+                        <TextBlock x:Name="DataTypeName"  />
+                        <TextBlock x:Name="LayoutName"  />
 
                     </StackPanel>
                 </wpfui:Card>

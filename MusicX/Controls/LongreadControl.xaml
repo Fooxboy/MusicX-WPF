@@ -22,7 +22,7 @@
                         HorizontalAlignment="Center"
                         FontFamily="{StaticResource VKSansDemiBold}"
                         FontSize="19"
-                        Foreground="White"
+                        
                         Text="Заголовок" />
                     <wpfui:Button
                         x:Name="OpenButton"

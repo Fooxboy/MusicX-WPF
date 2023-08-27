@@ -19,8 +19,7 @@ using NLog;
 using VkNet.AudioBypassService.Extensions;
 using VkNet.Exception;
 using VkNet.Extensions.DependencyInjection;
-using Wpf.Ui.Contracts;
-using Wpf.Ui.Services;
+using Wpf.Ui;
 using NavigationService = MusicX.Services.NavigationService;
 
 namespace MusicX.Views

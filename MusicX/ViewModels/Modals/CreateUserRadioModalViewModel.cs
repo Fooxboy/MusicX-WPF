@@ -7,6 +7,7 @@ using NLog;
 using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Wpf.Ui;
 
 namespace MusicX.ViewModels.Modals
 {
@@ -45,24 +46,24 @@ namespace MusicX.ViewModels.Modals
             var radioService = StaticService.Container.GetRequiredService<UserRadioService>();
             var listenTogetherService = StaticService.Container.GetRequiredService<ListenTogetherService>();
             var configService = StaticService.Container.GetRequiredService<ConfigService>();
-            var notificationsService = StaticService.Container.GetRequiredService<NotificationsService>();
+            var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
             var logger = StaticService.Container.GetRequiredService<Logger>();
 
             if(string.IsNullOrEmpty(TitleRadio))
             {
-                notificationsService.Show("Ошибка", "Вы не заполнили название");
+                snackbarService.Show("Ошибка", "Вы не заполнили название");
                 return;
             }
 
             if (string.IsNullOrEmpty(DescriptionRadio))
             {
-                notificationsService.Show("Ошибка", "Вы не заполнили описание");
+                snackbarService.Show("Ошибка", "Вы не заполнили описание");
                 return;
             }
 
             if(listenTogetherService.IsConnectedToServer && listenTogetherService.PlayerMode == Core.Models.PlayerMode.Listener)
             {
-                notificationsService.Show("Ошибка", "Сначала Вам необходимо отключиться от совместного просшуливания");
+                snackbarService.Show("Ошибка", "Сначала Вам необходимо отключиться от совместного просшуливания");
                 return;
             }
 
@@ -95,7 +96,7 @@ namespace MusicX.ViewModels.Modals
             catch(Exception ex)
             {
                 logger.Error(ex);
-                notificationsService.Show("Ошибка", "Мы не смогли создать радиостанцию");
+                snackbarService.Show("Ошибка", "Мы не смогли создать радиостанцию");
             }
         }
     }
