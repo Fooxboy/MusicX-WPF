@@ -3,11 +3,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Win32;
 using MusicX.Core.Services;
 using MusicX.Services;
+using MusicX.Shared.ListenTogether.Radio;
 using NLog;
 using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Wpf.Ui;
+using NavigationService = MusicX.Services.NavigationService;
 
 namespace MusicX.ViewModels.Modals
 {
@@ -24,6 +26,8 @@ namespace MusicX.ViewModels.Modals
         public string CoverPath { get; set; }
 
         public bool IsLoading { get; set; }
+
+        public event EventHandler<Station>? StationCreated;
 
         public CreateUserRadioModalViewModel()
         {
@@ -48,6 +52,7 @@ namespace MusicX.ViewModels.Modals
             var configService = StaticService.Container.GetRequiredService<ConfigService>();
             var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
             var logger = StaticService.Container.GetRequiredService<Logger>();
+            var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
 
             if(string.IsNullOrEmpty(TitleRadio))
             {
@@ -91,7 +96,11 @@ namespace MusicX.ViewModels.Modals
                     config.UserId, 
                     config.UserName, "photo");
 
+                navigationService.CloseModal();
+
                 IsLoading = false;
+
+                StationCreated?.Invoke(this, station);
             }
             catch(Exception ex)
             {

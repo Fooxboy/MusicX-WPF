@@ -13,13 +13,13 @@
         <ItemsControl ItemsSource="{Binding Audios, ElementName=Control}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <StackPanel Orientation="Vertical"/>
+                    <StackPanel Orientation="Vertical" IsItemsHost="True" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>
-                        <controls:TrackControl Audio="{Binding}" ShowCard="False" Margin="0,0,0,5" />
+                        <controls:TrackControl Audio="{Binding}" Margin="0,0,0,5" ShowCard="False" />
                         <Rectangle Height="1" Fill="White" Opacity="0.2" Margin="5,0,5,5"/>
                     </StackPanel>
                 </DataTemplate>

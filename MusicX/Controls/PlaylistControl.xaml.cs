@@ -34,20 +34,6 @@ namespace MusicX.Controls
             InitializeComponent();
 
             logger = StaticService.Container.GetRequiredService<Logger>();
-
-            this.Unloaded += PlaylistControl_Unloaded;
-        }
-
-        private void PlaylistControl_Unloaded(object sender, RoutedEventArgs e)
-        {
-            this.CoverImage.ImageSource = null;
-            this.CoverImage = null;
-            this.CoverImageCompact.ImageSource = null;
-            this.CoverImageCompact = null;
-            this.Title = null;
-            this.TitleCompact = null;
-            this.Artist = null;
-            this.ArtistCompact = null;
         }
 
         public static readonly DependencyProperty PlaylistProperty =

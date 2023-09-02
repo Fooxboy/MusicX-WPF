@@ -24,18 +24,18 @@ namespace MusicX.Controls.Blocks
 
         private void UserRadioBlockControl_Loaded(object sender, RoutedEventArgs e)
         {
-            if(Block.Stations is null)
+            if (DataContext is not Block block)
+                return;
+            if (block.Stations is null)
             {
-                Block.Stations = new List<Station>();
+                block.Stations = new List<Station>();
             }
 
-            foreach (var station in Block.Stations)
+            foreach (var station in block.Stations)
             {
                 ListStations.Items.Add( new UserStationControl() { Station = station});
             }
         }
-
-        public Block Block { get; set; }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {

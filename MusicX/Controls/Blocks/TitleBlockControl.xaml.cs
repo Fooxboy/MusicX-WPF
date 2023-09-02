@@ -15,15 +15,17 @@ namespace MusicX.Controls.Blocks
     /// </summary>
     public partial class TitleBlockControl : UserControl
     {
-        public Block Block { get; set; }
         public TitleBlockControl()
         {
             InitializeComponent();
-            Loaded += TitleBlockControl_Loaded;
+            DataContextChanged += TitleBlockControl_Loaded;
         }
 
-        private void TitleBlockControl_Loaded(object sender, RoutedEventArgs e)
+        private void TitleBlockControl_Loaded(object sender, DependencyPropertyChangedEventArgs e)
         {
+            if (DataContext is not Block block)
+                return;
+
             if(RootWindow.WinterTheme)
             {
                 var r = new Random();
@@ -36,29 +38,29 @@ namespace MusicX.Controls.Blocks
            
             Buttons.SelectionChanged += ButtonsComboBox_SelectionChanged;
 
-            if (Block.Layout.Name == "header_compact")
+            if (block.Layout.Name == "header_compact")
             {
                 Title.Opacity = 0.5;
                 Title.FontSize = 15;
             }
 
-            Title.Text = Block.Layout.Title;
+            Title.Text = block.Layout.Title;
 
-            if (Block.Badge != null)
+            if (block.Badge != null)
             {
-                BadgeHeader.Text = Block.Badge.Text;
+                BadgeHeader.Text = block.Badge.Text;
                 BadgeHeader.Visibility = Visibility.Visible;
             }
 
-            if (Block.Buttons != null && Block.Buttons.Count > 0) //ios
+            if (block.Buttons != null && block.Buttons.Count > 0) //ios
             {
-                if (Block.Buttons[0].Options.Count > 0)
+                if (block.Buttons[0].Options.Count > 0)
                 {
                     ButtonsGrid.Visibility = Visibility.Visible;
-                    TitleButtons.Text = Block.Buttons[0].Title;
+                    TitleButtons.Text = block.Buttons[0].Title;
                     Buttons.Visibility = Visibility.Visible;
                     MoreButton.Visibility = Visibility.Collapsed;
-                    foreach (var option in Block.Buttons[0].Options)
+                    foreach (var option in block.Buttons[0].Options)
                     {
                         Buttons.Items.Add(new TextBlock() { Text = option.Text });
                     }
@@ -69,7 +71,7 @@ namespace MusicX.Controls.Blocks
                 {
                     MoreButton.Visibility = Visibility.Visible;
 
-                    MoreButton.Content = Block.Buttons[0].Title;
+                    MoreButton.Content = block.Buttons[0].Title;
 
                     return;
 
@@ -78,18 +80,18 @@ namespace MusicX.Controls.Blocks
             else
             {
                 
-                if(Block.Actions.Count > 0)
+                if(block.Actions.Count > 0)
                 {
 
-                    if (Block.Actions[0].Options.Count > 0) //android
+                    if (block.Actions[0].Options.Count > 0) //android
                     {
                         ButtonsGrid.Visibility = Visibility.Visible;
-                        TitleButtons.Text = Block.Actions[0].Title;
+                        TitleButtons.Text = block.Actions[0].Title;
                         Buttons.Visibility = Visibility.Visible;
                         MoreButton.Visibility = Visibility.Collapsed;
                         
 
-                        foreach (var option in Block.Actions[0].Options)
+                        foreach (var option in block.Actions[0].Options)
                         {
                             Buttons.Items.Add(new TextBlock() { Text = option.Text });
                         }
@@ -100,7 +102,7 @@ namespace MusicX.Controls.Blocks
                     {
                         MoreButton.Visibility = Visibility.Visible;
 
-                        MoreButton.Content = Block.Actions[0].Title;
+                        MoreButton.Content = block.Actions[0].Title;
 
                         return;
 
@@ -114,19 +116,21 @@ namespace MusicX.Controls.Blocks
 
         private async void MoreButton_Click(object sender, RoutedEventArgs e)
         {
+            if (DataContext is not Block block)
+                return;
             try
             {
                 var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
 
-                if (Block.Actions.Count > 0)
+                if (block.Actions.Count > 0)
                 {
-                    var bnt = Block.Actions[0];
+                    var bnt = block.Actions[0];
 
                     navigationService.OpenSection(bnt.SectionId);
                     return;
                 }
 
-                var button = Block.Buttons[0];
+                var button = block.Buttons[0];
 
                 navigationService.OpenSection(button.SectionId);
             }
@@ -152,6 +156,8 @@ namespace MusicX.Controls.Blocks
 
         private async void ButtonsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (DataContext is not Block block)
+                return;
             try
             {
                 var comboBox = sender as ComboBox;
@@ -159,13 +165,13 @@ namespace MusicX.Controls.Blocks
                 var current = comboBox.SelectedIndex;
 
                 OptionButton option;
-                if(Block.Buttons != null)
+                if(block.Buttons != null)
                 {
-                    option = Block.Buttons[0].Options[current];
+                    option = block.Buttons[0].Options[current];
 
                 }else
                 {
-                    option = Block.Actions[0].Options[current];
+                    option = block.Actions[0].Options[current];
 
                 }
 

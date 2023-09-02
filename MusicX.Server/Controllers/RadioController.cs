@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MusicX.Server.Services;
 using MusicX.Shared.ListenTogether.Radio;
@@ -6,6 +7,7 @@ using MusicX.Shared.ListenTogether.Radio;
 namespace MusicX.Server.Controllers
 {
     [Route("radio")]
+    [Authorize]
     public class RadioController : Controller
     {
         private readonly RadioService _radioService;

@@ -74,7 +74,7 @@ namespace MusicX.Controls
             amim.Begin();
         }
 
-        public List<CatalogBanner> Banners { get; set; }
+        public List<CatalogBanner> Banners => ((Block)DataContext).Banners;
 
         private async void ActionButton_Click(object sender, RoutedEventArgs e)
         {

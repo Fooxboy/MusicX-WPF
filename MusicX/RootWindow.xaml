@@ -41,7 +41,8 @@
     <Window.Resources>
         <FontFamily x:Key="SegoeFluentIcons">pack://application:,,,/;component/Fonts/#Segoe Fluent Icons</FontFamily>
         <Storyboard x:Key="AminationShowPlayer">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="playerControl" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="playerControl"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00" Value="117" />
                 <EasingDoubleKeyFrame KeyTime="00:00:00.8000000" Value="-9">
                     <EasingDoubleKeyFrame.EasingFunction>
@@ -49,7 +50,8 @@
                     </EasingDoubleKeyFrame.EasingFunction>
                 </EasingDoubleKeyFrame>
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="playerControl" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="playerControl"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00" Value="-10.5" />
                 <EasingDoubleKeyFrame KeyTime="00:00:00.8000000" Value="-4.5">
                     <EasingDoubleKeyFrame.EasingFunction>
@@ -59,28 +61,32 @@
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
         <Storyboard x:Key="HidePlayer">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="playerControl" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="playerControl"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00.6000000" Value="0.058">
                     <EasingDoubleKeyFrame.EasingFunction>
                         <QuarticEase EasingMode="EaseInOut" />
                     </EasingDoubleKeyFrame.EasingFunction>
                 </EasingDoubleKeyFrame>
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="playerControl" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="playerControl"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00.6000000" Value="-500">
                     <EasingDoubleKeyFrame.EasingFunction>
                         <QuarticEase EasingMode="EaseInOut" />
                     </EasingDoubleKeyFrame.EasingFunction>
                 </EasingDoubleKeyFrame>
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="playerControl" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="playerControl"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00.6000000" Value="22.333">
                     <EasingDoubleKeyFrame.EasingFunction>
                         <QuarticEase EasingMode="EaseInOut" />
                     </EasingDoubleKeyFrame.EasingFunction>
                 </EasingDoubleKeyFrame>
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="playerControl" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="playerControl"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00.6000000" Value="0.78">
                     <EasingDoubleKeyFrame.EasingFunction>
                         <QuarticEase EasingMode="EaseInOut" />
@@ -168,6 +174,43 @@
                         <Thickness x:Key="ListenTogetherHiddenThickness"
                                    Right="250"
                                    Bottom="-2000" />
+
+                        <Storyboard x:Key="ListenTogetherHideAnimation">
+                            <DoubleAnimation Storyboard.Target="{Binding ElementName=ListenTogetherCard}"
+                                             Storyboard.TargetProperty="Height" From="220"
+                                             To="0" Duration="0:0:0.3">
+                                <DoubleAnimation.EasingFunction>
+                                    <PowerEase EasingMode="EaseIn" />
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                            <ThicknessAnimationUsingKeyFrames
+                                BeginTime="00:00:00"
+                                Storyboard.Target="{Binding ElementName=ListenTogetherCard}"
+                                Storyboard.TargetProperty="Margin">
+                                <SplineThicknessKeyFrame KeyTime="00:00:00"
+                                                         Value="{StaticResource ListenTogetherShownThickness}" />
+                                <SplineThicknessKeyFrame KeyTime="00:00:.2"
+                                                         Value="{StaticResource ListenTogetherHiddenThickness}" />
+                            </ThicknessAnimationUsingKeyFrames>
+                        </Storyboard>
+                        <Storyboard x:Key="ListenTogetherShowAnimation">
+                            <DoubleAnimation Storyboard.Target="{Binding ElementName=ListenTogetherCard}"
+                                             Storyboard.TargetProperty="Height" From="0"
+                                             To="220" Duration="0:0:0.3">
+                                <DoubleAnimation.EasingFunction>
+                                    <PowerEase EasingMode="EaseIn" />
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                            <ThicknessAnimationUsingKeyFrames
+                                BeginTime="00:00:00"
+                                Storyboard.Target="{Binding ElementName=ListenTogetherCard}"
+                                Storyboard.TargetProperty="Margin">
+                                <SplineThicknessKeyFrame KeyTime="00:00:00"
+                                                         Value="{StaticResource ListenTogetherHiddenThickness}" />
+                                <SplineThicknessKeyFrame KeyTime="00:00:.1"
+                                                         Value="{StaticResource ListenTogetherShownThickness}" />
+                            </ThicknessAnimationUsingKeyFrames>
+                        </Storyboard>
 
                     </StackPanel.Resources>
 

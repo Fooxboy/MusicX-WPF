@@ -103,7 +103,11 @@
     <PackageReference Include="HandyControl" Version="3.4.0" />
     <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.2" />
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.2" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.3.230502000" />
+    <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.18-beta">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.230822000" />
     <PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.1" />
     <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" PrivateAssets="All" />
     <PackageReference Include="System.Linq.Async" Version="6.0.1" />
@@ -162,5 +166,6 @@
   <ItemGroup>
     <Manifest Include="app.manifest" />
   </ItemGroup>
+
 
 </Project>

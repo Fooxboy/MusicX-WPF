@@ -20,25 +20,40 @@ namespace MusicX.ViewModels.Controls;
 
 public class BlockButtonViewModel : BaseViewModel
 {
-    private readonly Artist? _artist;
-    private readonly Block? _parentBlock;
+    private Button _action;
 
-    public BlockButtonViewModel(Button action, Artist? artist = null, Block? parentBlock = null)
+    public Button Action
     {
-        _artist = artist;
-        _parentBlock = parentBlock;
-        Action = action;
+        get => _action; set
+        {
+            _action = value;
+            if (value is not null)
+                Refresh();
+        }
+    }
+    public Artist? Artist { get; set; }
+    public Block? ParentBlock { get; set; }
+
+    public BlockButtonViewModel()
+    {
         InvokeCommand = new RelayCommand(Invoke);
-        Refresh();
+        // Refresh();
+    }
+
+    public BlockButtonViewModel(Button action, Artist? artist = null, Block? parentBlock = null) : this()
+    {
+        Artist = artist;
+        ParentBlock = parentBlock;
+        Action = action;
     }
 
     private void Refresh()
     {
         switch (Action.Action.Type)
         {
-            case "toggle_artist_subscription" when _artist is not null && _parentBlock is not null:
-                Icon = _artist.IsFollowed ? SymbolRegular.Dismiss24 : SymbolRegular.Checkmark24;
-                Text = _artist.IsFollowed ? "Отписаться" : "Подписаться";
+            case "toggle_artist_subscription" when Artist is not null && ParentBlock is not null:
+                Icon = Artist.IsFollowed ? SymbolRegular.Dismiss24 : SymbolRegular.Checkmark24;
+                Text = Artist.IsFollowed ? "Отписаться" : "Подписаться";
                 break;
             case "play_shuffled_audios_from_block":
                 Icon = SymbolRegular.MusicNote2Play20;
@@ -75,8 +90,6 @@ public class BlockButtonViewModel : BaseViewModel
 
     public string Text { get; set; } = string.Empty;
 
-    public Button Action { get; }
-
     public ICommand InvokeCommand { get; }
     
     private async void Invoke()
@@ -85,16 +98,16 @@ public class BlockButtonViewModel : BaseViewModel
         {
             switch (Action.Action.Type)
             {
-                case "toggle_artist_subscription" when _artist is not null && _parentBlock is not null:
+                case "toggle_artist_subscription" when Artist is not null && ParentBlock is not null:
                 {
                     var vkService = StaticService.Container.GetRequiredService<VkService>();
 
-                    if (_artist.IsFollowed)
-                        await vkService.UnfollowArtist(Action.ArtistId, _parentBlock.Id);
+                    if (Artist.IsFollowed)
+                        await vkService.UnfollowArtist(Action.ArtistId, ParentBlock.Id);
                     else
-                        await vkService.FollowArtist(Action.ArtistId, _parentBlock.Id);
+                        await vkService.FollowArtist(Action.ArtistId, ParentBlock.Id);
 
-                    _artist.IsFollowed = !_artist.IsFollowed;
+                        Artist.IsFollowed = !Artist.IsFollowed;
                     Refresh();
                     break;
                 }

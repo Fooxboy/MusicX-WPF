@@ -1,4 +1,4 @@
 ﻿[*.cs]
 
-# CA1416: Проверка совместимости платформы
-dotnet_diagnostic.CA1416.severity = none
+# IDE2002: Consecutive braces must not have blank line between them
+csharp_style_allow_blank_lines_between_consecutive_braces_experimental = false

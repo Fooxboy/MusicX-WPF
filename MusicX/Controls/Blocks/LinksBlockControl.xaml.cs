@@ -9,7 +9,6 @@ namespace MusicX.Controls.Blocks
     /// </summary>
     public partial class LinksBlockControl : UserControl
     {
-        public Block Block { get; set; }
         public LinksBlockControl()
         {
             InitializeComponent();
@@ -18,11 +17,13 @@ namespace MusicX.Controls.Blocks
 
         private void LinksBlockControl_Loaded(object sender, RoutedEventArgs e)
         {
+            if (DataContext is not Block block)
+                return;
             LinksBlock.Visibility = Visibility.Visible;
 
-            if (Block.Layout.Name == "list")
+            if (block.Layout.Name == "list")
             {
-                foreach (var link in Block.Links)
+                foreach (var link in block.Links)
                 {
                     ListLinks.Children.Add(new LinkControl() { Height = 80, Width = 300, Link = link, FullLink = true, Margin = new Thickness(0, 0, 10, 10) });
                 }
@@ -30,7 +31,7 @@ namespace MusicX.Controls.Blocks
             }
             else
             {
-                foreach (var link in Block.Links)
+                foreach (var link in block.Links)
                 {
                     ListLinksRec.Children.Add(new LinkControl() { Height = 140, Width = 140, Link = link, Margin = new Thickness(0, 0, 10, 0) });
                 }

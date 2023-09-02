@@ -21,10 +21,8 @@ namespace MusicX.Controls.Blocks
     /// </summary>
     public partial class PlaceholderBlockControl : UserControl
     {
-        private readonly Block block;
-        public PlaceholderBlockControl(Block block)
+        public PlaceholderBlockControl()
         {
-            this.block = block;
             this.Loaded += PlaceholderBlockControl_Loaded;
             InitializeComponent();
             
@@ -34,6 +32,8 @@ namespace MusicX.Controls.Blocks
 
         private void PlaceholderBlockControl_Loaded(object sender, RoutedEventArgs e)
         {
+            if (DataContext is not Block block)
+                return;
             if (block.Placeholders.Count == 0) return;
 
             var placeholder = block.Placeholders[0];

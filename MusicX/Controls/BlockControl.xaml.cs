@@ -38,19 +38,7 @@ namespace MusicX.Controls
 
         private void BlockControl_Unloaded(object sender, RoutedEventArgs e)
         {
-            BlocksPanel.Children.Clear();
-        }
-
-        public static readonly DependencyProperty BlockProperty =
-          DependencyProperty.Register("Block", typeof(Block), typeof(BlockControl), new PropertyMetadata(new Block()));
-
-        public Block Block
-        {
-            get { return (Block)GetValue(BlockProperty); }
-            set
-            {
-                SetValue(BlockProperty, value);
-            }
+            /*BlocksPanel.Children.Clear();*/
         }
 
         public static readonly DependencyProperty ArtistProperty = DependencyProperty.Register(
@@ -68,7 +56,7 @@ namespace MusicX.Controls
 
             try
             {
-                if (Block.DataType == "artist")
+                /*if (Block.DataType == "artist")
                 {
                     BlocksPanel.Children.Add(new ArtistBannerBlockControl(Block) { Block = Block });
                   
@@ -118,7 +106,7 @@ namespace MusicX.Controls
 
                     if (Block.Layout.Name == "music_chart_large_slider")
                     {
-                        BlocksPanel.Children.Add(new ListPlaylists() { Content = Block.Playlists, /*TODO ShowChart = true,*/ ShowFull = false });
+                        BlocksPanel.Children.Add(new ListPlaylists() { Content = Block.Playlists, *//*TODO ShowChart = true,*//* ShowFull = false });
                         logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
 
                         return;
@@ -463,10 +451,7 @@ namespace MusicX.Controls
                     return;
                 }
 
-                NotFoundBlock.Visibility = Visibility.Visible;
-                DataTypeName.Text = Block.DataType;
-                LayoutName.Text = Block.Layout.Name;
-                logger.Info($"loaded NOT FOUND {Block.DataType} block with block id = {Block.Id}");
+                logger.Info($"loaded NOT FOUND {Block.DataType} block with block id = {Block.Id}");*/
 
             }
             catch (Exception ex)
@@ -486,7 +471,7 @@ namespace MusicX.Controls
 
                 var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
 
-                snackbarService.Show("Произошла ошибка", $"Music X не смог показать блок {Block.DataType}");
+                snackbarService.Show("Произошла ошибка", $"Music X не смог показать блок");
 
             }
         }

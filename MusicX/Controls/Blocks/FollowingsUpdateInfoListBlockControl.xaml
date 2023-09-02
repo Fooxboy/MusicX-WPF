@@ -36,9 +36,9 @@
             <ui:Button Appearance="Secondary"
                        HorizontalAlignment="Center"
                        Margin="0,20,0,0"
-                       Icon="{Binding Icon}"
-                       Content="{Binding Text}"
-                       Command="{Binding InvokeCommand}"/>
+                       Icon="{Binding ViewModel.Icon, ElementName=Control}"
+                       Content="{Binding ViewModel.Text, ElementName=Control}"
+                       Command="{Binding ViewModel.InvokeCommand, ElementName=Control}"/>
         </StackPanel>
     </ui:Card>
 </UserControl>

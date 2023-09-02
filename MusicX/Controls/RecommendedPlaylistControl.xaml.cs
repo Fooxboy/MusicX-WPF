@@ -83,12 +83,7 @@ namespace MusicX.Controls
                     GradientBackground.GradientStops.Add(new GradientStop() { Color = color, Offset = 1.1 });
                 }
 
-                //BackgroundRectangle.Fill = 
-
-                foreach (var audio in Playlist.Audios)
-                {
-                    MainStackPanel.Children.Add(new TrackControl() { Audio = audio, Width = 284, Margin = new Thickness(0, 5, 0, 0) });
-                }
+                //BackgroundRectangle.Fill =
                 
                 var player = StaticService.Container.GetRequiredService<PlayerService>();
                 player.CurrentPlaylistChanged += PlayerOnCurrentPlaylistChanged;

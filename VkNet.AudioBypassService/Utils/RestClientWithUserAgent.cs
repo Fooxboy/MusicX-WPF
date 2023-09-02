@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
@@ -23,6 +24,9 @@ namespace VkNet.AudioBypassService.Utils
 			{
 				httpClient.DefaultRequestHeaders.TryAddWithoutValidation(header.Key, header.Value);
 			}
+
+			httpClient.DefaultRequestVersion = HttpVersion.Version20;
+			httpClient.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionOrHigher;
 		}
 	}
 }

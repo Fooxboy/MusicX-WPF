@@ -6,8 +6,11 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wpfui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:local="clr-namespace:MusicX.Controls"
+    xmlns:models="clr-namespace:MusicX.Core.Models;assembly=MusicX.Core" 
     d:DesignHeight="450"
     d:DesignWidth="800"
+    x:Name="Root"
     mc:Ignorable="d">
     <Grid>
         <wpfui:Card>
@@ -73,10 +76,15 @@
                     </StackPanel>
                 </Grid>
 
+                <ItemsControl ItemsSource="{Binding Playlist.Audios, RelativeSource={RelativeSource AncestorType=local:RecommendedPlaylistControl}}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="models:Audio">
+                            <local:TrackControl Audio="{Binding}" Width="284" Margin="0 5 0 0" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
             </StackPanel>
-
-
-
         </wpfui:Card>
 
         <Grid

@@ -96,7 +96,7 @@ namespace MusicX.Views
         {
             var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
 
-            snackbarService.Show("Заголовок", "Сообщение");
+            snackbarService.Show("Заголовок", "Сообщение", TimeSpan.FromSeconds(10));
 
         }
 

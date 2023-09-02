@@ -2,15 +2,21 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media.Animation;
+using Windows.Win32;
+using Windows.Win32.Graphics.Dwm;
 using AsyncAwaitBestPractices;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Win32;
 using MusicX.Controls;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
@@ -337,6 +343,22 @@ namespace MusicX
 
                 this.WindowState = WindowState.Normal;
 
+                var colorPrevalence = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\DWM", false)?
+                    .GetValue("ColorPrevalence", 0) as int? == 1;
+
+                if (colorPrevalence)
+                {
+                    var windowHandle = new WindowInteropHelper(this).Handle;
+                
+                    unsafe
+                    {
+                        var value = 0x00202020;
+                        var hResult = PInvoke.DwmSetWindowAttribute(new(windowHandle), DWMWINDOWATTRIBUTE.DWMWA_CAPTION_COLOR, Unsafe.AsPointer(ref value), sizeof(int));
+                        Marshal.ThrowExceptionForHR(hResult);
+                    }
+                }
+
+                
                 // AppNotifyIcon.Register();
             }
             catch (Exception ex)

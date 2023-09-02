@@ -21,15 +21,11 @@ namespace MusicX.Controls.Blocks
     /// </summary>
     public partial class ArtistBannerBlockControl : UserControl
     {
-        public Block Block { get; set; }
-        public ArtistBannerBlockControl(Block block)
+        public ArtistBannerBlockControl()
         {
             this.Loaded += ArtistBannerBlockControl_Loaded;
             this.Initialized += ArtistBannerBlockControl_Initialized;
             InitializeComponent();
-
-            ArtistBannerImage.ImageSource = new BitmapImage(new Uri(block.Artists[0].Photo[2].Url));
-            ArtistText.Text = block.Artists[0].Name;
 
             ArtistText.Visibility = Visibility.Collapsed;
             ArtistBanner.Visibility = Visibility.Collapsed;
@@ -61,21 +57,24 @@ namespace MusicX.Controls.Blocks
                
             }).Start();
 
-            if (Block.Actions is null)
+            if (DataContext is not Block block || block.Actions is null)
                 return;
+
+            ArtistBannerImage.ImageSource = new BitmapImage(new Uri(block.Artists[0].Photo[2].Url));
+            ArtistText.Text = block.Artists[0].Name;
 
             var sectionViewModel = (SectionViewModel)this.FindAncestor<SectionView>()!.DataContext;
 
-            for (var i = 0; i < Block.Actions.Count; i++)
+            for (var i = 0; i < block.Actions.Count; i++)
             {
-                var action = Block.Actions[i];
+                var action = block.Actions[i];
                 
                 var text = new TextBlock();
                 var card = new CardAction()
                 {
                     Margin = new Thickness(0, 10, 15, 10),
                     Content = text,
-                    DataContext = new BlockButtonViewModel(action, sectionViewModel.Artist, Block),
+                    DataContext = new BlockButtonViewModel(action, sectionViewModel.Artist, block),
                     IsChevronVisible = false,
                     Height = 45
                 };

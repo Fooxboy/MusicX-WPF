@@ -32,6 +32,8 @@ namespace MusicX.ViewModels
 
         public ICommand CreateStationCommand { get; set; }
 
+        public ICommand OpenProfileCommand { get; set; }
+
         public UserRadioViewModel()
         {
             Developers = new ObservableCollection<Station>();
@@ -40,8 +42,13 @@ namespace MusicX.ViewModels
 
             ConnectToStationCommand = new AsyncCommand<Station>(ConnectToStation);
             CreateStationCommand = new AsyncCommand(CreateStation);
+            OpenProfileCommand = new AsyncCommand<StationOwner>(OpenProfile);
         }
 
+        private async Task OpenProfile(StationOwner? owner)
+        {
+
+        }
 
         public async Task LoadData()
         {
@@ -153,7 +160,16 @@ namespace MusicX.ViewModels
                 return;
             }
 
-            navigationService.OpenModal<CreateUserRadioModal>(new CreateUserRadioModalViewModel());
+            var viewModel = new CreateUserRadioModalViewModel();
+
+            navigationService.OpenModal<CreateUserRadioModal>(viewModel);
+
+            viewModel.StationCreated += Modal_StationCreated;
+        }
+
+        private async void Modal_StationCreated(object? sender, Station e)
+        {
+            await LoadData();
         }
     }
 }

@@ -8,6 +8,7 @@
     xmlns:music="clr-namespace:MusicX.Controls"
     xmlns:wpfui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
     xmlns:viewModels="clr-namespace:MusicX.ViewModels"
+    xmlns:models="clr-namespace:MusicX.Core.Models;assembly=MusicX.Core"
     Title="SectionView"
     d:DesignHeight="450"
     d:DesignWidth="800"
@@ -157,10 +158,11 @@
                 </ListBox.ItemContainerStyle>
 
                 <ListBox.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate DataType="models:Block">
                         <Grid>
-                            <music:BlockControl Block="{Binding}"
-                                                Artist="{Binding DataContext.Artist, ElementName=BlocksScrollView}" />
+                            <music:BlockControl Content="{Binding}"
+                                                Artist="{Binding DataContext.Artist, ElementName=BlocksScrollView}"
+                                                Margin="5" />
                         </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>

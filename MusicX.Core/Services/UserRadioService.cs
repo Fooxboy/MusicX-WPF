@@ -5,8 +5,10 @@ using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
+using VkNet.Abstractions;
 using VkNet.Model.Attachments;
 
 namespace MusicX.Core.Services
@@ -14,14 +16,16 @@ namespace MusicX.Core.Services
     public class UserRadioService
     {
         private readonly Logger _logger;
-
-        private string _host;
+        private readonly ListenTogetherService _listenTogetherService;
+        private readonly IUsersCategory _usersCategory;
 
         public bool IsStarted { get; private set; }
 
-        public UserRadioService(Logger logger)
+        public UserRadioService(Logger logger, ListenTogetherService listenTogetherService, IUsersCategory usersCategory)
         {
             _logger = logger;
+            _listenTogetherService = listenTogetherService;
+            _usersCategory = usersCategory;
         }
 
         public async Task<List<Station>> GetStationsList()
@@ -73,59 +77,36 @@ namespace MusicX.Core.Services
         {
             try
             {
-                using (var httpClient = new HttpClient())
+                if (_listenTogetherService.Token is null)
                 {
-                    httpClient.BaseAddress = new Uri(await GetHostNameAsync());
-                    var p = parameters.Select(x => x.Key + "=" + x.Value);
-
-                    var result = await httpClient.GetAsync("/radio/" + method + "?" + string.Join("&", p));
-
-                    result.EnsureSuccessStatusCode();
-
-                    var resultJson = await result.Content.ReadAsStringAsync();
-
-                    return System.Text.Json.JsonSerializer.Deserialize<TResponse>(resultJson);
+                    var users = await _usersCategory.GetAsync(Enumerable.Empty<long>());
+                    await _listenTogetherService.LoginAsync(users[0].Id);
                 }
-            }catch(Exception ex)
+
+                using var httpClient = new HttpClient
+                {
+                    BaseAddress = new Uri(_listenTogetherService.Host),
+                    DefaultRequestHeaders =
+                    {
+                        Authorization = new("Bearer", _listenTogetherService.Token)
+                    }
+                };
+
+                var p = parameters.Select(x => x.Key + "=" + x.Value);
+
+                var result = await httpClient.GetAsync("/radio/" + method + "?" + string.Join("&", p));
+
+                result.EnsureSuccessStatusCode();
+
+                return await result.Content.ReadFromJsonAsync<TResponse>();
+            }
+            catch(Exception ex)
             {
                 _logger.Info($"Произошла ошибка при запросе: {ex}");
                 _logger.Error(ex);
                 throw;
             }
            
-        }
-
-        private async Task<string> GetHostNameAsync()
-        {
-            try
-            {
-                if(!string.IsNullOrEmpty(_host))
-                {
-                    return _host;
-                }
-
-                _logger.Info("Получение адресса сервера Послушать вместе");
-                using (var httpClient = new HttpClient())
-                {
-                    var response = await httpClient.GetAsync("https://fooxboy.blob.core.windows.net/musicx/ListenTogetherServers.json");
-
-                    var contents = await response.Content.ReadAsStringAsync();
-
-                    var servers = JsonConvert.DeserializeObject<ListenTogetherServersModel>(contents);
-
-                    return _host =
-#if DEBUG
-                    servers.Test;
-#else
-                    servers.Production;
-#endif
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex);
-                return "127.0.0.1:2023";
-            }
         }
     }
 }
