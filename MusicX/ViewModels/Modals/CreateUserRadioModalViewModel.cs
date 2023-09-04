@@ -6,8 +6,12 @@ using MusicX.Services;
 using MusicX.Shared.ListenTogether.Radio;
 using NLog;
 using System;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using VkNet.Abstractions;
+using VkNet.Enums.Filters;
 using Wpf.Ui;
 using NavigationService = MusicX.Services.NavigationService;
 
@@ -23,7 +27,7 @@ namespace MusicX.ViewModels.Modals
 
         public ICommand CreateRadioCommand { get; set; }
 
-        public string CoverPath { get; set; }
+        public string? CoverPath { get; set; }
 
         public bool IsLoading { get; set; }
 
@@ -53,6 +57,7 @@ namespace MusicX.ViewModels.Modals
             var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
             var logger = StaticService.Container.GetRequiredService<Logger>();
             var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
+            var usersCategory = StaticService.Container.GetRequiredService<IUsersCategory>();
 
             if(string.IsNullOrEmpty(TitleRadio))
             {
@@ -89,12 +94,18 @@ namespace MusicX.ViewModels.Modals
 
                 }
 
+                var user = (await usersCategory.GetAsync(new[] { config.UserId }, ProfileFields.Photo100))[0];
+
+                var coverUrl = "https://as2.ftcdn.net/v2/jpg/02/87/95/77/1000_F_287957705_kVUIWM8TnTbavhGX9JTEAQLGQo6fVrc5.jpg";
+                if (!string.IsNullOrEmpty(CoverPath) && File.Exists(CoverPath))
+                    coverUrl = await radioService.UploadCoverAsync(CoverPath);
+
                 var station = await radioService.CreateStationAsync(session,
                     TitleRadio,
-                    "https://as2.ftcdn.net/v2/jpg/02/87/95/77/1000_F_287957705_kVUIWM8TnTbavhGX9JTEAQLGQo6fVrc5.jpg", 
+                    coverUrl, 
                     DescriptionRadio,
                     config.UserId, 
-                    config.UserName, "photo");
+                    config.UserName, user.Photo100.ToString());
 
                 navigationService.CloseModal();
 

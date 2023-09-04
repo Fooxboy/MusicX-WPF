@@ -11,6 +11,7 @@ using NLog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -47,7 +48,26 @@ namespace MusicX.ViewModels
 
         private async Task OpenProfile(StationOwner? owner)
         {
+            if (owner is null)
+                return;
 
+            var vkService = StaticService.Container.GetRequiredService<VkService>();
+
+            var catalog = await vkService.GetAudioCatalogAsync($"https://vk.com/audios{owner.VkId}");
+
+            if (catalog.Catalog?.Sections?.Count is 0 or null)
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = $"https://vk.com/id{owner.VkId}",
+                    UseShellExecute = true
+                });
+                return;
+            }
+
+            var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
+
+            navigationService.OpenSection(catalog.Catalog.DefaultSection);
         }
 
         public async Task LoadData()

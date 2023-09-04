@@ -73,32 +73,32 @@ namespace MusicX.Core.Services
             return HttpRequestAsync<bool>("deleteStation", p);
         }
 
+        public async Task<string> UploadCoverAsync(string path)
+        {
+            using var httpClient = await GetHttpClientAsync();
+            await using var stream = File.OpenRead(path);
+
+            var data = new MultipartFormDataContent
+            {
+                { new StreamContent(stream), "image", "image" }
+            };
+
+            using var response = await httpClient.PostAsync("/radio/uploadImage", data);
+
+            response.EnsureSuccessStatusCode();
+
+            return $"{_listenTogetherService.Host}/{await response.Content.ReadAsStringAsync()}";
+        }
+
         private async Task<TResponse> HttpRequestAsync<TResponse>(string method, Dictionary<string, string> parameters)
         {
             try
             {
-                if (_listenTogetherService.Token is null)
-                {
-                    var users = await _usersCategory.GetAsync(Enumerable.Empty<long>());
-                    await _listenTogetherService.LoginAsync(users[0].Id);
-                }
-
-                using var httpClient = new HttpClient
-                {
-                    BaseAddress = new Uri(_listenTogetherService.Host),
-                    DefaultRequestHeaders =
-                    {
-                        Authorization = new("Bearer", _listenTogetherService.Token)
-                    }
-                };
+                using var httpClient = await GetHttpClientAsync();
 
                 var p = parameters.Select(x => x.Key + "=" + x.Value);
 
-                var result = await httpClient.GetAsync("/radio/" + method + "?" + string.Join("&", p));
-
-                result.EnsureSuccessStatusCode();
-
-                return await result.Content.ReadFromJsonAsync<TResponse>();
+                return await httpClient.GetFromJsonAsync<TResponse>("/radio/" + method + "?" + string.Join("&", p));
             }
             catch(Exception ex)
             {
@@ -107,6 +107,24 @@ namespace MusicX.Core.Services
                 throw;
             }
            
+        }
+
+        private async ValueTask<HttpClient> GetHttpClientAsync()
+        {
+            if (_listenTogetherService.Token is null)
+            {
+                var users = await _usersCategory.GetAsync(Enumerable.Empty<long>());
+                await _listenTogetherService.LoginAsync(users[0].Id);
+            }
+
+            return new HttpClient
+            {
+                BaseAddress = new Uri(_listenTogetherService.Host),
+                DefaultRequestHeaders =
+                    {
+                        Authorization = new("Bearer", _listenTogetherService.Token)
+                    }
+            };
         }
     }
 }

@@ -55,7 +55,7 @@
                                     Text="{Binding Title}"
                                     TextTrimming="CharacterEllipsis" />
 
-                                <wpfui:CardAction Margin="0,5,0,0" Command="{Binding DataContext.OpenProfileCommand, ElementName=Root}">
+                                <wpfui:CardAction Margin="0,5,0,0" Command="{Binding DataContext.OpenProfileCommand, ElementName=Root}" CommandParameter="{Binding Owner}">
                                     <StackPanel Orientation="Horizontal">
                                         <Border Height="45" Width="45" CornerRadius="99">
                                             <Border.Background>
