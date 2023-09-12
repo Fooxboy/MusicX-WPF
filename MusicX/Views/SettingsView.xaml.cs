@@ -13,6 +13,7 @@ using MusicX.Controls;
 using MusicX.Core.Services;
 using MusicX.Models;
 using MusicX.Services;
+using MusicX.ViewModels;
 using MusicX.Views.Modals;
 using NLog;
 using Ookii.Dialogs.Wpf;
@@ -92,7 +93,7 @@ namespace MusicX.Views
                 MinimizeToTray.IsChecked = config.MinimizeToTray.Value;
                 GetBetaUpdates.IsChecked = config.GetBetaUpdates.Value;
 
-                UserName.Text = config.UserName.Split(' ')[0];
+                UserName.Text = config.UserName;
 
                 var usr = await vkService.GetCurrentUserAsync();
 
@@ -108,19 +109,19 @@ namespace MusicX.Views
                     memory += file.Length / 1024;
                 }
 
+                string type;
                 if (memory > 1024)
                 {
                     memory /= 1024;
-                    MemoryType.Text = "МБ";
+                    type = "МБ";
                 }
                 else
                 {
-                    MemoryType.Text = "КБ";
+                    type = "КБ";
 
                 }
 
-                memory = Math.Round(memory, 2);
-                MemoryLogs.Text = memory.ToString();
+                MemoryLogs.Text = $"{memory:N} {type}";
                 
                 if(config.DownloadDirectory != null)
                 {
@@ -138,16 +139,15 @@ namespace MusicX.Views
                         if (memory > 1024)
                         {
                             memory /= 1024;
-                            MemoryTypeTracks.Text = "МБ";
+                            type = "МБ";
                         }
                         else
                         {
-                            MemoryTypeTracks.Text = "КБ";
+                            type = "КБ";
 
                         }
 
-                        memory = Math.Round(memory, 2);
-                        MemoryTracks.Text = memory.ToString();
+                        MemoryTracks.Text = $"{memory:N} {type}";
                     }
                 }
                 
@@ -260,10 +260,7 @@ namespace MusicX.Views
                 file.Delete();
             }
 
-            MemoryLogs.Text = "0";
-            MemoryType.Text = "КБ";
-
-
+            MemoryLogs.Text = "0 КБ";
         }
 
         private async void ShowRPC_Checked(object sender, RoutedEventArgs e)
@@ -568,6 +565,19 @@ namespace MusicX.Views
 
             StaticService.Container.GetRequiredService<ISnackbarService>().Show("Необходим перезапуск",
                 "Перезапустите Music X чтобы изменения применились");
+        }
+
+        private void ProfileCard_Click(object sender, RoutedEventArgs e)
+        {
+            StaticService.Container.GetRequiredService<NavigationService>().OpenExternalPage(new BoomProfileView
+            {
+                DataContext = StaticService.Container.GetRequiredService<BoomProfileViewModel>()
+            });
+        }
+
+        private void CatalogsCard_Click(object sender, RoutedEventArgs e)
+        {
+            StaticService.Container.GetRequiredService<NavigationService>().OpenSection("profiles");
         }
     }
 }

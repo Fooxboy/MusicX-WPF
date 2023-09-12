@@ -23,6 +23,7 @@
     <None Remove="Assets\icon.ico" />
     <None Remove="Assets\icons\albums_white.png" />
     <None Remove="Assets\icons\follows_white.png" />
+    <None Remove="Assets\icons\github-mark-white.png" />
     <None Remove="Assets\icons\playlists_white.png" />
     <None Remove="Assets\icons\recent_white.png" />
     <None Remove="Assets\lottie\play.json" />
@@ -49,6 +50,7 @@
     <Resource Include="Assets\icon.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\icons\github-mark-white.png" />
     <Resource Include="Assets\newyear\newyearblock.png" />
     <Resource Include="Assets\newyear\snow1.png" />
     <Resource Include="Assets\newyear\snow2.png" />

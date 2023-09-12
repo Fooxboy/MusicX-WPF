@@ -208,9 +208,9 @@ namespace MusicX
                     catalogs.Catalog.Sections.Insert(catalogs.Catalog.Sections.Count - 1, section);
                 }
 
-                var sectionsService = StaticService.Container.GetRequiredService<ICustomSectionsService>();
+                /*var sectionsService = StaticService.Container.GetRequiredService<ICustomSectionsService>();
                 
-                catalogs.Catalog.Sections.AddRange(await sectionsService.GetSectionsAsync().ToArrayAsync());
+                catalogs.Catalog.Sections.AddRange(await sectionsService.GetSectionsAsync().ToArrayAsync());*/
 
                 var rand = new Random();
 
@@ -269,12 +269,6 @@ namespace MusicX
                 {
                     Tag = "vkmix", PageDataContext = StaticService.Container.GetRequiredService<VKMixViewModel>(),
                     Icon = SymbolRegular.Stream24, Content = "Микс", PageType = typeof(VKMixView)
-                });
-                navigationBar.Items.Add(new()
-                {
-                    Tag = "boomprofile",
-                    PageDataContext = StaticService.Container.GetRequiredService<BoomProfileViewModel>(),
-                    Icon = SymbolRegular.Person16, Content = "Профиль", PageType = typeof(BoomProfileView)
                 });
                 navigationBar.Items.Add(new()
                 {
