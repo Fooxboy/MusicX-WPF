@@ -180,18 +180,6 @@ namespace MusicX.Controls
                 DownloadButton.IsEnabled = true;
                 Queue.ScrollIntoView(playerService.CurrentTrack);
 
-
-                if(playerService.CurrentTrack.Data is VkTrackData track)
-                {
-                    if(track.HasLyrics != null)
-                    {
-                        TextTrack.IsEnabled = track.HasLyrics.Value;
-                    }else
-                    {
-                        TextTrack.IsEnabled = false;
-                    }
-                }
-
                 await SaveVolume();
             }
             catch (Exception ex)

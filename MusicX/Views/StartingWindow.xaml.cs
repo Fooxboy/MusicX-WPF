@@ -65,6 +65,7 @@ namespace MusicX.Views
                 collection.AddSingleton<DiscordService>();
                 collection.AddSingleton<BoomService>();
                 collection.AddSingleton(LogManager.Setup().GetLogger("Common"));
+                collection.AddSingleton<GeniusService>();
 
                 collection.AddSingleton<IRegistryPatch, ListenTogetherPatch>();
 

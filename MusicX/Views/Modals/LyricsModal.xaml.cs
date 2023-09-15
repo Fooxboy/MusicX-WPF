@@ -1,4 +1,7 @@
-﻿using MusicX.ViewModels.Modals;
+﻿using AsyncAwaitBestPractices;
+using MusicX.Shared.Player;
+using MusicX.ViewModels.Modals;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -52,7 +55,19 @@ namespace MusicX.Views.Modals
 
         private async Task LoadTrack()
         {
-            await _viewModel.LoadLyrics();
+            if (_viewModel.Track.Data is not VkTrackData)
+            {
+                GeniusButton.IsEnabled = false;
+                LyricFindButton.IsEnabled = false;
+            }
+            else if (!GeniusButton.IsEnabled && !LyricFindButton.IsEnabled)
+            {
+                GeniusButton.IsEnabled = true;
+                LyricFindButton.IsEnabled = false;
+            }
+            LyricsControlView.SetLines(new List<string>());
+
+            await _viewModel.LoadLyrics(LyricFindButton.IsEnabled);
 
             SyncButton.Visibility = _viewModel.Timestamps != null ? Visibility.Visible : Visibility.Collapsed;
             if (_viewModel.Timestamps != null)
@@ -63,6 +78,23 @@ namespace MusicX.Views.Modals
                 LyricsControlView.SetLines(_viewModel.Texts);
             }
           
+        }
+
+        private void SourceButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (LyricFindButton.IsEnabled)
+            {
+                LyricFindButton.IsEnabled = false;
+                GeniusButton.IsEnabled = true;
+
+                LoadTrack().SafeFireAndForget();
+                return;
+            }
+
+            LyricFindButton.IsEnabled = true;
+            GeniusButton.IsEnabled = false;
+
+            LoadTrack().SafeFireAndForget();
         }
     }
 }
