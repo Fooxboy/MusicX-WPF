@@ -147,6 +147,7 @@
             <Grid Grid.Column="1" Grid.Row="1">
                 <Frame
                     x:Name="RootFrame"
+                    Navigating="RootFrame_Navigating"
                     Grid.Column="1" />
                 <ui:AutoSuggestBox
                     x:Name="SearchBox"
@@ -157,8 +158,8 @@
                     KeyUp="TextBox_KeyUp"
                     MouseEnter="SearchBox_MouseEnter"
                     MouseLeave="SearchBox_MouseLeave"
-                    MouseLeftButtonUp="SearchBox_MouseLeftButtonUp"
-                    PlaceholderText="Поиск музыки, плейлистов, исполнителей" />
+                    PlaceholderText="Поиск музыки, плейлистов, исполнителей"
+                    Visibility="Collapsed" />
 
                 <!--<Rectangle Fill="#414141" Grid.ColumnSpan="3" Height="300" Grid.RowSpan="5"  RadiusY="10" RadiusX="10" Width="500" VerticalAlignment="Top" Margin="0 45 0 0">
             <Rectangle.Effect>

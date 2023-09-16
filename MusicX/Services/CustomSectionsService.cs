@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Models;
 using MusicX.Core.Models.General;
 using MusicX.Core.Services;
@@ -20,14 +21,14 @@ public class CustomSectionsService : ICustomSectionsService
 {
     public const string CustomLinkRegex = @"^[c-]?\d*$";
     
-    private readonly IVkApiCategories _vkService;
+    private readonly IVkApiCategories _vkCategories;
     private readonly IVkApiInvoke _apiInvoke;
     private readonly UserRadioService _userRadioService;
     private readonly Logger _logger;
 
-    public CustomSectionsService(IVkApiCategories vkService, IVkApiInvoke apiInvoke, UserRadioService userRadioService, Logger logger)
+    public CustomSectionsService(IVkApiCategories vkCategories, IVkApiInvoke apiInvoke, UserRadioService userRadioService, Logger logger)
     {
-        _vkService = vkService;
+        _vkCategories = vkCategories;
         _apiInvoke = apiInvoke;
         _userRadioService = userRadioService;
         _logger = logger;
@@ -35,11 +36,16 @@ public class CustomSectionsService : ICustomSectionsService
 
     public async IAsyncEnumerable<Section> GetSectionsAsync()
     {
-        yield return new()
+        /*yield return new()
         {
             Title = "Каталоги",
             Id = "profiles",
             Url = "https://vk.com/profiles"
+        };*/
+        yield return new()
+        {
+            Title = "Поиск",
+            Id = "search"
         };
     }
 
@@ -54,9 +60,23 @@ public class CustomSectionsService : ICustomSectionsService
             {
                 Section = await GetAttachmentConvsSectionAsync(nextFrom)
             },
+            "search" => new()
+            {
+                Section = await GetSearchSectionAsync()
+            },
             _ when Regex.IsMatch(id, CustomLinkRegex) => await GetAttachmentsSectionAsync(id, nextFrom),
             _ => null
         };
+
+    private async Task<Section> GetSearchSectionAsync()
+    {
+        var vkService = StaticService.Container.GetRequiredService<VkService>();
+        var response = await vkService.GetAudioSearchAsync();
+
+        response.Catalog.Sections[0].Blocks[1].Suggestions = response.Suggestions;
+
+        return response.Catalog.Sections[0];
+    }
 
     private async Task<ResponseData> GetAttachmentsSectionAsync(string id, string? startFrom)
     {
@@ -170,7 +190,7 @@ public class CustomSectionsService : ICustomSectionsService
     {
         ulong? offset = startFrom is null ? null : ulong.Parse(startFrom);
         
-        var convs = await _vkService.Messages.GetConversationsAsync(new()
+        var convs = await _vkCategories.Messages.GetConversationsAsync(new()
         {
             Extended = true,
             Offset = offset
@@ -191,7 +211,7 @@ public class CustomSectionsService : ICustomSectionsService
 
     private async Task<Section> GetCatalogsSectionAsync()
     {
-        var convs = await _vkService.Messages.GetConversationsAsync(new()
+        var convs = await _vkCategories.Messages.GetConversationsAsync(new()
         {
             Extended = true,
             Count = 10

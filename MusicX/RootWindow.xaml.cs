@@ -208,9 +208,9 @@ namespace MusicX
                     catalogs.Catalog.Sections.Insert(catalogs.Catalog.Sections.Count - 1, section);
                 }
 
-                /*var sectionsService = StaticService.Container.GetRequiredService<ICustomSectionsService>();
+                var sectionsService = StaticService.Container.GetRequiredService<ICustomSectionsService>();
                 
-                catalogs.Catalog.Sections.AddRange(await sectionsService.GetSectionsAsync().ToArrayAsync());*/
+                catalogs.Catalog.Sections.AddRange(await sectionsService.GetSectionsAsync().ToArrayAsync());
 
                 var rand = new Random();
 
@@ -241,6 +241,10 @@ namespace MusicX
                     else if (section.Title.ToLower() == "каталоги")
                     {
                         icon = SymbolRegular.People24;
+                    }
+                    else if (section.Title.ToLower() == "поиск")
+                    {
+                        icon = SymbolRegular.Search24;
                     }
                     else
                     {
@@ -608,6 +612,13 @@ namespace MusicX
             configService.Config.Width = Width;
             configService.Config.Height = Height;
             configService.SetConfig(configService.Config).SafeFireAndForget(continueOnCapturedContext: true);
+        }
+
+        private void RootFrame_Navigating(object sender, System.Windows.Navigation.NavigatingCancelEventArgs e)
+        {
+            SearchBox.Visibility = e.Content is SectionView { DataContext: SectionViewModel { SectionId: "search" } or SectionViewModel { SectionType: SectionType.Search } }
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
     }
 }
