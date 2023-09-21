@@ -409,6 +409,9 @@ public class PlayerService
 
     public async void Pause()
     {
+        if (!IsPlaying)
+            return;
+        
         try
         {
             player.Pause();
@@ -419,8 +422,8 @@ public class PlayerService
                 await Application.Current.Dispatcher.InvokeAsync(
                     () => PlayStateChangedEvent?.Invoke(this, EventArgs.Empty));
 
-                await Task.WhenAll(
-                    _statsListeners.Select(b => b.TrackPlayStateChangedAsync(CurrentTrack!, player.Position, true)));
+            await Task.WhenAll(
+                _statsListeners.Select(b => b.TrackPlayStateChangedAsync(CurrentTrack!, player.Position, true)));
         }catch (Exception ex)
         {
             logger.Error(ex, ex.Message);

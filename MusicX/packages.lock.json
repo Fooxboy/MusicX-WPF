@@ -21,16 +21,6 @@
           "SharpCompress": "0.32.2"
         }
       },
-      "FFmpegInteropX": {
-        "type": "Direct",
-        "requested": "[1.1.0-pre42, )",
-        "resolved": "1.1.0-pre42",
-        "contentHash": "7hyKEYCENbI0Fm3B+X95eqLP3VHA95BPkmJnWJzH62v5YqhsQZG3ra4/hO1ijYcf/s+k8pAAXzLPaV1QrXP+yw==",
-        "dependencies": {
-          "FFmpegInteropX.FFmpegUWP": "5.1.100",
-          "Microsoft.Graphics.Win2D": "1.0.4"
-        }
-      },
       "HandyControl": {
         "type": "Direct",
         "requested": "[3.4.0, )",
@@ -55,12 +45,6 @@
           "Microsoft.AppCenter": "5.0.2"
         }
       },
-      "Microsoft.VCRTForwarders.140": {
-        "type": "Direct",
-        "requested": "[1.0.8-pre, )",
-        "resolved": "1.0.8-pre",
-        "contentHash": "KhAP4zat4NFaJ2MedW4pM0PpV8dERXdA8VHo0HkNp1NGTVvbn55ixDMsPrqJA5mNS5bnakIq9kOfI/e/jWnqLA=="
-      },
       "Microsoft.Windows.CsWin32": {
         "type": "Direct",
         "requested": "[0.3.18-beta, )",
@@ -72,15 +56,6 @@
           "Microsoft.Windows.WDK.Win32Metadata": "0.7.3-experimental",
           "System.Memory": "4.5.5",
           "System.Runtime.CompilerServices.Unsafe": "6.0.0"
-        }
-      },
-      "Microsoft.WindowsAppSDK": {
-        "type": "Direct",
-        "requested": "[1.4.230822000, )",
-        "resolved": "1.4.230822000",
-        "contentHash": "QeR+4u7j0z9RWhVzTbr/5izWmq7k3GkjxCFbXNuYtIHYDm2YcdIH5Kvn+9tpMLweFzDZO7YVzVvvyQGivUtNcw==",
-        "dependencies": {
-          "Microsoft.Windows.SDK.BuildTools": "10.0.22621.1"
         }
       },
       "Ookii.Dialogs.Wpf": {
@@ -143,33 +118,15 @@
         "resolved": "2.1.0",
         "contentHash": "ZzS/lkme7QcYIvQgsVw9D1OuI/fSrNnoDXXDCrFmacYVvdGXOQlGEeQBbKdBP9r4k+3CsUQMZq59RU99I9Mjhw=="
       },
-      "Xabe.FFmpeg": {
-        "type": "Direct",
-        "requested": "[5.2.6, )",
-        "resolved": "5.2.6",
-        "contentHash": "AFT06eHAZ4OV3s6H2dZWeRQ6kkdWkY1dGq76iFprlOG6quB7V7Nm8wWhEF63As1txsh/8kwAbybtffrgqfQ0dg==",
-        "dependencies": {
-          "Newtonsoft.Json": "9.0.1"
-        }
-      },
-      "Xabe.FFmpeg.Downloader": {
-        "type": "Direct",
-        "requested": "[5.2.6, )",
-        "resolved": "5.2.6",
-        "contentHash": "BmkE8QAYF6lo3E6J3ZvAoFt2JYGsGdGMGjHaVYI1wCN4rH4mwT4t2Ajo6Eh2+rAP+qccZFHTyf6+Hp+eYp5msg==",
-        "dependencies": {
-          "Xabe.FFmpeg": "5.2.6"
-        }
-      },
       "AsyncAwaitBestPractices": {
         "type": "Transitive",
         "resolved": "6.0.6",
         "contentHash": "5JwyXsa0357gUCfrm741ae10LuWRl/V3JmBLL/7ddTeyA0ajWm4Ze+WCzweSzz2Pd8MT6T9PDVNK8pjZ9ezt6A=="
       },
-      "FFmpegInteropX.FFmpegUWP": {
+      "FFmpeg.AutoGen": {
         "type": "Transitive",
-        "resolved": "5.1.100",
-        "contentHash": "Pi+ifqTU3VpkvfTkZIR62+fck22HaA54WJeLyumI/EWgXM+1euSihsTX20oi3aQKQAz8Qh9weNLhntD4g3pmvA=="
+        "resolved": "6.0.0.2",
+        "contentHash": "49FmWsgV06yh9tJQiWT4L+/tt/kLLoDzojeAMwCcU19vstCQENe9H/iRdPuDwQL1cAqEIgjlnotEoawfypXFpQ=="
       },
       "Fody": {
         "type": "Transitive",
@@ -315,14 +272,6 @@
           "System.Runtime.CompilerServices.Unsafe": "6.0.0"
         }
       },
-      "Microsoft.Graphics.Win2D": {
-        "type": "Transitive",
-        "resolved": "1.0.4",
-        "contentHash": "PmUO0B+gLdbxy1XCmX6pS57SL08roPKZC3sXKSRH4Qa1nX5RKwIdmmIxSvmV9irN57ABSMtDtWa+qNYnyzB/nw==",
-        "dependencies": {
-          "Microsoft.WindowsAppSDK": "1.0.4"
-        }
-      },
       "Microsoft.NETCore.Platforms": {
         "type": "Transitive",
         "resolved": "2.0.0",
@@ -341,11 +290,6 @@
         "type": "Transitive",
         "resolved": "6.0.0",
         "contentHash": "hqTM5628jSsQiv+HGpiq3WKBl2c8v1KZfby2J6Pr7pEPlK9waPdgEO6b8A/+/xn/yZ9ulv8HuqK71ONy2tg67A=="
-      },
-      "Microsoft.Windows.SDK.BuildTools": {
-        "type": "Transitive",
-        "resolved": "10.0.22621.1",
-        "contentHash": "Sp1DkYvg7yxuhamwxv+qFC66KC3paKQpwK8Q1J6XuAh6nzXIInmsDcpJ3szr0XGud4ysXojqwTfGdW01gvZ/0g=="
       },
       "Microsoft.Windows.SDK.Win32Docs": {
         "type": "Transitive",
@@ -550,6 +494,12 @@
           "Newtonsoft.Json": "[12.0.2, )"
         }
       },
+      "ffmediatoolkit": {
+        "type": "Project",
+        "dependencies": {
+          "FFmpeg.AutoGen": "[6.0.0.2, )"
+        }
+      },
       "musicx.core": {
         "type": "Project",
         "dependencies": {
@@ -594,31 +544,6 @@
       }
     },
     "net7.0-windows10.0.22000/win10-arm64": {
-      "FFmpegInteropX": {
-        "type": "Direct",
-        "requested": "[1.1.0-pre42, )",
-        "resolved": "1.1.0-pre42",
-        "contentHash": "7hyKEYCENbI0Fm3B+X95eqLP3VHA95BPkmJnWJzH62v5YqhsQZG3ra4/hO1ijYcf/s+k8pAAXzLPaV1QrXP+yw==",
-        "dependencies": {
-          "FFmpegInteropX.FFmpegUWP": "5.1.100",
-          "Microsoft.Graphics.Win2D": "1.0.4"
-        }
-      },
-      "Microsoft.VCRTForwarders.140": {
-        "type": "Direct",
-        "requested": "[1.0.8-pre, )",
-        "resolved": "1.0.8-pre",
-        "contentHash": "KhAP4zat4NFaJ2MedW4pM0PpV8dERXdA8VHo0HkNp1NGTVvbn55ixDMsPrqJA5mNS5bnakIq9kOfI/e/jWnqLA=="
-      },
-      "Microsoft.WindowsAppSDK": {
-        "type": "Direct",
-        "requested": "[1.4.230822000, )",
-        "resolved": "1.4.230822000",
-        "contentHash": "QeR+4u7j0z9RWhVzTbr/5izWmq7k3GkjxCFbXNuYtIHYDm2YcdIH5Kvn+9tpMLweFzDZO7YVzVvvyQGivUtNcw==",
-        "dependencies": {
-          "Microsoft.Windows.SDK.BuildTools": "10.0.22621.1"
-        }
-      },
       "System.Text.Encoding.CodePages": {
         "type": "Direct",
         "requested": "[6.0.0, )",
@@ -626,19 +551,6 @@
         "contentHash": "ZFCILZuOvtKPauZ/j/swhvw68ZRi9ATCfvGbk1QfydmcXBkIWecWKn/250UH7rahZ5OoDBaiAudJtPvLwzw85A==",
         "dependencies": {
           "System.Runtime.CompilerServices.Unsafe": "6.0.0"
-        }
-      },
-      "FFmpegInteropX.FFmpegUWP": {
-        "type": "Transitive",
-        "resolved": "5.1.100",
-        "contentHash": "Pi+ifqTU3VpkvfTkZIR62+fck22HaA54WJeLyumI/EWgXM+1euSihsTX20oi3aQKQAz8Qh9weNLhntD4g3pmvA=="
-      },
-      "Microsoft.Graphics.Win2D": {
-        "type": "Transitive",
-        "resolved": "1.0.4",
-        "contentHash": "PmUO0B+gLdbxy1XCmX6pS57SL08roPKZC3sXKSRH4Qa1nX5RKwIdmmIxSvmV9irN57ABSMtDtWa+qNYnyzB/nw==",
-        "dependencies": {
-          "Microsoft.WindowsAppSDK": "1.0.4"
         }
       },
       "Microsoft.Win32.Registry": {
@@ -709,31 +621,6 @@
       }
     },
     "net7.0-windows10.0.22000/win10-x64": {
-      "FFmpegInteropX": {
-        "type": "Direct",
-        "requested": "[1.1.0-pre42, )",
-        "resolved": "1.1.0-pre42",
-        "contentHash": "7hyKEYCENbI0Fm3B+X95eqLP3VHA95BPkmJnWJzH62v5YqhsQZG3ra4/hO1ijYcf/s+k8pAAXzLPaV1QrXP+yw==",
-        "dependencies": {
-          "FFmpegInteropX.FFmpegUWP": "5.1.100",
-          "Microsoft.Graphics.Win2D": "1.0.4"
-        }
-      },
-      "Microsoft.VCRTForwarders.140": {
-        "type": "Direct",
-        "requested": "[1.0.8-pre, )",
-        "resolved": "1.0.8-pre",
-        "contentHash": "KhAP4zat4NFaJ2MedW4pM0PpV8dERXdA8VHo0HkNp1NGTVvbn55ixDMsPrqJA5mNS5bnakIq9kOfI/e/jWnqLA=="
-      },
-      "Microsoft.WindowsAppSDK": {
-        "type": "Direct",
-        "requested": "[1.4.230822000, )",
-        "resolved": "1.4.230822000",
-        "contentHash": "QeR+4u7j0z9RWhVzTbr/5izWmq7k3GkjxCFbXNuYtIHYDm2YcdIH5Kvn+9tpMLweFzDZO7YVzVvvyQGivUtNcw==",
-        "dependencies": {
-          "Microsoft.Windows.SDK.BuildTools": "10.0.22621.1"
-        }
-      },
       "System.Text.Encoding.CodePages": {
         "type": "Direct",
         "requested": "[6.0.0, )",
@@ -741,19 +628,6 @@
         "contentHash": "ZFCILZuOvtKPauZ/j/swhvw68ZRi9ATCfvGbk1QfydmcXBkIWecWKn/250UH7rahZ5OoDBaiAudJtPvLwzw85A==",
         "dependencies": {
           "System.Runtime.CompilerServices.Unsafe": "6.0.0"
-        }
-      },
-      "FFmpegInteropX.FFmpegUWP": {
-        "type": "Transitive",
-        "resolved": "5.1.100",
-        "contentHash": "Pi+ifqTU3VpkvfTkZIR62+fck22HaA54WJeLyumI/EWgXM+1euSihsTX20oi3aQKQAz8Qh9weNLhntD4g3pmvA=="
-      },
-      "Microsoft.Graphics.Win2D": {
-        "type": "Transitive",
-        "resolved": "1.0.4",
-        "contentHash": "PmUO0B+gLdbxy1XCmX6pS57SL08roPKZC3sXKSRH4Qa1nX5RKwIdmmIxSvmV9irN57ABSMtDtWa+qNYnyzB/nw==",
-        "dependencies": {
-          "Microsoft.WindowsAppSDK": "1.0.4"
         }
       },
       "Microsoft.Win32.Registry": {
@@ -824,31 +698,6 @@
       }
     },
     "net7.0-windows10.0.22000/win10-x86": {
-      "FFmpegInteropX": {
-        "type": "Direct",
-        "requested": "[1.1.0-pre42, )",
-        "resolved": "1.1.0-pre42",
-        "contentHash": "7hyKEYCENbI0Fm3B+X95eqLP3VHA95BPkmJnWJzH62v5YqhsQZG3ra4/hO1ijYcf/s+k8pAAXzLPaV1QrXP+yw==",
-        "dependencies": {
-          "FFmpegInteropX.FFmpegUWP": "5.1.100",
-          "Microsoft.Graphics.Win2D": "1.0.4"
-        }
-      },
-      "Microsoft.VCRTForwarders.140": {
-        "type": "Direct",
-        "requested": "[1.0.8-pre, )",
-        "resolved": "1.0.8-pre",
-        "contentHash": "KhAP4zat4NFaJ2MedW4pM0PpV8dERXdA8VHo0HkNp1NGTVvbn55ixDMsPrqJA5mNS5bnakIq9kOfI/e/jWnqLA=="
-      },
-      "Microsoft.WindowsAppSDK": {
-        "type": "Direct",
-        "requested": "[1.4.230822000, )",
-        "resolved": "1.4.230822000",
-        "contentHash": "QeR+4u7j0z9RWhVzTbr/5izWmq7k3GkjxCFbXNuYtIHYDm2YcdIH5Kvn+9tpMLweFzDZO7YVzVvvyQGivUtNcw==",
-        "dependencies": {
-          "Microsoft.Windows.SDK.BuildTools": "10.0.22621.1"
-        }
-      },
       "System.Text.Encoding.CodePages": {
         "type": "Direct",
         "requested": "[6.0.0, )",
@@ -856,19 +705,6 @@
         "contentHash": "ZFCILZuOvtKPauZ/j/swhvw68ZRi9ATCfvGbk1QfydmcXBkIWecWKn/250UH7rahZ5OoDBaiAudJtPvLwzw85A==",
         "dependencies": {
           "System.Runtime.CompilerServices.Unsafe": "6.0.0"
-        }
-      },
-      "FFmpegInteropX.FFmpegUWP": {
-        "type": "Transitive",
-        "resolved": "5.1.100",
-        "contentHash": "Pi+ifqTU3VpkvfTkZIR62+fck22HaA54WJeLyumI/EWgXM+1euSihsTX20oi3aQKQAz8Qh9weNLhntD4g3pmvA=="
-      },
-      "Microsoft.Graphics.Win2D": {
-        "type": "Transitive",
-        "resolved": "1.0.4",
-        "contentHash": "PmUO0B+gLdbxy1XCmX6pS57SL08roPKZC3sXKSRH4Qa1nX5RKwIdmmIxSvmV9irN57ABSMtDtWa+qNYnyzB/nw==",
-        "dependencies": {
-          "Microsoft.WindowsAppSDK": "1.0.4"
         }
       },
       "Microsoft.Win32.Registry": {

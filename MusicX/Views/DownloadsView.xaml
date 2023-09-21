@@ -74,7 +74,7 @@
                 <ui:SymbolIcon
                     Margin="0,0,0,0"
                     FontSize="80"
-                    
+                    Foreground="White"
                     Symbol="ArrowDownload48" />
                 <TextBlock
                     Margin="0,30,0,0"
@@ -195,32 +195,44 @@
                                     Height="50"
                                     Appearance="Secondary"
                                     Command="{Binding QueueAllMyTracksCommand}"
-                                    Content="Скачать все мои аудиозаписи"
-                                    Icon="MusicNote220" />
+                                    Content="Скачать все мои аудиозаписи">
+                                    <wpfui:Button.Icon>
+                                        <ui:SymbolIcon Symbol="MusicNote220" />
+                                    </wpfui:Button.Icon>
+                                </wpfui:Button>
                                 <wpfui:Button
                                     Width="300"
                                     Height="50"
                                     Margin="5,0,0,0"
                                     Appearance="Secondary"
                                     Command="{Binding QueueAllMyPlaylistsCommand}"
-                                    Content="Скачать все мои плейлисты"
-                                    Icon="Stream24" />
+                                    Content="Скачать все мои плейлисты">
+                                    <wpfui:Button.Icon>
+                                        <ui:SymbolIcon Symbol="Stream24" />
+                                    </wpfui:Button.Icon>
+                                </wpfui:Button>
                                 <wpfui:Button
                                     Width="300"
                                     Height="50"
                                     Margin="5,0,0,0"
                                     Appearance="Secondary"
                                     Command="{Binding OpenMusicFolderCommand}"
-                                    Content="Открыть папку с музыкой"
-                                    Icon="Folder32" />
+                                    Content="Открыть папку с музыкой">
+                                    <wpfui:Button.Icon>
+                                        <ui:SymbolIcon Symbol="Folder32" />
+                                    </wpfui:Button.Icon>
+                                </wpfui:Button>
                                 <wpfui:Button
                                     Width="300"
                                     Height="50"
                                     Margin="5,0,0,0"
                                     Appearance="Secondary"
                                     Command="{Binding ClearQueueCommand}"
-                                    Content="Очистить очередь"
-                                    Icon="ArrowRedo32"/>
+                                    Content="Очистить очередь">
+                                    <wpfui:Button.Icon>
+                                        <ui:SymbolIcon Symbol="ArrowRedo32" />
+                                    </wpfui:Button.Icon>
+                                </wpfui:Button>
                             </StackPanel>
                         </hc:ScrollViewer>
 
@@ -237,7 +249,7 @@
                         <ItemsControl ItemsSource="{Binding DownloadQueue}" Margin="5,10">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Vertical" />
+                                    <VirtualizingStackPanel Orientation="Vertical" IsItemsHost="True" />
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>

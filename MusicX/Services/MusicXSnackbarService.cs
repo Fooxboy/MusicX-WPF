@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
@@ -62,13 +63,19 @@ public class MusicXSnackbarService : ISnackbarService
     {
         if (_presenter == null)
         {
-            throw new ArgumentNullException("The SnackbarPresenter didn't set previously.");
+            throw new ArgumentNullException(null, "The SnackbarPresenter didn't set previously.");
         }
 
-        if (_snackbar == null)
-        {
-            _snackbar = new Snackbar(_presenter);
-        }
+        if (Application.Current.Dispatcher.CheckAccess())
+            ShowInternal(title, message, appearance, icon, timeout);
+        else
+            Application.Current.Dispatcher.BeginInvoke(() => ShowInternal(title, message, appearance, icon, timeout));
+    }
+
+    private void ShowInternal(string title, string message, ControlAppearance appearance, IconElement? icon,
+        TimeSpan timeout)
+    {
+        _snackbar ??= new Snackbar(_presenter!);
 
         _snackbar!.SetCurrentValue(Snackbar.TitleProperty, title);
         _snackbar!.SetCurrentValue(ContentControl.ContentProperty, message);

@@ -38,6 +38,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicX.Server.Tests", "Musi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SignalR.Protobuf", "SignalR.Protobuf\SignalR.Protobuf.csproj", "{6A511BD3-95E2-4087-9F68-A17DBC237B71}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FFMediaToolkit", "FFMediaToolkit\FFMediaToolkit\FFMediaToolkit.csproj", "{1A698859-8147-458D-9FC3-C4302F24AA86}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -104,6 +106,10 @@ Global
 		{6A511BD3-95E2-4087-9F68-A17DBC237B71}.Debug|x64.Build.0 = Debug|x64
 		{6A511BD3-95E2-4087-9F68-A17DBC237B71}.Release|x64.ActiveCfg = Release|x64
 		{6A511BD3-95E2-4087-9F68-A17DBC237B71}.Release|x64.Build.0 = Release|x64
+		{1A698859-8147-458D-9FC3-C4302F24AA86}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1A698859-8147-458D-9FC3-C4302F24AA86}.Debug|x64.Build.0 = Debug|Any CPU
+		{1A698859-8147-458D-9FC3-C4302F24AA86}.Release|x64.ActiveCfg = Release|Any CPU
+		{1A698859-8147-458D-9FC3-C4302F24AA86}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

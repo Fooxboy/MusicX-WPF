@@ -9,9 +9,6 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>StoreLogo.scale-400.ico</ApplicationIcon>
     <Version>0.40</Version>
-    <WindowsPackageType>None</WindowsPackageType>
-    <WindowsAppSDKBootstrapAutoInitializeOptions_OnNoMatch_ShowUI>true</WindowsAppSDKBootstrapAutoInitializeOptions_OnNoMatch_ShowUI>
-    <EnableMsixTooling>true</EnableMsixTooling>
     <Platforms>x86;x64;arm64</Platforms>
     <RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
@@ -101,7 +98,6 @@
   <ItemGroup>
     <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="6.0.6" />
     <PackageReference Include="Clowd.Squirrel" Version="3.0.210-g5f9f594" />
-    <PackageReference Include="FFmpegInteropX" Version="1.1.0-pre42" />
     <PackageReference Include="HandyControl" Version="3.4.0" />
     <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.2" />
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.2" />
@@ -109,7 +105,6 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.230822000" />
     <PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.1" />
     <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" PrivateAssets="All" />
     <PackageReference Include="System.Linq.Async" Version="6.0.1" />
@@ -118,12 +113,10 @@
     <PackageReference Include="taglib-sharp-netstandard2.0" Version="2.1.0" />
     <PackageReference Include="WPF-UI" Version="3.0.0-preview.6" />
     <PackageReference Include="WpfScreenHelper" Version="2.1.0" />
-    <PackageReference Include="Xabe.FFmpeg" Version="5.2.6" />
-    <PackageReference Include="Xabe.FFmpeg.Downloader" Version="5.2.6" />
-    <PackageReference Include="Microsoft.VCRTForwarders.140" Version="1.0.8-pre" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FFMediaToolkit\FFMediaToolkit\FFMediaToolkit.csproj" />
     <ProjectReference Include="..\MusicX.Core\MusicX.Core.csproj" />
   </ItemGroup>
 
@@ -169,5 +162,8 @@
     <Manifest Include="app.manifest" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="..\ffmpeg\*.dll" Visible="false" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
+  </ItemGroup>
 
 </Project>

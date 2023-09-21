@@ -567,7 +567,7 @@ namespace MusicX.Controls
         {
             if (playerService.CurrentTrack?.AlbumId is VkAlbumId albumId)
             {
-                var (id, ownerId, accessKey, _, _) = albumId;
+                var (id, ownerId, accessKey, _, _, _) = albumId;
                 var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
                 navigationService.OpenExternalPage(new PlaylistView(id, ownerId, accessKey));
             }

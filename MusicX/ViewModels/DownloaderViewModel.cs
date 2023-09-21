@@ -20,7 +20,6 @@ using MusicX.Shared.Player;
 using NLog;
 using Wpf.Ui;
 using Wpf.Ui.Common;
-using Xabe.FFmpeg.Events;
 
 namespace MusicX.ViewModels;
 
@@ -44,7 +43,7 @@ public class DownloaderViewModel : BaseViewModel
     private readonly Logger logger;
     private readonly VkService vkService;
     private readonly ConfigService configService;
-    private readonly IProgress<ConversionProgressEventArgs> progress;
+    private readonly IProgress<(TimeSpan Position, TimeSpan Duration)>? progress;
 
     public DownloaderViewModel(DownloaderService downloaderService, ISnackbarService snackbarService, Logger logger,
         VkService vkService, ConfigService configService)
@@ -54,7 +53,7 @@ public class DownloaderViewModel : BaseViewModel
         this.logger = logger;
         this.vkService = vkService;
         this.configService = configService;
-        progress = new Progress<ConversionProgressEventArgs>(args => DownloadProgress = args.Percent);
+        progress = new Progress<(TimeSpan Position, TimeSpan Duration)>(args => DownloadProgress = (int)(args.Position.TotalSeconds / args.Duration.TotalSeconds * 100));
         
         StartDownloadingCommand = new RelayCommand(StartDownloading);
         StopDownloadingCommand = new RelayCommand(StopDownloading);
@@ -66,11 +65,7 @@ public class DownloaderViewModel : BaseViewModel
 
     public async ValueTask AddPlaylistToQueueAsync(IEnumerable<PlaylistTrack> tracks, string title)
     {
-        tracks = tracks.Select(b => b with { Data = new DownloaderData(b.Data.Url, 
-                                                                       b.Data.IsLiked, 
-                                                                       b.Data.IsExplicit, 
-                                                                       b.Data.Duration,
-                                                                       title)});
+        tracks = MapTracks(tracks, title);
         
         if (Application.Current.Dispatcher.CheckAccess())
             DownloadQueue.AddRange(tracks, NotifyCollectionChangedAction.Reset);
@@ -78,6 +73,16 @@ public class DownloaderViewModel : BaseViewModel
             await Application.Current.Dispatcher.InvokeAsync(() => DownloadQueue.AddRange(tracks));
         _snackbarService.Show("Скачивание начато", $"{title} добавлен в очередь");
     }
+
+    private static IEnumerable<PlaylistTrack> MapTracks(IEnumerable<PlaylistTrack> tracks, string title)
+    {
+        return tracks.Select(b => b with { Data = new DownloaderData(b.Data.Url, 
+            b.Data.IsLiked, 
+            b.Data.IsExplicit, 
+            b.Data.Duration,
+            title)});
+    }
+
     public async Task AddPlaylistToQueueAsync(long playlistId, long ownerId, string accessKey)
     {
         var playlist = await vkService.LoadFullPlaylistAsync(playlistId, ownerId, accessKey);
@@ -130,12 +135,18 @@ public class DownloaderViewModel : BaseViewModel
             
         var playlists = await vkService.GetPlaylistsAsync(config.UserId);
 
+        var allTracks = new List<PlaylistTrack>();
+        
         foreach (var playlist in playlists)
         {
             var tracks = await vkService.LoadFullPlaylistAsync(playlist.Id, playlist.OwnerId, playlist.AccessKey);
 
-            await AddPlaylistToQueueAsync(tracks.Items.Select(TrackExtensions.ToTrack), playlist.Title!);
+            allTracks.AddRange(MapTracks(tracks.Items.Select(TrackExtensions.ToTrack), playlist.Title!));
         }
+        
+        DownloadQueue.AddRange(allTracks, NotifyCollectionChangedAction.Reset);
+        
+        _snackbarService.Show("Скачивание начато", "Все ваши плейлисты добавлены в очередь");
         
         StartDownloading();
     }

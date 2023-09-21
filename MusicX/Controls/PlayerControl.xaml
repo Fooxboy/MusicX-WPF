@@ -392,6 +392,7 @@
                             Padding="0"
                             HorizontalContentAlignment="Center"
                             Appearance="Transparent"
+                            FontSize="20"
                             Click="PlayPauseButton_Click">
 
                             <wpfui:Button.Style>
@@ -400,7 +401,7 @@
                                         <Setter.Value>
                                             <ControlTemplate>
                                                 <Border Style="{StaticResource TransparentBorderStyle}">
-                                                    <ui:SymbolIcon FontSize="20" Symbol="Play32" />
+                                                    <ui:SymbolIcon Symbol="Play32" />
                                                 </Border>
                                             </ControlTemplate>
                                         </Setter.Value>
@@ -411,7 +412,7 @@
                                                 <Setter.Value>
                                                     <ControlTemplate>
                                                         <Border Style="{StaticResource TransparentBorderStyle}">
-                                                            <ui:SymbolIcon FontSize="20" Symbol="Pause32" />
+                                                            <ui:SymbolIcon Symbol="Pause32" />
                                                         </Border>
                                                     </ControlTemplate>
                                                 </Setter.Value>

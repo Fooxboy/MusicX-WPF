@@ -1,43 +1,45 @@
-﻿using System;
+﻿using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Media.Playback;
-using FFmpegInteropX;
+using FFMediaToolkit.Decoding;
 using MusicX.Core.Services;
 using MusicX.Shared.Player;
 
 namespace MusicX.Services.Player.Sources;
 
-public class BoomMediaSource : ITrackMediaSource
+public class BoomMediaSource : MediaSourceBase
 {
-    private FFmpegMediaSource? _currentSource; // hold reference so it wont be collected before audio actually ends
     private readonly BoomService _boomService;
+
+    private Stream? _currentStream;
 
     public BoomMediaSource(BoomService boomService)
     {
         _boomService = boomService;
     }
 
-    public async Task<MediaPlaybackItem?> CreateMediaSourceAsync(MediaPlaybackSession playbackSession,
+    public override async Task<MediaPlaybackItem?> CreateMediaSourceAsync(MediaPlaybackSession playbackSession,
         PlaylistTrack track,
         CancellationToken cancellationToken = default)
     {
-        if (track.Data is VkTrackData)
+        if (track.Data is not BoomTrackData boomData)
             return null;
 
-        var ffSource = _currentSource = await FFmpegMediaSource.CreateFromUriAsync(track.Data.Url, new()
-        {
-            DefaultBufferTimeUri = TimeSpan.FromMinutes(5),
-            ReadAheadBufferEnabled = true,
-            FFmpegOptions = new()
+        if (CurrentSource != null)
+            lock (CurrentSource)
             {
-                ["headers"] = $"Authorization: {_boomService.Client.DefaultRequestHeaders.Authorization}"
+                CurrentSource.Dispose();
+                CurrentSource = null;
             }
-        });
         
-        ffSource.PlaybackSession = playbackSession;
-        ffSource.StartBuffering();
+        if (_currentStream != null)
+            await _currentStream.DisposeAsync();
 
-        return ffSource.CreateMediaPlaybackItem();
+        var stream = _currentStream = await _boomService.Client.GetStreamAsync(boomData.Url, cancellationToken);
+
+        var file = CurrentSource = MediaFile.Open(stream, MediaOptions);
+            
+        return CreateMediaPlaybackItem(file);
     }
 }

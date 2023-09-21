@@ -236,8 +236,11 @@
                                     Appearance="Secondary"
                                     Click="AddPlaylist_Click"
                                     Content="Добавить к себе"
-                                    Foreground="White"
-                                    Icon="Add28" />
+                                    Foreground="White">
+                                    <controls:Button.Icon>
+                                        <controls:SymbolIcon Symbol="Add28"/>
+                                    </controls:Button.Icon>
+                                </controls:Button>
                                 <controls:Button
                                     x:Name="PlayPlaylist"
                                     MinWidth="150"
@@ -245,8 +248,11 @@
                                     Appearance="Secondary"
                                     Click="PlayPlaylist_Click"
                                     Content="Воспроизвести"
-                                    Foreground="White"
-                                    Icon="Play20" />
+                                    Foreground="White">
+                                    <controls:Button.Icon>
+                                        <controls:SymbolIcon Symbol="Play20"/>
+                                    </controls:Button.Icon>
+                                </controls:Button>
 
                                 <controls:Button
                                     x:Name="EditPlaylist"
@@ -255,8 +261,11 @@
                                     Appearance="Secondary"
                                     Click="EditPlaylist_Click"
                                     Content="Редактировать"
-                                    Foreground="White"
-                                    Icon="Edit16" />
+                                    Foreground="White">
+                                    <controls:Button.Icon>
+                                        <controls:SymbolIcon Symbol="Edit16"/>
+                                    </controls:Button.Icon>
+                                </controls:Button>
 
                                 <controls:Button
                                     x:Name="DownloadPlaylist"
@@ -265,8 +274,11 @@
                                     Appearance="Secondary"
                                     Click="DownloadPlaylist_Click"
                                     Content="Скачать"
-                                    Foreground="White"
-                                    Icon="ArrowDownload48" />
+                                    Foreground="White">
+                                    <controls:Button.Icon>
+                                        <controls:SymbolIcon Symbol="ArrowDownload48"/>
+                                    </controls:Button.Icon>
+                                </controls:Button>
 
                             </StackPanel>
                             
