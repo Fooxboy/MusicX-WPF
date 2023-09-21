@@ -25,12 +25,16 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition x:Name="ChevronColumn" Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <ContentPresenter
+                            <ContentControl
                                 x:Name="ControlIcon"
                                 Grid.Column="0"
                                 Margin="{StaticResource CardActionIconMargin}"
                                 VerticalAlignment="Center"
-                                Content="{TemplateBinding Icon}" />
+                                Content="{TemplateBinding Icon}"
+                                Focusable="False"
+                                FontSize="{StaticResource CardActionIconSize}"
+                                Foreground="{TemplateBinding Foreground}"
+                                KeyboardNavigation.IsTabStop="False" />
                             <ContentPresenter
                                 x:Name="ContentPresenter"
                                 Grid.Column="1"
