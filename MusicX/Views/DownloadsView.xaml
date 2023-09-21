@@ -32,7 +32,7 @@
                 <ui:SymbolIcon
                     Margin="0,0,0,0"
                     FontSize="80"
-                    
+                    Foreground="White"
                     Symbol="Warning20" />
                 <TextBlock
                     Margin="0,30,0,0"
@@ -57,8 +57,11 @@
                     HorizontalAlignment="Center"
                     Appearance="Secondary"
                     Click="DownloadButton_Click"
-                    Content="Скачать"
-                    Icon="ArrowDownload16" />
+                    Content="Скачать">
+                    <wpfui:Button.Icon>
+                        <ui:SymbolIcon Symbol="ArrowDownload16" />
+                    </wpfui:Button.Icon>
+                </wpfui:Button>
             </StackPanel>
         </Grid>
 
