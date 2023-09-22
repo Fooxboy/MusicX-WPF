@@ -58,8 +58,11 @@
             Appearance="Transparent"
             BorderThickness="0"
             Click="CloseButton_Click"
-            FontSize="30"
-            Icon="ArrowMinimize28" />
+            FontSize="30">
+            <wpfui:Button.Icon>
+                <ui:SymbolIcon Symbol="ArrowMinimize28"/>
+            </wpfui:Button.Icon>
+        </wpfui:Button>
 
 
         <StackPanel
@@ -122,6 +125,14 @@
                     Width="400"
                     Margin="0,20,0,0"
                     ValueChanged="PositionSlider_ValueChanged">
+                    <hc:PreviewSlider.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml" />
+                                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                    </hc:PreviewSlider.Resources>
                     <hc:PreviewSlider.Background>
                         <SolidColorBrush Opacity="0.3" Color="White" />
                     </hc:PreviewSlider.Background>
@@ -129,7 +140,7 @@
             </StackPanel>
 
 
-            <controls:LyricsControl Margin="30,0,0,0" MaxHeight="500" x:Name="LyricsControlView"/>
+            <controls:LyricsControl Margin="30,0,0,0" MaxHeight="500" MaxWidth="500" x:Name="LyricsControlView"/>
 
         </StackPanel>
 
