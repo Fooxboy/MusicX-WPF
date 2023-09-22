@@ -10,16 +10,15 @@ using Windows.Media.Playback;
 using FFMediaToolkit;
 using FFMediaToolkit.Audio;
 using FFMediaToolkit.Decoding;
+using MusicX.Helpers;
 using MusicX.Shared.Player;
 
 namespace MusicX.Services.Player.Sources;
 
 public abstract class MediaSourceBase : ITrackMediaSource
 {
-    protected static MediaFile? CurrentSource { get; set; } // holds reference so it wont be collected before audio actually ends
-
-    private TimeSpan _position;
-
+    private static readonly Semaphore FFmpegSemaphore = new(1, 1, "MusicX_FFmpegSemaphore");
+    
     protected readonly MediaOptions MediaOptions = new()
     {
         StreamsToLoad = MediaMode.Audio,
@@ -38,7 +37,7 @@ public abstract class MediaSourceBase : ITrackMediaSource
         PlaylistTrack track,
         CancellationToken cancellationToken = default);
 
-    protected MediaPlaybackItem CreateMediaPlaybackItem(MediaFile file)
+    protected static MediaPlaybackItem CreateMediaPlaybackItem(MediaFile file)
     {
         var properties =
             AudioEncodingProperties.CreatePcm((uint)file.Audio.Info.SampleRate, (uint)file.Audio.Info.NumChannels, 16);
@@ -50,51 +49,77 @@ public abstract class MediaSourceBase : ITrackMediaSource
             Duration = file.Audio.Info.Duration,
             BufferTime = file.Audio.Info.Duration / 3
         };
+        
+        var position = TimeSpan.Zero;
 
         streamingSource.Starting += (_, args) =>
         {
-            _position = args.Request.StartPosition == TimeSpan.Zero
-                ? CurrentSource!.Info.StartTime
+            position = args.Request.StartPosition == TimeSpan.Zero
+                ? file.Info.StartTime
                 : args.Request.StartPosition.GetValueOrDefault();
             
-            args.Request.SetActualStartPosition(_position);
-            
+            args.Request.SetActualStartPosition(position);
+
             try
             {
-                if (CurrentSource == null) return;
-                
-                var position = _position;
-                lock (CurrentSource)
-                {
-                    if (CurrentSource is null)
-                        return;
-                    CurrentSource.Audio.GetFrame(position);
-                }
+                FFmpegSemaphore.WaitOne();
+                file.Audio.GetFrame(position);
             }
             catch (FFmpegException)
             {
             }
+            finally
+            {
+                FFmpegSemaphore.Release();
+            }
         };
 
-        streamingSource.SampleRequested += (_, args) =>
+        streamingSource.Closed += async (_, _) =>
+        {
+            await FFmpegSemaphore.WaitOneAsync();
+            try
+            {
+                file.Dispose();
+            }
+            finally
+            {
+                FFmpegSemaphore.Release();
+            }
+        };
+
+        streamingSource.SampleRequested += async (_, args) =>
+        {
+            var deferral = args.Request.GetDeferral();
+            
+            await FFmpegSemaphore.WaitOneAsync();
+            
+            try
+            {
+                if (file.IsDisposed)
+                    return;
+                
+                var array = ProcessSample();
+                if (array != null)
+                    args.Request.Sample = MediaStreamSample.CreateFromBuffer(array.AsBuffer(), position);
+            }
+            finally
+            {
+                FFmpegSemaphore.Release();
+                deferral.Complete();
+            }
+        };
+        
+        byte[]? ProcessSample()
         {
             AudioData frame;
             while (true)
             {
                 try
                 {
-                    if (CurrentSource is null)
-                        return;
+                    if (!file.Audio.TryGetNextFrame(out frame))
+                        return null;
 
-                    lock (CurrentSource)
-                    {
-                        if (CurrentSource is null)
-                            return;
-                        if (!CurrentSource.Audio.TryGetNextFrame(out frame))
-                            return;
-                    }
-
-                    _position = CurrentSource.Audio.Position;
+                    position = file.Audio.Position;
                     
                     break;
                 }
@@ -107,9 +132,11 @@ public abstract class MediaSourceBase : ITrackMediaSource
             var array = new byte[frame.NumChannels * blockSize];
 
             frame.GetChannelData<short>(0).CopyTo(MemoryMarshal.Cast<byte, short>(array));
+            
+            frame.Dispose();
 
-            args.Request.Sample = MediaStreamSample.CreateFromBuffer(array.AsBuffer(), _position);
-        };
+            return array;
+        }
 
         return new (MediaSource.CreateFromMediaStreamSource(streamingSource));
     }

@@ -11,7 +11,7 @@ using FFMediaToolkit.Audio;
 using FFMediaToolkit.Decoding;
 using FFMediaToolkit.Encoding;
 using MusicX.Core.Services;
-using MusicX.Services.Player;
+using MusicX.Helpers;
 using MusicX.Services.Player.Playlists;
 using MusicX.Shared.Player;
 using TagLib;
@@ -24,15 +24,15 @@ namespace MusicX.Services;
 
 public class DownloaderService
 {
+    private static readonly Semaphore FFmpegSemaphore = new(1, 1, "MusicX_FFmpegSemaphore");
+    
     private readonly ConfigService configService;
     private readonly BoomService _boomService;
-    private readonly PlayerService _playerService;
 
-    public DownloaderService(ConfigService configService, BoomService boomService, PlayerService playerService)
+    public DownloaderService(ConfigService configService, BoomService boomService)
     {
         this.configService = configService;
         _boomService = boomService;
-        _playerService = playerService;
 
         FFmpegLoader.FFmpegPath = AppContext.BaseDirectory;
     }
@@ -45,10 +45,10 @@ public class DownloaderService
         return Directory.CreateDirectory(directory).FullName;
     }
 
-    public Task DownloadAudioAsync(PlaylistTrack audio, IProgress<(TimeSpan Position, TimeSpan Duration)>? progress = null, CancellationToken cancellationToken = default)
+    public async Task DownloadAudioAsync(PlaylistTrack audio, IProgress<(TimeSpan Position, TimeSpan Duration)>? progress = null, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrEmpty(audio.Data.Url))
-            return Task.CompletedTask;
+            return;
         
         var fileName = $"{audio.GetArtistsString()} - {audio.Title}.mp3";
         fileName = ReplaceSymbols(fileName);
@@ -96,8 +96,6 @@ public class DownloaderService
                 }
             }
         };
-        
-        _playerService.Pause();
 
         using var mediaFile = audio.Data is BoomTrackData ? MediaFile.Open(_boomService.Client.GetStreamAsync(audio.Data.Url, cancellationToken).Result, options) : MediaFile.Open(audio.Data.Url, options);
 
@@ -121,26 +119,37 @@ public class DownloaderService
                        Copyright = "Music X Player - https://t.me/MusicXPlayer"
                    }).Create())
         {
-            while (true)
+            bool ProcessSample()
             {
                 AudioData audioData;
                 try
                 {
                     if (!mediaFile.Audio.TryGetNextFrame(out audioData))
-                        break;
+                        return false;
                 }
                 catch (FFmpegException)
                 {
-                    continue;
+                    return true;
+                }
+                finally
+                {
+                    FFmpegSemaphore.Release();
                 }
 
                 progress?.Report((mediaFile.Audio.Position, audio.Data.Duration));
 
                 outputFile.Audio.AddFrame(audioData);
+                audioData.Dispose();
+                return true;
             }
+
+            do
+            {
+                await FFmpegSemaphore.WaitOneAsync(cancellationToken);
+            } while (ProcessSample());
         }
         
-        return AddMetadataAsync(audio, fileDownloadPath, cancellationToken);
+        await AddMetadataAsync(audio, fileDownloadPath, cancellationToken);
     }
 
     private void Ffmpeg_Data(object sender, DataReceivedEventArgs e)

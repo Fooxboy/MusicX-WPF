@@ -12,8 +12,6 @@ public class BoomMediaSource : MediaSourceBase
 {
     private readonly BoomService _boomService;
 
-    private Stream? _currentStream;
-
     public BoomMediaSource(BoomService boomService)
     {
         _boomService = boomService;
@@ -26,19 +24,9 @@ public class BoomMediaSource : MediaSourceBase
         if (track.Data is not BoomTrackData boomData)
             return null;
 
-        if (CurrentSource != null)
-            lock (CurrentSource)
-            {
-                CurrentSource.Dispose();
-                CurrentSource = null;
-            }
-        
-        if (_currentStream != null)
-            await _currentStream.DisposeAsync();
+        var stream = await _boomService.Client.GetStreamAsync(boomData.Url, cancellationToken);
 
-        var stream = _currentStream = await _boomService.Client.GetStreamAsync(boomData.Url, cancellationToken);
-
-        var file = CurrentSource = MediaFile.Open(stream, MediaOptions);
+        var file = MediaFile.Open(stream, MediaOptions);
             
         return CreateMediaPlaybackItem(file);
     }

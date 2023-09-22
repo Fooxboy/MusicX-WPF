@@ -14,15 +14,12 @@ public class VkMediaSource : MediaSourceBase
     {
         if (track.Data is not VkTrackData vkData) return Task.FromResult<MediaPlaybackItem?>(null);
 
-        if (CurrentSource != null)
-            lock (CurrentSource)
-            {
-                CurrentSource.Dispose();
-                CurrentSource = null;
-            }
+        // i think its better to use task.run over task.yield because we aren't doing async with ffmpeg
+        return Task.Run(() =>
+        {
+            var file = MediaFile.Open(vkData.Url, MediaOptions);
 
-        var file = CurrentSource = MediaFile.Open(vkData.Url, MediaOptions);
-            
-        return Task.FromResult(CreateMediaPlaybackItem(file))!;
+            return CreateMediaPlaybackItem(file);
+        }, cancellationToken)!;
     }
 }
