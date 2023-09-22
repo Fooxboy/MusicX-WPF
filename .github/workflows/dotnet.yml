@@ -47,6 +47,7 @@ jobs:
       with:
         ref: ${{ github.head_ref }}
         fetch-depth: 0
+        submodules: 'true'
         
     - name: Setup .NET
       uses: actions/setup-dotnet@v2
