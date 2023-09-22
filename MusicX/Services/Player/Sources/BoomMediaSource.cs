@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.Media.Core;
 using Windows.Media.Playback;
 using FFMediaToolkit.Decoding;
 using MusicX.Core.Services;
@@ -24,10 +25,18 @@ public class BoomMediaSource : MediaSourceBase
         if (track.Data is not BoomTrackData boomData)
             return null;
 
-        var stream = await _boomService.Client.GetStreamAsync(boomData.Url, cancellationToken);
+        /*var stream = await _boomService.Client.GetStreamAsync(boomData.Url, cancellationToken);
 
         var file = MediaFile.Open(stream, MediaOptions);
             
-        return CreateMediaPlaybackItem(file);
+        return CreateMediaPlaybackItem(file);*/
+        
+        var response = await _boomService.Client.GetAsync(boomData.Url, cancellationToken);
+
+        var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
+
+        return new(MediaSource.CreateFromStream(stream.AsRandomAccessStream(),
+            response.Content.Headers.ContentType?.MediaType ??
+            "audio/mpeg"));
     }
 }
