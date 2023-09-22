@@ -167,5 +167,9 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </DataTemplate>
+        
+        <DataTemplate x:Key="curator_banner" DataType="models:Block">
+            <blocks:CuratorBannerBlockControl />
+        </DataTemplate>
     </UserControl.Resources>
 </UserControl>

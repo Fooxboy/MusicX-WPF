@@ -18,41 +18,10 @@ namespace MusicX.Controls.Blocks
     /// </summary>
     public partial class CuratorBannerBlockControl : UserControl
     {
-        public Block Block { get; set; }
+        public Block Block => (Block)DataContext;
         public CuratorBannerBlockControl()
         {
-            this.Loaded += CuratorBannerBlockControl_Loaded;
-            this.Initialized += CuratorBannerBlockControl_Initialized;
             InitializeComponent();
-
-            
-        }
-
-        private void CuratorBannerBlockControl_Initialized(object? sender, EventArgs e)
-        {
-
-           
-        }
-
-        private void CuratorBannerBlockControl_Loaded(object sender, RoutedEventArgs e)
-        {
-
-            CuratorBannerImage.ImageSource = new BitmapImage(new Uri(Block.Curators[0].Photo[2].Url));
-            CuratorText.Text = Block.Curators[0].Name;
-            //CuratorDescription.Text = Block.Curators[0].Description;
-
-            if (Block.Curators[0].IsFollowed)
-            {
-                ActionCuratorButton.Content = "Отписаться";
-                ActionCuratorButton.Icon = new SymbolIcon(SymbolRegular.DeleteDismiss20);
-            }
-            else
-            {
-
-                ActionCuratorButton.Content = "Подписаться";
-                ActionCuratorButton.Icon = new SymbolIcon(SymbolRegular.Add24);
-            }
-
         }
 
         private async void ActionCuratorButton_Click(object sender, RoutedEventArgs e)
@@ -105,6 +74,28 @@ namespace MusicX.Controls.Blocks
 
             }
 
+        }
+
+        private void CuratorBannerBlockControl_OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (e.NewValue is not Core.Models.Block)
+                return;
+            
+            CuratorBannerImage.ImageSource = new BitmapImage(new Uri(Block.Curators[0].Photo[2].Url));
+            CuratorText.Text = Block.Curators[0].Name;
+            //CuratorDescription.Text = Block.Curators[0].Description;
+
+            if (Block.Curators[0].IsFollowed)
+            {
+                ActionCuratorButton.Content = "Отписаться";
+                ActionCuratorButton.Icon = new SymbolIcon(SymbolRegular.DeleteDismiss20);
+            }
+            else
+            {
+
+                ActionCuratorButton.Content = "Подписаться";
+                ActionCuratorButton.Icon = new SymbolIcon(SymbolRegular.Add24);
+            }
         }
     }
 }
