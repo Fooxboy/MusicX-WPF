@@ -81,7 +81,7 @@ namespace MusicX.Views
                 if (playerService.CurrentTrack.AlbumId != null)
                 {
 
-                    var bitmapImage = new BitmapImage(new Uri(playerService.CurrentTrack.AlbumId.CoverUrl));
+                    var bitmapImage = new BitmapImage(new Uri(playerService.CurrentTrack.AlbumId.BigCoverUrl ?? playerService.CurrentTrack.AlbumId.CoverUrl));
                     BackgroundImage.Source = bitmapImage;
                     CoverImage.ImageSource = bitmapImage;
                     CoverNote.Visibility = Visibility.Collapsed;

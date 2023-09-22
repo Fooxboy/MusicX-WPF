@@ -40,19 +40,23 @@
                                 Text="User Name" />
                         </StackPanel>
                     </StackPanel>
-
-                    <!--<StackPanel
-	Width="250"
-	Margin="0,14,0,0"
-	HorizontalAlignment="Right">
-	<wpfui:Button
-		x:Name="DeleteAccount"
-		Width="250"
-		Appearance="Secondary"
-		Click="DeleteAccount_Click"
-		Content="Выйти с аккаунта"
-		Icon="PersonDelete16" />
-</StackPanel>-->
+                    
+                    <StackPanel
+                        Width="250"
+                        Margin="15,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center">
+                        <wpfui:Button
+                            x:Name="DeleteAccount"
+                            Width="250"
+                            Appearance="Secondary"
+                            Click="DeleteAccount_Click"
+                            Content="Выйти с аккаунта">
+                            <wpfui:Button.Icon>
+                                <wpfui:SymbolIcon Symbol="PersonDelete16" />
+                            </wpfui:Button.Icon>
+                        </wpfui:Button>
+                    </StackPanel>
                 </Grid>
 
             </wpfui:CardAction>

@@ -252,7 +252,6 @@
             x:Name="WpfTitleBar"
             Grid.Row="0"
             Title="Music X Player"
-            ShowMaximize="False"
             Height="35">
             <ui:TitleBar.Icon>
                 <ui:ImageIcon Source="/StoreLogo.scale-400.png" />
