@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -26,6 +27,8 @@ public abstract class MediaSourceBase : ITrackMediaSource
         DemuxerOptions =
         {
             FlagDiscardCorrupt = true,
+            FlagEnableFastSeek = true,
+            SeekToAny = true,
             PrivateOptions =
             {
                 ["http_persistent"] = "false"
@@ -47,7 +50,7 @@ public abstract class MediaSourceBase : ITrackMediaSource
             CanSeek = true,
             IsLive = true,
             Duration = file.Audio.Info.Duration,
-            BufferTime = file.Audio.Info.Duration / 3
+            BufferTime = TimeSpan.Zero
         };
         
         var position = TimeSpan.Zero;
@@ -87,11 +90,12 @@ public abstract class MediaSourceBase : ITrackMediaSource
             }
         };
 
-        streamingSource.SampleRequested += async (_, args) =>
+        streamingSource.SampleRequested += (_, args) =>
         {
-            var deferral = args.Request.GetDeferral();
+            //var deferral = args.Request.GetDeferral();
             
-            await FFmpegSemaphore.WaitOneAsync();
+            //await FFmpegSemaphore.WaitOneAsync();
+            FFmpegSemaphore.WaitOne();
             
             try
             {
@@ -105,7 +109,7 @@ public abstract class MediaSourceBase : ITrackMediaSource
             finally
             {
                 FFmpegSemaphore.Release();
-                deferral.Complete();
+                //deferral.Complete();
             }
         };
         
