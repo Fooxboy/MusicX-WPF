@@ -94,6 +94,49 @@
                 </EasingDoubleKeyFrame>
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
+        <Thickness x:Key="ListenTogetherShownThickness"
+                   Right="250"
+                   Bottom="10" />
+        <Thickness x:Key="ListenTogetherHiddenThickness"
+                   Right="250"
+                   Bottom="-2000" />
+
+        <Storyboard x:Key="ListenTogetherHideAnimation">
+            <DoubleAnimation Storyboard.Target="{Binding ElementName=ListenTogetherCard}"
+                             Storyboard.TargetProperty="Height" From="220"
+                             To="0" Duration="0:0:0.3">
+                <DoubleAnimation.EasingFunction>
+                    <PowerEase EasingMode="EaseIn" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <ThicknessAnimationUsingKeyFrames
+                BeginTime="00:00:00"
+                Storyboard.Target="{Binding ElementName=ListenTogetherCard}"
+                Storyboard.TargetProperty="Margin">
+                <SplineThicknessKeyFrame KeyTime="00:00:00"
+                                         Value="{StaticResource ListenTogetherShownThickness}" />
+                <SplineThicknessKeyFrame KeyTime="00:00:.2"
+                                         Value="{StaticResource ListenTogetherHiddenThickness}" />
+            </ThicknessAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="ListenTogetherShowAnimation">
+            <DoubleAnimation Storyboard.Target="{Binding ElementName=ListenTogetherCard}"
+                             Storyboard.TargetProperty="Height" From="0"
+                             To="220" Duration="0:0:0.3">
+                <DoubleAnimation.EasingFunction>
+                    <PowerEase EasingMode="EaseIn" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <ThicknessAnimationUsingKeyFrames
+                BeginTime="00:00:00"
+                Storyboard.Target="{Binding ElementName=ListenTogetherCard}"
+                Storyboard.TargetProperty="Margin">
+                <SplineThicknessKeyFrame KeyTime="00:00:00"
+                                         Value="{StaticResource ListenTogetherHiddenThickness}" />
+                <SplineThicknessKeyFrame KeyTime="00:00:.1"
+                                         Value="{StaticResource ListenTogetherShownThickness}" />
+            </ThicknessAnimationUsingKeyFrames>
+        </Storyboard>
     </Window.Resources>
 
     <Grid x:Name="rootGrid">
@@ -166,92 +209,41 @@
                 <DropShadowEffect Color="Black" Opacity="0.2" ShadowDepth="0" BlurRadius="20"/>
             </Rectangle.Effect>
         </Rectangle>-->
-
-                <StackPanel Grid.Row="1" VerticalAlignment="Bottom">
-                    <StackPanel.Resources>
-                        <Thickness x:Key="ListenTogetherShownThickness"
-                                   Right="250"
-                                   Bottom="10" />
-                        <Thickness x:Key="ListenTogetherHiddenThickness"
-                                   Right="250"
-                                   Bottom="-2000" />
-
-                        <Storyboard x:Key="ListenTogetherHideAnimation">
-                            <DoubleAnimation Storyboard.Target="{Binding ElementName=ListenTogetherCard}"
-                                             Storyboard.TargetProperty="Height" From="220"
-                                             To="0" Duration="0:0:0.3">
-                                <DoubleAnimation.EasingFunction>
-                                    <PowerEase EasingMode="EaseIn" />
-                                </DoubleAnimation.EasingFunction>
-                            </DoubleAnimation>
-                            <ThicknessAnimationUsingKeyFrames
-                                BeginTime="00:00:00"
-                                Storyboard.Target="{Binding ElementName=ListenTogetherCard}"
-                                Storyboard.TargetProperty="Margin">
-                                <SplineThicknessKeyFrame KeyTime="00:00:00"
-                                                         Value="{StaticResource ListenTogetherShownThickness}" />
-                                <SplineThicknessKeyFrame KeyTime="00:00:.2"
-                                                         Value="{StaticResource ListenTogetherHiddenThickness}" />
-                            </ThicknessAnimationUsingKeyFrames>
-                        </Storyboard>
-                        <Storyboard x:Key="ListenTogetherShowAnimation">
-                            <DoubleAnimation Storyboard.Target="{Binding ElementName=ListenTogetherCard}"
-                                             Storyboard.TargetProperty="Height" From="0"
-                                             To="220" Duration="0:0:0.3">
-                                <DoubleAnimation.EasingFunction>
-                                    <PowerEase EasingMode="EaseIn" />
-                                </DoubleAnimation.EasingFunction>
-                            </DoubleAnimation>
-                            <ThicknessAnimationUsingKeyFrames
-                                BeginTime="00:00:00"
-                                Storyboard.Target="{Binding ElementName=ListenTogetherCard}"
-                                Storyboard.TargetProperty="Margin">
-                                <SplineThicknessKeyFrame KeyTime="00:00:00"
-                                                         Value="{StaticResource ListenTogetherHiddenThickness}" />
-                                <SplineThicknessKeyFrame KeyTime="00:00:.1"
-                                                         Value="{StaticResource ListenTogetherShownThickness}" />
-                            </ThicknessAnimationUsingKeyFrames>
-                        </Storyboard>
-
-                    </StackPanel.Resources>
-
-                    <Grid>
-                        <ui:SnackbarPresenter
-                            x:Name="RootSnackbar"
-                            MaxWidth="600"
-                            Margin="0,0,0,20"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Bottom" />
-                        <wpfui:Card Margin="{StaticResource ListenTogetherHiddenThickness}"
-                                    HorizontalAlignment="Right"
-                                    VerticalAlignment="Bottom"
-                                    Name="ListenTogetherCard"
-                                    Background="#232323">
-                            <controls:ListenTogetherControl />
-                        </wpfui:Card>
-                    </Grid>
-                </StackPanel>
             </Grid>
         </Grid>
-        
+
         <Grid Grid.Row="1">
-            <controls:PlayerControl
-                x:Name="playerControl"
-                MouseDoubleClick="playerControl_MouseDoubleClick"
-                RenderTransformOrigin="0.5,0.5"
-                Margin="18,0,12,0"
-                Visibility="Collapsed"
-                VerticalAlignment="Bottom">
-                <controls:PlayerControl.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform />
-                        <SkewTransform />
-                        <RotateTransform />
-                        <TranslateTransform />
-                    </TransformGroup>
-                </controls:PlayerControl.RenderTransform>
-            </controls:PlayerControl>
-            
+            <StackPanel VerticalAlignment="Bottom">
+                <Grid>
+                    <ui:SnackbarPresenter
+                        x:Name="RootSnackbar"
+                        MaxWidth="600"
+                        Margin="0,0,0,20"
+                        HorizontalAlignment="Center" />
+                    <wpfui:Card Margin="{StaticResource ListenTogetherHiddenThickness}"
+                                HorizontalAlignment="Right"
+                                Name="ListenTogetherCard"
+                                Background="#232323">
+                        <controls:ListenTogetherControl />
+                    </wpfui:Card>
+                </Grid>
+                <controls:PlayerControl
+                    x:Name="playerControl"
+                    MouseDoubleClick="playerControl_MouseDoubleClick"
+                    RenderTransformOrigin="0.5,0.5"
+                    Margin="18,0,12,0"
+                    Visibility="Collapsed">
+                    <controls:PlayerControl.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform />
+                            <SkewTransform />
+                            <RotateTransform />
+                            <TranslateTransform />
+                        </TransformGroup>
+                    </controls:PlayerControl.RenderTransform>
+                </controls:PlayerControl>
+            </StackPanel>
+
             <controls:ModalFrame x:Name="ModalFrame" />
         </Grid>
 
