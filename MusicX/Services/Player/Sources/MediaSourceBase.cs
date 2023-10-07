@@ -31,7 +31,11 @@ public abstract class MediaSourceBase : ITrackMediaSource
             SeekToAny = true,
             PrivateOptions =
             {
-                ["http_persistent"] = "false"
+                ["http_persistent"] = "false",
+                ["reconnect"] = "1",
+                ["reconnect_streamed"] = "1",
+                ["reconnect_delay_max"] = "5",
+                ["stimeout"] = "10"
             }
         }
     };

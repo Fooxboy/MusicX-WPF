@@ -43,5 +43,31 @@ namespace VkNet.AudioBypassService.Utils
 
 			throw VkAuthErrorFactory.Create(vkAuthError);
 		}
+		
+		/// <summary>
+		/// Выбрасывает ошибку, если есть в json.
+		/// </summary>
+		/// <param name="json"> JSON. </param>
+		/// <exception cref="VkApiException">
+		/// Неправильные данные JSON.
+		/// </exception>
+		public static void IfErrorThrowException(JObject json)
+		{
+			var error = json["error"];
+
+			if (error == null || error.Type == JTokenType.Null)
+			{
+				return;
+			}
+
+			if (error.Type != JTokenType.String)
+			{
+				return;
+			}
+
+			var vkAuthError = json.ToObject<VkAuthError>();
+
+			throw VkAuthErrorFactory.Create(vkAuthError);
+		}
 	}
 }

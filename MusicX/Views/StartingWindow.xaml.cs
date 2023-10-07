@@ -12,11 +12,17 @@ using MusicX.Services;
 using MusicX.Services.Player;
 using MusicX.Services.Player.Sources;
 using MusicX.Services.Player.TrackStats;
+using MusicX.Services.Stores;
 using MusicX.ViewModels;
 using MusicX.ViewModels.Controls;
+using MusicX.ViewModels.Login;
 using MusicX.ViewModels.Modals;
+using MusicX.Views.Login;
 using NLog;
+using VkNet.Abstractions;
+using VkNet.AudioBypassService.Abstractions;
 using VkNet.AudioBypassService.Extensions;
+using VkNet.AudioBypassService.Models.Auth;
 using VkNet.Exception;
 using VkNet.Extensions.DependencyInjection;
 using Wpf.Ui;
@@ -55,6 +61,10 @@ namespace MusicX.Views
 
                 collection.AddSingleton<IAsyncCaptchaSolver, CaptchaSolverService>();
 
+                collection.AddSingleton<IVkTokenStore, TokenStore>();
+                collection.AddSingleton<IDeviceIdStore, DeviceIdStore>();
+                collection.AddSingleton<IExchangeTokenStore, ExchangeTokenStore>();
+
                 collection.AddAudioBypass();
                 collection.AddVkNet();
 
@@ -89,6 +99,7 @@ namespace MusicX.Views
                 collection.AddTransient<ListenTogetherControlViewModel>();
                 collection.AddTransient<LyricsViewModel>();
                 collection.AddTransient<CaptchaModalViewModel>();
+                collection.AddTransient<AccountsWindowViewModel>();
 
                 collection.AddSingleton<NavigationService>();
                 collection.AddSingleton<ConfigService>();
@@ -148,10 +159,12 @@ namespace MusicX.Views
                     {
                         if (string.IsNullOrEmpty(config.AccessToken))
                         {
-                            var navigation = StaticService.Container.GetRequiredService<NavigationService>();
-                            var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
-                            var login = new LoginWindow(vkService, configService, logger, navigation, snackbarService);
-                            login.Show();
+                            if (string.IsNullOrEmpty(config.AnonToken))
+                                await container.GetRequiredService<IVkApiAuthAsync>()
+                                    .AuthorizeAsync(new AndroidApiAuthParams());
+                            
+                            ActivatorUtilities.CreateInstance<AccountsWindow>(container).Show();
+                            
                             this.Close();
                         }
                         else
@@ -175,20 +188,21 @@ namespace MusicX.Views
 
                                 this.Close();
                             }
-                            catch (VkApiMethodInvokeException e) when (e.ErrorCode is 5 or 1117)
+                            catch (VkApiMethodInvokeException ex) when (ex.ErrorCode is 5 or 1117)
                             {
                                 config.AccessToken = null;
-                                config.UserName = null;
+                                config.UserName = null!;
                                 config.UserId = 0;
+                                config.AccessTokenTtl = default;
+                                config.ExchangeToken = null;
 
+                                if (string.IsNullOrEmpty(config.AnonToken))
+                                    await container.GetRequiredService<IVkApiAuthAsync>()
+                                        .AuthorizeAsync(new AndroidApiAuthParams());
+                                
                                 await configService.SetConfig(config);
-
-                                var logger = StaticService.Container.GetRequiredService<Logger>();
-                                var navigation = StaticService.Container.GetRequiredService<NavigationService>();
-                                var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
-
-                                new LoginWindow(vkService, configService, logger, navigation, snackbarService, true)
-                                    .Show();
+                            
+                                ActivatorUtilities.CreateInstance<AccountsWindow>(container).Show();
 
                                 this.Close();
                             }
