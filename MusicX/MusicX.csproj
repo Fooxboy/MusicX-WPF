@@ -15,6 +15,12 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <TieredPGO>true</TieredPGO>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <AssemblyAttribute Include="MusicX.Services.BuildDateTime">
+      <_Parameter1>$([System.DateTime]::UtcNow.ToString("s"))</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
 
   <ItemGroup>
     <None Remove="Assets\icon.ico" />
