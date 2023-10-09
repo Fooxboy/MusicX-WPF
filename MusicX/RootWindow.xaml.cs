@@ -246,6 +246,10 @@ namespace MusicX
                     {
                         icon = SymbolRegular.Search24;
                     }
+                    else if (section.Title.ToLower().StartsWith("книги"))
+                    {
+                        continue;
+                    }
                     else
                     {
                         var number = rand.Next(0, icons.Count);

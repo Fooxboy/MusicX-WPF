@@ -191,9 +191,19 @@ public class PlayerService
 
             Application.Current.Dispatcher.BeginInvoke(
                 () => TrackLoadingStateChanged?.Invoke(this, new(PlayerLoadingState.Finished)));
-        }catch(Exception ex)
+        }
+        catch(Exception e)
         {
-
+            var properties = new Dictionary<string, string>
+            {
+#if DEBUG
+                { "IsDebug", "True" },
+#endif
+                {"Version", StaticService.Version }
+            };
+            Crashes.TrackError(e, properties);
+            logger.Error(e);
+            _snackbarService.Show("Ошибка", "Произошла ошибка при воспроизведении");
         }
        
     }
@@ -251,6 +261,7 @@ public class PlayerService
             
             Tracks.ReplaceRange(loadTask.Result);
             CurrentIndex = Tracks.IndexOf(CurrentTrack!);
+            NextPlayTrack = Tracks.ElementAtOrDefault(CurrentIndex + 1);
 
             if (firstTrack is null)
             {

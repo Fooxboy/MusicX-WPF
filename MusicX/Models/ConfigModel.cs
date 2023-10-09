@@ -5,7 +5,10 @@ namespace MusicX.Models
 {
     public class ConfigModel
     {
-        public string AccessToken { get; set; }
+        public string? AnonToken { get; set; }
+        public string? AccessToken { get; set; }
+        
+        public DateTimeOffset AccessTokenTtl { get; set; } = DateTimeOffset.Now + TimeSpan.FromHours(2.5);
 
         public long UserId { get; set; }
 
@@ -46,5 +49,9 @@ namespace MusicX.Models
         public double Width { get; set; } = 1440;
 
         public double Height { get; set; } = 960;
+        
+        public string? DeviceId { get; set; }
+        
+        public string? ExchangeToken { get; set; }
     }
 }

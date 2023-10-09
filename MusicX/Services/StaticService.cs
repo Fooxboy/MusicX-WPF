@@ -1,13 +1,24 @@
 ﻿using System;
+using System.Globalization;
 using System.Reflection;
 
-namespace MusicX.Services
+namespace MusicX.Services;
+
+public static class StaticService
 {
-    public static class StaticService
+    public static IServiceProvider Container { get; set; }
+    public static string Version { get; } = typeof(StaticService).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "1.0";
+    public static string BuildDate { get; } =
+        typeof(StaticService).Assembly.GetCustomAttribute<BuildDateTimeAttribute>()?.Date.ToLocalTime()
+            .ToString("d MMMM yyyy", CultureInfo.GetCultureInfo("ru-RU")) ?? "23 сентября 2023";
+}
+
+[AttributeUsage(AttributeTargets.Assembly)]
+public class BuildDateTimeAttribute : Attribute
+{
+    public DateTime Date { get; set; }
+    public BuildDateTimeAttribute(string date)
     {
-        public static IServiceProvider Container { get; set; }
-        public static string Version = typeof(StaticService).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "1.0";
-        public static string VersionKind = "";
-        public static string BuildDate = "23 сентября 2023";
+        Date = DateTime.Parse(date, CultureInfo.InvariantCulture);
     }
 }

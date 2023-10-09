@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Interop;
+using Windows.UI.Popups;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 
@@ -14,7 +17,7 @@ public class MusicXSnackbarService : ISnackbarService
     public TimeSpan DefaultTimeOut { get; set; } = TimeSpan.FromSeconds(5.0);
 
 
-    public void SetSnackbarPresenter(SnackbarPresenter contentPresenter)
+    public void SetSnackbarPresenter(SnackbarPresenter? contentPresenter)
     {
         _presenter = contentPresenter;
     }
@@ -23,7 +26,7 @@ public class MusicXSnackbarService : ISnackbarService
     {
         if (_presenter == null)
         {
-            throw new ArgumentNullException("The SnackbarPresenter didn't set previously.");
+            throw new InvalidOperationException("The SnackbarPresenter didn't set previously.");
         }
 
         return _presenter;
@@ -61,11 +64,6 @@ public class MusicXSnackbarService : ISnackbarService
 
     public void Show(string title, string message, ControlAppearance appearance, IconElement? icon, TimeSpan timeout)
     {
-        if (_presenter == null)
-        {
-            throw new ArgumentNullException(null, "The SnackbarPresenter didn't set previously.");
-        }
-
         if (Application.Current.Dispatcher.CheckAccess())
             ShowInternal(title, message, appearance, icon, timeout);
         else
@@ -75,7 +73,24 @@ public class MusicXSnackbarService : ISnackbarService
     private void ShowInternal(string title, string message, ControlAppearance appearance, IconElement? icon,
         TimeSpan timeout)
     {
-        _snackbar ??= new Snackbar(_presenter!);
+        if (_presenter is null)
+        {
+            var window = Application.Current.Windows.OfType<Window>().FirstOrDefault();
+            
+            if (window is null)
+                return;
+            
+            var handle = new WindowInteropHelper(window).EnsureHandle();
+
+            var dialog = new MessageDialog(message, title);
+            
+            WinRT.Interop.InitializeWithWindow.Initialize(dialog, handle);
+
+            dialog.ShowAsync();
+            return;
+        }
+        
+        _snackbar ??= new Snackbar(_presenter);
 
         _snackbar!.SetCurrentValue(Snackbar.TitleProperty, title);
         _snackbar!.SetCurrentValue(ContentControl.ContentProperty, message);

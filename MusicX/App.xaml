@@ -16,6 +16,7 @@
                 <ResourceDictionary x:Name="TextBlockStyles" Source="Styles/TextBlockStyles.xaml" />
                 <ResourceDictionary x:Name="NavBarStyles" Source="Styles/NavigationBarStyles.xaml" />
                 <ResourceDictionary x:Name="ModalFrameStyles" Source="Styles/ModalFrameStyles.xaml" />
+                <ResourceDictionary x:Name="MusicXWindowStyles" Source="Styles/MusicXWindowStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <FontFamily x:Key="SegoeFluentIcons">pack://application:,,,/;component/Fonts/#Segoe Fluent Icons</FontFamily>

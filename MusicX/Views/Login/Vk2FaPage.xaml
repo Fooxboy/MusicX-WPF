@@ -1,0 +1,119 @@
+﻿<UserControl x:Class="MusicX.Views.Login.Vk2FaPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:MusicX.Views.Login"
+             xmlns:login="clr-namespace:MusicX.ViewModels.Login"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:auth="clr-namespace:VkNet.AudioBypassService.Models.Auth;assembly=VkNet.AudioBypassService"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance login:AccountsWindowViewModel}"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </UserControl.Resources>
+    
+    <ui:Card HorizontalAlignment="Center">
+        <Grid>
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                <Path HorizontalAlignment="Center"
+                      Data="{DynamicResource VkLogoSvg}">
+                    <Path.Fill>
+                        <SolidColorBrush Color="{DynamicResource SystemAccentColor}" />
+                    </Path.Fill>
+                </Path>
+                <ui:TextBlock Appearance="Secondary" Margin="0,16,0,0"
+                              FontTypography="Subtitle"
+                              HorizontalAlignment="Center"
+                              FontFamily="{StaticResource VKSansDemiBold}">Подтвердите вход</ui:TextBlock>
+                <ContentControl Margin="0,8,0,16" HorizontalAlignment="Center" MaxWidth="272" TextBlock.TextAlignment="Center">
+                    <ContentControl.Style>
+                        <Style TargetType="ContentControl">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate>
+                                        <ui:TextBlock TextWrapping="Wrap">
+                                            <Run Text="Введите код двухфакторной аутентификации" FontWeight="Light" />
+                                        </ui:TextBlock>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Vk2FaResponse.ValidationType, FallbackValue={x:Null}}" Value="{x:Static auth:LoginWay.Push}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate>
+                                                <ui:TextBlock TextWrapping="Wrap">
+                                                    <Run Text="Мы отправили push-уведомление с кодом на ваше устройство" FontWeight="Light" />
+                                                </ui:TextBlock>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Vk2FaResponse.ValidationType, FallbackValue={x:Null}}" Value="{x:Static auth:LoginWay.TwoFactorApp}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate>
+                                                <ui:TextBlock TextWrapping="Wrap">
+                                                    <Run Text="Введите код из приложения аутентификатора" FontWeight="Light" />
+                                                </ui:TextBlock>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Vk2FaResponse.ValidationType, FallbackValue={x:Null}}" Value="{x:Static auth:LoginWay.Sms}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate>
+                                                <ui:TextBlock TextWrapping="Wrap">
+                                                    <Run Text="Мы отправили SMS c кодом на номер " FontWeight="Light" />
+                                                    <Run>
+                                                        <Run.Text>
+                                                            <PriorityBinding>
+                                                                <Binding Path="Vk2FaResponse.Phone" IsAsync="True" />
+                                                                <Binding Path="Login" IsAsync="True" />
+                                                            </PriorityBinding>
+                                                        </Run.Text>
+                                                    </Run>
+                                                </ui:TextBlock>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Vk2FaResponse.ValidationType, FallbackValue={x:Null}}" Value="{x:Static auth:LoginWay.CallReset}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate>
+                                                <ui:TextBlock TextWrapping="Wrap">
+                                                    <Run Text="Вам поступит звонок-сброс на номер " FontWeight="Light" />
+                                                    <Run>
+                                                        <Run.Text>
+                                                            <PriorityBinding>
+                                                                <Binding Path="Vk2FaResponse.Phone" IsAsync="True" />
+                                                                <Binding Path="Login" IsAsync="True" />
+                                                            </PriorityBinding>
+                                                        </Run.Text>
+                                                    </Run>
+                                                    <Run Text=" введите последние " FontWeight="Light" />
+                                                    <Run Text="{Binding Vk2FaResponse.CodeLength, FallbackValue=6}" />
+                                                    <Run Text=" цифр" FontWeight="Light" />
+                                                </ui:TextBlock>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ContentControl.Style>
+                </ContentControl>
+                <ui:TextBox Name="CodeBox" PlaceholderText="Код" ClearButtonEnabled="False" PreviewTextInput="CodeBox_OnPreviewTextInput" />
+                <ui:Button Width="272" Margin="0,20,0,0" Appearance="Primary" Command="{Binding Vk2FaCompleteCommand}" CommandParameter="{Binding Text, ElementName=CodeBox}">Продолжить</ui:Button>
+                <ui:Button Width="272" Margin="0,10,0,0" Appearance="Light" Command="{Binding Vk2FaCompleteCommand}"
+                           Visibility="{Binding Vk2FaCanUsePassword, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    Войти с помощью пароля
+                </ui:Button>
+            </StackPanel>
+        </Grid>
+    </ui:Card>
+</UserControl>

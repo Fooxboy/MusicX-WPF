@@ -52,11 +52,11 @@ namespace VkNet.AudioBypassService.Utils
 			var content = new ByteArrayContent(requestStream.ToArray());
 			content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/x-protobuffer");
 
-			var response = await _httpClient.PostAsync("https://android.clients.google.com/checkin", content).ConfigureAwait(false);
+			var response = await _httpClient.PostAsync("https://android.clients.google.com/checkin", content);
 
 			response.EnsureSuccessStatusCode();
 
-			var responseStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+			var responseStream = await response.Content.ReadAsStreamAsync();
 
 			var androidCheckinResponse = Serializer.Deserialize<AndroidCheckinResponse>(responseStream);
 
@@ -75,11 +75,11 @@ namespace VkNet.AudioBypassService.Utils
 			};
 			httpRequestMessage.Headers.TryAddWithoutValidation("Authorization", $"AidLogin {credentials.AndroidId}:{credentials.SecurityToken}");
 
-			var response = await _httpClient.SendAsync(httpRequestMessage).ConfigureAwait(false);
+			var response = await _httpClient.SendAsync(httpRequestMessage);
 
 			response.EnsureSuccessStatusCode();
 
-			var registerResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+			var registerResponse = await response.Content.ReadAsStringAsync();
 
 			return registerResponse;
 		}

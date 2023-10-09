@@ -14,9 +14,12 @@ using MusicX.Core.Services;
 using MusicX.Models;
 using MusicX.Services;
 using MusicX.ViewModels;
+using MusicX.Views.Login;
 using MusicX.Views.Modals;
 using NLog;
 using Ookii.Dialogs.Wpf;
+using VkNet.Abstractions;
+using VkNet.AudioBypassService.Models.Auth;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 using Button = Wpf.Ui.Controls.Button;
@@ -152,7 +155,7 @@ namespace MusicX.Views
                 }
                 
 
-                this.VersionApp.Text = StaticService.Version + " " + StaticService.VersionKind;
+                this.VersionApp.Text = StaticService.Version;
                 this.BuildDate.Text = StaticService.BuildDate;
 
                 if (config.IgnoredArtists is null)
@@ -188,16 +191,19 @@ namespace MusicX.Views
         private async void DeleteAccount_Click(object sender, RoutedEventArgs e)
         {
             config.AccessToken = null;
-            config.UserName = null;
+            config.UserName = null!;
             config.UserId = 0;
+            config.AccessTokenTtl = default;
+            config.ExchangeToken = null;
 
+            if (string.IsNullOrEmpty(config.AnonToken))
+                await StaticService.Container.GetRequiredService<IVkApiAuthAsync>()
+                    .AuthorizeAsync(new AndroidApiAuthParams());
+                                
             await configService.SetConfig(config);
-
-            var logger = StaticService.Container.GetRequiredService<Logger>();
-            var navigation = StaticService.Container.GetRequiredService<NavigationService>();
-            var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
-
-            new LoginWindow(vkService, configService, logger, navigation, snackbarService).Show();
+                            
+            ActivatorUtilities.CreateInstance<AccountsWindow>(StaticService.Container).Show();
+            
             Window.GetWindow(this)?.Close();
         }
 

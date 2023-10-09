@@ -2,10 +2,17 @@ using System;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using VkNet.Abstractions;
 using VkNet.Abstractions.Authorization;
 using VkNet.Abstractions.Utils;
 using VkNet.AudioBypassService.Abstractions;
+using VkNet.AudioBypassService.Abstractions.Categories;
+using VkNet.AudioBypassService.Categories;
+using VkNet.AudioBypassService.Flows;
 using VkNet.AudioBypassService.Utils;
+using VkNet.Extensions.DependencyInjection;
+using IAuthCategory = VkNet.AudioBypassService.Abstractions.Categories.IAuthCategory;
+using VkApiInvoke = VkNet.AudioBypassService.Utils.VkApiInvoke;
 
 namespace VkNet.AudioBypassService.Extensions
 {
@@ -19,11 +26,15 @@ namespace VkNet.AudioBypassService.Extensions
 			}
 
 			services.TryAddSingleton<FakeSafetyNetClient>();
-			services.TryAddSingleton<IVkApiInvoker, VkApiInvoker>();
-			services.TryAddSingleton<IVkAndroidAuthorization, VkAndroidAuthorization>();
-			services.TryAddSingleton<IAuthorizationFlow>(s => s.GetRequiredService<IVkAndroidAuthorization>());
+			services.TryAddSingleton<LibVerifyClient>();
+			services.TryAddSingleton<IAuthorizationFlow, PasswordAuthorizationFlow>();
 			services.TryAddSingleton<IRestClient, RestClientWithUserAgent>();
-			services.TryAddSingleton<IReceiptParser, ReceiptParser>();
+			services.TryAddSingleton<IDeviceIdStore, DefaultDeviceIdStore>();
+			services.TryAddSingleton<ITokenRefreshHandler, TokenRefreshHandler>();
+			services.TryAddSingleton<IVkApiInvoke, VkApiInvoke>();
+			
+			services.TryAddSingleton<IAuthCategory, AuthCategory>();
+			services.TryAddSingleton<ILoginCategory, LoginCategory>();
 
 			return services;
 		}
