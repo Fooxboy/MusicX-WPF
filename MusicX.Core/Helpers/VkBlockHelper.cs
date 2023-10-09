@@ -714,15 +714,27 @@ namespace MusicX.Core.Helpers
                 }
             }
 
-            response.Section.Blocks.RemoveAll(block => 
-                block is { Banners.Count: > 0 } && 
+            var snippetsBannerIndex = response.Section.Blocks.FindIndex(b => b is { Layout.Name: "snippets_banner" });
+
+            if (snippetsBannerIndex >= 0)
+            {
+                response.Section.Blocks.RemoveAt(snippetsBannerIndex);
+                response.Section.Blocks.RemoveAt(snippetsBannerIndex); // excess separator
+            }
+
+            response.Section.Blocks.RemoveAll(block =>
+                block is { DataType: "radiostations" } or { Layout.Title: "Радиостанции" } ||
                 (
-                    block.Banners[0].ClickAction.Action.Url.Contains("subscription") ||
-                    block.Banners[0].ClickAction.Action.Url.Contains("combo") ||
-                    block.Banners[0].ClickAction.Action.Url.Contains("https://vk.com/app") ||
-                    block.Banners[0].ClickAction.Action.Url.Contains("https://vk.com/vk_music"
+                    block is { Banners.Count: > 0 } &&
+                    (
+                        block.Banners[0].ClickAction.Action.Url.Contains("subscription") ||
+                        block.Banners[0].ClickAction.Action.Url.Contains("combo") ||
+                        block.Banners[0].ClickAction.Action.Url.Contains("https://vk.com/app") ||
+                        block.Banners[0].ClickAction.Action.Url.Contains("https://vk.com/vk_music"
+                        )
+                    )
                 )
-            ));
+            );
 
             for (var i = 0; i < response.Section.Blocks.Count; i++)
             {
