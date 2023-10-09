@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Net.Cache;
@@ -505,6 +506,9 @@ namespace MusicX.Controls
 
                 if (this.FindAncestor<PlaylistView>() is { DataContext: PlaylistViewModel viewModel })
                     await player.PlayAsync(new VkPlaylistPlaylist(vkService, viewModel.PlaylistData), Audio.ToTrack());
+                //костыль для реков, да мне лень править.
+                else if (Audio.ParentBlockId == "recomms" && this.FindAncestor<BlockControl>() is { DataContext: Block { Audios.Count: > 0 } block })
+                    await player.PlayAsync(new ListPlaylist(block.Audios.Select(TrackExtensions.ToTrack).ToImmutableList()), Audio.ToTrack());
                 else
                     await player.PlayAsync(new VkBlockPlaylist(vkService, Audio.ParentBlockId, LoadOtherTracks), Audio.ToTrack());
             }catch(Exception ex)
@@ -720,20 +724,22 @@ namespace MusicX.Controls
                 var items = await vk.GetRecommendationsAudio(Audio.OwnerId + "_" + Audio.Id);
 
                 var navigation = StaticService.Container.GetRequiredService<NavigationService>();
-
-                var ids = new List<string>();
-
+                
                 foreach (var audio in items.Items)
                 {
-                    ids.Add(audio.OwnerId + "_" + audio.Id + "_" + audio.AccessKey);
+                    audio.ParentBlockId = "recomms";
                 }
 
-                var block = new Block { Audios = items.Items, AudiosIds = ids, DataType = "music_audios", Layout = new Layout() { Name = "list" } };
+                var ids = items.Items.Select(audio => $"{audio.OwnerId}_{audio.Id}_{audio.AccessKey}").ToList();
+
+                var block = new Block { Id = "recomms", Audios = items.Items, AudiosIds = ids, DataType = "music_audios", Layout = new Layout() { Name = "list" } };
                 var title = new Block { DataType = "none", Layout = new Layout() { Name = "header", Title = $"Треки похожие на \"{Audio.Title}\"" } };
 
-                var blocks = new List<Block>();
-                blocks.Add(title);
-                blocks.Add(block);
+                var blocks = new List<Block>
+                {
+                    title,
+                    block
+                };
 
                 navigation.OpenBlocks(blocks);
             }
