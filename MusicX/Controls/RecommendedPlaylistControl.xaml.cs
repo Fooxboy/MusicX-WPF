@@ -37,7 +37,6 @@ namespace MusicX.Controls
         public RecommendedPlaylistControl()
         {
             InitializeComponent();
-            this.Loaded += RecommendedPlaylistControl_Loaded;
         }
 
         private void RecommendedPlaylistControl_Loaded(object sender, RoutedEventArgs e)
@@ -208,6 +207,12 @@ namespace MusicX.Controls
                 Debug.WriteLine(ex.Message);
                 nowLoad = false;
             }
+        }
+
+        private void RecommendedPlaylistControl_OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            var player = StaticService.Container.GetRequiredService<PlayerService>();
+            player.CurrentPlaylistChanged -= PlayerOnCurrentPlaylistChanged;
         }
     }
 }

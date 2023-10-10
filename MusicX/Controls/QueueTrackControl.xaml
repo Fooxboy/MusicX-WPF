@@ -10,7 +10,8 @@
              d:DesignHeight="80" d:DesignWidth="300"
              d:DataContext="{d:DesignInstance Type={x:Type player:PlaylistTrack}}"
              x:Name="Control"
-             DataContextChanged="QueueTrackControl_OnDataContextChanged">
+             DataContextChanged="QueueTrackControl_OnDataContextChanged"
+             Unloaded="QueueTrackControl_OnUnloaded">
     <UserControl.Resources>
         <converters:TrackArtistsToStringConverter x:Key="ArtistsToStringConverter" />
         <converters:EmptyStringToVisibilityConverter x:Key="StringToVisibilityConverter" />

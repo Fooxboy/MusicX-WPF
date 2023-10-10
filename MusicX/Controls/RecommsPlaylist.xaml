@@ -8,7 +8,8 @@
              mc:Ignorable="d"
              Name="Control"
              d:DesignHeight="300" d:DesignWidth="300"
-             Loaded="RecommsPlaylist_OnLoaded">
+             Loaded="RecommsPlaylist_OnLoaded"
+             Unloaded="RecommsPlaylist_OnUnloaded">
     <UserControl.Template>
         <ControlTemplate TargetType="local:RecommsPlaylist">
             <Grid>

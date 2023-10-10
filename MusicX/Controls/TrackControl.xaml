@@ -9,6 +9,7 @@
     d:DesignHeight="100"
     d:DesignWidth="800"
     Loaded="UserControl_Loaded"
+    Unloaded="TrackControl_OnUnloaded"
     MouseEnter="Grid_MouseEnter"
     MouseLeave="Grid_MouseLeave"
     mc:Ignorable="d">

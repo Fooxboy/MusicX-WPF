@@ -880,5 +880,11 @@ namespace MusicX.Controls
                     "Произошла ошибка при добавлении добавлении исполнителя в черный список");
             }
         }
+
+        private void TrackControl_OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            player.TrackChangedEvent -= Player_TrackChangedEvent;
+            player.PlayStateChangedEvent -= Player_PlayStateChangedEvent;
+        }
     }
 }

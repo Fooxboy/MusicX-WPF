@@ -112,4 +112,9 @@ public partial class QueueTrackControl : UserControl
     {
         PlayerOnPlayStateChangedEvent(_player, EventArgs.Empty);
     }
+
+    private void QueueTrackControl_OnUnloaded(object sender, RoutedEventArgs e)
+    {
+        _player.PlayStateChangedEvent -= PlayerOnPlayStateChangedEvent;
+    }
 }

@@ -400,5 +400,11 @@ namespace MusicX.Controls
                 snackbarService.Show("Ошибка", "Мы не смогли обновить очередь");
             }
         }
+
+        private void PlaylistControl_OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            var player = StaticService.Container.GetRequiredService<PlayerService>();
+            player.CurrentPlaylistChanged -= PlayerOnCurrentPlaylistChanged;
+        }
     }
 }

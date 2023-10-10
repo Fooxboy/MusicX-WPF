@@ -91,4 +91,9 @@ public partial class RecommsPlaylist : UserControl
         _playerService.CurrentPlaylistChanged += PlayerServiceOnCurrentPlaylistChanged;
         PlayerServiceOnCurrentPlaylistChanged(_playerService, EventArgs.Empty);
     }
+
+    private void RecommsPlaylist_OnUnloaded(object sender, RoutedEventArgs e)
+    {
+        _playerService.CurrentPlaylistChanged -= PlayerServiceOnCurrentPlaylistChanged;
+    }
 }
