@@ -35,6 +35,7 @@ public class AccountsWindowViewModel : BaseViewModel
     private readonly ConfigService _configService;
     private readonly Logger _logger;
     private readonly IExchangeTokenStore _exchangeTokenStore;
+    private readonly IVkApi _vkApi;
     public ICommand LoginCommand { get; }
     public ICommand LoginPasswordCommand { get; }
     
@@ -64,7 +65,7 @@ public class AccountsWindowViewModel : BaseViewModel
 
     public AccountsWindowViewModel(IAuthCategory authCategory, ISnackbarService snackbarService,
         NavigationService navigationService, IVkApiAuthAsync vkApiAuth, ILoginCategory loginCategory,
-        VkService vkService, ConfigService configService, Logger logger, IExchangeTokenStore exchangeTokenStore)
+        VkService vkService, ConfigService configService, Logger logger, IExchangeTokenStore exchangeTokenStore, IVkApi vkApi)
     {
         _authCategory = authCategory;
         _snackbarService = snackbarService;
@@ -75,6 +76,7 @@ public class AccountsWindowViewModel : BaseViewModel
         _configService = configService;
         _logger = logger;
         _exchangeTokenStore = exchangeTokenStore;
+        _vkApi = vkApi;
 
         void Handler(Exception e)
         {
@@ -160,6 +162,8 @@ public class AccountsWindowViewModel : BaseViewModel
                         new[] { LoginWay.Push, LoginWay.Email }, arg));
 
         var (token, profile) = await _authCategory.GetExchangeToken();
+
+        _vkApi.UserId = profile.Id;
 
         _configService.Config.UserId = profile.Id;
         _configService.Config.UserName = $"{profile.FirstName} {profile.LastName}";
