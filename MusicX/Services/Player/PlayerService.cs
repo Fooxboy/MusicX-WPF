@@ -126,6 +126,7 @@ public class PlayerService
                 return;
             }
 
+
             _tokenSource?.Cancel();
             _tokenSource?.Dispose();
             _tokenSource = new();
@@ -139,7 +140,6 @@ public class PlayerService
             CurrentTrack = track;
             CurrentIndex = Tracks.IndexOf(track);
             NextPlayTrack = Tracks.ElementAtOrDefault(CurrentIndex + 1);
-
 
             var config = await _configService.GetConfig();
 

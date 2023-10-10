@@ -46,6 +46,12 @@ namespace MusicX.Controls.Blocks
 
             Title.Text = block.Layout.Title;
 
+            if(block.Layout.TopTitle is not null || block.Layout.Subtitle is not null)
+            {
+                Subtitle.Text = block.Layout.TopTitle?.Text ?? block.Layout.Subtitle;
+                Subtitle.Visibility = Visibility.Visible;
+            }
+
             if (block.Badge != null)
             {
                 BadgeHeader.Text = block.Badge.Text;

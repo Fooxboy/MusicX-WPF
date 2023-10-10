@@ -18,5 +18,11 @@ namespace MusicX.Core.Models
 
         [JsonProperty("is_editable")]
         public int? IsEditable { get; set; }
+
+        [JsonProperty("top_title")]
+        public TopTitle TopTitle { get; set; }
+
+        [JsonProperty("subtitle")]
+        public string Subtitle { get; set; }
     }
 }

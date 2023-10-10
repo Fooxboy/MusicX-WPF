@@ -166,7 +166,6 @@ namespace MusicX
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-
             try
             {
                 var os = Environment.OSVersion;
@@ -195,8 +194,6 @@ namespace MusicX
                     SymbolRegular.PlayCircle48,
                     SymbolRegular.HeadphonesSoundWave20,
                     SymbolRegular.Speaker228
-
-
                 };
 
                 var updatesSection = await vkService.GetAudioCatalogAsync("https://vk.com/audio?section=updates");
