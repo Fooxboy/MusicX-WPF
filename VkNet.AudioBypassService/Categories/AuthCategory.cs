@@ -47,28 +47,28 @@ public partial class AuthCategory : IAuthCategory
         return _anonToken = AnonTokenRegex().Match(response.Value).Groups["token"].Value;
     }
 
-    public async Task<AuthValidateAccountResponse> ValidateAccountAsync(string login, bool forcePassword = false, IEnumerable<LoginWay> loginWays = null)
+    public Task<AuthValidateAccountResponse> ValidateAccountAsync(string login, bool forcePassword = false, bool passkeySupported = false, IEnumerable<LoginWay> loginWays = null)
     {
-        return await _apiInvoke.CallAsync<AuthValidateAccountResponse>("auth.validateAccount", new()
+        return _apiInvoke.CallAsync<AuthValidateAccountResponse>("auth.validateAccount", new()
         {
             { "login", login },
             { "force_password", forcePassword },
             { "supported_ways", loginWays },
             { "flow_type", "auth_without_password" },
-            { "device_id", await _deviceIdStore.GetDeviceIdAsync() }
+            { "api_id", 2274003 },
+            { "passkey_supported", passkeySupported }
         });
     }
 
-    public async Task<AuthValidatePhoneResponse> ValidatePhoneAsync(string phone, string sid, bool allowCallReset = true, IEnumerable<LoginWay> loginWays = null)
+    public Task<AuthValidatePhoneResponse> ValidatePhoneAsync(string phone, string sid, bool allowCallReset = true, IEnumerable<LoginWay> loginWays = null)
     {
-        return await _apiInvoke.CallAsync<AuthValidatePhoneResponse>("auth.validatePhone", new()
+        return _apiInvoke.CallAsync<AuthValidatePhoneResponse>("auth.validatePhone", new()
         {
             { "phone", phone },
             { "sid", sid },
             { "supported_ways", loginWays },
-            { "flow_type", "auth_without_password" },
-            { "allow_callreset", allowCallReset },
-            { "device_id", await _deviceIdStore.GetDeviceIdAsync() }
+            { "flow_type", "tg_flow" },
+            { "allow_callreset", allowCallReset }
         });
     }
 
@@ -99,7 +99,6 @@ public partial class AuthCategory : IAuthCategory
     {
         var response = await _apiInvoke.CallAsync<AuthRefreshTokensResponse>("auth.refreshTokens", new()
         {
-            { "device_id", await _deviceIdStore.GetDeviceIdAsync() },
             { "exchange_tokens", exchangeToken },
             { "scope", "all" },
             {"initiator", "expired_token"},
@@ -112,11 +111,10 @@ public partial class AuthCategory : IAuthCategory
         return response.Success[0].AccessToken;
     }
 
-    public async Task<ExchangeTokenResponse> GetExchangeToken(UsersFields fields = null)
+    public Task<ExchangeTokenResponse> GetExchangeToken(UsersFields fields = null)
     {
-        return await _apiInvoke.CallAsync<ExchangeTokenResponse>("execute.getUserInfo", new()
+        return _apiInvoke.CallAsync<ExchangeTokenResponse>("execute.getUserInfo", new()
         {
-            { "device_id", await _deviceIdStore.GetDeviceIdAsync() },
             { "func_v", 30 },
             { "androidVersion", 32 },
             { "androidManufacturer", "MusicX" },

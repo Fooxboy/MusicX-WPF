@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using VkNet.Abstractions;
 using VkNet.AudioBypassService.Abstractions;
-using VkNet.AudioBypassService.Abstractions.Categories;
+using VkNet.AudioBypassService.Models.Auth;
 using VkNet.Extensions.DependencyInjection;
+using IAuthCategory = VkNet.AudioBypassService.Abstractions.Categories.IAuthCategory;
 
 namespace VkNet.AudioBypassService.Utils;
 
@@ -22,6 +24,15 @@ public class TokenRefreshHandler : ITokenRefreshHandler
 
     public async Task<string> RefreshTokenAsync(string oldToken)
     {
+        if (oldToken.StartsWith("anonym"))
+        {
+            var auth = _serviceProvider.GetRequiredService<IVkApiAuthAsync>();
+            
+            await auth.AuthorizeAsync(new AndroidApiAuthParams());
+            
+            return _tokenStore.Token;
+        }
+        
         if (await _exchangeTokenStore.GetExchangeTokenAsync() is not { } exchangeToken)
             return null;
 

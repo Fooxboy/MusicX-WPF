@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using AsyncAwaitBestPractices;
@@ -15,7 +14,6 @@ using QRCoder.Xaml;
 using VkNet.Abstractions;
 using VkNet.AudioBypassService.Abstractions;
 using VkNet.AudioBypassService.Abstractions.Categories;
-using VkNet.AudioBypassService.Exceptions;
 using VkNet.AudioBypassService.Models.Auth;
 using Wpf.Ui;
 using Wpf.Ui.Common;
@@ -36,6 +34,7 @@ public class AccountsWindowViewModel : BaseViewModel
     private readonly Logger _logger;
     private readonly IExchangeTokenStore _exchangeTokenStore;
     private readonly IVkApi _vkApi;
+    private readonly IEcosystemCategory _ecosystemCategory;
     public ICommand LoginCommand { get; }
     public ICommand LoginPasswordCommand { get; }
     
@@ -62,10 +61,11 @@ public class AccountsWindowViewModel : BaseViewModel
     public event EventHandler? LoggedIn;
 
     private TaskCompletionSource<string>? _codeTask;
+    private AndroidGrantType _grantType = AndroidGrantType.Password;
 
     public AccountsWindowViewModel(IAuthCategory authCategory, ISnackbarService snackbarService,
         NavigationService navigationService, IVkApiAuthAsync vkApiAuth, ILoginCategory loginCategory,
-        VkService vkService, ConfigService configService, Logger logger, IExchangeTokenStore exchangeTokenStore, IVkApi vkApi)
+        VkService vkService, ConfigService configService, Logger logger, IExchangeTokenStore exchangeTokenStore, IVkApi vkApi, IEcosystemCategory ecosystemCategory)
     {
         _authCategory = authCategory;
         _snackbarService = snackbarService;
@@ -77,6 +77,7 @@ public class AccountsWindowViewModel : BaseViewModel
         _logger = logger;
         _exchangeTokenStore = exchangeTokenStore;
         _vkApi = vkApi;
+        _ecosystemCategory = ecosystemCategory;
 
         void Handler(Exception e)
         {
@@ -99,8 +100,21 @@ public class AccountsWindowViewModel : BaseViewModel
 
     private async Task Vk2FaCompleteAsync(string? arg)
     {
-        if (string.IsNullOrEmpty(arg) || !int.TryParse(arg, out var code) || arg.Length < Vk2FaResponse?.CodeLength)
+        if (string.IsNullOrEmpty(arg) || !int.TryParse(arg, out _) || arg.Length < Vk2FaResponse?.CodeLength)
             return;
+
+        if (_grantType == AndroidGrantType.PhoneConfirmationSid)
+        {
+            var response = await _ecosystemCategory.CheckOtpAsync(Sid, Vk2FaResponse!.ValidationType, arg);
+
+            Sid = response.Sid;
+
+            if (response is { ProfileExist: true, CanSkipPassword: false })
+            {
+                OpenPage(AccountsWindowPage.EnterPassword);
+                return;
+            }
+        }
 
         if (_codeTask is not null)
         {
@@ -159,7 +173,10 @@ public class AccountsWindowViewModel : BaseViewModel
             return;
         
         await _vkApiAuth.AuthorizeAsync(new AndroidApiAuthParams(Login, Sid, ActionRequestedAsync, 
-                        new[] { LoginWay.Push, LoginWay.Email }, arg));
+                        new[] { LoginWay.Push, LoginWay.Email }, arg)
+        {
+            AndroidGrantType = _grantType
+        });
 
         var (token, profile) = await _authCategory.GetExchangeToken();
 
@@ -222,7 +239,7 @@ public class AccountsWindowViewModel : BaseViewModel
         if (string.IsNullOrEmpty(arg))
             return;
 
-        var (_, isPhone, authFlow, flowNames, sid) = await _authCategory.ValidateAccountAsync(arg, loginWays:
+        var (_, isPhone, authFlow, flowNames, sid, nextStep) = await _authCategory.ValidateAccountAsync(arg, loginWays:
             new[]
             {
                 LoginWay.Password, LoginWay.Push, LoginWay.Sms, LoginWay.CallReset, LoginWay.ReserveCode,
@@ -231,7 +248,7 @@ public class AccountsWindowViewModel : BaseViewModel
 
         if (flowNames.All(b => b != AuthType.Password && b != AuthType.Otp))
         {
-            _snackbarService.Show("Упс!", "К сожалению, плеер не поддерживает вход с аккаунтом без пароля, воспользуйтесь QR-кодом или установите пароль.");
+            _snackbarService.Show("Упс!", "К сожалению, плеер не поддерживает вход с аккаунтом без пароля, установите пароль.");
             return;
         }
 
@@ -239,7 +256,7 @@ public class AccountsWindowViewModel : BaseViewModel
         Login = arg;
         Vk2FaCanUsePassword = flowNames.Any(b => b == AuthType.Password);
 
-        // TODO: implement without password flow
+        // TODO implement without password flow
         /*if (isPhone && authFlow == AuthFlow.NeedValidation)
         {
             Vk2FaResponse = await _authCategory.ValidatePhoneAsync(arg, sid,
@@ -252,7 +269,35 @@ public class AccountsWindowViewModel : BaseViewModel
             return;
         }*/
         
-        OpenPage(AccountsWindowPage.EnterPassword);
+        if (nextStep is null || nextStep.VerificationMethod == LoginWay.Password)
+        {
+            OpenPage(AccountsWindowPage.EnterPassword);
+            return;
+        }
+        
+        Vk2FaCanUsePassword = false;
+
+        if (nextStep.VerificationMethod == LoginWay.Sms)
+        {
+            var (_, otpSid, smsInfo, codeLength) = await _ecosystemCategory.SendOtpSmsAsync(Sid);
+
+            Sid = otpSid;
+            
+            _grantType = AndroidGrantType.PhoneConfirmationSid;
+
+            Vk2FaResponse = new(nextStep.VerificationMethod, LoginWay.None, Sid, 0, codeLength, false, smsInfo);
+            OpenPage(AccountsWindowPage.Vk2Fa);
+            return;
+        }
+
+        if (nextStep.VerificationMethod == LoginWay.Codegen)
+        {
+            Vk2FaResponse = new(nextStep.VerificationMethod, LoginWay.None, Sid, 0, 6, false, null);
+            OpenPage(AccountsWindowPage.Vk2Fa);
+            return;
+        }
+
+        // TODO nextStep.HasAnotherVerificationMethods
     }
 }
 
@@ -260,7 +305,5 @@ public enum AccountsWindowPage
 {
     EnterLogin,
     EnterPassword,
-    Vk2Fa,
-    Totp,
-    Captcha
+    Vk2Fa
 }

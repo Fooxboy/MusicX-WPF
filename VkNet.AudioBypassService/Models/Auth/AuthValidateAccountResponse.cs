@@ -7,7 +7,9 @@ using VkNet.Utils.JsonConverter;
 
 namespace VkNet.AudioBypassService.Models.Auth;
 
-public record AuthValidateAccountResponse(bool IsEmail, bool IsPhone, AuthFlow FlowName, ReadOnlyCollection<AuthType> FlowNames, string Sid);
+public record AuthValidateAccountResponse(bool IsEmail, bool IsPhone, AuthFlow FlowName, ReadOnlyCollection<AuthType> FlowNames, string Sid, NextVerificationStep NextStep);
+
+public record NextVerificationStep(LoginWay VerificationMethod, bool HasAnotherVerificationMethods, [CanBeNull] string ExternalId);
 
 [JsonConverter(typeof(SafetyEnumJsonConverter))]
 public class AuthFlow : SafetyEnum<AuthFlow>

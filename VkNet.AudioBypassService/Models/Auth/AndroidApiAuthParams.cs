@@ -71,6 +71,7 @@ public class AndroidGrantType : SafetyEnum<AndroidGrantType>
 {
     public static readonly AndroidGrantType Password = RegisterPossibleValue("password");
     public static readonly AndroidGrantType Passkey = RegisterPossibleValue("passkey");
+    public static readonly AndroidGrantType PhoneConfirmationSid = RegisterPossibleValue("phone_confirmation_sid");
 }
 
 public record AuthState;

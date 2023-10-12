@@ -35,6 +35,7 @@ namespace VkNet.AudioBypassService.Extensions
 			
 			services.TryAddSingleton<IAuthCategory, AuthCategory>();
 			services.TryAddSingleton<ILoginCategory, LoginCategory>();
+			services.TryAddSingleton<IEcosystemCategory, EcosystemCategory>();
 
 			return services;
 		}

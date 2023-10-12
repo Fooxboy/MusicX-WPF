@@ -110,7 +110,9 @@ internal abstract class VkAndroidAuthorizationBase : IAuthorizationFlow
                 { "password", authParams.Password },
                 { "grant_type", authParams.AndroidGrantType },
                 { "2fa_supported", true },
+                { "vk_connect_auth", true },
                 { "libverify_support", false }, // TODO: test lib verify cringe
+                { "sid", authParams.Sid },
                 { "scope", "all" },
                 { "supported_ways", authParams.SupportedWays },
                 { "device_id", await GetDeviceIdAsync() },

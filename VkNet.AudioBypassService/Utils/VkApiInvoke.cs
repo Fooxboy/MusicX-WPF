@@ -148,7 +148,7 @@ public class VkApiInvoke : IVkApiInvoke
             {
                 return VkErrors.IfErrorThrowException(response.Value)["response"]!;
             }
-            catch (VkApiMethodInvokeException e) when (e.ErrorCode is 5 or 1117) // token has expired
+            catch (VkApiMethodInvokeException e) when (e.ErrorCode is 5 or 1117 or 1114) // token has expired
             {
                 if (await _tokenRefreshHandler.RefreshTokenAsync(_tokenStore.Token) is not { } newToken)
                     throw;
