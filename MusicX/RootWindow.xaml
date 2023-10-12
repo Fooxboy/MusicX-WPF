@@ -1,4 +1,4 @@
-﻿<ui:FluentWindow
+﻿<views:MusicXWindow
     x:Class="MusicX.RootWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -7,19 +7,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wpfui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:views="clr-namespace:MusicX.Views"
     d:DesignHeight="720"
     d:DesignWidth="1280"
-    Height="960"
-    Width="1440"
     KeyDown="Window_KeyDown"
     Loaded="Window_Loaded"
     Closing="RootWindow_OnClosing"
-    Title="MusicX"
+    Title="MusicX Player"
     WindowStartupLocation="CenterScreen"
-    Background="#202020"
-    ExtendsContentIntoTitleBar="True"
-    WindowBackdropType="Mica"
-    WindowCornerPreference="Round"
     mc:Ignorable="d">
 
     <Window.TaskbarItemInfo>
@@ -140,12 +135,7 @@
     </Window.Resources>
 
     <Grid x:Name="rootGrid">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-
-        <Grid Grid.Row="1">
+        <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
@@ -212,7 +202,7 @@
             </Grid>
         </Grid>
 
-        <Grid Grid.Row="1">
+        <Grid>
             <StackPanel VerticalAlignment="Bottom">
                 <Grid>
                     <ui:SnackbarPresenter
@@ -243,34 +233,6 @@
                     </controls:PlayerControl.RenderTransform>
                 </controls:PlayerControl>
             </StackPanel>
-
-            <controls:ModalFrame x:Name="ModalFrame" />
         </Grid>
-
-
-        <ui:TitleBar
-            x:Name="WpfTitleBar"
-            Grid.Row="0"
-            Title="Music X Player"
-            Height="35">
-            <ui:TitleBar.Icon>
-                <ui:ImageIcon Source="/StoreLogo.scale-400.png" />
-            </ui:TitleBar.Icon>
-        </ui:TitleBar>
-
-        <!--<Rectangle RadiusX="99" RadiusY="99" HorizontalAlignment="Right" Margin="0 8 150 0" Height="35" Fill="Red" Width="35">
-            <Rectangle.ContextMenu >
-                <ContextMenu x:Name ="user">
-                    <Grid>
-                        <StackPanel>
-                            <TextBlock FontSize="18" Margin="10 10 10 0" FontFamily="{StaticResource VKSansDemiBold}" Text="Имя пользователя" x:Name="UserName"/>
-
-                            <wpfui:Button Content="Выйти" Margin="0 40 0 0" Appearance="Transparent"/>
-                        </StackPanel>
-                    </Grid>
-                </ContextMenu>
-            </Rectangle.ContextMenu>
-        </Rectangle>-->
-
     </Grid>
-</ui:FluentWindow>
+</views:MusicXWindow>

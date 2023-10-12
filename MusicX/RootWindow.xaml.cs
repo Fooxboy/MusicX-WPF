@@ -59,7 +59,7 @@ namespace MusicX
 
         public RootWindow(NavigationService navigationService, VkService vkService, Logger logger,
             ConfigService configService, ISnackbarService snackbarService,
-                          ListenTogetherService togetherService)
+                          ListenTogetherService togetherService) : base(snackbarService, navigationService)
         {
             InitializeComponent();     
             this.navigationService = navigationService;
@@ -178,8 +178,6 @@ namespace MusicX
                 navigationService.BackRequested += NavigationServiceOnBackRequested;
                 navigationService.ExternalPageOpened += NavigationServiceOnExternalPageOpened;
                 navigationService.ReplaceBlocksRequested += NavigationServiceOnReplaceBlocksRequested;
-                navigationService.ModalOpenRequested += NavigationServiceOnModalOpenRequested;
-                navigationService.ModalCloseRequested += NavigationServiceOnModalCloseRequested;
 
                 var catalogs = await vkService.GetAudioCatalogAsync();
 
@@ -375,14 +373,6 @@ namespace MusicX
                     "Попробуйте перезапустить приложение, если ошибка повторяется, напишите об этом разработчику");
             }
             
-        }
-        private void NavigationServiceOnModalCloseRequested(object? sender, EventArgs e)
-        {
-            ModalFrame.Close();
-        }
-        private void NavigationServiceOnModalOpenRequested(object? sender, object e)
-        {
-            ModalFrame.Open(e);
         }
         private void NavigationServiceOnReplaceBlocksRequested(object? sender, string e)
         {

@@ -20,14 +20,6 @@ public class MusicXWindow : FluentWindow
     private readonly NavigationService _navigationService;
     private ModalFrame? _frame;
 
-    static MusicXWindow()
-    {
-        BackgroundProperty.OverrideMetadata(typeof(MusicXWindow), new FrameworkPropertyMetadata(new SolidColorBrush(Color.FromRgb(20, 20, 20))));
-        ExtendsContentIntoTitleBarProperty.OverrideMetadata(typeof(MusicXWindow), new FrameworkPropertyMetadata(true));
-        WindowBackdropTypeProperty.OverrideMetadata(typeof(MusicXWindow), new FrameworkPropertyMetadata(WindowBackdropType.Mica));
-        WindowCornerPreferenceProperty.OverrideMetadata(typeof(MusicXWindow), new FrameworkPropertyMetadata(WindowCornerPreference.Round));
-    }
-
     public MusicXWindow(ISnackbarService snackbarService, NavigationService navigationService)
     {
         _snackbarService = snackbarService;
