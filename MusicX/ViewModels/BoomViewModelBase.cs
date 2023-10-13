@@ -12,6 +12,7 @@ using MusicX.Services;
 using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
 using NLog;
+using Wpf.Ui;
 
 namespace MusicX.ViewModels;
 
@@ -21,17 +22,17 @@ public abstract class BoomViewModelBase : BaseViewModel
     protected readonly ConfigService ConfigService;
     protected readonly VkService VkService;
     protected readonly Logger Logger;
-    protected readonly NotificationsService NotificationsService;
+    protected readonly ISnackbarService SnackbarService;
     protected readonly PlayerService PlayerService;
 
     protected BoomViewModelBase(BoomService boomService, ConfigService configService, VkService vkService, Logger logger,
-                                NotificationsService notificationsService, PlayerService playerService)
+        ISnackbarService snackbarService, PlayerService playerService)
     {
         BoomService = boomService;
         ConfigService = configService;
         VkService = vkService;
         Logger = logger;
-        NotificationsService = notificationsService;
+        SnackbarService = snackbarService;
         PlayerService = playerService;
     }
 
@@ -83,7 +84,7 @@ public abstract class BoomViewModelBase : BaseViewModel
             };
             Crashes.TrackError(ex, properties);
 
-            NotificationsService.Show("Ошибка загрузки микса", "Мы не смогли загрузить микс, попробуйте ещё раз");
+            SnackbarService.Show("Ошибка загрузки микса", "Мы не смогли загрузить микс, попробуйте ещё раз");
             Logger.Error(ex, ex.Message);
         }
     }
@@ -133,7 +134,7 @@ public abstract class BoomViewModelBase : BaseViewModel
             };
             Crashes.TrackError(ex, properties);
 
-            NotificationsService.Show("Ошибка загрузки микса", "Мы не смогли загрузить микс, попробуйте ещё раз");
+            SnackbarService.Show("Ошибка загрузки микса", "Мы не смогли загрузить микс, попробуйте ещё раз");
 
             Logger.Error(ex, ex.Message);
         }
@@ -167,7 +168,7 @@ public abstract class BoomViewModelBase : BaseViewModel
             };
             Crashes.TrackError(ex, properties);
 
-            NotificationsService.Show("Ошибка загрузки", "Мы не смогли авторизоваться в ВК Музыке, попробуйте ещё раз");
+            SnackbarService.Show("Ошибка загрузки", "Мы не смогли авторизоваться в ВК Музыке, попробуйте ещё раз");
 
             IsLoaded = true;
 

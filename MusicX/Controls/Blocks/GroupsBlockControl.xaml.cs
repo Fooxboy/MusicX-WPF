@@ -17,7 +17,6 @@ namespace MusicX.Controls.Blocks
     /// </summary>
     public partial class GroupsBlockControl : UserControl
     {
-        public Block Block { get; set; }
         public GroupsBlockControl()
         {
             InitializeComponent();
@@ -26,19 +25,23 @@ namespace MusicX.Controls.Blocks
 
         private void GroupsBlockControl_Loaded(object sender, RoutedEventArgs e)
         {
-            if(Block.Groups[0].Photo100 != null) GroupImage.ImageSource = new BitmapImage(new Uri(Block.Groups[0].Photo100));
+            if (DataContext is not Block block)
+                return;
+            if(block.Groups[0].Photo100 != null) GroupImage.ImageSource = new BitmapImage(new Uri(block.Groups[0].Photo100));
 
-            GroupName.Text = Block.Groups[0].Name;
-            GroupSub.Text = Block.Groups[0].MembersCount.ToString();
+            GroupName.Text = block.Groups[0].Name;
+            GroupSub.Text = block.Groups[0].MembersCount.ToString();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            if (DataContext is not Block block)
+                return;
             try
             {
                 Process.Start(new ProcessStartInfo
                 {
-                    FileName = "https://vk.com/" + Block.Groups[0].ScreenName,
+                    FileName = "https://vk.com/" + block.Groups[0].ScreenName,
                     UseShellExecute = true
                 });
             }

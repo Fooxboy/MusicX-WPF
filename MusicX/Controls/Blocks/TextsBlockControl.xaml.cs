@@ -9,7 +9,6 @@ namespace MusicX.Controls.Blocks
     /// </summary>
     public partial class TextsBlockControl : UserControl
     {
-        public Block Block { get; set; }
         public TextsBlockControl()
         {
             InitializeComponent();
@@ -18,8 +17,8 @@ namespace MusicX.Controls.Blocks
 
         private void TextsBlockControl_Loaded(object sender, RoutedEventArgs e)
         {
-          TextsValue.Text = Block.Texts[0].Value;
-
+            if (DataContext is Block block)
+                TextsValue.Text = block.Texts[0].Value;
         }
     }
 }

@@ -1,16 +1,16 @@
-﻿using System;
+﻿using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.Media.Core;
 using Windows.Media.Playback;
-using FFmpegInteropX;
+using FFMediaToolkit.Decoding;
 using MusicX.Core.Services;
 using MusicX.Shared.Player;
 
 namespace MusicX.Services.Player.Sources;
 
-public class BoomMediaSource : ITrackMediaSource
+public class BoomMediaSource : MediaSourceBase
 {
-    private FFmpegMediaSource? _currentSource; // hold reference so it wont be collected before audio actually ends
     private readonly BoomService _boomService;
 
     public BoomMediaSource(BoomService boomService)
@@ -18,20 +18,25 @@ public class BoomMediaSource : ITrackMediaSource
         _boomService = boomService;
     }
 
-    public async Task<MediaPlaybackItem?> CreateMediaSourceAsync(PlaylistTrack track,
+    public override async Task<MediaPlaybackItem?> CreateMediaSourceAsync(MediaPlaybackSession playbackSession,
+        PlaylistTrack track,
         CancellationToken cancellationToken = default)
     {
-        if (track.Data is VkTrackData)
+        if (track.Data is not BoomTrackData boomData)
             return null;
 
-        var ffSource = _currentSource = await FFmpegMediaSource.CreateFromUriAsync(track.Data.Url, new()
-        {
-            FFmpegOptions = new()
-            {
-                ["headers"] = $"Authorization: {_boomService.Client.DefaultRequestHeaders.Authorization}"
-            }
-        });
+        /*var stream = await _boomService.Client.GetStreamAsync(boomData.Url, cancellationToken);
 
-        return ffSource.CreateMediaPlaybackItem();
+        var file = MediaFile.Open(stream, MediaOptions);
+            
+        return CreateMediaPlaybackItem(file);*/
+        
+        var response = await _boomService.Client.GetAsync(boomData.Url, cancellationToken);
+
+        var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
+
+        return new(MediaSource.CreateFromStream(stream.AsRandomAccessStream(),
+            response.Content.Headers.ContentType?.MediaType ??
+            "audio/mpeg"));
     }
 }

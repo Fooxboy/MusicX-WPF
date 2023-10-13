@@ -1,15 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using MusicX.Core.Models;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using Microsoft.AppCenter.Crashes;
+using Microsoft.Extensions.DependencyInjection;
+using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Services;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AppCenter.Crashes;
-using System.Collections.Generic;
-using System.Diagnostics;
+using Wpf.Ui;
+using Button = MusicX.Core.Models.Button;
+using NavigationService = MusicX.Services.NavigationService;
 
 namespace MusicX.Controls.Blocks
 {
@@ -18,19 +21,19 @@ namespace MusicX.Controls.Blocks
     /// </summary>
     public partial class PlaceholderBlockControl : UserControl
     {
-        private readonly Block block;
-        public PlaceholderBlockControl(Block block)
+        public PlaceholderBlockControl()
         {
-            this.block = block;
             this.Loaded += PlaceholderBlockControl_Loaded;
             InitializeComponent();
             
         }
 
-        private Core.Models.Button buttonAction;
+        private Button buttonAction;
 
         private void PlaceholderBlockControl_Loaded(object sender, RoutedEventArgs e)
         {
+            if (DataContext is not Block block)
+                return;
             if (block.Placeholders.Count == 0) return;
 
             var placeholder = block.Placeholders[0];
@@ -76,7 +79,7 @@ namespace MusicX.Controls.Blocks
                     return;
                 }
 
-                var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
+                var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
                 var vkService = StaticService.Container.GetRequiredService<VkService>();
 
                 var music = await vkService.GetAudioCatalogAsync(buttonAction.Action.Url);
@@ -93,9 +96,9 @@ namespace MusicX.Controls.Blocks
                 };
                 Crashes.TrackError(ex, properties);
 
-                var notificationService = StaticService.Container.GetRequiredService<Services.NotificationsService>();
+                var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
 
-                notificationService.Show("Ошибка", "Music X не смог открыть контент");
+                snackbarService.Show("Ошибка", "Music X не смог открыть контент");
             }
 
         }

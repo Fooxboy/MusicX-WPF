@@ -1,23 +1,29 @@
-﻿using MusicX.Core.Services;
-using MusicX.Models;
-using MusicX.Services;
-using MusicX.Views.Modals;
-using NLog;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using Microsoft.Extensions.DependencyInjection;
-using MusicX.Controls;
-using Ookii.Dialogs.Wpf;
-using System.Collections.Generic;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
-using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
+using MusicX.Controls;
+using MusicX.Core.Services;
+using MusicX.Models;
+using MusicX.Services;
+using MusicX.ViewModels;
+using MusicX.Views.Login;
+using MusicX.Views.Modals;
+using NLog;
+using Ookii.Dialogs.Wpf;
+using VkNet.Abstractions;
+using VkNet.AudioBypassService.Models.Auth;
+using Wpf.Ui;
 using Wpf.Ui.Controls;
-using MusicX.Helpers;
+using Button = Wpf.Ui.Controls.Button;
+using NavigationService = MusicX.Services.NavigationService;
 
 namespace MusicX.Views
 {
@@ -85,12 +91,12 @@ namespace MusicX.Views
 
                 ShowRPC.IsChecked = config.ShowRPC.Value;
                 BroacastVK.IsChecked = config.BroadcastVK.Value;
-                ShowAmimatedBackground.IsChecked = config.AmimatedBackground;
+                ShowAmimatedBackground.IsChecked = config.AnimatedBackground;
                 WinterTheme.IsChecked = config.WinterTheme.Value;
                 MinimizeToTray.IsChecked = config.MinimizeToTray.Value;
                 GetBetaUpdates.IsChecked = config.GetBetaUpdates.Value;
 
-                UserName.Text = config.UserName.Split(' ')[0];
+                UserName.Text = config.UserName;
 
                 var usr = await vkService.GetCurrentUserAsync();
 
@@ -106,19 +112,19 @@ namespace MusicX.Views
                     memory += file.Length / 1024;
                 }
 
+                string type;
                 if (memory > 1024)
                 {
                     memory /= 1024;
-                    MemoryType.Text = "МБ";
+                    type = "МБ";
                 }
                 else
                 {
-                    MemoryType.Text = "КБ";
+                    type = "КБ";
 
                 }
 
-                memory = Math.Round(memory, 2);
-                MemoryLogs.Text = memory.ToString();
+                MemoryLogs.Text = $"{memory:N} {type}";
                 
                 if(config.DownloadDirectory != null)
                 {
@@ -136,21 +142,20 @@ namespace MusicX.Views
                         if (memory > 1024)
                         {
                             memory /= 1024;
-                            MemoryTypeTracks.Text = "МБ";
+                            type = "МБ";
                         }
                         else
                         {
-                            MemoryTypeTracks.Text = "КБ";
+                            type = "КБ";
 
                         }
 
-                        memory = Math.Round(memory, 2);
-                        MemoryTracks.Text = memory.ToString();
+                        MemoryTracks.Text = $"{memory:N} {type}";
                     }
                 }
                 
 
-                this.VersionApp.Text = StaticService.Version + " " + StaticService.VersionKind;
+                this.VersionApp.Text = StaticService.Version;
                 this.BuildDate.Text = StaticService.BuildDate;
 
                 if (config.IgnoredArtists is null)
@@ -186,26 +191,29 @@ namespace MusicX.Views
         private async void DeleteAccount_Click(object sender, RoutedEventArgs e)
         {
             config.AccessToken = null;
-            config.UserName = null;
+            config.UserName = null!;
             config.UserId = 0;
+            config.AccessTokenTtl = default;
+            config.ExchangeToken = null;
 
+            if (string.IsNullOrEmpty(config.AnonToken))
+                await StaticService.Container.GetRequiredService<IVkApiAuthAsync>()
+                    .AuthorizeAsync(new AndroidApiAuthParams());
+                                
             await configService.SetConfig(config);
-
-            var logger = StaticService.Container.GetRequiredService<Logger>();
-            var navigation = StaticService.Container.GetRequiredService<Services.NavigationService>();
-            var notifications = StaticService.Container.GetRequiredService<Services.NotificationsService>();
-
-            new LoginWindow(vkService, configService, logger, navigation, notifications).Show();
+                            
+            ActivatorUtilities.CreateInstance<AccountsWindow>(StaticService.Container).Show();
+            
             Window.GetWindow(this)?.Close();
         }
 
         private async void CheckUpdates_Click(object sender, RoutedEventArgs e)
         {
-            var notifications = StaticService.Container.GetRequiredService<Services.NotificationsService>();
+            var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
 
             try
             {
-                var navigation = StaticService.Container.GetRequiredService<Services.NavigationService>();
+                var navigation = StaticService.Container.GetRequiredService<NavigationService>();
                 var github = StaticService.Container.GetRequiredService<GithubService>();
 
                 var release = await github.GetLastRelease();
@@ -214,7 +222,8 @@ namespace MusicX.Views
 
                 if (release.TagName == StaticService.Version)
                 {
-                    notifications.Show("Уже обновлено!", "У Вас установлена последняя версия MusicX! Обновлений пока что нет");
+                    snackbarService.Show("Уже обновлено!",
+                        "У Вас установлена последняя версия MusicX! Обновлений пока что нет");
 
                 }
                 else
@@ -224,7 +233,7 @@ namespace MusicX.Views
             }
             catch (Exception ex)
             {
-                notifications.Show("Ошибка", "Произошла ошибка при проверке обновлений");
+                snackbarService.Show("Ошибка", "Произошла ошибка при проверке обновлений");
 
             }
 
@@ -257,10 +266,7 @@ namespace MusicX.Views
                 file.Delete();
             }
 
-            MemoryLogs.Text = "0";
-            MemoryType.Text = "КБ";
-
-
+            MemoryLogs.Text = "0 КБ";
         }
 
         private async void ShowRPC_Checked(object sender, RoutedEventArgs e)
@@ -366,7 +372,7 @@ namespace MusicX.Views
         {
             if (string.IsNullOrEmpty(config.DownloadDirectory) || !Directory.Exists(config.DownloadDirectory))
             {
-                StaticService.Container.GetRequiredService<NotificationsService>().Show("Ошибка", "Сначала выберите папку");
+                StaticService.Container.GetRequiredService<ISnackbarService>().Show("Ошибка", "Сначала выберите папку");
                 return;
             }
             
@@ -387,7 +393,7 @@ namespace MusicX.Views
                     config.IgnoredArtists = new List<string>();
                 }
 
-                var selectedArtistName = (sender as Wpf.Ui.Controls.Button).Tag;
+                var selectedArtistName = (sender as Button).Tag;
                 var selectedArtist = config.IgnoredArtists.SingleOrDefault(x => x == selectedArtistName);
 
                 if (selectedArtist != null)
@@ -460,18 +466,19 @@ namespace MusicX.Views
 
         private async void ShowAmimatedBackground_Checked(object sender, RoutedEventArgs e)
         {
-            if (config.AmimatedBackground == (sender as ToggleSwitch).IsChecked)
+            if (config.AnimatedBackground == (sender as ToggleSwitch).IsChecked)
             {
                 return;
             }
 
-            config.AmimatedBackground = true;
+            config.AnimatedBackground = true;
 
             await configService.SetConfig(config);
 
             if(RootWindow.SnowEngine is null)
             {
-                StaticService.Container.GetRequiredService<NotificationsService>().Show("Необходим перезапуск", "Перезапустите Music X чтобы пошел снег :)");
+                StaticService.Container.GetRequiredService<ISnackbarService>().Show("Необходим перезапуск",
+                    "Перезапустите Music X чтобы пошел снег :)");
 
                 return;
             }
@@ -481,8 +488,7 @@ namespace MusicX.Views
 
         private async void ShowAmimatedBackground_Unchecked(object sender, RoutedEventArgs e)
         {
-
-            config.AmimatedBackground = false;
+            config.AnimatedBackground = false;
 
             RootWindow.SnowEngine.Stop();
 
@@ -501,7 +507,8 @@ namespace MusicX.Views
 
             await configService.SetConfig(config);
 
-            StaticService.Container.GetRequiredService<NotificationsService>().Show("Необходим перезапуск", "Перезапустите Music X чтобы началась зима :)");
+            StaticService.Container.GetRequiredService<ISnackbarService>().Show("Необходим перезапуск",
+                "Перезапустите Music X чтобы началась зима :)");
         }
 
         private async void WinterTheme_Unchecked(object sender, RoutedEventArgs e)
@@ -510,7 +517,8 @@ namespace MusicX.Views
 
             await configService.SetConfig(config);
 
-            StaticService.Container.GetRequiredService<NotificationsService>().Show("Необходим перезапуск", "Перезапустите Music X чтобы зима закончилась :)");
+            StaticService.Container.GetRequiredService<ISnackbarService>().Show("Необходим перезапуск",
+                "Перезапустите Music X чтобы зима закончилась :)");
 
         }
 
@@ -525,7 +533,8 @@ namespace MusicX.Views
 
             await configService.SetConfig(config);
 
-            StaticService.Container.GetRequiredService<NotificationsService>().Show("Необходим перезапуск", "Перезапустите Music X чтобы изменения применились");
+            StaticService.Container.GetRequiredService<ISnackbarService>().Show("Необходим перезапуск",
+                "Перезапустите Music X чтобы изменения применились");
 
         }
 
@@ -535,7 +544,8 @@ namespace MusicX.Views
 
             await configService.SetConfig(config);
 
-            StaticService.Container.GetRequiredService<NotificationsService>().Show("Необходим перезапуск", "Перезапустите Music X чтобы изменения применились");
+            StaticService.Container.GetRequiredService<ISnackbarService>().Show("Необходим перезапуск",
+                "Перезапустите Music X чтобы изменения применились");
         }
 
         private async void GetBetaUpdates_OnChecked(object sender, RoutedEventArgs e)
@@ -549,7 +559,8 @@ namespace MusicX.Views
 
             await configService.SetConfig(config);
 
-            StaticService.Container.GetRequiredService<NotificationsService>().Show("Необходим перезапуск", "Перезапустите Music X чтобы изменения применились");
+            StaticService.Container.GetRequiredService<ISnackbarService>().Show("Необходим перезапуск",
+                "Перезапустите Music X чтобы изменения применились");
         }
 
         private async void GetBetaUpdates_OnUnchecked(object sender, RoutedEventArgs e)
@@ -558,7 +569,21 @@ namespace MusicX.Views
 
             await configService.SetConfig(config);
 
-            StaticService.Container.GetRequiredService<NotificationsService>().Show("Необходим перезапуск", "Перезапустите Music X чтобы изменения применились");
+            StaticService.Container.GetRequiredService<ISnackbarService>().Show("Необходим перезапуск",
+                "Перезапустите Music X чтобы изменения применились");
+        }
+
+        private void ProfileCard_Click(object sender, RoutedEventArgs e)
+        {
+            StaticService.Container.GetRequiredService<NavigationService>().OpenExternalPage(new BoomProfileView
+            {
+                DataContext = StaticService.Container.GetRequiredService<BoomProfileViewModel>()
+            });
+        }
+
+        private void CatalogsCard_Click(object sender, RoutedEventArgs e)
+        {
+            StaticService.Container.GetRequiredService<NavigationService>().OpenSection("profiles");
         }
     }
 }

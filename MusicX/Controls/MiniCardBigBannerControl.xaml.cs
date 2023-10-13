@@ -22,6 +22,7 @@ namespace MusicX.Controls
            DependencyProperty.Register("IsSelected", typeof(bool), typeof(MiniCardBigBannerControl), new PropertyMetadata(false));
 
 
+        private  BannerService bannerServc = null;
         public bool IsSelected
         {
             get { return (bool)GetValue(IsSelectedProperty); }
@@ -37,6 +38,12 @@ namespace MusicX.Controls
         {
             InitializeComponent();
             this.Loaded += MiniCardBigBannerControl_Loaded;
+            this.Unloaded += MiniCardBigBannerControl_Unloaded;
+        }
+
+        private void MiniCardBigBannerControl_Unloaded(object sender, RoutedEventArgs e)
+        {
+            bannerServc.ShowBannerEvent += BannerService_ShowBannerEvent;
         }
 
         private void MiniCardBigBannerControl_Loaded(object sender, RoutedEventArgs e)
@@ -44,6 +51,8 @@ namespace MusicX.Controls
 
 
             var bannerService = StaticService.Container.GetRequiredService<BannerService>();
+
+            bannerServc = bannerService;
 
             bannerService.ShowBannerEvent += BannerService_ShowBannerEvent;
 

@@ -1,8 +1,4 @@
-﻿using MusicX.Controls.Blocks;
-using MusicX.Core.Models;
-using MusicX.Services;
-using NLog;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -11,10 +7,18 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using Microsoft.Extensions.DependencyInjection;
-using MusicX.ViewModels.Controls;
-using Wpf.Ui.Controls;
 using Microsoft.AppCenter.Crashes;
+using Microsoft.Extensions.DependencyInjection;
+using MusicX.Controls.Blocks;
+using MusicX.Core.Models;
+using MusicX.Services;
+using MusicX.ViewModels.Controls;
+using NLog;
+using Wpf.Ui;
+using Wpf.Ui.Controls;
+using Button = MusicX.Core.Models.Button;
+using NavigationService = MusicX.Services.NavigationService;
+using TextBlock = System.Windows.Controls.TextBlock;
 
 namespace MusicX.Controls
 {
@@ -23,30 +27,18 @@ namespace MusicX.Controls
     /// </summary>
     public partial class BlockControl : UserControl
     {
-        private readonly Services.NavigationService navigationService;
+        private readonly NavigationService navigationService;
         public BlockControl()
         {
             InitializeComponent();
 
-            navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
+            navigationService = StaticService.Container.GetRequiredService<NavigationService>();
             this.Unloaded += BlockControl_Unloaded;
         }
 
         private void BlockControl_Unloaded(object sender, RoutedEventArgs e)
         {
-            BlocksPanel.Children.Clear();
-        }
-
-        public static readonly DependencyProperty BlockProperty =
-          DependencyProperty.Register("Block", typeof(Block), typeof(BlockControl), new PropertyMetadata(new Block()));
-
-        public Block Block
-        {
-            get { return (Block)GetValue(BlockProperty); }
-            set
-            {
-                SetValue(BlockProperty, value);
-            }
+            /*BlocksPanel.Children.Clear();*/
         }
 
         public static readonly DependencyProperty ArtistProperty = DependencyProperty.Register(
@@ -64,7 +56,7 @@ namespace MusicX.Controls
 
             try
             {
-                if (Block.DataType == "artist")
+                /*if (Block.DataType == "artist")
                 {
                     BlocksPanel.Children.Add(new ArtistBannerBlockControl(Block) { Block = Block });
                   
@@ -114,7 +106,7 @@ namespace MusicX.Controls
 
                     if (Block.Layout.Name == "music_chart_large_slider")
                     {
-                        BlocksPanel.Children.Add(new ListPlaylists() { Content = Block.Playlists, /*TODO ShowChart = true,*/ ShowFull = false });
+                        BlocksPanel.Children.Add(new ListPlaylists() { Content = Block.Playlists, *//*TODO ShowChart = true,*//* ShowFull = false });
                         logger.Info($"loaded {Block.DataType} block with block id = {Block.Id}");
 
                         return;
@@ -282,8 +274,7 @@ namespace MusicX.Controls
 
                 if (Block.DataType == "action")
                 {
-
-                    List<Core.Models.Button> buttons = new List<Core.Models.Button>();
+                    var buttons = new List<Button>();
 
                     if(Block.Buttons == null)
                     {
@@ -450,10 +441,17 @@ namespace MusicX.Controls
                     }
                 }
 
-                NotFoundBlock.Visibility = Visibility.Visible;
-                DataTypeName.Text = Block.DataType;
-                LayoutName.Text = Block.Layout.Name;
-                logger.Info($"loaded NOT FOUND {Block.DataType} block with block id = {Block.Id}");
+                if(Block.DataType == "stations")
+                {
+                    BlocksPanel.Children.Add(new UserRadioBlockControl()
+                    {
+                        Block = Block
+                    });
+
+                    return;
+                }
+
+                logger.Info($"loaded NOT FOUND {Block.DataType} block with block id = {Block.Id}");*/
 
             }
             catch (Exception ex)
@@ -471,9 +469,9 @@ namespace MusicX.Controls
                 logger.Error("Fatal error show block content:");
                 logger.Error(ex);
 
-                var notificationService = StaticService.Container.GetRequiredService<Services.NotificationsService>();
+                var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
 
-                notificationService.Show("Произошла ошибка", $"Music X не смог показать блок {Block.DataType}");
+                snackbarService.Show("Произошла ошибка", $"Music X не смог показать блок");
 
             }
         }

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using VkNet.Model;
-using VkNet.Model.Attachments;
 using Image = MusicX.Core.Models.Image;
 
 namespace MusicX.Helpers;

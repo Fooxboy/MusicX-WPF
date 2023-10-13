@@ -11,6 +11,7 @@ using MusicX.Core.Services;
 using MusicX.Services;
 using NLog;
 using Squirrel;
+using Wpf.Ui;
 
 namespace MusicX.ViewModels.Modals;
 
@@ -38,7 +39,7 @@ public sealed class AvailableNewUpdateModalViewModel : BaseViewModel, IDisposabl
         ApplyUpdatesCommand = new AsyncCommand(Execute);
         LoadChangelogAsync().SafeFireAndForget(ex =>
         {
-            var notificationService = StaticService.Container.GetRequiredService<NotificationsService>();
+            var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
             var logger = StaticService.Container.GetRequiredService<Logger>();
             
             var properties = new Dictionary<string, string>
@@ -50,8 +51,9 @@ public sealed class AvailableNewUpdateModalViewModel : BaseViewModel, IDisposabl
             };
             Crashes.TrackError(ex, properties);
             logger.Error(ex, ex.Message);
-            
-            notificationService.Show("Неудалось получить список изменений", $"Произошла ошибка при получении списка изменений: {ex.GetType().FullName}");
+
+            snackbarService.Show("Неудалось получить список изменений",
+                $"Произошла ошибка при получении списка изменений: {ex.GetType().FullName}");
             Changelog = "Нет информации.";
         });
     }
@@ -83,7 +85,7 @@ public sealed class AvailableNewUpdateModalViewModel : BaseViewModel, IDisposabl
         }
         catch (Exception ex)
         {
-            var notificationService = StaticService.Container.GetRequiredService<NotificationsService>();
+            var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
             var logger = StaticService.Container.GetRequiredService<Logger>();
 
             var properties = new Dictionary<string, string>
@@ -96,7 +98,7 @@ public sealed class AvailableNewUpdateModalViewModel : BaseViewModel, IDisposabl
             Crashes.TrackError(ex, properties);
             logger.Error(ex, ex.Message);
 
-            notificationService.Show("Неудалось обновить приложение",
+            snackbarService.Show("Неудалось обновить приложение",
                 $"Произошла ошибка при обновлении приложения: {ex.GetType().FullName}");
         }
         finally

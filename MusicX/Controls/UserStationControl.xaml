@@ -1,0 +1,59 @@
+﻿<UserControl
+    x:Class="MusicX.Controls.UserStationControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:MusicX.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <Grid Margin="0,0,15,0">
+
+        <wpfui:Card
+            x:Name="RadioCard"
+            Padding="0"
+            MouseEnter="Card_MouseEnter"
+            MouseLeftButtonDown="RadioCard_MouseLeftButtonDown"
+            MouseLeave="Card_MouseLeave">
+            <Grid
+                Width="400"
+                Height="120"
+                Margin="0">
+                <Border
+                    Width="120"
+                    HorizontalAlignment="Left"
+                    CornerRadius="5">
+                    <Border.Background>
+                        <ImageBrush x:Name="Cover" />
+                    </Border.Background>
+                </Border>
+
+                <StackPanel Margin="130,0,0,0">
+                    <TextBlock
+                        x:Name="Title"
+                        Margin="0,5,0,0"
+                        FontFamily="{StaticResource VKSansBold}"
+                        FontSize="18"
+                        Text="Заголовок радио станции"
+                        TextTrimming="CharacterEllipsis" />
+
+                    <TextBlock
+                        x:Name="Author"
+                        Opacity="0.9"
+                        Text="Славик Смирнов" />
+
+                    <TextBlock
+                        x:Name="Description"
+                        Opacity="0.4"
+                        Text="Очень длиное описание этого всего говна. Надеюсь это будет правда работать как надо или нет рав влпа влдпр ывджваоп ываолд ыдвл "
+                        TextTrimming="CharacterEllipsis"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+
+            </Grid>
+        </wpfui:Card>
+
+    </Grid>
+</UserControl>

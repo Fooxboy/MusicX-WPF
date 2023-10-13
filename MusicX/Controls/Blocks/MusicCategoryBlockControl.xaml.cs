@@ -28,7 +28,7 @@ namespace MusicX.Controls.Blocks
             navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
         }
 
-        public List<Link> Links { get; set; }
+        public List<Link> Links => (DataContext as Block)?.Links ?? new();
 
         private async void CardAction_Click(object sender, RoutedEventArgs e)
         {
@@ -77,7 +77,7 @@ namespace MusicX.Controls.Blocks
 
         private async void CardAction_Click_3(object sender, RoutedEventArgs e)
         {
-            var link = Links[3];
+            var link = Links[5];
 
             await OpenPage(link);
         }

@@ -3,7 +3,6 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:MusicX.Controls.Blocks"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wpfui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
     d:DesignHeight="450"
@@ -27,21 +26,21 @@
                         x:Name="GroupName"
                         FontSize="23"
                         FontWeight="DemiBold"
-                        Foreground="White"
+                        
                         Text="Group Name" />
                     <TextBlock
                         x:Name="GroupSub"
                         Margin="15,0,0,3"
                         VerticalAlignment="Bottom"
                         FontSize="14"
-                        Foreground="White"
+                        
                         Opacity="0.5"
                         Text="0" />
                     <TextBlock
                         Margin="5,0,0,3"
                         VerticalAlignment="Bottom"
                         FontSize="14"
-                        Foreground="White"
+                        
                         Opacity="0.5"
                         Text="подписчиков" />
 

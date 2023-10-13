@@ -1,34 +1,31 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Windows.Media.Playback;
-using FFmpegInteropX;
+using FFMediaToolkit.Decoding;
 using MusicX.Shared.Player;
+using System.IO;
 
 namespace MusicX.Services.Player.Sources;
 
-public class VkMediaSource : ITrackMediaSource
+public class VkMediaSource : MediaSourceBase
 {
-    private FFmpegMediaSource? _currentSource; // hold reference so it wont be collected before audio actually ends
-    
-    public async Task<MediaPlaybackItem?> CreateMediaSourceAsync(PlaylistTrack track,
+    public override Task<MediaPlaybackItem?> CreateMediaSourceAsync(MediaPlaybackSession playbackSession,
+        PlaylistTrack track,
         CancellationToken cancellationToken = default)
     {
-        while (!cancellationToken.IsCancellationRequested)
+        if (track.Data is not VkTrackData vkData) return Task.FromResult<MediaPlaybackItem?>(null);
+
+        // i think its better to use task.run over task.yield because we aren't doing async with ffmpeg
+        return Task.Run(() =>
         {
-            if (track.Data is not VkTrackData vkData) break;
-
-            var ffSource = _currentSource = await FFmpegMediaSource.CreateFromUriAsync(vkData.Url, new()
+            if(string.IsNullOrEmpty(vkData.Url))
             {
-                FFmpegOptions = new()
-                {
-                    ["http_persistent"] = "false"
-                }
-            });
+                return null;
+            }
 
-            return ffSource.CreateMediaPlaybackItem();
-        }
-        
-        return null;
+            var file = MediaFile.Open(vkData.Url, MediaOptions);
+
+            return CreateMediaPlaybackItem(file);
+        }, cancellationToken)!;
     }
 }

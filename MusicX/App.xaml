@@ -2,25 +2,25 @@
     x:Class="MusicX.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:MusicX"
-    xmlns:convertes="clr-namespace:MusicX.Converters">
+    xmlns:convertes="clr-namespace:MusicX.Converters"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
     <Application.Resources>
 
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Wpf.Ui;component/Styles/Theme/Dark.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/Wpf.Ui;component/Styles/Wpf.Ui.xaml" />
+                <ui:ThemesDictionary Theme="Dark" />
+                <ui:ControlsDictionary />
                 <ResourceDictionary x:Name="ListViewStyles" Source="Styles/ListViewStyles.xaml" />
                 <ResourceDictionary x:Name="SliderStyles" Source="Styles/SliderStyles.xaml" />
-                <ResourceDictionary x:Name="SearchBoxStyles" Source="Styles/SearchBoxStyles.xaml" />
                 <ResourceDictionary x:Name="CardActionStyles" Source="Styles/CardActionStyles.xaml" />
                 <ResourceDictionary x:Name="TextBlockStyles" Source="Styles/TextBlockStyles.xaml" />
                 <ResourceDictionary x:Name="NavBarStyles" Source="Styles/NavigationBarStyles.xaml" />
                 <ResourceDictionary x:Name="ModalFrameStyles" Source="Styles/ModalFrameStyles.xaml" />
+                <ResourceDictionary x:Name="MusicXWindowStyles" Source="Styles/MusicXWindowStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <FontFamily x:Key="SegoeFluentIcons">pack://application:,,,/;component/Fonts/#Segoe Fluent Icons</FontFamily>
-            <FontFamily x:Key="VKSansDemiBold" >pack://application:,,,/;component/Fonts/VKSansDisplay-DemiBold.ttf#VK Sans Display DemiBold</FontFamily>
+            <FontFamily x:Key="VKSansDemiBold">pack://application:,,,/;component/Fonts/VKSansDisplay-DemiBold.ttf#VK Sans Display DemiBold</FontFamily>
             <FontFamily x:Key="VKSansMedium">pack://application:,,,/;component/Fonts/VKSansDisplay-Medium.ttf#VK Sans Display Medium</FontFamily>
             <FontFamily x:Key="VKSansBold">pack://application:,,,/;component/Fonts/VKSansDisplay-Bold.ttf#VK Sans Display Bold</FontFamily>
             <FontFamily x:Key="VKSansRegular">pack://application:,,,/;component/Fonts/VKSansDisplay-Regular.ttf#VK Sans Display Regular</FontFamily>

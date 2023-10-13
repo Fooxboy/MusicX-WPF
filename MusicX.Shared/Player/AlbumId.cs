@@ -8,11 +8,11 @@ namespace MusicX.Shared.Player;
 [ProtoContract(ImplicitFields = ImplicitFields.AllPublic, SkipConstructor = true)]
 [ProtoInclude(100, typeof(BoomAlbumId))]
 [ProtoInclude(101, typeof(VkAlbumId))]
-public abstract record AlbumId(string Name, string CoverUrl);
+public abstract record AlbumId(string Name, string CoverUrl, string? BigCoverUrl);
 
 [ProtoContract(ImplicitFields = ImplicitFields.AllPublic, SkipConstructor = true)]
 public sealed record VkAlbumId
-    (long Id, long OwnerId, string AccessKey, string Name, string CoverUrl) : AlbumId(Name, CoverUrl)
+    (long Id, long OwnerId, string AccessKey, string Name, string CoverUrl, string? BigCoverUrl) : AlbumId(Name, CoverUrl, BigCoverUrl)
 {
     public bool Equals(VkAlbumId? other)
     {
@@ -28,7 +28,7 @@ public sealed record VkAlbumId
 }
 
 [ProtoContract(ImplicitFields = ImplicitFields.AllPublic, SkipConstructor = true)]
-public sealed record BoomAlbumId(string Id, string Name, string CoverUrl) : AlbumId(Name, CoverUrl)
+public sealed record BoomAlbumId(string Id, string Name, string CoverUrl, string? BigCoverUrl) : AlbumId(Name, CoverUrl, BigCoverUrl)
 {
     public bool Equals(BoomAlbumId? other) => Id == other?.Id;
     public override int GetHashCode() => Id.GetHashCode();

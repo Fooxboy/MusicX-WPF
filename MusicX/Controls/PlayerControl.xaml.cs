@@ -1,9 +1,5 @@
-﻿using MusicX.Core.Services;
-using MusicX.Models;
-using MusicX.Services;
-using MusicX.Views;
-using NLog;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,19 +8,24 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
+using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Behaviors;
+using MusicX.Core.Services;
+using MusicX.Models;
+using MusicX.Services;
 using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
-using MusicX.ViewModels;
-using Wpf.Ui.Common;
-using System.Collections.Generic;
-using Microsoft.AppCenter.Crashes;
 using MusicX.Shared.Player;
-using MusicX.Shared.ListenTogether;
-using System.Windows.Media;
-using MusicX.Views.Modals;
+using MusicX.ViewModels;
 using MusicX.ViewModels.Modals;
+using MusicX.Views;
+using MusicX.Views.Modals;
+using NLog;
+using Wpf.Ui;
+using Wpf.Ui.Controls;
+using WpfScreenHelper;
+using NavigationService = MusicX.Services.NavigationService;
 
 namespace MusicX.Controls
 {
@@ -179,18 +180,6 @@ namespace MusicX.Controls
                 DownloadButton.IsEnabled = true;
                 Queue.ScrollIntoView(playerService.CurrentTrack);
 
-
-                if(playerService.CurrentTrack.Data is VkTrackData track)
-                {
-                    if(track.HasLyrics != null)
-                    {
-                        TextTrack.IsEnabled = track.HasLyrics.Value;
-                    }else
-                    {
-                        TextTrack.IsEnabled = false;
-                    }
-                }
-
                 await SaveVolume();
             }
             catch (Exception ex)
@@ -269,11 +258,11 @@ namespace MusicX.Controls
         {
             SpeakerIcon.Icon = playerService.Volume switch
             {
-                _ when playerService.IsMuted => SymbolRegular.SpeakerOff28,
-                0.0 => SymbolRegular.SpeakerOff28,
-                > 0.0 and < 0.30 => SymbolRegular.Speaker032,
-                > 0.30 and < 0.60 => SymbolRegular.Speaker132,
-                > 0.80 => SymbolRegular.Speaker232,
+                _ when playerService.IsMuted => new SymbolIcon(SymbolRegular.SpeakerOff28),
+                0.0 => new SymbolIcon(SymbolRegular.SpeakerOff28),
+                > 0.0 and < 0.30 => new SymbolIcon(SymbolRegular.Speaker032),
+                > 0.30 and < 0.60 => new SymbolIcon(SymbolRegular.Speaker132),
+                > 0.80 => new SymbolIcon(SymbolRegular.Speaker232),
                 _ => SpeakerIcon.Icon
             };
         }
@@ -344,7 +333,7 @@ namespace MusicX.Controls
         {
             try
             {
-                var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
+                var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
 
                 if (playerService.CurrentTrack?.MainArtists.First().Id is {Type: ArtistIdType.Vk} artistId)
                 {
@@ -378,7 +367,7 @@ namespace MusicX.Controls
             try
             {
                 var vkService = StaticService.Container.GetRequiredService<VkService>();
-                var notificationService = StaticService.Container.GetRequiredService<Services.NotificationsService>();
+                var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
 
                 switch (playerService.CurrentTrack?.Data)
                 {
@@ -388,27 +377,31 @@ namespace MusicX.Controls
                             LikeIcon.Filled = true;
                             await vkService.AudioAddAsync(data.Info.Id, data.Info.OwnerId);
 
-                            notificationService.Show("Добавлено в вашу библиотеку", $"Трек {this.ArtistName.Text} - {this.TrackTitle.Text} теперь находится в Вашей музыке!");
+                            snackbarService.Show("Добавлено в вашу библиотеку",
+                                $"Трек {ArtistName.Text} - {TrackTitle.Text} теперь находится в Вашей музыке!");
                             break;
                         }
 
                         LikeIcon.Filled = false;
                         await vkService.AudioDeleteAsync(data.Info.Id, data.Info.OwnerId);
-                        notificationService.Show("Удалено из вашей библиотеки", $"Трек {this.ArtistName.Text} - {this.TrackTitle.Text} теперь удален из вашей музыки");
+                        snackbarService.Show("Удалено из вашей библиотеки",
+                            $"Трек {ArtistName.Text} - {TrackTitle.Text} теперь удален из вашей музыки");
                         break;
                     case VkTrackData data:
                         if (LikeIcon.Filled)
                         {
                             LikeIcon.Filled = false;
                             await vkService.AudioDeleteAsync(data.Info.Id, data.Info.OwnerId);
-                            notificationService.Show("Удалено из вашей библиотеки", $"Трек {this.ArtistName.Text} - {this.TrackTitle.Text} теперь удален из вашей музыки");
+                            snackbarService.Show("Удалено из вашей библиотеки",
+                                $"Трек {ArtistName.Text} - {TrackTitle.Text} теперь удален из вашей музыки");
                             break;
                         }
 
                         LikeIcon.Filled = true;
                         await vkService.AudioAddAsync(data.Info.Id, data.Info.OwnerId);
 
-                        notificationService.Show("Добавлено в вашу библиотеку", $"Трек {this.ArtistName.Text} - {this.TrackTitle.Text} теперь находится в Вашей музыке!");
+                        snackbarService.Show("Добавлено в вашу библиотеку",
+                            $"Трек {ArtistName.Text} - {TrackTitle.Text} теперь находится в Вашей музыке!");
                         break;
                 }
             }
@@ -427,9 +420,9 @@ namespace MusicX.Controls
                 logger.Error("Error in like track");
                 logger.Error(ex, ex.Message);
 
-                var notificationService = StaticService.Container.GetRequiredService<NotificationsService>();
+                var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
 
-                notificationService.Show("Ошибка", $"Мы не смогли добавить этот трек :с");
+                snackbarService.Show("Ошибка", "Мы не смогли добавить этот трек :с");
             }
         }
 
@@ -480,14 +473,14 @@ namespace MusicX.Controls
 
         }
 
-        private async void OpenFullScreen_Click(object sender, RoutedEventArgs e)
+        private void OpenFullScreen_Click(object sender, RoutedEventArgs e)
         {
-            var notificationService = StaticService.Container.GetRequiredService<Services.NotificationsService>();
+            var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
             var mainWindow = Window.GetWindow(this);
 
             if (fullScreenWindow is not null || mainWindow is null)
                 return;
-            fullScreenWindow = new FullScreenWindow(logger, playerService, notificationService);
+            fullScreenWindow = new(logger, playerService, snackbarService);
 
             ShowOnMonitor(fullScreenWindow, mainWindow);
             fullScreenWindow.Closed += FullScreenWindowOnClosed;
@@ -499,7 +492,7 @@ namespace MusicX.Controls
 
         private void ShowOnMonitor(Window window, Window mainWindow)
         {
-            var screen = WpfScreenHelper.Screen.FromWindow(mainWindow);
+            var screen = Screen.FromWindow(mainWindow);
 
             window.WindowStyle = WindowStyle.None;
             window.WindowStartupLocation = WindowStartupLocation.Manual;
@@ -535,7 +528,7 @@ namespace MusicX.Controls
                 };
                 Crashes.TrackError(ex, properties);
 
-                var navigation = StaticService.Container.GetRequiredService<Services.NavigationService>();
+                var navigation = StaticService.Container.GetRequiredService<NavigationService>();
 
                 navigation.OpenMenuSection("downloads");
                 //go to download page
@@ -574,8 +567,8 @@ namespace MusicX.Controls
         {
             if (playerService.CurrentTrack?.AlbumId is VkAlbumId albumId)
             {
-                var (id, ownerId, accessKey, _, _) = albumId;
-                var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
+                var (id, ownerId, accessKey, _, _, _) = albumId;
+                var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
                 navigationService.OpenExternalPage(new PlaylistView(id, ownerId, accessKey));
             }
         }
@@ -648,7 +641,7 @@ namespace MusicX.Controls
 
         private void TextTrack_Click(object sender, RoutedEventArgs e)
         {
-            var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
+            var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
             var lyricsViewModel = StaticService.Container.GetRequiredService<LyricsViewModel>();
             lyricsViewModel.Track = playerService.CurrentTrack;
 

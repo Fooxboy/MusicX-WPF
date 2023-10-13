@@ -3,7 +3,6 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:MusicX.Controls.Blocks"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wpfui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
     d:DesignHeight="450"
@@ -11,7 +10,7 @@
     mc:Ignorable="d">
     <Grid
         x:Name="TitleBlock"
-        Margin="0,0,10,13"
+        Margin="0,0,0,13"
         HorizontalAlignment="Stretch">
 
         <Grid.ColumnDefinitions>
@@ -19,14 +18,14 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Column="0" Orientation="Horizontal">
+        <StackPanel Grid.Column="0" VerticalAlignment="Top" Orientation="Horizontal">
             <TextBlock
                 x:Name="Title"
                 VerticalAlignment="Center"
                 FontFamily="{StaticResource VKSansDemiBold}"
                 FontSize="30"
                 FontWeight="DemiBold"
-                Foreground="White"
+                
                 Text="Title block" />
             <TextBlock
                 x:Name="BadgeHeader"
@@ -34,7 +33,7 @@
                 Margin="10,5,0,0"
                 VerticalAlignment="Center"
                 FontSize="20"
-                Foreground="White"
+                
                 Opacity="0.3"
                 Text="123"
                 Visibility="Collapsed" />
@@ -47,6 +46,8 @@
 
         </StackPanel>
 
+        <TextBlock Margin="0,35,0,0" x:Name="Subtitle" Visibility="Collapsed" VerticalAlignment="Bottom" Opacity="0.4" Text="Subtitle"/>
+
         <Grid
             x:Name="ButtonsGrid"
             Grid.Column="2"
@@ -58,7 +59,7 @@
             <TextBlock
                 x:Name="TitleButtons"
                 Margin="10,5,0,0"
-                Foreground="White"
+                
                 Text="brr" />
 
 
@@ -68,7 +69,7 @@
                 VerticalContentAlignment="Center"
                 Background="Transparent"
                 BorderBrush="#424242"
-                Foreground="White" />
+                 />
 
 
         </Grid>
@@ -77,10 +78,9 @@
         <wpfui:Button
             x:Name="MoreButton"
             Grid.Column="1"
-            Width="110"
             Height="30"
-            Margin="0,0,5,0"
-            Padding="0"
+            Margin="0,0,0,0"
+            Padding="8 0"
             HorizontalAlignment="Right"
             Appearance="Secondary"
             Click="MoreButton_Click"

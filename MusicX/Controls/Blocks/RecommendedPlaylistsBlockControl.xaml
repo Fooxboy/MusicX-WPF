@@ -4,22 +4,18 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:hc="https://handyorg.github.io/handycontrol"
-    xmlns:local="clr-namespace:MusicX.Controls.Blocks"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:wpfui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
     xmlns:collections="clr-namespace:System.Collections;assembly=System.Runtime"
     xmlns:controls="clr-namespace:MusicX.Controls"
     xmlns:models="clr-namespace:MusicX.Core.Models;assembly=MusicX.Core"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     d:DesignHeight="450"
     d:DesignWidth="800"
     x:Name="Control"
     mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDark.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
-            </ResourceDictionary.MergedDictionaries>
+            
 
             <DataTemplate DataType="{x:Type models:RecommendedPlaylist}" x:Key="FullRecommendedPlaylistTemplate">
                 <controls:RecommendedPlaylistControl Margin="0,5" Width="300" Playlist="{Binding}" />
@@ -30,7 +26,7 @@
             </DataTemplate>
 
             <ItemsPanelTemplate x:Key="FullRecommendedPlaylistPanelTemplate">
-                <wpfui:VirtualizingWrapPanel Orientation="Vertical" IsItemsHost="True" />
+                <ui:VirtualizingWrapPanel Orientation="Vertical" IsItemsHost="True" />
             </ItemsPanelTemplate>
             <ItemsPanelTemplate x:Key="RecommendedPlaylistPanelTemplate">
                 <VirtualizingStackPanel Orientation="Horizontal" IsItemsHost="True" />

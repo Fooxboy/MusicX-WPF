@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -7,14 +6,17 @@ using System.Net.Http;
 using System.Net.Mime;
 using System.Threading;
 using System.Threading.Tasks;
-using MusicX.Core.Models;
+using FFMediaToolkit;
+using FFMediaToolkit.Audio;
+using FFMediaToolkit.Decoding;
+using FFMediaToolkit.Encoding;
 using MusicX.Core.Services;
+using MusicX.Helpers;
 using MusicX.Services.Player.Playlists;
 using MusicX.Shared.Player;
 using TagLib;
 using TagLib.Id3v2;
-using Xabe.FFmpeg;
-using Xabe.FFmpeg.Events;
+using AudioCodec = FFMediaToolkit.Encoding.AudioCodec;
 using File = System.IO.File;
 using Tag = TagLib.Id3v2.Tag;
 
@@ -22,9 +24,8 @@ namespace MusicX.Services;
 
 public class DownloaderService
 {
-
-    private readonly string ffmpegPath = $"{AppDomain.CurrentDomain.BaseDirectory}ffmpeg";
-
+    private static readonly Semaphore FFmpegSemaphore = new(1, 1, "MusicX_FFmpegSemaphore");
+    
     private readonly ConfigService configService;
     private readonly BoomService _boomService;
 
@@ -32,24 +33,28 @@ public class DownloaderService
     {
         this.configService = configService;
         _boomService = boomService;
-        FFmpeg.SetExecutablesPath(ffmpegPath);
+
+        FFmpegLoader.FFmpegPath = AppContext.BaseDirectory;
     }
 
-    public async Task<string> GetDownloadDirectoryAsync()
+    public string GetDownloadDirectoryAsync()
     {
-        var directory = (await configService.GetConfig()).DownloadDirectory ??
+        var directory = configService.Config.DownloadDirectory ??
                         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyMusic), "MusicX");
 
         return Directory.CreateDirectory(directory).FullName;
     }
 
-    public async Task DownloadAudioAsync(PlaylistTrack audio, IProgress<ConversionProgressEventArgs>? progress = null, CancellationToken cancellationToken = default)
+    public async Task DownloadAudioAsync(PlaylistTrack audio, IProgress<(TimeSpan Position, TimeSpan Duration)>? progress = null, CancellationToken cancellationToken = default)
     {
+        if (string.IsNullOrEmpty(audio.Data.Url))
+            return;
+        
         var fileName = $"{audio.GetArtistsString()} - {audio.Title}.mp3";
         fileName = ReplaceSymbols(fileName);
             
         string fileDownloadPath;
-        var musicFolder = await GetDownloadDirectoryAsync();
+        var musicFolder = GetDownloadDirectoryAsync();
 
         if (audio.Data is DownloaderData data)
         {
@@ -69,30 +74,81 @@ public class DownloaderService
             fileDownloadPath = Path.Combine(musicFolder, fileName);
         }
 
-        if (File.Exists(fileDownloadPath))
+        var i = 0;
+        while (File.Exists(fileDownloadPath))
         {
-            fileDownloadPath.Replace(".mp3", string.Empty);
-
-            fileDownloadPath += $"(1).mp3";
+            fileDownloadPath = fileDownloadPath.Replace(".mp3", string.Empty);
+            var value = $"({i})";
+            if (fileDownloadPath.EndsWith(value))
+                fileDownloadPath = fileDownloadPath[..^value.Length];
+            fileDownloadPath += $"({++i}).mp3";
         }
 
-        var conversion = FFmpeg.Conversions.New()
-            .SetOutput(fileDownloadPath);
+        var options = new MediaOptions
+        {
+            StreamsToLoad = MediaMode.Audio,
+            DemuxerOptions =
+            {
+                FlagDiscardCorrupt = true,
+                PrivateOptions =
+                {
+                    ["http_persistent"] = "false"
+                }
+            }
+        };
 
-        conversion.OnDataReceived += Ffmpeg_Data;
-        if (progress is not null)
-            conversion.OnProgress += (_, args) => progress.Report(args);
+        using var mediaFile = audio.Data is BoomTrackData ? MediaFile.Open(_boomService.Client.GetStreamAsync(audio.Data.Url, cancellationToken).Result, options) : MediaFile.Open(audio.Data.Url, options);
 
-        conversion.AddParameter(
-            audio.Data is VkTrackData
-                ? "-http_persistent false"
-                : $"-headers \"Authorization: {_boomService.Client.DefaultRequestHeaders.Authorization}\"");
+        using (var outputFile = MediaBuilder.CreateContainer(fileDownloadPath)
+                   .WithAudio(new(mediaFile.Audio.Info.SampleRate, mediaFile.Audio.Info.NumChannels, AudioCodec.MP3)
+                   {
+                       Bitrate = 320_000,
+                       SampleFormat = mediaFile.Audio.Info.SampleFormat,
+                       SamplesPerFrame = mediaFile.Audio.Info.SamplesPerFrame
+                   })
+                   .UseMetadata(new()
+                   {
+                       Title = audio.Title,
+                       Metadata =
+                       {
+                           ["artist"] = audio.MainArtists.First().Name,
+                           ["comment"] = "Загружено с помощью Music X. https://t.me/MusicXPlayer",
+                           ["conductor"] = "Music X Player"
+                       },
+                       Album = audio.AlbumId?.Name ?? "",
+                       Copyright = "Music X Player - https://t.me/MusicXPlayer"
+                   }).Create())
+        {
+            bool ProcessSample()
+            {
+                AudioData audioData;
+                try
+                {
+                    if (!mediaFile.Audio.TryGetNextFrame(out audioData))
+                        return false;
+                }
+                catch (FFmpegException)
+                {
+                    return true;
+                }
+                finally
+                {
+                    FFmpegSemaphore.Release();
+                }
+
+                progress?.Report((mediaFile.Audio.Position, audio.Data.Duration));
+
+                outputFile.Audio.AddFrame(audioData);
+                audioData.Dispose();
+                return true;
+            }
+
+            do
+            {
+                await FFmpegSemaphore.WaitOneAsync(cancellationToken);
+            } while (ProcessSample());
+        }
         
-        conversion.AddParameter($"-i {audio.Data.Url}")
-            .AddParameter("-vcodec copy")
-            .AddParameter("-c copy");
-
-        await conversion.Start(cancellationToken);
         await AddMetadataAsync(audio, fileDownloadPath, cancellationToken);
     }
 
@@ -112,18 +168,13 @@ public class DownloaderService
         Tag.ForceDefaultVersion = true;
 
         var tfile = TagLib.File.Create(filePath);
-
-        tfile.Tag.Title = audio.Title;
-        tfile.Tag.Performers = audio.MainArtists.Concat(audio.FeaturedArtists ?? Enumerable.Empty<TrackArtist>()).Select(b => b.Name).ToArray();
-        tfile.Tag.AlbumArtists = audio.MainArtists.Select(b => b.Name).ToArray();
+        
+        // TODO: Stop using taglib
 
         if (audio.AlbumId != null)
         {
-            tfile.Tag.Album = audio.AlbumId.Name;
-            tfile.Tag.Year = 2022;
-
             using var httpClient = new HttpClient();
-            var thumbData = await httpClient.GetByteArrayAsync(audio.AlbumId.CoverUrl, cancellationToken);
+            var thumbData = await httpClient.GetByteArrayAsync(audio.AlbumId.BigCoverUrl ?? audio.AlbumId.CoverUrl, cancellationToken);
 
             var cover = new AttachedPictureFrame
             {
@@ -135,19 +186,12 @@ public class DownloaderService
             };
             tfile.Tag.Pictures = new IPicture[] {cover};
         }
-
-        tfile.Tag.Comment = "Загружено с помощью Music X. https://t.me/MusicXPlayer";
-        tfile.Tag.Copyright = "Music X Player - https://t.me/MusicXPlayer";
-        if (audio.Data is VkTrackData data)
-            tfile.Tag.MusicIpId = data.Info.OwnerId + "_" + data.Info.Id + "_" + data.Info.OwnerId;
-
-        tfile.Tag.Conductor = "Music X Player";
-
+        
         tfile.Save();
     }
 
-    public async Task<bool> CheckExistAllDownloadTracksAsync()
+    public Task<bool> CheckExistAllDownloadTracksAsync()
     {
-        return Directory.Exists(Path.Combine(await GetDownloadDirectoryAsync(), "Музыка Вконтакте"));
+        return Task.FromResult(Directory.Exists(Path.Combine(GetDownloadDirectoryAsync(), "Музыка Вконтакте")));
     }
 }

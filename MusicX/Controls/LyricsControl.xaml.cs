@@ -6,7 +6,9 @@ using MusicX.Services.Player;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 
 namespace MusicX.Controls
@@ -43,7 +45,7 @@ namespace MusicX.Controls
             ListLines.Children.Clear();
             foreach (var line in _allLines)
             {
-                var textControl = new TextBlock() { Text = line.Line, FontSize = 25, Opacity = 0.5, Margin = new System.Windows.Thickness(0, 5, 0, 5), Cursor = Cursors.Hand};
+                var textControl = new TextBlock() { TextWrapping = TextWrapping.Wrap, Text = line.Line, FontSize = 25, Opacity = 0.5, Margin = new System.Windows.Thickness(0, 5, 0, 5), Cursor = Cursors.Hand};
                 textControl.MouseEnter += TextControl_MouseEnter;
                 textControl.MouseLeave += TextControl_MouseLeave;
                 textControl.MouseLeftButtonDown += TextControl_MouseLeftButtonDown;
@@ -66,7 +68,7 @@ namespace MusicX.Controls
             ListLines.Children.Clear();
             foreach (var line in _allText)
             {
-                var textControl = new TextBlock() { Text = line, FontSize = 25, Opacity = 0.5, Margin = new System.Windows.Thickness(0, 5, 0, 5) };
+                var textControl = new TextBlock() { TextWrapping = TextWrapping.Wrap, Text = line, FontSize = 25, Opacity = 0.5, Margin = new System.Windows.Thickness(0, 5, 0, 5) };
                 ListLines.Children.Add(textControl);
             }
         }
@@ -133,11 +135,11 @@ namespace MusicX.Controls
 
             var position = _allLines.IndexOf(element);
 
-            var scrollOffset = position * 43;
+            var scrollOffset = ListLines.Children.Cast<TextBlock>().Take(position).Sum(b => b.ActualHeight + 3);
 
             CurrentScrollViewer.ScrollToVerticalOffsetWithAnimation(scrollOffset);
 
-            var textBlocks = ListLines.Children.Cast<TextBlock>().ToList();
+            var textBlocks = ListLines.Children.Cast<TextBlock>();
 
             var whiteLines = textBlocks.Where(x => x.Opacity == 1);
 
@@ -145,8 +147,8 @@ namespace MusicX.Controls
             {
                 whiteLine.Opacity = 0.5;
             }
-
-            textBlocks[position].Opacity = 1;
+            
+            ListLines.Children[position].Opacity = 1;
         }
 
         private void CurrentScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)

@@ -72,7 +72,6 @@ namespace MusicX.Controls
                         
                         panel.Children.Add(new TrackControl()
                         {
-                            ShowCard = true, 
                             ChartPosition = chart, 
                             Margin = new Thickness(0, 0, 0, 10), 
                             Width = 300, 

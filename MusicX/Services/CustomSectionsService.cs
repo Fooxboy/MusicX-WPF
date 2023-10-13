@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Models;
 using MusicX.Core.Models.General;
 using MusicX.Core.Services;
 using MusicX.Helpers;
+using MusicX.Shared.ListenTogether.Radio;
+using NLog;
 using VkNet.Abstractions;
 using VkNet.Enums.SafetyEnums;
 using VkNet.Model;
@@ -18,22 +21,31 @@ public class CustomSectionsService : ICustomSectionsService
 {
     public const string CustomLinkRegex = @"^[c-]?\d*$";
     
-    private readonly IVkApiCategories _vkService;
+    private readonly IVkApiCategories _vkCategories;
     private readonly IVkApiInvoke _apiInvoke;
+    private readonly UserRadioService _userRadioService;
+    private readonly Logger _logger;
 
-    public CustomSectionsService(IVkApiCategories vkService, IVkApiInvoke apiInvoke)
+    public CustomSectionsService(IVkApiCategories vkCategories, IVkApiInvoke apiInvoke, UserRadioService userRadioService, Logger logger)
     {
-        _vkService = vkService;
+        _vkCategories = vkCategories;
         _apiInvoke = apiInvoke;
+        _userRadioService = userRadioService;
+        _logger = logger;
     }
 
     public async IAsyncEnumerable<Section> GetSectionsAsync()
     {
-        yield return new()
+        /*yield return new()
         {
             Title = "Каталоги",
             Id = "profiles",
             Url = "https://vk.com/profiles"
+        };*/
+        yield return new()
+        {
+            Title = "Поиск",
+            Id = "search"
         };
     }
 
@@ -42,15 +54,29 @@ public class CustomSectionsService : ICustomSectionsService
         {
             "profiles" => new()
             {
-                Section = await GetProfilesSectionAsync()
+                Section = await GetCatalogsSectionAsync()
             },
             "attachments_full" => new()
             {
                 Section = await GetAttachmentConvsSectionAsync(nextFrom)
             },
+            "search" => new()
+            {
+                Section = await GetSearchSectionAsync()
+            },
             _ when Regex.IsMatch(id, CustomLinkRegex) => await GetAttachmentsSectionAsync(id, nextFrom),
             _ => null
         };
+
+    private async Task<Section> GetSearchSectionAsync()
+    {
+        var vkService = StaticService.Container.GetRequiredService<VkService>();
+        var response = await vkService.GetAudioSearchAsync();
+
+        response.Catalog.Sections[0].Blocks[1].Suggestions = response.Suggestions;
+
+        return response.Catalog.Sections[0];
+    }
 
     private async Task<ResponseData> GetAttachmentsSectionAsync(string id, string? startFrom)
     {
@@ -164,7 +190,7 @@ public class CustomSectionsService : ICustomSectionsService
     {
         ulong? offset = startFrom is null ? null : ulong.Parse(startFrom);
         
-        var convs = await _vkService.Messages.GetConversationsAsync(new()
+        var convs = await _vkCategories.Messages.GetConversationsAsync(new()
         {
             Extended = true,
             Offset = offset
@@ -183,13 +209,24 @@ public class CustomSectionsService : ICustomSectionsService
         };
     }
 
-    private async Task<Section> GetProfilesSectionAsync()
+    private async Task<Section> GetCatalogsSectionAsync()
     {
-        var convs = await _vkService.Messages.GetConversationsAsync(new()
+        var convs = await _vkCategories.Messages.GetConversationsAsync(new()
         {
             Extended = true,
             Count = 10
         });
+
+        List<Station> stations = null;
+        try
+        {
+            stations = await _userRadioService.GetStationsList();
+
+        }catch(Exception ex)
+        {
+            _logger.Info($"Ошибка получения списка радиостанций: {ex}");
+            _logger.Error(ex);
+        }
 
         var buttons = convs.Count > 10
             ? new()
@@ -231,11 +268,42 @@ public class CustomSectionsService : ICustomSectionsService
                     },
                 },
 
+
                 new()
                 {
                     Id = Random.Shared.Next().ToString(),
-                    DataType = "placeholder",
-                    Placeholders  = new List<Placeholder>()
+                    DataType = "none",
+                    Layout = new()
+                    {
+                        Name = "header_extended",
+                        Title = "Радиостанции пользователей"
+                    }
+                },
+
+                MapStationsBlock(stations),
+
+                new()
+                {
+                    Id = Random.Shared.Next().ToString(),
+                    DataType = "none",
+                    Layout = new()
+                    {
+                        Name = "separator",
+                    },
+                },
+
+                GetPlaceholderBlock(),
+            }
+        };
+    }
+
+    private Block GetPlaceholderBlock()
+    {
+        return new()
+        {
+            Id = Random.Shared.Next().ToString(),
+            DataType = "placeholder",
+            Placeholders = new List<Placeholder>()
                     {
                         new Placeholder()
                         {
@@ -263,8 +331,24 @@ public class CustomSectionsService : ICustomSectionsService
                             }
                         }
                     },
-                }
-            }
+        };
+    }
+
+
+    private Block MapStationsBlock(List<Station> stations)
+    {
+        return new()
+        {
+            Id = Random.Shared.Next().ToString(),
+
+            DataType = "stations",
+
+            Layout = new()
+            {
+                Name = "large_slider"
+            },
+
+            Stations = stations
         };
     }
 

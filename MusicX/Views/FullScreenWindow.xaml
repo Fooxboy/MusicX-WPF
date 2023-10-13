@@ -4,9 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:hc="https://handyorg.github.io/handycontrol"
-    xmlns:local="clr-namespace:MusicX.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wpfui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui" xmlns:controls="clr-namespace:MusicX.Controls"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="FullScreenWindow"
     Width="1280"
     Height="720"
@@ -17,15 +17,6 @@
     mc:Ignorable="d">
 
     <Grid>
-
-        <Grid.Resources>
-            <ResourceDictionary>
-                <ResourceDictionary.MergedDictionaries>
-                    <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml" />
-                    <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
-                </ResourceDictionary.MergedDictionaries>
-            </ResourceDictionary>
-        </Grid.Resources>
 
         <Rectangle HorizontalAlignment="Stretch"
                    VerticalAlignment="Stretch"
@@ -52,7 +43,7 @@
             HorizontalAlignment="Center"
             FontFamily="{StaticResource VKSansDemiBold}"
             FontSize="30"
-            Foreground="White"
+            
             Opacity="0.7"
             Text="Сейчас играет" />
 
@@ -67,8 +58,11 @@
             Appearance="Transparent"
             BorderThickness="0"
             Click="CloseButton_Click"
-            FontSize="30"
-            Icon="ArrowMinimize28" />
+            FontSize="30">
+            <wpfui:Button.Icon>
+                <ui:SymbolIcon Symbol="ArrowMinimize28"/>
+            </wpfui:Button.Icon>
+        </wpfui:Button>
 
 
         <StackPanel
@@ -104,9 +98,9 @@
                             Color="Black" />
                     </Rectangle.Effect>
                 </Rectangle>
-                <wpfui:SymbolIcon x:Name="CoverNote"
-                                  FontSize="460"
-                                  Symbol="MusicNote124"/>
+                <ui:SymbolIcon x:Name="CoverNote"
+                               FontSize="460"
+                               Symbol="MusicNote124" />
             </Grid>
 
             <StackPanel Margin="30,0,0,0" VerticalAlignment="Center">
@@ -114,13 +108,13 @@
                     x:Name="TrackName"
                     FontFamily="{StaticResource VKSansDemiBold}"
                     FontSize="60"
-                    Foreground="White"
+                    
                     Text="Название трека" />
                 <TextBlock
                     x:Name="ArtistName"
                     FontFamily="{StaticResource VKSansMedium}"
                     FontSize="40"
-                    Foreground="White"
+                    
                     Opacity="0.6"
                     Text="Имя исполнителя" />
 
@@ -131,6 +125,14 @@
                     Width="400"
                     Margin="0,20,0,0"
                     ValueChanged="PositionSlider_ValueChanged">
+                    <hc:PreviewSlider.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml" />
+                                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                    </hc:PreviewSlider.Resources>
                     <hc:PreviewSlider.Background>
                         <SolidColorBrush Opacity="0.3" Color="White" />
                     </hc:PreviewSlider.Background>
@@ -138,7 +140,7 @@
             </StackPanel>
 
 
-            <controls:LyricsControl Margin="30,0,0,0" MaxHeight="500" x:Name="LyricsControlView"/>
+            <controls:LyricsControl Margin="30,0,0,0" MaxHeight="500" MaxWidth="500" x:Name="LyricsControlView"/>
 
         </StackPanel>
 
@@ -149,7 +151,7 @@
             VerticalAlignment="Bottom"
             FontFamily="{StaticResource VKSansRegular}"
             FontSize="18"
-            Foreground="White"
+            
             Opacity="0.6"
             Text="Далее" />
 
@@ -160,7 +162,7 @@
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom"
             Click="CardAction_Click"
-            ShowChevron="False">
+            IsChevronVisible="False">
             <Grid>
                 <StackPanel Orientation="Horizontal">
 
@@ -184,9 +186,9 @@
                                 <ImageBrush x:Name="NextTrackCover" />
                             </Rectangle.Fill>
                         </Rectangle>
-                        <wpfui:SymbolIcon x:Name="NextTrackNote"
-                                          FontSize="46"
-                                          Symbol="MusicNote124"/>
+                        <ui:SymbolIcon x:Name="NextTrackNote"
+                                       FontSize="46"
+                                       Symbol="MusicNote124" />
                     </Grid>
 
                     <StackPanel Margin="10,0,0,0">
@@ -212,7 +214,7 @@
                 </StackPanel>
 
 
-                <wpfui:SymbolIcon
+                <ui:SymbolIcon
                     HorizontalAlignment="Right"
                     FontSize="25"
                     Symbol="Next24" />

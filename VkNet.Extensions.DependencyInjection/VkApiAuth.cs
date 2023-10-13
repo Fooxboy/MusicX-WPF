@@ -9,11 +9,13 @@ public class VkApiAuth : IVkApiAuthAsync
     private IApiAuthParams? _lastAuthParams;
     private readonly IAuthorizationFlow _authorizationFlow;
     private readonly IVkTokenStore _tokenStore;
+    private readonly ITokenRefreshHandler? _tokenRefreshHandler;
 
-    public VkApiAuth(IAuthorizationFlow authorizationFlow, IVkTokenStore tokenStore)
+    public VkApiAuth(IAuthorizationFlow authorizationFlow, IVkTokenStore tokenStore, ITokenRefreshHandler? tokenRefreshHandler = null)
     {
         _authorizationFlow = authorizationFlow;
         _tokenStore = tokenStore;
+        _tokenRefreshHandler = tokenRefreshHandler;
     }
 
     public void Authorize(IApiAuthParams @params)
@@ -67,7 +69,7 @@ public class VkApiAuth : IVkApiAuthAsync
         if (code is not null)
             _lastAuthParams.TwoFactorAuthorization = code;
 
-        return AuthorizeAsync(_lastAuthParams);
+        return _tokenRefreshHandler?.RefreshTokenAsync(_tokenStore.Token) ?? AuthorizeAsync(_lastAuthParams);
     }
 
     public Task LogOutAsync()

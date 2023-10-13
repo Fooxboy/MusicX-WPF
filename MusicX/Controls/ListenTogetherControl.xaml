@@ -1,9 +1,8 @@
-﻿<UserControl x:Class="MusicX.Controls.ListenTogetherControl"
+<UserControl x:Class="MusicX.Controls.ListenTogetherControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:MusicX.Controls"
              xmlns:controls="clr-namespace:MusicX.ViewModels.Controls"
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              xmlns:converters="clr-namespace:MusicX.Converters"
@@ -84,12 +83,20 @@
                         <Style TargetType="{x:Type ui:Button}"
                                BasedOn="{StaticResource {x:Type ui:Button}}">
                             <Setter Property="Content" Value="Отключится" />
-                            <Setter Property="Icon" Value="PlugDisconnected24" />
+                            <Setter Property="Icon">
+                                <Setter.Value>
+                                    <ui:SymbolIcon Symbol="PlugDisconnected24" />
+                                </Setter.Value>
+                            </Setter>
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding IsSessionHost}"
                                              Value="True">
                                     <Setter Property="Content" Value="Остановить" />
-                                    <Setter Property="Icon" Value="PlugDisconnected24" />
+                                    <Setter Property="Icon">
+                                        <Setter.Value>
+                                            <ui:SymbolIcon Symbol="PlugDisconnected24" />
+                                        </Setter.Value>
+                                    </Setter>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -121,9 +128,13 @@
                 
                     <StackPanel Orientation="Horizontal">
                         <ui:TextBox PlaceholderText="Id сессии" MinWidth="180" Name="SessionIdBox" HorizontalAlignment="Center" />
-                        <ui:Button Margin="5,0,0,0" Height="35" Appearance="Secondary" Icon="Play28"
+                        <ui:Button Margin="5,0,0,0" Height="35" Appearance="Secondary"
                                    Command="{Binding ConnectCommand}"
-                                   CommandParameter="{Binding Text, ElementName=SessionIdBox}" HorizontalAlignment="Center" />
+                                   CommandParameter="{Binding Text, ElementName=SessionIdBox}" HorizontalAlignment="Center">
+                            <ui:Button.Icon>
+                                <ui:SymbolIcon Symbol="Play28" />
+                            </ui:Button.Icon>
+                        </ui:Button>
                     </StackPanel>
                 </StackPanel>
             </Grid>

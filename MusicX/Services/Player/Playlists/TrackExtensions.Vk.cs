@@ -2,9 +2,7 @@
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Models;
-using MusicX.Core.Services;
 using MusicX.Shared.Player;
-using MusicX.ViewModels;
 using VkNet.Abstractions;
 
 namespace MusicX.Services.Player.Playlists;
@@ -49,6 +47,6 @@ public static partial class TrackExtensions
 
     public static VkAlbumId ToAlbumId(this Album album)
     {
-        return new(album.Id, album.OwnerId, album.AccessKey, album.Title, album.Cover);
+        return new(album.Id, album.OwnerId, album.AccessKey, album.Title, album.Cover, album.Thumb?.Photo1200 ?? album.Thumb?.Photo600);
     }
 }

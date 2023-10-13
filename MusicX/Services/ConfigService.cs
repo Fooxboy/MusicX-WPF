@@ -1,19 +1,25 @@
 ﻿using System;
 using System.IO;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Win32;
 using MusicX.Models;
-using Newtonsoft.Json;
 using NLog;
+using Wpf.Ui;
 
 namespace MusicX.Services
 {
     public class ConfigService
     {
+        private readonly JsonSerializerOptions _configSerializerOptions = new(JsonSerializerDefaults.Web)
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
+        };
+        
         private readonly Logger _logger;
         private readonly string _configPath;
 
-        public ConfigService(Logger logger, NotificationsService notificationsService)
+        public ConfigService(Logger logger, ISnackbarService snackbarService)
         {
             _logger = logger;
             var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MusicX");
@@ -29,7 +35,8 @@ namespace MusicX.Services
             catch (Exception e)
             {
                 logger.Error(e, "Failed to migrate config");
-                notificationsService.Show("Ошибка миграции!", "Неудалось использовать настройки из прошлой установки приложения.");
+                snackbarService.Show("Ошибка миграции!",
+                    "Неудалось использовать настройки из прошлой установки приложения.");
             }
         }
 
@@ -57,32 +64,27 @@ namespace MusicX.Services
 
         public async Task<ConfigModel> GetConfig()
         {
+            ConfigModel? config = null;
             if(File.Exists(_configPath))
             {
-                var file = await File.ReadAllTextAsync(_configPath);
+                await using var stream = File.OpenRead(_configPath);
 
-                var model = JsonConvert.DeserializeObject<ConfigModel>(file)!;
-
-                Config = model;
-                return model;
-
-            }else
-            {
-                var config = new ConfigModel();
-
-                await SetConfig(config);
-
-                Config = config;
-                return config;
+                config = await JsonSerializer.DeserializeAsync<ConfigModel>(stream, _configSerializerOptions);
             }
+
+            if (config is null)
+                await SetConfig(config = new());
+
+            Config = config;
+            return config;
         }
 
         public async Task SetConfig(ConfigModel config)
         {
             Config = config;
-            var json= JsonConvert.SerializeObject(config);
 
-            await File.WriteAllTextAsync(_configPath, json);
+            await using var stream = File.Create(_configPath);
+            await JsonSerializer.SerializeAsync(stream, config, _configSerializerOptions);
         }
     }
 }

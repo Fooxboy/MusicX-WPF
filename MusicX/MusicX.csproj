@@ -2,25 +2,31 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows10.0.22000.0</TargetFramework>
+    <TargetFramework>net7.0-windows10.0.22000.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
+    <SupportedOSPlatform>10.0.19041.0</SupportedOSPlatform>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>StoreLogo.scale-400.ico</ApplicationIcon>
     <Version>0.40</Version>
-    <NoWin32Manifest>true</NoWin32Manifest>
-    <WindowsPackageType>None</WindowsPackageType>
-    <EnableMsixTooling>true</EnableMsixTooling>
-    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
     <Platforms>x86;x64;arm64</Platforms>
     <RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <TieredPGO>true</TieredPGO>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <AssemblyAttribute Include="MusicX.Services.BuildDateTime">
+      <_Parameter1>$([System.DateTime]::UtcNow.ToString("s"))</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
 
   <ItemGroup>
     <None Remove="Assets\icon.ico" />
     <None Remove="Assets\icons\albums_white.png" />
     <None Remove="Assets\icons\follows_white.png" />
+    <None Remove="Assets\icons\github-mark-white.png" />
     <None Remove="Assets\icons\playlists_white.png" />
     <None Remove="Assets\icons\recent_white.png" />
     <None Remove="Assets\lottie\play.json" />
@@ -47,6 +53,7 @@
     <Resource Include="Assets\icon.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\icons\github-mark-white.png" />
     <Resource Include="Assets\newyear\newyearblock.png" />
     <Resource Include="Assets\newyear\snow1.png" />
     <Resource Include="Assets\newyear\snow2.png" />
@@ -88,29 +95,35 @@
 	  <None Remove="Assets\icons\ic_fluent_video_play_pause_24_regular.png" />
 
 	  <Resource Include="Assets\icons\ic_fluent_video_play_pause_24_regular.png" />
+
+	  <None Remove="StoreLogo.scale-400.png" />
+
+	  <Resource Include="StoreLogo.scale-400.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="6.0.5" />
+    <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="6.0.6" />
     <PackageReference Include="Clowd.Squirrel" Version="3.0.210-g5f9f594" />
-    <PackageReference Include="FFmpegInteropX" Version="1.1.0-pre42" />
-    <PackageReference Include="HandyControl" Version="3.3.0" />
-    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.5.1" />
-    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.5.1" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.3.230502000" />
+    <PackageReference Include="HandyControl" Version="3.4.0" />
+    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.2" />
+    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.2" />
+    <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.18-beta">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.1" />
-    <PackageReference Include="PropertyChanged.Fody" Version="4.0.0" PrivateAssets="All" />
+    <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" PrivateAssets="All" />
+    <PackageReference Include="QRCoder.Xaml" Version="1.4.3" />
     <PackageReference Include="System.Linq.Async" Version="6.0.1" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
+    <PackageReference Include="System.Text.Json" Version="8.0.0-preview.7.23375.6" />
     <PackageReference Include="taglib-sharp-netstandard2.0" Version="2.1.0" />
-    <PackageReference Include="WPF-UI" Version="2.0.2" />
-    <PackageReference Include="WpfScreenHelper" Version="2.0.0" />
-    <PackageReference Include="Xabe.FFmpeg" Version="5.2.6" />
-    <PackageReference Include="Xabe.FFmpeg.Downloader" Version="5.2.0" />
-    <PackageReference Include="Microsoft.VCRTForwarders.140" Version="1.0.8-pre" />
+    <PackageReference Include="WPF-UI" Version="3.0.0-preview.6" />
+    <PackageReference Include="WpfScreenHelper" Version="2.1.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FFMediaToolkit\FFMediaToolkit\FFMediaToolkit.csproj" />
     <ProjectReference Include="..\MusicX.Core\MusicX.Core.csproj" />
   </ItemGroup>
 
@@ -150,6 +163,14 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Manifest Include="app.manifest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\ffmpeg\*.dll" Visible="false" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
   </ItemGroup>
 
 </Project>

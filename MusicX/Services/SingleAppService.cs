@@ -1,13 +1,7 @@
 ﻿using MusicX.Models;
 using System;
-using System.IO;
 using System.IO.Pipes;
-using System.Linq;
-using System.Security.Principal;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using VkNet.Abstractions.Authorization;
 
 namespace MusicX.Services
 {

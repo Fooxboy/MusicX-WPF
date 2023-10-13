@@ -6,6 +6,7 @@ using MusicX.Core.Services;
 using MusicX.Models.Enums;
 using MusicX.Shared.Player;
 using NLog;
+using Wpf.Ui;
 
 namespace MusicX.Services.Player.TrackStats;
 
@@ -14,14 +15,15 @@ public class VkTrackBroadcastStats : ITrackStatsListener
     private readonly VkService _vkService;
     private readonly ConfigService _configService;
     private readonly Logger logger;
-    private readonly NotificationsService notificationsService;
+    private readonly ISnackbarService _snackbarService;
 
-    public VkTrackBroadcastStats(VkService vkService, ConfigService configService, Logger logger, NotificationsService notificationsService)
+    public VkTrackBroadcastStats(VkService vkService, ConfigService configService, Logger logger,
+        ISnackbarService snackbarService)
     {
         _vkService = vkService;
         _configService = configService;
         this.logger = logger;
-        this.notificationsService = notificationsService;
+        _snackbarService = snackbarService;
     }
 
     public Task TrackChangedAsync(PlaylistTrack? previousTrack, PlaylistTrack newTrack, ChangeReason reason)
@@ -49,7 +51,7 @@ public class VkTrackBroadcastStats : ITrackStatsListener
             logger.Error("Fatal error in load playlist");
             logger.Error(ex, ex.Message);
 
-            notificationsService.Show("Произошла ошибка", "MusicX не смог установить муызку в статус ВКонтакте");
+            _snackbarService.Show("Произошла ошибка", "MusicX не смог установить муызку в статус ВКонтакте");
 
             return Task.CompletedTask;
         }
@@ -81,7 +83,7 @@ public class VkTrackBroadcastStats : ITrackStatsListener
             logger.Error("Fatal error in load playlist");
             logger.Error(ex, ex.Message);
 
-            notificationsService.Show("Произошла ошибка", "MusicX не смог установить музыку в статус ВКонтакте");
+            _snackbarService.Show("Произошла ошибка", "MusicX не смог установить музыку в статус ВКонтакте");
 
             return Task.CompletedTask;
         }

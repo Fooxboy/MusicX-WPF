@@ -1,42 +1,44 @@
-﻿using Microsoft.AppCenter.Crashes;
-using MusicX.Core.Services;
-using MusicX.Services;
-using NLog;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using System.Windows;
+using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
-using Wpf.Ui.Appearance;
-using Wpf.Ui.Controls;
+using MusicX.Core.Services;
 using MusicX.Models;
-using System.Diagnostics;
+using MusicX.Services;
+using NLog;
+using VkNet.AudioBypassService.Exceptions;
+using Wpf.Ui;
+using NavigationService = MusicX.Services.NavigationService;
 
 namespace MusicX.Views
 {
     /// <summary>
     /// Логика взаимодействия для LoginWindow.xaml
     /// </summary>
-    public partial class LoginWindow : UiWindow
+    public partial class LoginWindow
     {
         private readonly VkService vkService;
         private readonly ConfigService configService;
         private readonly Logger logger;
         private readonly NavigationService _navigationService;
-        private readonly NotificationsService _notificationsService;
+        private readonly ISnackbarService _snackbarService;
 
         private readonly bool tokenRefresh;
-        public LoginWindow(VkService vkService, ConfigService configService, Logger logger, NavigationService navigationService, NotificationsService notificationsService, bool tokenRefresh = false)
+
+        public LoginWindow(VkService vkService, ConfigService configService, Logger logger,
+            NavigationService navigationService, ISnackbarService snackbarService, bool tokenRefresh = false)
         {
             InitializeComponent();
             this.vkService = vkService;
             this.configService = configService;
             this.logger = logger;
             _navigationService = navigationService;
-            _notificationsService = notificationsService;
+            _snackbarService = snackbarService;
             this.tokenRefresh = tokenRefresh;
-            this.WpfTitleBar.MaximizeClicked += WpfTitleBar_MaximizeClicked;
-            Accent.Apply(Accent.GetColorizationColor(), ThemeType.Dark);
+            WpfTitleBar.MaximizeClicked += WpfTitleBar_MaximizeClicked;
 
             if(Environment.OSVersion.Version.Build < WindowsBuild.Windows10_1607)
             {
@@ -45,8 +47,7 @@ namespace MusicX.Views
             
             navigationService.ModalOpenRequested += NavigationServiceOnModalOpenRequested;
             navigationService.ModalCloseRequested += NavigationServiceOnModalCloseRequested;
-            
-            notificationsService.NewNotificationEvent += NotificationsServiceOnNewNotificationEvent;
+            snackbarService.SetSnackbarPresenter(RootSnackbar);
         }
 
         protected override void OnClosed(EventArgs e)
@@ -54,13 +55,6 @@ namespace MusicX.Views
             base.OnClosed(e);
             _navigationService.ModalOpenRequested -= NavigationServiceOnModalOpenRequested;
             _navigationService.ModalCloseRequested -= NavigationServiceOnModalCloseRequested;
-            
-            _notificationsService.NewNotificationEvent -= NotificationsServiceOnNewNotificationEvent;
-        }
-        
-        private void NotificationsServiceOnNewNotificationEvent(string title, string message)
-        {
-            RootSnackbar.Show(title, message);
         }
 
         private void NavigationServiceOnModalCloseRequested(object? sender, EventArgs e)
@@ -101,7 +95,7 @@ namespace MusicX.Views
 
             if(tokenRefresh)
             {
-                _notificationsService.Show("Токен устарел", "Войдите в аккаунт снова, чтобы продолжить пользоваться MusicX");
+                _snackbarService.Show("Токен устарел", "Войдите в аккаунт снова, чтобы продолжить пользоваться MusicX");
             }
         }
 
@@ -135,7 +129,7 @@ namespace MusicX.Views
 
 
             }
-            catch (VkNet.AudioBypassService.Exceptions.VkAuthException ex)
+            catch (VkAuthException ex)
             {
 
                 var properties = new Dictionary<string, string>
@@ -153,7 +147,7 @@ namespace MusicX.Views
                 loading.Visibility = Visibility.Collapsed;
                 content.Visibility = Visibility.Visible;
 
-                await RootSnackbar.ShowAsync("Неверные данные", "Вы ввели неверно логин или пароль");
+                _snackbarService.Show("Неверные данные", "Вы ввели неверно логин или пароль");
             }
             catch (Exception ex)
             {
@@ -173,7 +167,7 @@ namespace MusicX.Views
                 loading.Visibility = Visibility.Collapsed;
                 content.Visibility = Visibility.Visible;
 
-                await RootSnackbar.ShowAsync("Ошибка", $"Произошла неизвестная ошибка при входе: {ex.Message}");
+                _snackbarService.Show("Ошибка", $"Произошла неизвестная ошибка при входе: {ex.Message}");
             }
         }
 

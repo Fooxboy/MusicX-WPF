@@ -1,29 +1,33 @@
-﻿using MusicX.Core.Models;
-using MusicX.Core.Services;
-using MusicX.Services;
-using MusicX.Views;
-using MusicX.Views.Modals;
-using NLog;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
+using System.Linq;
 using System.Net.Cache;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Microsoft.Extensions.DependencyInjection;
-using MusicX.Helpers;
-using MusicX.Services.Player;
-using MusicX.Services.Player.Playlists;
-using MusicX.ViewModels;
-using MusicX.ViewModels.Modals;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
+using Microsoft.Extensions.DependencyInjection;
+using MusicX.Core.Models;
+using MusicX.Core.Services;
+using MusicX.Helpers;
+using MusicX.Services;
+using MusicX.Services.Player;
+using MusicX.Services.Player.Playlists;
 using MusicX.Shared.Player;
-using Wpf.Ui.Common;
-using System.Linq;
+using MusicX.ViewModels;
+using MusicX.ViewModels.Modals;
+using MusicX.Views;
+using MusicX.Views.Modals;
+using NLog;
+using Wpf.Ui;
+using Wpf.Ui.Controls;
+using NavigationService = MusicX.Services.NavigationService;
+using TextBlock = System.Windows.Controls.TextBlock;
 
 namespace MusicX.Controls
 {
@@ -354,7 +358,8 @@ namespace MusicX.Controls
                 Crashes.TrackError(ex, properties);
 
                 logger.Error(ex, ex.Message);
-                StaticService.Container.GetRequiredService<NotificationsService>().Show("Ошибка", "Нам не удалось перейти на эту секцию");
+                StaticService.Container.GetRequiredService<ISnackbarService>()
+                    .Show("Ошибка", "Нам не удалось перейти на эту секцию");
             }
 
         }
@@ -501,6 +506,9 @@ namespace MusicX.Controls
 
                 if (this.FindAncestor<PlaylistView>() is { DataContext: PlaylistViewModel viewModel })
                     await player.PlayAsync(new VkPlaylistPlaylist(vkService, viewModel.PlaylistData), Audio.ToTrack());
+                //костыль для реков, да мне лень править.
+                else if (Audio.ParentBlockId == "recomms" && this.FindAncestor<BlockControl>() is { DataContext: Block { Audios.Count: > 0 } block })
+                    await player.PlayAsync(new ListPlaylist(block.Audios.Select(TrackExtensions.ToTrack).ToImmutableList()), Audio.ToTrack());
                 else
                     await player.PlayAsync(new VkBlockPlaylist(vkService, Audio.ParentBlockId, LoadOtherTracks), Audio.ToTrack());
             }catch(Exception ex)
@@ -600,7 +608,8 @@ namespace MusicX.Controls
                 Crashes.TrackError(ex, properties);
 
                 logger.Error(ex, ex.Message);
-                StaticService.Container.GetRequiredService<NotificationsService>().Show("Ошибка", "Нам не удалось перейти на эту секцию");
+                StaticService.Container.GetRequiredService<ISnackbarService>()
+                    .Show("Ошибка", "Нам не удалось перейти на эту секцию");
             }
         }
 
@@ -608,7 +617,7 @@ namespace MusicX.Controls
         {
             try
             {
-                var configService = StaticService.Container.GetRequiredService<Services.ConfigService>();
+                var configService = StaticService.Container.GetRequiredService<ConfigService>();
                 var vkService = StaticService.Container.GetRequiredService<VkService>();
 
 
@@ -706,29 +715,31 @@ namespace MusicX.Controls
         {
             try
             {
-                var notifications = StaticService.Container.GetRequiredService<NotificationsService>();
+                var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
 
-                notifications.Show("Уже ищем", "Сейчас мы найдем похожие треки, подождите");
+                snackbarService.Show("Уже ищем", "Сейчас мы найдем похожие треки, подождите");
 
                 var vk = StaticService.Container.GetRequiredService<VkService>();
 
                 var items = await vk.GetRecommendationsAudio(Audio.OwnerId + "_" + Audio.Id);
 
                 var navigation = StaticService.Container.GetRequiredService<NavigationService>();
-
-                var ids = new List<string>();
-
+                
                 foreach (var audio in items.Items)
                 {
-                    ids.Add(audio.OwnerId + "_" + audio.Id + "_" + audio.AccessKey);
+                    audio.ParentBlockId = "recomms";
                 }
 
-                var block = new Block { Audios = items.Items, AudiosIds = ids, DataType = "music_audios", Layout = new Layout() { Name = "list" } };
+                var ids = items.Items.Select(audio => $"{audio.OwnerId}_{audio.Id}_{audio.AccessKey}").ToList();
+
+                var block = new Block { Id = "recomms", Audios = items.Items, AudiosIds = ids, DataType = "music_audios", Layout = new Layout() { Name = "list" } };
                 var title = new Block { DataType = "none", Layout = new Layout() { Name = "header", Title = $"Треки похожие на \"{Audio.Title}\"" } };
 
-                var blocks = new List<Block>();
-                blocks.Add(title);
-                blocks.Add(block);
+                var blocks = new List<Block>
+                {
+                    title,
+                    block
+                };
 
                 navigation.OpenBlocks(blocks);
             }
@@ -745,9 +756,9 @@ namespace MusicX.Controls
                 Crashes.TrackError(ex, properties);
 
                 logger.Error(ex, ex.Message);
-                var notifications = StaticService.Container.GetRequiredService<NotificationsService>();
+                var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
 
-                notifications.Show("Ошибка", "Мы не смогли найти подходящие треки");
+                snackbarService.Show("Ошибка", "Мы не смогли найти подходящие треки");
 
             }
 
@@ -809,13 +820,13 @@ namespace MusicX.Controls
         private async void ViewModel_PlaylistSelected(Playlist playlist)
         {
             var vk = StaticService.Container.GetRequiredService<VkService>();
-            var notificationsService = StaticService.Container.GetRequiredService<NotificationsService>();
+            var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
 
             try
             {
                 await vk.AddToPlaylistAsync(Audio, playlist.OwnerId, playlist.Id);
 
-                notificationsService.Show("Трек добавлен", $"Трек '{Audio.Title}' добавлен в плейлист '{playlist.Title}'");
+                snackbarService.Show("Трек добавлен", $"Трек '{Audio.Title}' добавлен в плейлист '{playlist.Title}'");
 
 
             }
@@ -833,13 +844,13 @@ namespace MusicX.Controls
 
                 logger.Error(ex, ex.Message);
 
-                notificationsService.Show("Ошибка", "Произошла ошибка при добавлении трека в плейлист");
+                snackbarService.Show("Ошибка", "Произошла ошибка при добавлении трека в плейлист");
             }
         }
 
         private async void AddArtistIgnore_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            var notificationsService = StaticService.Container.GetRequiredService<NotificationsService>();
+            var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
             var configService = StaticService.Container.GetRequiredService<ConfigService>();
 
             try
@@ -853,7 +864,7 @@ namespace MusicX.Controls
 
                 await configService.SetConfig(config);
 
-                notificationsService.Show("Готово!", "Теперь треки с этим исполнителем будет автоматически пропускаться");
+                snackbarService.Show("Готово!", "Теперь треки с этим исполнителем будет автоматически пропускаться");
             }
             catch (Exception ex)
             {
@@ -865,8 +876,15 @@ namespace MusicX.Controls
 
                 logger.Error(ex, ex.Message);
 
-                notificationsService.Show("Ошибка", "Произошла ошибка при добавлении добавлении исполнителя в черный список");
+                snackbarService.Show("Ошибка",
+                    "Произошла ошибка при добавлении добавлении исполнителя в черный список");
             }
+        }
+
+        private void TrackControl_OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            player.TrackChangedEvent -= Player_TrackChangedEvent;
+            player.PlayStateChangedEvent -= Player_PlayStateChangedEvent;
         }
     }
 }

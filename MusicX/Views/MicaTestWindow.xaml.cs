@@ -1,7 +1,4 @@
-﻿using System;
-using System.Windows;
-using System.Windows.Interop;
-using System.Windows.Media;
+﻿using System.Windows;
 
 namespace MusicX.Views
 {
@@ -23,8 +20,8 @@ namespace MusicX.Views
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            //РАБОТАЕТ!!!!
-            IntPtr windowHandle = new WindowInteropHelper(this).Handle;
+            //РАБОТАЕТ!!!! (ne rabotaet)
+            /*IntPtr windowHandle = new WindowInteropHelper(this).Handle;
             this.Background = Brushes.Transparent;
             Wpf.Ui.Appearance.Background.Remove(windowHandle);
 
@@ -38,7 +35,7 @@ namespace MusicX.Views
 
             Wpf.Ui.Appearance.Background.Apply(windowHandle, Wpf.Ui.Appearance.BackgroundType.Mica);
 
-           var res = Wpf.Ui.Appearance.Theme.IsAppMatchesSystem();
+           var res = Wpf.Ui.Appearance.Theme.IsAppMatchesSystem();*/
         }
     }
 }

@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:hc="https://handyorg.github.io/handycontrol"
-    xmlns:local="clr-namespace:MusicX.Controls.Blocks"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="clr-namespace:MusicX.Controls"
     xmlns:models="clr-namespace:MusicX.Core.Models;assembly=MusicX.Core"
@@ -16,18 +15,15 @@
     mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDark.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
-            </ResourceDictionary.MergedDictionaries>
+            
             
             <DataTemplate DataType="{x:Type models:Video}" x:Key="FullVideoTemplate">
                 <ui:Card Margin="0,0,0,10">
-                    <controls:VideoControl Height="200" Width="300" Video="{Binding}" />
+                    <controls:VideoControl MinHeight="200" Width="300" Video="{Binding}" />
                 </ui:Card>
             </DataTemplate>
             <DataTemplate DataType="{x:Type models:Video}" x:Key="VideoTemplate">
-                <controls:VideoControl Margin="0,0,10,0" Height="200" Width="300" Video="{Binding}" />
+                <controls:VideoControl Margin="0,0,10,0" MinHeight="200" Width="300" Video="{Binding}" />
             </DataTemplate>
             
             <ItemsPanelTemplate x:Key="FullVideoPanelTemplate">

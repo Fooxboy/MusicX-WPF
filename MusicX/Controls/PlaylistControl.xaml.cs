@@ -1,22 +1,24 @@
-﻿using MusicX.Core.Models;
-using MusicX.Core.Services;
-using MusicX.Services;
-using MusicX.Views;
-using NLog;
-using System;
-using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
-using Microsoft.Extensions.DependencyInjection;
-using MusicX.Helpers;
-using MusicX.Services.Player;
-using MusicX.Services.Player.Playlists;
-using System.Collections.Generic;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
+using Microsoft.Extensions.DependencyInjection;
+using MusicX.Core.Models;
+using MusicX.Core.Services;
+using MusicX.Helpers;
+using MusicX.Services;
+using MusicX.Services.Player;
+using MusicX.Services.Player.Playlists;
+using MusicX.Views;
+using NLog;
+using Wpf.Ui;
+using Wpf.Ui.Controls;
+using NavigationService = MusicX.Services.NavigationService;
 
 namespace MusicX.Controls
 {
@@ -32,20 +34,6 @@ namespace MusicX.Controls
             InitializeComponent();
 
             logger = StaticService.Container.GetRequiredService<Logger>();
-
-            this.Unloaded += PlaylistControl_Unloaded;
-        }
-
-        private void PlaylistControl_Unloaded(object sender, RoutedEventArgs e)
-        {
-            this.CoverImage.ImageSource = null;
-            this.CoverImage = null;
-            this.CoverImageCompact.ImageSource = null;
-            this.CoverImageCompact = null;
-            this.Title = null;
-            this.TitleCompact = null;
-            this.Artist = null;
-            this.ArtistCompact = null;
         }
 
         public static readonly DependencyProperty PlaylistProperty =
@@ -82,7 +70,7 @@ namespace MusicX.Controls
                 if (player.CurrentPlaylist is VkPlaylistPlaylist {Data: {} data} && data.PlaylistId == Playlist.Id)
                 {
                     nowPlay = true;
-                    iconPlay.Symbol = Wpf.Ui.Common.SymbolRegular.Pause24;
+                    iconPlay.Symbol = SymbolRegular.Pause24;
                 }
                 
                 if (ShowFull)
@@ -229,12 +217,12 @@ namespace MusicX.Controls
             if (service.CurrentPlaylist is VkPlaylistPlaylist {Data: {} data} && data.PlaylistId == Playlist.Id)
             {
                 nowPlay = true;
-                iconPlay.Symbol = Wpf.Ui.Common.SymbolRegular.Pause24;
+                iconPlay.Symbol = SymbolRegular.Pause24;
             }
             else
             {
                 nowPlay = false;
-                iconPlay.Symbol = Wpf.Ui.Common.SymbolRegular.Play24;
+                iconPlay.Symbol = SymbolRegular.Play24;
             }
         }
 
@@ -258,15 +246,15 @@ namespace MusicX.Controls
                     {"Version", StaticService.Version }
                 };
             Analytics.TrackEvent("OpenPlaylist", properties);
-            
-            var notificationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
+
+            var notificationService = StaticService.Container.GetRequiredService<NavigationService>();
 
             notificationService.OpenExternalPage(new PlaylistView(Playlist));
         }
 
         private void FullGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var notificationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
+            var notificationService = StaticService.Container.GetRequiredService<NavigationService>();
 
             notificationService.OpenExternalPage(new PlaylistView(Playlist));
         }
@@ -308,19 +296,19 @@ namespace MusicX.Controls
                     nowPlay = true;
                     nowLoad = true;
 
-                    iconPlay.Symbol = Wpf.Ui.Common.SymbolRegular.Timer24;
+                    iconPlay.Symbol = SymbolRegular.Timer24;
                     var vkService = StaticService.Container.GetRequiredService<VkService>();
 
                     await playerService.PlayAsync(
                         new VkPlaylistPlaylist(vkService, new(Playlist.Id, Playlist.OwnerId, Playlist.AccessKey)));
 
-                    iconPlay.Symbol = Wpf.Ui.Common.SymbolRegular.Pause24;
+                    iconPlay.Symbol = SymbolRegular.Pause24;
                     nowLoad = false;
                 }
                 else
                 {
                     playerService.Pause();
-                    iconPlay.Symbol = Wpf.Ui.Common.SymbolRegular.Play24;
+                    iconPlay.Symbol = SymbolRegular.Play24;
 
                     nowPlay = false;
                 }
@@ -350,17 +338,17 @@ namespace MusicX.Controls
             amim.Begin();
         }
 
-        private void AddToLibrary_MouseDown(object sender, MouseButtonEventArgs e)
+        private async void AddToLibrary_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            var notificationsService = StaticService.Container.GetRequiredService<NotificationsService>();
+            var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
 
             try
             {
                 var vkService = StaticService.Container.GetRequiredService<VkService>();
 
-                vkService.AddPlaylistAsync(Playlist.Id, Playlist.OwnerId, Playlist.AccessKey);
+                await vkService.AddPlaylistAsync(Playlist.Id, Playlist.OwnerId, Playlist.AccessKey);
 
-                notificationsService.Show("Плейлист добавлен", "Плейлист теперь находится в Вашей библиотеке");
+                snackbarService.Show("Плейлист добавлен", "Плейлист теперь находится в Вашей библиотеке");
             }
             catch(Exception ex)
             {
@@ -370,7 +358,7 @@ namespace MusicX.Controls
                 };
                 Crashes.TrackError(ex, properties);
 
-                notificationsService.Show("Ошибка", "Мы не смогли добавить плейлист к Вам в библиотеку");
+                snackbarService.Show("Ошибка", "Мы не смогли добавить плейлист к Вам в библиотеку");
 
             }
 
@@ -378,7 +366,7 @@ namespace MusicX.Controls
 
         private async void AddToQueue_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            var notificationsService = StaticService.Container.GetRequiredService<NotificationsService>();
+            var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
 
             try
             {
@@ -386,7 +374,7 @@ namespace MusicX.Controls
 
                 var vkService = StaticService.Container.GetRequiredService<VkService>();
 
-                notificationsService.Show("Подождите", "Мы получаем треки из плейлиста и добавляем их в очередь");
+                snackbarService.Show("Подождите", "Мы получаем треки из плейлиста и добавляем их в очередь");
 
                 var result = await vkService.LoadFullPlaylistAsync( Playlist.Id, Playlist.OwnerId, Playlist.AccessKey);
 
@@ -397,7 +385,7 @@ namespace MusicX.Controls
                     playerService.InsertToQueue(audio.ToTrack(result.Playlist), true);
                 }
 
-                notificationsService.Show("Готово!", "Треки из плейлиста добавлены в очередь!");
+                snackbarService.Show("Готово!", "Треки из плейлиста добавлены в очередь!");
 
 
             }
@@ -409,8 +397,14 @@ namespace MusicX.Controls
                 };
                 Crashes.TrackError(ex, properties);
 
-                notificationsService.Show("Ошибка", "Мы не смогли обновить очередь");
+                snackbarService.Show("Ошибка", "Мы не смогли обновить очередь");
             }
+        }
+
+        private void PlaylistControl_OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            var player = StaticService.Container.GetRequiredService<PlayerService>();
+            player.CurrentPlaylistChanged -= PlayerOnCurrentPlaylistChanged;
         }
     }
 }

@@ -1,19 +1,19 @@
-﻿using Microsoft.AppCenter.Analytics;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using MusicX.Core.Exceptions.Boom;
 using MusicX.Core.Models.Boom;
 using MusicX.Core.Services;
+using MusicX.Helpers;
 using MusicX.Services;
 using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
-using NLog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using MusicX.Helpers;
 using MusicX.Shared.Player;
-using Artist = MusicX.Core.Models.Boom.Artist;
+using NLog;
+using Wpf.Ui;
 
 namespace MusicX.ViewModels
 {
@@ -43,9 +43,9 @@ namespace MusicX.ViewModels
         public ObservableRangeCollection<PlaylistTrack> Tracks { get; set; } = new();
 
         public BoomProfileViewModel(BoomService boomService, ConfigService configService, VkService vkService,
-                                    Logger logger, NotificationsService notificationsService,
-                                    PlayerService playerService) : 
-            base(boomService, configService, vkService, logger, notificationsService, playerService)
+            Logger logger, ISnackbarService snackbarService,
+            PlayerService playerService) :
+            base(boomService, configService, vkService, logger, snackbarService, playerService)
         {
         }
         
@@ -105,7 +105,7 @@ namespace MusicX.ViewModels
                 };
                 Crashes.TrackError(ex, properties);
 
-                NotificationsService.Show("Ошибка загрузки", "Мы не смогли открыть Ваш профиль  в ВК музыке");
+                SnackbarService.Show("Ошибка загрузки", "Мы не смогли открыть Ваш профиль  в ВК музыке");
 
                 IsLoaded = true;
 
@@ -166,7 +166,7 @@ namespace MusicX.ViewModels
                 };
                 Crashes.TrackError(ex, properties);
 
-                NotificationsService.Show("Ошибка загрузки", "Мы не смогли открыть Ваш профиль в ВК музыке");
+                SnackbarService.Show("Ошибка загрузки", "Мы не смогли открыть Ваш профиль в ВК музыке");
 
                 IsLoaded = true;
 

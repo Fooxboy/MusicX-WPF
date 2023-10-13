@@ -1,19 +1,21 @@
-﻿using AsyncAwaitBestPractices.MVVM;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using AsyncAwaitBestPractices.MVVM;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.Win32;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
+using MusicX.Helpers;
 using MusicX.Models;
 using MusicX.Services;
 using MusicX.Views.Modals;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using MusicX.Helpers;
+using Wpf.Ui;
 using Wpf.Ui.Common;
+using NavigationService = MusicX.Services.NavigationService;
 
 namespace MusicX.ViewModels.Modals
 {
@@ -49,7 +51,7 @@ namespace MusicX.ViewModels.Modals
 
         private readonly TracksSelectorModalViewModel selectorViewModel;
         private readonly ConfigService configService;
-        private readonly NotificationsService notificationsService;
+        private readonly ISnackbarService _snackbarService;
 
         private bool isEdit;
         public bool IsEdit
@@ -62,13 +64,15 @@ namespace MusicX.ViewModels.Modals
             }
         }
 
-        public CreatePlaylistModalViewModel(NavigationService navigationService, VkService vkService, TracksSelectorModalViewModel selectorViewModel, ConfigService configService, NotificationsService notificationsService)
+        public CreatePlaylistModalViewModel(NavigationService navigationService, VkService vkService,
+            TracksSelectorModalViewModel selectorViewModel, ConfigService configService,
+            ISnackbarService snackbarService)
         {
             this.navigationService = navigationService;
             this.vkService = vkService;
             this.selectorViewModel = selectorViewModel;
             this.configService = configService;
-            this.notificationsService = notificationsService;
+            _snackbarService = snackbarService;
 
             this.AddTracksCommand = new RelayCommand(AddTracks);
             this.CreateCommand = new AsyncCommand(Create);
@@ -123,7 +127,7 @@ namespace MusicX.ViewModels.Modals
             {
                 if(string.IsNullOrEmpty(Title) || string.IsNullOrWhiteSpace(Title))
                 {
-                    notificationsService.Show("Обязательные поля не заполнены", "Вы должны заполнить название плейлиста");
+                    _snackbarService.Show("Обязательные поля не заполнены", "Вы должны заполнить название плейлиста");
                     return;
                 }
 
@@ -154,11 +158,12 @@ namespace MusicX.ViewModels.Modals
 
                 if(isEdit)
                 {
-                    notificationsService.Show("Плейлист изменен", $"Плейлист '{Title}' теперь изменен.");
+                    _snackbarService.Show("Плейлист изменен", $"Плейлист '{Title}' теперь изменен.");
 
                 }else
                 {
-                    notificationsService.Show("Плейлист создан", $"Плейлист '{Title}' теперь находится в списке Ваших плейлистов.");
+                    _snackbarService.Show("Плейлист создан",
+                        $"Плейлист '{Title}' теперь находится в списке Ваших плейлистов.");
                 }
 
                 EndEvent?.Invoke(true);
@@ -178,7 +183,7 @@ namespace MusicX.ViewModels.Modals
 
                 CreateIsEnable = true;
 
-                notificationsService.Show("Ошибка", $"MusicX не смог создать плейлист :(");
+                _snackbarService.Show("Ошибка", "MusicX не смог создать плейлист :(");
 
                 EndEvent?.Invoke(false);
 
@@ -220,7 +225,7 @@ namespace MusicX.ViewModels.Modals
 
                 CreateIsEnable = true;
 
-                notificationsService.Show("Ошибка", $"MusicX не смог изменить плейлист :(");
+                _snackbarService.Show("Ошибка", "MusicX не смог изменить плейлист :(");
                 throw ex;
             }
         }
@@ -235,7 +240,7 @@ namespace MusicX.ViewModels.Modals
             }
         }
 
-        private void AddSelectedTracks(System.Collections.IList selectedTracks)
+        private void AddSelectedTracks(IList selectedTracks)
         {
             CreateIsEnable = true;
 

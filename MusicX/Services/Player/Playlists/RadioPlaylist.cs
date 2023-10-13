@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using MusicX.Core.Models.Boom;
 using MusicX.Core.Services;
 using MusicX.Shared.Player;

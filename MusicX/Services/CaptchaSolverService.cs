@@ -4,19 +4,21 @@ using Microsoft.Extensions.DependencyInjection;
 using MusicX.ViewModels.Modals;
 using MusicX.Views.Modals;
 using VkNet.Extensions.DependencyInjection;
+using Wpf.Ui;
 
 namespace MusicX.Services;
 
 public class CaptchaSolverService : IAsyncCaptchaSolver
 {
     private readonly NavigationService _navigationService;
-    private readonly NotificationsService _notificationsService;
+    private readonly ISnackbarService _snackbarService;
     private readonly IServiceProvider _serviceProvider;
 
-    public CaptchaSolverService(NavigationService navigationService, NotificationsService notificationsService, IServiceProvider serviceProvider)
+    public CaptchaSolverService(NavigationService navigationService, ISnackbarService snackbarService,
+        IServiceProvider serviceProvider)
     {
         _navigationService = navigationService;
-        _notificationsService = notificationsService;
+        _snackbarService = snackbarService;
         _serviceProvider = serviceProvider;
     }
 
@@ -32,7 +34,7 @@ public class CaptchaSolverService : IAsyncCaptchaSolver
 
     public ValueTask SolveFailedAsync()
     {
-        _notificationsService.Show("Ошибка!", "Вы ввели неправильную капчу");
+        _snackbarService.Show("Ошибка!", "Вы ввели неправильную капчу");
         return ValueTask.CompletedTask;
     }
 }

@@ -30,6 +30,10 @@ namespace MusicX.Controls
         private void BigBannerControl_Unloaded(object sender, RoutedEventArgs e)
         {
             runAutoNext = false;
+            var bannerService = StaticService.Container.GetRequiredService<BannerService>();
+
+            bannerService.ShowBannerEvent -= BannerService_ShowBannerEvent;
+
         }
 
         private void BigBannerControl_Loaded(object sender, RoutedEventArgs e)
@@ -74,7 +78,7 @@ namespace MusicX.Controls
             amim.Begin();
         }
 
-        public List<CatalogBanner> Banners { get; set; }
+        public List<CatalogBanner> Banners => ((Block)DataContext).Banners;
 
         private async void ActionButton_Click(object sender, RoutedEventArgs e)
         {

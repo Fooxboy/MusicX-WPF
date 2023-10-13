@@ -1,18 +1,20 @@
-﻿using MusicX.Services;
-using NLog;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using MusicX.Services.Player;
-using MusicX.Services.Player.Playlists;
-using System.Collections.Generic;
+using System.Windows.Threading;
 using Microsoft.AppCenter.Analytics;
-using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Services;
+using MusicX.Services;
+using MusicX.Services.Player;
+using MusicX.Services.Player.Playlists;
 using MusicX.Shared.Player;
-using System.Windows.Threading;
+using NLog;
+using Wpf.Ui;
 
 namespace MusicX.Views
 {
@@ -23,16 +25,16 @@ namespace MusicX.Views
     {
         private readonly Logger logger;
         private readonly PlayerService playerService;
-        private readonly NotificationsService notificationsService;
+        private readonly ISnackbarService _snackbarService;
 
-        public FullScreenWindow(Logger logger, PlayerService playerService, NotificationsService notificationsService)
+        public FullScreenWindow(Logger logger, PlayerService playerService, ISnackbarService snackbarService)
         {
             InitializeComponent();
 
             this.Loaded += FullScreenWindow_Loaded;
             this.logger = logger;
             this.playerService = playerService;
-            this.notificationsService = notificationsService;
+            _snackbarService = snackbarService;
 
             this.playerService.TrackChangedEvent += PlayerService_TrackChangedEvent;
             playerService.PositionTrackChangedEvent += PlayerService_PositionTrackChangedEvent;
@@ -79,7 +81,7 @@ namespace MusicX.Views
                 if (playerService.CurrentTrack.AlbumId != null)
                 {
 
-                    var bitmapImage = new BitmapImage(new Uri(playerService.CurrentTrack.AlbumId.CoverUrl));
+                    var bitmapImage = new BitmapImage(new Uri(playerService.CurrentTrack.AlbumId.BigCoverUrl ?? playerService.CurrentTrack.AlbumId.CoverUrl));
                     BackgroundImage.Source = bitmapImage;
                     CoverImage.ImageSource = bitmapImage;
                     CoverNote.Visibility = Visibility.Collapsed;
@@ -105,49 +107,19 @@ namespace MusicX.Views
                     }
 
                     NextTrackName.Text = playerService.NextPlayTrack.Title;
-                    string s2 = string.Empty;
-                    if (playerService.NextPlayTrack.MainArtists != null)
-                    {
-                        foreach (var trackArtist in playerService.NextPlayTrack.MainArtists)
-                        {
-                            s2 += trackArtist.Name + ", ";
-                        }
-
-                        var artists2 = s2.Remove(s2.Length - 2);
-
-                        NextTrackArtist.Text = artists2;
-                    }
-                    else
-                    {
-                        NextTrackArtist.Text = playerService.NextPlayTrack.GetArtistsString();
-                    }
+                    NextTrackArtist.Text = playerService.NextPlayTrack.GetArtistsString();
                 }
 
 
                 TrackName.Text = playerService.CurrentTrack.Title;
-                string s = string.Empty;
-                if (playerService.CurrentTrack.MainArtists != null)
-                {
-                    foreach (var trackArtist in playerService.CurrentTrack.MainArtists)
-                    {
-                        s += trackArtist.Name + ", ";
-                    }
-
-                    var artists = s.Remove(s.Length - 2);
-
-                    ArtistName.Text = artists;
-                }
-                else
-                {
-                    ArtistName.Text = playerService.CurrentTrack.GetArtistsString();
-                }
+                ArtistName.Text = playerService.CurrentTrack.GetArtistsString();
 
                 await LoadLyrics();
             }
             catch (Exception ex)
             {
                 logger.Error(ex, ex.Message);
-                notificationsService.Show("Произошла ошибка", "MusicX не смог запустить полноэкранный режим");
+                _snackbarService.Show("Произошла ошибка", "MusicX не смог запустить полноэкранный режим");
 
                 this.Close();
 
@@ -163,38 +135,59 @@ namespace MusicX.Views
             {
                 var vkService = StaticService.Container.GetRequiredService<VkService>();
 
-                if (playerService.CurrentTrack.Data is VkTrackData track)
+                if (playerService.CurrentTrack!.Data is not VkTrackData track)
                 {
-                    if (track.HasLyrics is null || !track.HasLyrics.Value)
-                    {
-                        LyricsControlView.SetLines(new List<string>() { "У этого трека", "Нет пока что текста" });
-                    }
+                    await LoadGenius(playerService.CurrentTrack);
+                    return;
+                }
 
-                    var vkLyrics = await vkService.GetLyrics(track.Info.OwnerId + "_" + track.Info.Id);
+                if (track.HasLyrics is null || !track.HasLyrics.Value)
+                {
+                    if (!await LoadGenius(playerService.CurrentTrack))
+                        LyricsControlView.SetLines(new List<string> { "У этого трека", "Нет пока что текста" });
 
-                    if (vkLyrics.LyricsInfo.Timestamps is null)
-                    {
-                        LyricsControlView.SetLines(vkLyrics.LyricsInfo.Text);
-                    }
+                    return;
+                }
 
-                    if (vkLyrics.LyricsInfo.Text is null)
-                    {
-                        LyricsControlView.SetLines(vkLyrics.LyricsInfo.Timestamps);
-                    }
+                var vkLyrics = await vkService.GetLyrics(track.Info.OwnerId + "_" + track.Info.Id);
 
-                    if (_timer is null)
-                    {
-                        _timer = new DispatcherTimer();
-                        _timer.Interval = TimeSpan.FromMilliseconds(500);
-                        _timer.Tick += _timer_Tick;
-                        _timer.Start();
-                    }
+                if (vkLyrics.LyricsInfo.Timestamps is null)
+                {
+                    LyricsControlView.SetLines(vkLyrics.LyricsInfo.Text);
+                }
+
+                if (vkLyrics.LyricsInfo.Text is null)
+                {
+                    LyricsControlView.SetLines(vkLyrics.LyricsInfo.Timestamps);
+                }
+
+                if (_timer is null)
+                {
+                    _timer = new DispatcherTimer();
+                    _timer.Interval = TimeSpan.FromMilliseconds(500);
+                    _timer.Tick += _timer_Tick;
+                    _timer.Start();
                 }
             }catch(Exception ex)
             {
                 logger.Error(ex, ex.Message);
             }
            
+        }
+        
+        private async Task<bool> LoadGenius(PlaylistTrack track)
+        {
+            var geniusService = StaticService.Container.GetRequiredService<GeniusService>();
+            var hits = await geniusService.SearchAsync($"{track.Title} {track.MainArtists.First().Name}");
+
+            if (!hits.Any())
+                return false;
+
+            var song = await geniusService.GetSongAsync(hits.First().Result.Id);
+
+            LyricsControlView.SetLines(song.Lyrics.Plain.Split('\n', StringSplitOptions.RemoveEmptyEntries).ToList());
+
+            return true;
         }
 
         private void _timer_Tick(object? sender, EventArgs e)

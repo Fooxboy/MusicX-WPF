@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using AsyncAwaitBestPractices;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Models;
@@ -13,7 +12,6 @@ using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
 using MusicX.ViewModels;
 using MusicX.Views;
-using Wpf.Ui.Common;
 using Wpf.Ui.Controls;
 
 namespace MusicX.Controls;
@@ -92,5 +90,10 @@ public partial class RecommsPlaylist : UserControl
         _playerService = StaticService.Container.GetRequiredService<PlayerService>();
         _playerService.CurrentPlaylistChanged += PlayerServiceOnCurrentPlaylistChanged;
         PlayerServiceOnCurrentPlaylistChanged(_playerService, EventArgs.Empty);
+    }
+
+    private void RecommsPlaylist_OnUnloaded(object sender, RoutedEventArgs e)
+    {
+        _playerService.CurrentPlaylistChanged -= PlayerServiceOnCurrentPlaylistChanged;
     }
 }

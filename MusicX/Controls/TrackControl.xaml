@@ -4,11 +4,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:MusicX.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:iconElements="http://schemas.lepo.co/wpfui/2022/xaml"
     d:DesignHeight="100"
     d:DesignWidth="800"
     Loaded="UserControl_Loaded"
+    Unloaded="TrackControl_OnUnloaded"
     MouseEnter="Grid_MouseEnter"
     MouseLeave="Grid_MouseLeave"
     mc:Ignorable="d">
@@ -60,63 +61,60 @@
     </UserControl.Triggers>-->
 
     <UserControl.ContextMenu>
-        <ContextMenu
-            Background="#414141"
-            BorderBrush="#646464"
-            Foreground="White">
+        <ContextMenu>
             <StackPanel
                 x:Name="AddRemove"
                 MouseDown="AddRemove_MouseDown"
                 Orientation="Horizontal">
-                <ui:SymbolIcon x:Name="AddRemoveIcon" />
+                <iconElements:SymbolIcon x:Name="AddRemoveIcon"  />
                 <TextBlock
                     x:Name="AddRemoveText"
                     Margin="10,0,0,0"
-                    Foreground="White" />
+                     />
             </StackPanel>
 
             <MenuItem
                 x:Name="GoToArtistMenu"
-                Foreground="White"
+                
                 Header="Перейти к артисту" />
 
             <StackPanel x:Name="AddToPlaylist" MouseDown="AddToPlaylist_MouseDown"  Orientation="Horizontal">
-                <ui:SymbolIcon Symbol="AlbumAdd20" />
+                <iconElements:SymbolIcon Symbol="AlbumAdd20"  />
                 <TextBlock
                     Margin="10,0,0,0"
-                    Foreground="White"
+                    
                     Text="Добавить в плейлист" />
             </StackPanel>
 
             <StackPanel x:Name="AddArtistIgnore" MouseDown="AddArtistIgnore_MouseDown"  Orientation="Horizontal">
-                <ui:SymbolIcon Symbol="PresenceBlocked24" />
+                <iconElements:SymbolIcon Symbol="PresenceDnd24"  />
                 <TextBlock
                     Margin="10,0,0,0"
-                    Foreground="White"
+                    
                     Text="Пропускать треки исполнителя" />
             </StackPanel>
 
             <StackPanel MouseDown="Download_MouseDown" Orientation="Horizontal">
-                <ui:SymbolIcon Symbol="ArrowDownload24" />
+                <iconElements:SymbolIcon Symbol="ArrowDownload24"  />
                 <TextBlock
                     Margin="10,0,0,0"
-                    Foreground="White"
+                    
                     Text="Скачать" />
             </StackPanel>
             
             <StackPanel MouseDown="PlayNext_MouseDown" Orientation="Horizontal">
-                <ui:SymbolIcon Symbol="TextAddSpaceBefore24" />
+                <iconElements:SymbolIcon Symbol="TextAddSpaceBefore24"  />
                 <TextBlock
                     Margin="10,0,0,0"
-                    Foreground="White"
+                    
                     Text="Возпроизвести следующим" />
             </StackPanel>
 
             <StackPanel MouseDown="AddToQueue_MouseDown" Orientation="Horizontal">
-                <ui:SymbolIcon Symbol="TextAddSpaceAfter24" />
+                <iconElements:SymbolIcon Symbol="TextAddSpaceAfter24"  />
                 <TextBlock
                     Margin="10,0,0,0"
-                    Foreground="White"
+                    
                     Text="Добавить в очередь" />
             </StackPanel>
 
@@ -203,10 +201,11 @@
                         Opacity="0.1"
                         RadiusX="5"
                         RadiusY="5" />
-                    <ui:SymbolIcon
-                        HorizontalContentAlignment="Center"
-                        VerticalContentAlignment="Center"
+                    <iconElements:SymbolIcon
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
                         FontSize="20"
+                        Foreground="White"
                         Symbol="MusicNote124" />
 
                     <Rectangle
@@ -237,11 +236,12 @@
                             Opacity="0.6"
                             RadiusX="3"
                             RadiusY="3" />
-                        <ui:SymbolIcon
+                        <iconElements:SymbolIcon
                             x:Name="IconPlay"
-                            HorizontalContentAlignment="Center"
-                            VerticalContentAlignment="Center"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
                             FontSize="20"
+                            Foreground="White"
                             Symbol="Play24" />
 
                     </Grid>
@@ -261,7 +261,7 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         FontWeight="ExtraBlack"
-                        Foreground="White"
+                        
                         Text="1" />
                 </Grid>
                 <StackPanel Margin="5,0,0,0" VerticalAlignment="Center" MaxWidth="170" x:Name="TextsPanel">
@@ -271,7 +271,7 @@
                             x:Name="Title"
                             FontSize="16"
                             FontWeight="DemiBold"
-                            Foreground="White"
+                            
                             MouseEnter="Title_MouseEnter"
                             MouseLeave="Title_MouseLeave"
                             MouseLeftButtonDown="Title_MouseLeftButtonDown"
@@ -284,7 +284,7 @@
                         <TextBlock
                             x:Name="Subtitle"
                             Margin="5,3,2,0"
-                            Foreground="White"
+                            
                             Opacity="0.3"
                             Text="Subtitle"
                             TextTrimming="CharacterEllipsis" />
@@ -305,7 +305,7 @@
                                 VerticalAlignment="Center"
                                 FontFamily="{StaticResource VKSansBold}"
                                 FontSize="12"
-                                Foreground="White"
+                                
                                 Text="E" />
                         </Border>
 
@@ -316,7 +316,7 @@
                             x:Name="Artists"
                             Margin="0,2,0,0"
                             FontSize="11"
-                            Foreground="White"
+                            
                             Opacity="0.6"
                             Text="Artist"
                             TextWrapping="NoWrap"
@@ -339,9 +339,11 @@
                 ForceCursor="True"
                 Click="RecommendedAudio_Click"
                 FontSize="20"
-                Icon="Sparkle48"
                 Appearance="Transparent"
                 Visibility="Collapsed">
+                <ui:Button.Icon>
+                    <iconElements:SymbolIcon Symbol="Sparkle48" />
+                </ui:Button.Icon>
                 <ui:Button.ToolTip>
                     <ToolTip Content="Показать похожие треки" />
                 </ui:Button.ToolTip>
@@ -356,7 +358,7 @@
                 Margin="3,0,25,0"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
-                Foreground="White"
+                
                 Opacity="0.5"
                 Text="02:20" />
         </Grid>

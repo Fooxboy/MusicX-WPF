@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using MusicX.Services;
-using System;
 using System.Windows;
 using System.Windows.Controls;
 

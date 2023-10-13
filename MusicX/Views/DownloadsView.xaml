@@ -5,11 +5,11 @@
     xmlns:controls="clr-namespace:MusicX.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:hc="https://handyorg.github.io/handycontrol"
-    xmlns:local="clr-namespace:MusicX.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wpfui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
     xmlns:viewModels="clr-namespace:MusicX.ViewModels"
     xmlns:converters="clr-namespace:MusicX.Converters"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="DownloadsView"
     d:DesignHeight="450"
     d:DesignWidth="800"
@@ -29,15 +29,16 @@
             VerticalAlignment="Center"
             Visibility="Collapsed">
             <StackPanel>
-                <wpfui:SymbolIcon
+                <ui:SymbolIcon
                     Margin="0,0,0,0"
                     FontSize="80"
+                    Foreground="White"
                     Symbol="Warning20" />
                 <TextBlock
                     Margin="0,30,0,0"
                     FontFamily="{StaticResource VKSansDemiBold}"
                     FontSize="20"
-                    Foreground="White"
+                    
                     Text="Для загрузки треков необходимо загрузить дополнительный компонент"
                     TextWrapping="Wrap" />
                 <TextBlock
@@ -45,7 +46,7 @@
                     HorizontalAlignment="Center"
                     FontFamily="{StaticResource VKSansRegular}"
                     FontSize="18"
-                    Foreground="White"
+                    
                     Opacity="0.7"
                     Text="Размер: 222МБ"
                     TextWrapping="Wrap" />
@@ -56,8 +57,11 @@
                     HorizontalAlignment="Center"
                     Appearance="Secondary"
                     Click="DownloadButton_Click"
-                    Content="Скачать"
-                    Icon="ArrowDownload16" />
+                    Content="Скачать">
+                    <wpfui:Button.Icon>
+                        <ui:SymbolIcon Symbol="ArrowDownload16" />
+                    </wpfui:Button.Icon>
+                </wpfui:Button>
             </StackPanel>
         </Grid>
 
@@ -67,16 +71,17 @@
             VerticalAlignment="Center"
             Visibility="Collapsed">
             <StackPanel>
-                <wpfui:SymbolIcon
+                <ui:SymbolIcon
                     Margin="0,0,0,0"
                     FontSize="80"
+                    Foreground="White"
                     Symbol="ArrowDownload48" />
                 <TextBlock
                     Margin="0,30,0,0"
                     HorizontalAlignment="Center"
                     FontFamily="{StaticResource VKSansDemiBold}"
                     FontSize="23"
-                    Foreground="White"
+                    
                     Text="Выполняется загрузка компонента"
                     TextWrapping="Wrap" />
                 <TextBlock
@@ -84,21 +89,21 @@
                     HorizontalAlignment="Center"
                     FontFamily="{StaticResource VKSansRegular}"
                     FontSize="18"
-                    Foreground="White"
+                    
                     Opacity="0.7"
                     Text="Мы сообщим Вам о результате"
                     TextWrapping="Wrap" />
 
                 <StackPanel Margin="0,30,0,0" Orientation="Horizontal">
-                    <TextBlock Foreground="White" Text="Осталось: " />
+                    <TextBlock  Text="Осталось: " />
                     <TextBlock
                         x:Name="DownloadedCount"
-                        Foreground="White"
+                        
                         Opacity="0.7"
                         Text="0" />
                     <TextBlock
                         x:Name="DownloadedKind"
-                        Foreground="White"
+                        
                         Opacity="0.7"
                         Text="МБ" />
 
@@ -122,7 +127,7 @@
                         <TextBlock
                             FontFamily="{StaticResource VKSansDemiBold}"
                             FontSize="29"
-                            Foreground="White"
+                            
                             Text="Сейчас загружается" />
 
                         <StackPanel Margin="8,10,8,0">
@@ -142,13 +147,13 @@
                                         <TextBlock
                                             FontFamily="{StaticResource VKSansDemiBold}"
                                             FontSize="18"
-                                            Foreground="White"
+                                            
                                             Text="{Binding CurrentDownloadingAudio.Title, FallbackValue=Название аудио}" />
                                         <TextBlock
                                             x:Name="NowDownloadArtist"
                                             FontFamily="{StaticResource VKSansMedium}"
                                             FontSize="16"
-                                            Foreground="White"
+                                            
                                             Opacity="0.7"
                                             Text="{Binding CurrentDownloadingAudio, Converter={StaticResource ArtistsToStringConverter}, FallbackValue=Имя исполнителя}" />
 
@@ -174,7 +179,7 @@
                         <TextBlock
                             FontFamily="{StaticResource VKSansDemiBold}"
                             FontSize="29"
-                            Foreground="White"
+                            
                             Text="Действия" />
 
                         <hc:ScrollViewer
@@ -190,32 +195,44 @@
                                     Height="50"
                                     Appearance="Secondary"
                                     Command="{Binding QueueAllMyTracksCommand}"
-                                    Content="Скачать все мои аудиозаписи"
-                                    Icon="MusicNote220" />
+                                    Content="Скачать все мои аудиозаписи">
+                                    <wpfui:Button.Icon>
+                                        <ui:SymbolIcon Symbol="MusicNote220" />
+                                    </wpfui:Button.Icon>
+                                </wpfui:Button>
                                 <wpfui:Button
                                     Width="300"
                                     Height="50"
                                     Margin="5,0,0,0"
                                     Appearance="Secondary"
                                     Command="{Binding QueueAllMyPlaylistsCommand}"
-                                    Content="Скачать все мои плейлисты"
-                                    Icon="Stream24" />
+                                    Content="Скачать все мои плейлисты">
+                                    <wpfui:Button.Icon>
+                                        <ui:SymbolIcon Symbol="Stream24" />
+                                    </wpfui:Button.Icon>
+                                </wpfui:Button>
                                 <wpfui:Button
                                     Width="300"
                                     Height="50"
                                     Margin="5,0,0,0"
                                     Appearance="Secondary"
                                     Command="{Binding OpenMusicFolderCommand}"
-                                    Content="Открыть папку с музыкой"
-                                    Icon="Folder32" />
+                                    Content="Открыть папку с музыкой">
+                                    <wpfui:Button.Icon>
+                                        <ui:SymbolIcon Symbol="Folder32" />
+                                    </wpfui:Button.Icon>
+                                </wpfui:Button>
                                 <wpfui:Button
                                     Width="300"
                                     Height="50"
                                     Margin="5,0,0,0"
                                     Appearance="Secondary"
                                     Command="{Binding ClearQueueCommand}"
-                                    Content="Очистить очередь"
-                                    Icon="ArrowRedo32"/>
+                                    Content="Очистить очередь">
+                                    <wpfui:Button.Icon>
+                                        <ui:SymbolIcon Symbol="ArrowRedo32" />
+                                    </wpfui:Button.Icon>
+                                </wpfui:Button>
                             </StackPanel>
                         </hc:ScrollViewer>
 
@@ -226,13 +243,13 @@
                             Margin="0,20,0,0"
                             FontFamily="{StaticResource VKSansDemiBold}"
                             FontSize="29"
-                            Foreground="White"
+                            
                             Text="Очередь загрузки" />
 
                         <ItemsControl ItemsSource="{Binding DownloadQueue}" Margin="5,10">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Vertical" />
+                                    <VirtualizingStackPanel Orientation="Vertical" IsItemsHost="True" />
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
@@ -248,7 +265,7 @@
                             Margin="0,20,0,0"
                             FontFamily="{StaticResource VKSansDemiBold}"
                             FontSize="29"
-                            Foreground="White"
+                            
                             Text="Загруженные треки" />
 
                         <StackPanel x:Name="DownloadedTracks" />

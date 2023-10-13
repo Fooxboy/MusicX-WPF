@@ -10,11 +10,14 @@ public class ListenTogetherHub : Hub
 {
     private readonly ILogger<ListenTogetherHub> _logger;
     private readonly ListenTogetherService _listenTogetherService;
+    private readonly RadioService _radioService;
 
-    public ListenTogetherHub(ILogger<ListenTogetherHub> logger, ListenTogetherService listenTogetherService)
+
+    public ListenTogetherHub(ILogger<ListenTogetherHub> logger, ListenTogetherService listenTogetherService, RadioService radioService)
     {
         _logger = logger;
         _listenTogetherService = listenTogetherService;
+        _radioService = radioService;
     }
 
     /// <summary>
@@ -86,7 +89,11 @@ public class ListenTogetherHub : Hub
         try
         {
             var owner = Context.ConnectionId;
-            return new(await _listenTogetherService.StopSessionAsync(owner));
+            ErrorState res = new(await _listenTogetherService.StopSessionAsync(owner));
+
+            _radioService.DeleteStation(owner);
+
+            return res;
         }
         catch (Exception ex)
         {
@@ -198,8 +205,10 @@ public class ListenTogetherHub : Hub
             var connectionId = Context.ConnectionId;
 
             await _listenTogetherService.ClientDisconnected(connectionId);
+            _radioService.DeleteStation(connectionId);
 
-        }catch(Exception ex)
+        }
+        catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
             throw new HubException(ex.Message, ex);

@@ -3,7 +3,6 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:local="clr-namespace:MusicX.Views.Modals"
       mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"
       xmlns:models="clr-namespace:MusicX.Core.Models;assembly=MusicX.Core"
@@ -15,8 +14,8 @@
     <Grid>
         <StackPanel Margin="20 10 0 0">
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Выбрано треков: " Foreground="White" />
-                <TextBlock Foreground="White" Text="{Binding SelectedTracks.Count}" />
+                <TextBlock Text="Выбрано треков: "  />
+                <TextBlock  Text="{Binding SelectedTracks.Count}" />
             </StackPanel>
             <controls:MultiSelectListView BorderBrush="Transparent"
                                           Margin="0 10 0 0"
@@ -53,7 +52,7 @@
             </Grid.ColumnDefinitions>
 
             <wpfui:Button HorizontalAlignment="Stretch" Command="{Binding ConfirmCommand}" Grid.Column="2"
-                          Appearance="Primary" Foreground="White" Content="Добавить" />
+                          Appearance="Primary"  Content="Добавить" />
         </Grid>
     </Grid>
 </Page>

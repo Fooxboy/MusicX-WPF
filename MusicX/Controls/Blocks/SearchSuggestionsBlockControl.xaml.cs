@@ -9,7 +9,6 @@ namespace MusicX.Controls.Blocks
     /// </summary>
     public partial class SearchSuggestionsBlockControl : UserControl
     {
-        public Block Block { get; set; }
         public SearchSuggestionsBlockControl()
         {
             InitializeComponent();
@@ -18,10 +17,12 @@ namespace MusicX.Controls.Blocks
 
         private void SearchSuggestionsBlockControl_Loaded(object sender, RoutedEventArgs e)
         {
-            if (Block.Layout.Name == "list") SearchSuggestionsPanel.Orientation = Orientation.Vertical;
-            if (Block.Suggestions != null && Block.Suggestions.Count > 0)
+            if (DataContext is not Block block)
+                return;
+            if (block.Layout.Name == "list") SearchSuggestionsPanel.Orientation = Orientation.Vertical;
+            if (block.Suggestions != null && block.Suggestions.Count > 0)
             {
-                foreach (var suggestion in Block.Suggestions)
+                foreach (var suggestion in block.Suggestions)
                 {
                     var sug = new SuggestionControl() { Height = 40, HorizontalAlignment = HorizontalAlignment.Left, HorizontalContentAlignment = HorizontalAlignment.Left, Suggestion = suggestion, Margin = new Thickness(0, 0, 10, 0) };
 

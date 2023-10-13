@@ -28,6 +28,6 @@ public static partial class TrackExtensions
 
     public static BoomAlbumId ToAlbumId(this Album album)
     {
-        return new(album.ApiId, album.Name, album.Cover.Url);
+        return new(album.ApiId, album.Name, album.Cover.Url, null);
     }
 }

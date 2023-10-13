@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Windows;
-using Wpf.Ui.Controls;
 
 namespace MusicX.Views
 {
     /// <summary>
     /// Логика взаимодействия для FatalErrorView.xaml
     /// </summary>
-    public partial class FatalErrorView : UiWindow
+    public partial class FatalErrorView
     {
         private readonly Exception exInfo;
         public FatalErrorView(Exception ex)

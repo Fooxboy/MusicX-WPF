@@ -1,17 +1,14 @@
-﻿using MusicX.Services;
-using NLog;
-using System;
-using System.IO;
-using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using Microsoft.AppCenter.Analytics;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Controls;
+using MusicX.Services;
 using MusicX.ViewModels;
-using Xabe.FFmpeg;
-using Xabe.FFmpeg.Downloader;
-using System.Collections.Generic;
-using Microsoft.AppCenter.Analytics;
+using NLog;
+using Wpf.Ui;
 
 namespace MusicX.Views;
 
@@ -21,7 +18,6 @@ namespace MusicX.Views;
 public partial class DownloadsView : Page, IMenuPage
 {
     private long maxTotal;
-    private string ffmpegPath = Path.Combine(AppContext.BaseDirectory, "ffmpeg");
 
     public DownloadsView()
     {
@@ -40,13 +36,6 @@ public partial class DownloadsView : Page, IMenuPage
                     {"Version", StaticService.Version }
                 };
         Analytics.TrackEvent("OpenDownloads", properties);
-
-        if (!File.Exists(Path.Combine(ffmpegPath, "version.json")))
-        {
-            NoAvailable.Visibility = Visibility.Visible;
-
-            return;
-        }
             
         ContentGrid.Visibility = Visibility.Visible;
     }
@@ -54,50 +43,27 @@ public partial class DownloadsView : Page, IMenuPage
     {
         NoAvailable.Visibility = Visibility.Collapsed;
         DownloadFfmpeg.Visibility = Visibility.Visible;
-
-        await DownloadFfmpegAsync();
     }
 
-    private async Task DownloadFfmpegAsync()
-    {
-        if(!Directory.Exists(ffmpegPath))
-        {
-            Directory.CreateDirectory(ffmpegPath);
-        }
-        else
-        {
-            foreach (var file in Directory.GetFiles(ffmpegPath))
-            {
-                File.Delete(file);
-            }
-        }
-
-        await FFmpegDownloader.GetLatestVersion(FFmpegVersion.Official, ffmpegPath, new Progress<ProgressInfo>(Client_DownloadProgressChanged));
-            
-        var notifications = StaticService.Container.GetRequiredService<Services.NotificationsService>();
-        notifications.Show("Загрузка завершена", "Дополнительный компонент был загружен. Теперь Вы можете скачивать музыку!");
-
-        ContentGrid.Visibility = Visibility.Visible;
-        DownloadFfmpeg.Visibility = Visibility.Collapsed;
-    }
-
-    private void Client_DownloadProgressChanged(ProgressInfo progressInfo)
+    private void Client_DownloadProgressChanged((long TotalBytes, long Bytes) valueTuple)
     {
         try
         {
-            if (progressInfo.TotalBytes >= maxTotal)
-                maxTotal = progressInfo.TotalBytes;
+            var (totalBytes, downloadedBytes) = valueTuple;
+            
+            if (totalBytes >= maxTotal)
+                maxTotal = totalBytes;
             else
                 return;
             
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                this.DonloadProgress.Maximum = progressInfo.TotalBytes;
-                this.DonloadProgress.Value = progressInfo.DownloadedBytes;
+                this.DonloadProgress.Maximum = totalBytes;
+                this.DonloadProgress.Value = downloadedBytes;
 
-                double left = progressInfo.TotalBytes - progressInfo.DownloadedBytes;
+                double left = totalBytes - downloadedBytes;
 
-                left = left / 1024;
+                left /= 1024;
 
                 if (left > 1024)
                 {
@@ -115,8 +81,9 @@ public partial class DownloadsView : Page, IMenuPage
         }
         catch (Exception ex)
         {
-            var notifications = StaticService.Container.GetRequiredService<Services.NotificationsService>();
-            notifications.Show("Произошла ошибка", "Мы не смогли скачать дополнительный компонент, попробуйте перезапустить приложение.");
+            var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
+            snackbarService.Show("Произошла ошибка",
+                "Мы не смогли скачать дополнительный компонент, попробуйте перезапустить приложение.");
 
             var logger = StaticService.Container.GetRequiredService<Logger>();
 

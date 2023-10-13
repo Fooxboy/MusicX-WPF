@@ -8,7 +8,8 @@
              mc:Ignorable="d"
              Name="Control"
              d:DesignHeight="300" d:DesignWidth="300"
-             Loaded="RecommsPlaylist_OnLoaded">
+             Loaded="RecommsPlaylist_OnLoaded"
+             Unloaded="RecommsPlaylist_OnUnloaded">
     <UserControl.Template>
         <ControlTemplate TargetType="local:RecommsPlaylist">
             <Grid>
@@ -38,7 +39,8 @@
                 
                 <Border Width="198" Height="240" CornerRadius="12"
                            Background="Black" Opacity="0" Name="PlayPauseOverlay"
-                           MouseLeftButtonUp="PlayPauseOverlay_OnMouseLeftButtonUp">
+                           MouseLeftButtonUp="PlayPauseOverlay_OnMouseLeftButtonUp"
+                           TextElement.FontSize="48"> <!-- startup FontSize for icons sets here because it doesnt work directly on SymbolIcon -->
                     <Border.Resources>
                         <Storyboard x:Key="EnterStoryboard">
                             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PlayPauseOverlay" Storyboard.TargetProperty="(UIElement.Opacity)">
@@ -65,9 +67,10 @@
                             </EventTrigger.Actions>
                         </EventTrigger>
                     </Border.Triggers>
-                    <ui:SymbolIcon FontSize="48"
-                                   Symbol="Play48"
+                    <ui:SymbolIcon Symbol="Play24"
+                                   Foreground="White"
                                    Name="PlayPauseIcon"
+                                   FontSize="48"
                                    HorizontalAlignment="Center" VerticalAlignment="Center"
                                    MouseLeftButtonUp="PlayPause_OnMouseLeftButtonUp"/>
                 </Border>

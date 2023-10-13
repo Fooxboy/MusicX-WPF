@@ -6,9 +6,9 @@
     xmlns:controls="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:hc="https://handyorg.github.io/handycontrol"
-    xmlns:local="clr-namespace:MusicX.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:behaviors="clr-namespace:MusicX.Behaviors"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="PlaylistView"
     d:DesignHeight="720"
     d:DesignWidth="1280"
@@ -17,10 +17,7 @@
 
     <Page.Resources>
         <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDark.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
-            </ResourceDictionary.MergedDictionaries>
+            
             <Storyboard x:Key="LoadedPlaylist">
                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="rectangle" Storyboard.TargetProperty="(Shape.Fill).(Brush.Opacity)">
                     <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
@@ -80,7 +77,7 @@
                     VerticalAlignment="Center"
                     FontSize="16"
                     FontWeight="DemiBold"
-                    Foreground="White"
+                    
                     Text="Стучусь к серверам ВКонтакте..." />
             </StackPanel>
         </Grid>
@@ -115,9 +112,9 @@
                                 Opacity="0.2"
                                 RadiusX="5"
                                 RadiusY="5" />
-                            <controls:SymbolIcon
-                                HorizontalContentAlignment="Center"
-                                VerticalContentAlignment="Center"
+                            <ui:SymbolIcon
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
                                 FontSize="70"
                                 Symbol="NavigationPlay20" />
 
@@ -166,7 +163,7 @@
                                            FontFamily="{StaticResource VKSansBold}"
                                            FontSize="40"
                                            FontWeight="ExtraBlack"
-                                           Foreground="White"
+                                           
                                            Text="{Binding Title}" />
                             </ScrollViewer>
 
@@ -175,7 +172,7 @@
                                 Margin="0,10,0,0"
                                 FontFamily="{StaticResource VKSansRegular}"
                                 FontSize="22"
-                                Foreground="White"
+                                
                                 Opacity="0.8"
                                 Text="{Binding ArtistText}"
                                 TextTrimming="CharacterEllipsis" />
@@ -189,34 +186,34 @@
                                 <TextBlock
                                     x:Name="Genres"
                                     FontFamily="{StaticResource VKSansRegular}"
-                                    Foreground="White"
+                                    
                                     Text="{Binding Genres}" />
                                 <TextBlock
                                     x:Name="Dot2"
                                     Margin="3,0,0,0"
-                                    Foreground="White"
+                                    
                                     Text="•" />
                                 <TextBlock
                                     x:Name="Year"
                                     Margin="3,0,0,0"
                                     FontFamily="{StaticResource VKSansRegular}"
-                                    Foreground="White"
+                                    
                                     Text="{Binding Year}" />
                                 <TextBlock
                                     x:Name="Dot3"
                                     Margin="3,0,0,0"
-                                    Foreground="White"
+                                    
                                     Text="•" />
                                 <TextBlock
                                     x:Name="Plays"
                                     Margin="3,0,0,0"
                                     FontFamily="{StaticResource VKSansRegular}"
-                                    Foreground="White"
+                                    
                                     Text="{Binding Plays}" />
                                 <TextBlock
                                     x:Name="PlaysText"
                                     Margin="3,0,0,0"
-                                    Foreground="White"
+                                    
                                     Text="прослушиваний" />
                             </StackPanel>
 
@@ -239,7 +236,11 @@
                                     Appearance="Secondary"
                                     Click="AddPlaylist_Click"
                                     Content="Добавить к себе"
-                                    Icon="Add28" />
+                                    Foreground="White">
+                                    <controls:Button.Icon>
+                                        <controls:SymbolIcon Symbol="Add28"/>
+                                    </controls:Button.Icon>
+                                </controls:Button>
                                 <controls:Button
                                     x:Name="PlayPlaylist"
                                     MinWidth="150"
@@ -247,7 +248,11 @@
                                     Appearance="Secondary"
                                     Click="PlayPlaylist_Click"
                                     Content="Воспроизвести"
-                                    Icon="Play20" />
+                                    Foreground="White">
+                                    <controls:Button.Icon>
+                                        <controls:SymbolIcon Symbol="Play20"/>
+                                    </controls:Button.Icon>
+                                </controls:Button>
 
                                 <controls:Button
                                     x:Name="EditPlaylist"
@@ -256,7 +261,11 @@
                                     Appearance="Secondary"
                                     Click="EditPlaylist_Click"
                                     Content="Редактировать"
-                                    Icon="Edit16" />
+                                    Foreground="White">
+                                    <controls:Button.Icon>
+                                        <controls:SymbolIcon Symbol="Edit16"/>
+                                    </controls:Button.Icon>
+                                </controls:Button>
 
                                 <controls:Button
                                     x:Name="DownloadPlaylist"
@@ -265,13 +274,17 @@
                                     Appearance="Secondary"
                                     Click="DownloadPlaylist_Click"
                                     Content="Скачать"
-                                    Icon="ArrowDownload48" />
+                                    Foreground="White">
+                                    <controls:Button.Icon>
+                                        <controls:SymbolIcon Symbol="ArrowDownload48"/>
+                                    </controls:Button.Icon>
+                                </controls:Button>
 
                             </StackPanel>
                             
                             <TextBlock x:Name="__"
                                        Margin="0,10,0,0" 
-                                       Foreground="White"
+                                       
                                        Opacity="0.6"
                                        MaxWidth="550"
                                        TextWrapping="Wrap"

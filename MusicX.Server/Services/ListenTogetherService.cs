@@ -189,5 +189,12 @@ namespace MusicX.Server.Services
 
             if(s is not null) await this.LeaveSessionAsync(connectionId);
         }
+
+        public bool CheckExsistSession(string connectionId)
+        {
+            var session = _sessionService.GetSessionByOwner(connectionId);
+
+            return session is not null;
+        }
     }
 }

@@ -4,16 +4,15 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:hc="https://handyorg.github.io/handycontrol"
-    xmlns:local="clr-namespace:MusicX.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:music="clr-namespace:MusicX.Controls"
     xmlns:wpfui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
     xmlns:viewModels="clr-namespace:MusicX.ViewModels"
+    xmlns:models="clr-namespace:MusicX.Core.Models;assembly=MusicX.Core"
     Title="SectionView"
     d:DesignHeight="450"
     d:DesignWidth="800"
     d:DataContext="{d:DesignInstance {x:Type viewModels:SectionViewModel}, IsDesignTimeCreatable=True}"
-    Style="{StaticResource UiPage}"
     mc:Ignorable="d"
     KeyUp="SectionView_OnKeyUp"
     Loaded="SectionView_OnLoaded">
@@ -87,7 +86,7 @@
                     VerticalAlignment="Center"
                     FontSize="16"
                     FontWeight="DemiBold"
-                    Foreground="White"
+                    
                     Text="Стучусь к серверам ВКонтакте..." />
             </StackPanel>
         </Grid>
@@ -120,17 +119,6 @@
                 ScrollViewer.CanContentScroll="False"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                 SnapsToDevicePixels="True">
-
-                <ListBox.Resources>
-                    <ResourceDictionary>
-                        <ResourceDictionary.MergedDictionaries>
-                            <ResourceDictionary
-                                Source="pack://application:,,,/HandyControl;component/Themes/SkinDark.xaml" />
-                            <ResourceDictionary
-                                Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
-                        </ResourceDictionary.MergedDictionaries>
-                    </ResourceDictionary>
-                </ListBox.Resources>
                 <ListBox.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform />
@@ -170,10 +158,11 @@
                 </ListBox.ItemContainerStyle>
 
                 <ListBox.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate DataType="models:Block">
                         <Grid>
-                            <music:BlockControl Block="{Binding}"
-                                                Artist="{Binding DataContext.Artist, ElementName=BlocksScrollView}" />
+                            <music:BlockControl Content="{Binding}"
+                                                Artist="{Binding DataContext.Artist, ElementName=BlocksScrollView}"
+                                                Margin="5" />
                         </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>

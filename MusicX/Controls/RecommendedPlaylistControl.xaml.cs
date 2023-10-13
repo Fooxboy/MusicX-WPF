@@ -17,6 +17,7 @@ using MusicX.Services.Player.Playlists;
 using System.Collections.Generic;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
+using Wpf.Ui.Controls;
 
 namespace MusicX.Controls
 {
@@ -36,7 +37,6 @@ namespace MusicX.Controls
         public RecommendedPlaylistControl()
         {
             InitializeComponent();
-            this.Loaded += RecommendedPlaylistControl_Loaded;
         }
 
         private void RecommendedPlaylistControl_Loaded(object sender, RoutedEventArgs e)
@@ -82,12 +82,7 @@ namespace MusicX.Controls
                     GradientBackground.GradientStops.Add(new GradientStop() { Color = color, Offset = 1.1 });
                 }
 
-                //BackgroundRectangle.Fill = 
-
-                foreach (var audio in Playlist.Audios)
-                {
-                    MainStackPanel.Children.Add(new TrackControl() { Audio = audio, Width = 284, Margin = new Thickness(0, 5, 0, 0) });
-                }
+                //BackgroundRectangle.Fill =
                 
                 var player = StaticService.Container.GetRequiredService<PlayerService>();
                 player.CurrentPlaylistChanged += PlayerOnCurrentPlaylistChanged;
@@ -95,7 +90,7 @@ namespace MusicX.Controls
                 if (player.CurrentPlaylist is VkPlaylistPlaylist {Data: {} data} && data.PlaylistId == Playlist.Id)
                 {
                     nowPlay = true;
-                    Icons.Symbol = Wpf.Ui.Common.SymbolRegular.Pause24;
+                    Icons.Symbol = SymbolRegular.Pause24;
                 }
             }catch (Exception ex)
             {
@@ -123,11 +118,11 @@ namespace MusicX.Controls
             if (service.CurrentPlaylist is VkPlaylistPlaylist {Data: {} data} && data.PlaylistId == Playlist.Id)
             {
                 nowPlay = true;
-                Icons.Symbol = Wpf.Ui.Common.SymbolRegular.Pause24;
+                Icons.Symbol = SymbolRegular.Pause24;
             }
             else
             {
-                Icons.Symbol = Wpf.Ui.Common.SymbolRegular.Play24;
+                Icons.Symbol = SymbolRegular.Play24;
             }
         }
 
@@ -173,14 +168,14 @@ namespace MusicX.Controls
                 {
                     nowPlay = true;
 
-                    Icons.Symbol = Wpf.Ui.Common.SymbolRegular.Timer20;
+                    Icons.Symbol = SymbolRegular.Timer20;
                     
                     await playerService.PlayAsync(new VkPlaylistPlaylist(
                                                       vkService,
                                                       new(Playlist.Playlist.Id, Playlist.Playlist.OwnerId,
                                                           Playlist.Playlist.AccessKey)), Playlist.Audios[0].ToTrack(Playlist.Playlist));
 
-                    Icons.Symbol = Wpf.Ui.Common.SymbolRegular.Pause24;
+                    Icons.Symbol = SymbolRegular.Pause24;
 
                     nowLoad = false;
 
@@ -188,7 +183,7 @@ namespace MusicX.Controls
                 else
                 {
                     playerService.Pause();
-                    Icons.Symbol = Wpf.Ui.Common.SymbolRegular.Play24;
+                    Icons.Symbol = SymbolRegular.Play24;
 
                     await Task.Delay(400);
                     nowLoad = false;
@@ -212,6 +207,12 @@ namespace MusicX.Controls
                 Debug.WriteLine(ex.Message);
                 nowLoad = false;
             }
+        }
+
+        private void RecommendedPlaylistControl_OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            var player = StaticService.Container.GetRequiredService<PlayerService>();
+            player.CurrentPlaylistChanged -= PlayerOnCurrentPlaylistChanged;
         }
     }
 }
