@@ -340,21 +340,6 @@ namespace MusicX
 
                 this.WindowState = WindowState.Normal;
 
-                var colorPrevalence = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\DWM", false)?
-                    .GetValue("ColorPrevalence", 0) as int? == 1;
-
-                if (colorPrevalence)
-                {
-                    var windowHandle = new WindowInteropHelper(this).Handle;
-                
-                    unsafe
-                    {
-                        var value = 0x00202020;
-                        var hResult = PInvoke.DwmSetWindowAttribute(new(windowHandle), DWMWINDOWATTRIBUTE.DWMWA_CAPTION_COLOR, Unsafe.AsPointer(ref value), sizeof(int));
-                        Marshal.ThrowExceptionForHR(hResult);
-                    }
-                }
-
                 
                 // AppNotifyIcon.Register();
             }
