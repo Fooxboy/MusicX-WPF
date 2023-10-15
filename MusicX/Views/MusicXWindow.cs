@@ -35,12 +35,19 @@ public class MusicXWindow : FluentWindow
 
         if (!colorPrevalence) return;
         
-        unsafe
+        try
         {
-            var value = 0x00202020;
-            var hResult = PInvoke.DwmSetWindowAttribute(new(windowHandle), DWMWINDOWATTRIBUTE.DWMWA_CAPTION_COLOR, Unsafe.AsPointer(ref value), sizeof(int));
-            Marshal.ThrowExceptionForHR(hResult);
+            unsafe
+            {
+                var value = 0x00202020;
+                var hResult = PInvoke.DwmSetWindowAttribute(new(windowHandle), DWMWINDOWATTRIBUTE.DWMWA_CAPTION_COLOR, Unsafe.AsPointer(ref value), sizeof(int));
+                Marshal.ThrowExceptionForHR(hResult);
+            }
+        }catch(Exception ex)
+        {
+            //nothing
         }
+        
     }
 
     protected override void OnInitialized(EventArgs e)
