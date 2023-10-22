@@ -119,7 +119,7 @@
                     </ContentControl.Style>
                 </ContentControl>
                 <ui:TextBox Name="CodeBox" PlaceholderText="Код" ClearButtonEnabled="False" MaxLength="{Binding Vk2FaResponse.CodeLength}" PreviewTextInput="CodeBox_OnPreviewTextInput" />
-                <ui:Button Width="272" Margin="0,20,0,0" Appearance="Primary" Background="#3379d9" Command="{Binding Vk2FaCompleteCommand}" CommandParameter="{Binding Text, ElementName=CodeBox}">Продолжить</ui:Button>
+                <ui:Button Width="272" Margin="0,20,0,0" Appearance="Primary" Command="{Binding Vk2FaCompleteCommand}" CommandParameter="{Binding Text, ElementName=CodeBox}">Продолжить</ui:Button>
                 <ui:Button Width="272" Margin="0,10,0,0" Appearance="Light" Command="{Binding Vk2FaCompleteCommand}"
                            Visibility="{Binding Vk2FaCanUsePassword, Converter={StaticResource BooleanToVisibilityConverter}}">
                     Войти с помощью пароля

@@ -40,6 +40,8 @@ namespace VkNet.AudioBypassService.Extensions
 				(s, _) => s.GetRequiredKeyedService<IAuthorizationFlow>(AndroidGrantType.Passkey));
 			services.TryAddKeyedSingleton<IAuthorizationFlow, WithoutPasswordAuthorizationFlow>(AndroidGrantType.WithoutPassword);
 			
+			services.TryAddSingleton(s => s.GetRequiredKeyedService<IAuthorizationFlow>(AndroidGrantType.Password));
+			
 			services.TryAddSingleton<IAuthCategory, AuthCategory>();
 			services.TryAddSingleton<ILoginCategory, LoginCategory>();
 			services.TryAddSingleton<IEcosystemCategory, EcosystemCategory>();
