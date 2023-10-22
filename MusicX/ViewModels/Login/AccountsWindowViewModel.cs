@@ -117,28 +117,21 @@ public class AccountsWindowViewModel : BaseViewModel
 
         if (_grantType == AndroidGrantType.PhoneConfirmationSid)
         {
-            if(string.IsNullOrEmpty(Sid))
-            {
-                _snackbarService.Show("Ошибка", "Sid оказался пустым");
-            }
-
             var response = await _ecosystemCategory.CheckOtpAsync(Sid, Vk2FaResponse!.ValidationType, arg);
 
             Profile = response.Profile;
 
             Sid = response.Sid;
 
-            if (response is { ProfileExist: true})
+            if (response is { ProfileExist: true })
             {
-                OpenPage(AccountsWindowPage.EnterPassword);
-
-                return;
-            }
-
-            if(response is { ProfileExist: false })
-            {
-                _snackbarService.Show("Ошибка", "Вконтакте сообщил, что такого пользователя не существует");
-
+                if (response.CanSkipPassword)
+                {
+                    _grantType = AndroidGrantType.WithoutPassword;
+                    await AuthAsync(null);
+                }
+                else
+                    OpenPage(AccountsWindowPage.EnterPassword);
                 return;
             }
         }
@@ -196,13 +189,15 @@ public class AccountsWindowViewModel : BaseViewModel
         }
     }
 
-    private async Task LoginPasswordAsync(string? arg)
+    private Task LoginPasswordAsync(string? arg)
     {
-        if (string.IsNullOrEmpty(arg))
-            return;
-        
+        return string.IsNullOrEmpty(arg) ? Task.CompletedTask : AuthAsync(arg);
+    }
+
+    private async Task AuthAsync(string? password)
+    {
         await _vkApiAuth.AuthorizeAsync(new AndroidApiAuthParams(Login, Sid, ActionRequestedAsync, 
-                        new[] { LoginWay.Push, LoginWay.Email }, arg)
+            new[] { LoginWay.Push, LoginWay.Email }, password)
         {
             AndroidGrantType = _grantType
         });
@@ -322,6 +317,7 @@ public class AccountsWindowViewModel : BaseViewModel
 
         if (nextStep.VerificationMethod == LoginWay.Codegen)
         {
+            _grantType = AndroidGrantType.PhoneConfirmationSid;
             Vk2FaResponse = new(nextStep.VerificationMethod, LoginWay.None, Sid, 0, 6, false, null);
             _grantType = AndroidGrantType.PhoneConfirmationSid;
 
