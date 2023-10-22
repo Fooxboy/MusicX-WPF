@@ -38,7 +38,12 @@ public class TokenRefreshHandler : ITokenRefreshHandler
 
         var authCategory = _serviceProvider.GetRequiredService<IAuthCategory>();
 
-        var (token, expiresIn) = await authCategory.RefreshTokensAsync(oldToken, exchangeToken);
+        var tokenInfo = await authCategory.RefreshTokensAsync(oldToken, exchangeToken);
+        
+        if (tokenInfo is null)
+            return null;
+
+        var (token, expiresIn) = tokenInfo;
 
         await _tokenStore.SetAsync(token, DateTimeOffset.Now + TimeSpan.FromSeconds(expiresIn));
 

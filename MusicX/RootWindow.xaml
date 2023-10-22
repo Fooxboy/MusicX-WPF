@@ -135,19 +135,18 @@
     </Window.Resources>
 
     <Grid x:Name="rootGrid">
+        <Image Visibility="Collapsed" x:Name="WinterBackground" Stretch="UniformToFill"
+               Opacity="0.1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+               Source="pack://application:,,,/Assets/newyear/snowfall.png" />
+
+        <Canvas Opacity="0.2" Name="canvas" HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch" />
+        
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-
-            <Image Visibility="Collapsed" x:Name="WinterBackground" Grid.RowSpan="2" Stretch="UniformToFill"
-                   Opacity="0.1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                   Source="pack://application:,,,/Assets/newyear/snowfall.png" />
-
-            <Canvas Opacity="0.2" Grid.RowSpan="2" Name="canvas" HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch" />
-
 
             <Grid Grid.Row="1" Margin="5,0,0,0">
                 <Grid.RowDefinitions>

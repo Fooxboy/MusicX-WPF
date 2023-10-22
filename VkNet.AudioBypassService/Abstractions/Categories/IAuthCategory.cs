@@ -15,7 +15,7 @@ public interface IAuthCategory
     
     Task<AuthCheckResponse> CheckAuthCodeAsync(string authHash);
     
-    Task<TokenInfo> RefreshTokensAsync(string oldToken, string exchangeToken);
+    [ItemCanBeNull] Task<TokenInfo> RefreshTokensAsync(string oldToken, string exchangeToken);
 
     Task<ExchangeTokenResponse> GetExchangeToken([CanBeNull] UsersFields fields = null);
 }

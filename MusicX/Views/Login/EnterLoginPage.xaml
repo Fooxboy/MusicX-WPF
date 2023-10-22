@@ -22,8 +22,11 @@
                               FontTypography="Subtitle"
                               HorizontalAlignment="Center"
                               FontFamily="{StaticResource VKSansDemiBold}">Вход ВКонтакте</ui:TextBlock>
-                <ui:TextBox Name="LoginTextBox" PlaceholderText="Телефон или почта" />
+                <ui:TextBox Margin="0,20,0,0" Name="LoginTextBox" PlaceholderText="Телефон или почта" />
                 <ui:Button Width="272" Margin="0,20,0,0" Appearance="Primary" Command="{Binding LoginCommand}" CommandParameter="{Binding Text, ElementName=LoginTextBox}">Войти</ui:Button>
+
+                <ui:Button Width="272" Margin="0,20,0,0"  Appearance="Transparent" Command="{Binding OpenTgChannelCommand}">Телеграм канал с помощью</ui:Button>
+
             </StackPanel>
         </Grid>
         <!--<ui:Card.Footer>

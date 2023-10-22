@@ -27,7 +27,7 @@
                               FontTypography="Subtitle"
                               HorizontalAlignment="Center"
                               FontFamily="{StaticResource VKSansDemiBold}">Подтвердите вход</ui:TextBlock>
-                <ContentControl Margin="0,8,0,16" HorizontalAlignment="Center" MaxWidth="272" TextBlock.TextAlignment="Center">
+                <ContentControl Margin="0,8,0,16" Opacity="0.5" HorizontalAlignment="Center" MaxWidth="272" TextBlock.TextAlignment="Center">
                     <ContentControl.Style>
                         <Style TargetType="ContentControl">
                             <Setter Property="Template">
@@ -52,6 +52,17 @@
                                     </Setter>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Vk2FaResponse.ValidationType, FallbackValue={x:Null}}" Value="{x:Static auth:LoginWay.TwoFactorApp}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate>
+                                                <ui:TextBlock TextWrapping="Wrap">
+                                                    <Run Text="Введите код из приложения аутентификатора" FontWeight="Light" />
+                                                </ui:TextBlock>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Vk2FaResponse.ValidationType, FallbackValue={x:Null}}" Value="{x:Static auth:LoginWay.Codegen}">
                                     <Setter Property="Template">
                                         <Setter.Value>
                                             <ControlTemplate>
@@ -107,7 +118,7 @@
                         </Style>
                     </ContentControl.Style>
                 </ContentControl>
-                <ui:TextBox Name="CodeBox" PlaceholderText="Код" ClearButtonEnabled="False" PreviewTextInput="CodeBox_OnPreviewTextInput" />
+                <ui:TextBox Name="CodeBox" PlaceholderText="Код" ClearButtonEnabled="False" MaxLength="{Binding Vk2FaResponse.CodeLength}" PreviewTextInput="CodeBox_OnPreviewTextInput" />
                 <ui:Button Width="272" Margin="0,20,0,0" Appearance="Primary" Command="{Binding Vk2FaCompleteCommand}" CommandParameter="{Binding Text, ElementName=CodeBox}">Продолжить</ui:Button>
                 <ui:Button Width="272" Margin="0,10,0,0" Appearance="Light" Command="{Binding Vk2FaCompleteCommand}"
                            Visibility="{Binding Vk2FaCanUsePassword, Converter={StaticResource BooleanToVisibilityConverter}}">

@@ -59,7 +59,7 @@ namespace MusicX
 
         public RootWindow(NavigationService navigationService, VkService vkService, Logger logger,
             ConfigService configService, ISnackbarService snackbarService,
-                          ListenTogetherService togetherService) : base(snackbarService, navigationService)
+                          ListenTogetherService togetherService) : base(snackbarService, navigationService, logger)
         {
             InitializeComponent();     
             this.navigationService = navigationService;

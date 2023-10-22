@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Services;
 using MusicX.ViewModels.Login;
+using NLog;
 using Wpf.Ui;
 using NavigationService = MusicX.Services.NavigationService;
 
@@ -11,7 +12,7 @@ public partial class AccountsWindow
 {
     private readonly NavigationService _navigationService;
 
-    public AccountsWindow(ISnackbarService snackbarService, NavigationService navigationService, AccountsWindowViewModel viewModel) : base(snackbarService, navigationService)
+    public AccountsWindow(ISnackbarService snackbarService, NavigationService navigationService, AccountsWindowViewModel viewModel, Logger logger) : base(snackbarService, navigationService, logger)
     {
         _navigationService = navigationService;
         navigationService.ExternalPageOpened += NavigationServiceOnExternalPageOpened;
