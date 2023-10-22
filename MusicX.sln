@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicX", "MusicX\MusicX.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicX.Core", "MusicX.Core\MusicX.Core.csproj", "{A5A9EB77-FE73-4AE9-9324-4675EDFD16CE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicX.Tests", "MusicX.Tests\MusicX.Tests.csproj", "{52C0E787-521A-4195-9FB1-ED920743804C}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9D91917B-AA1B-4FB6-8A28-D23EFBA24F07}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
@@ -34,11 +32,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicX.Avalonia", "MusicX.A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VkNet.Extensions.DependencyInjection", "VkNet.Extensions.DependencyInjection\VkNet.Extensions.DependencyInjection.csproj", "{646DE14C-B71A-4A62-8249-204D98DD5334}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicX.Server.Tests", "MusicX.Server.Tests\MusicX.Server.Tests.csproj", "{52E65E39-5947-48FA-B7D4-CEEEFBE33470}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicX.Server.Tests", "MusicX.Server.Tests\MusicX.Server.Tests.csproj", "{52E65E39-5947-48FA-B7D4-CEEEFBE33470}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SignalR.Protobuf", "SignalR.Protobuf\SignalR.Protobuf.csproj", "{6A511BD3-95E2-4087-9F68-A17DBC237B71}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FFMediaToolkit", "FFMediaToolkit\FFMediaToolkit\FFMediaToolkit.csproj", "{1A698859-8147-458D-9FC3-C4302F24AA86}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FFMediaToolkit", "FFMediaToolkit\FFMediaToolkit\FFMediaToolkit.csproj", "{1A698859-8147-458D-9FC3-C4302F24AA86}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -54,10 +52,6 @@ Global
 		{A5A9EB77-FE73-4AE9-9324-4675EDFD16CE}.Debug|x64.Build.0 = Debug|x64
 		{A5A9EB77-FE73-4AE9-9324-4675EDFD16CE}.Release|x64.ActiveCfg = Release|x64
 		{A5A9EB77-FE73-4AE9-9324-4675EDFD16CE}.Release|x64.Build.0 = Release|x64
-		{52C0E787-521A-4195-9FB1-ED920743804C}.Debug|x64.ActiveCfg = Debug|x64
-		{52C0E787-521A-4195-9FB1-ED920743804C}.Debug|x64.Build.0 = Debug|x64
-		{52C0E787-521A-4195-9FB1-ED920743804C}.Release|x64.ActiveCfg = Release|x64
-		{52C0E787-521A-4195-9FB1-ED920743804C}.Release|x64.Build.0 = Release|x64
 		{AB09062A-83B9-4441-8D69-27E144875F6B}.Debug|x64.ActiveCfg = Debug|x64
 		{AB09062A-83B9-4441-8D69-27E144875F6B}.Debug|x64.Build.0 = Debug|x64
 		{AB09062A-83B9-4441-8D69-27E144875F6B}.Release|x64.ActiveCfg = Release|x64
