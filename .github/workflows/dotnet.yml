@@ -64,7 +64,7 @@ jobs:
       
     - name: Set current tag
       if: ${{ github.ref == 'refs/heads/develop' }}
-      run: git tag -a ${{ needs.compute-version.outputs.version }}
+      run: git config user.email "you@example.com" && git config user.name "Your Name" && git tag -a ${{ needs.compute-version.outputs.version }}
 
     - name: Build Changelog
       if: ${{ github.ref == 'refs/heads/develop' }}

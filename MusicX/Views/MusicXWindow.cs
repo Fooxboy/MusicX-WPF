@@ -11,6 +11,7 @@ using MusicX.Controls;
 using NLog;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
+using DispatcherPriority = System.Windows.Threading.DispatcherPriority;
 using NavigationService = MusicX.Services.NavigationService;
 
 namespace MusicX.Views;
@@ -49,15 +50,19 @@ public class MusicXWindow : FluentWindow
     protected override void OnInitialized(EventArgs e)
     {
         base.OnInitialized(e);
-        if (GetTemplateChild("PART_SnackbarPresenter") is SnackbarPresenter snackbarPresenter)
-            _snackbarService.SetSnackbarPresenter(snackbarPresenter);
-        else _snackbarService.SetSnackbarPresenter(null!);
 
-        if (GetTemplateChild("PART_ModalFrame") is not ModalFrame frame) return;
-        
-        _frame = frame;
-        _navigationService.ModalOpenRequested += NavigationServiceOnModalOpenRequested;
-        _navigationService.ModalCloseRequested += NavigationServiceOnModalCloseRequested;
+        Dispatcher.BeginInvoke(DispatcherPriority.Loaded, () =>
+        {
+            if (GetTemplateChild("PART_SnackbarPresenter") is SnackbarPresenter snackbarPresenter)
+                _snackbarService.SetSnackbarPresenter(snackbarPresenter);
+            else _snackbarService.SetSnackbarPresenter(null!);
+
+            if (GetTemplateChild("PART_ModalFrame") is not ModalFrame frame) return;
+
+            _frame = frame;
+            _navigationService.ModalOpenRequested += NavigationServiceOnModalOpenRequested;
+            _navigationService.ModalCloseRequested += NavigationServiceOnModalCloseRequested;
+        });
     }
 
     protected override void OnClosed(EventArgs e)
