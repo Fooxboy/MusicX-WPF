@@ -61,6 +61,10 @@ jobs:
         
     - name: Build
       run: dotnet publish MusicX/MusicX.csproj --no-restore -o pub -p:Platform=x64 -p:InformationalVersion=${{ needs.compute-version.outputs.version }} -c Release -r win10-x64 --sc
+      
+    - name: Set current tag
+      if: ${{ github.ref == 'refs/heads/develop' }}
+      run: git tag -a ${{ needs.compute-version.outputs.version }}
 
     - name: Build Changelog
       if: ${{ github.ref == 'refs/heads/develop' }}
