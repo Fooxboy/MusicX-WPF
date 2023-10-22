@@ -21,22 +21,27 @@
         <Rectangle HorizontalAlignment="Stretch"
                    VerticalAlignment="Stretch"
                    Fill="Black"/>
-        <Image
-            x:Name="BackgroundImage"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Center"
-            Stretch="UniformToFill">
-            <Image.Effect>
-                <BlurEffect
-                    KernelType="Gaussian"
-                    Radius="100"
-                    RenderingBias="Performance" />
-            </Image.Effect>
+        <Border>
+            <Image
+                x:Name="BackgroundImage"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                Stretch="UniformToFill">
+                <Image.Effect>
+                    <BlurEffect
+                        KernelType="Gaussian"
+                        Radius="100"
+                        RenderingBias="Performance" />
+                </Image.Effect>
 
-            <Image.RenderTransform>
-                <ScaleTransform CenterX="500" ScaleX="1.1" ScaleY="1" />
-            </Image.RenderTransform>
-        </Image>
+                <Image.RenderTransform>
+                    <ScaleTransform CenterX="500" ScaleX="1.1" ScaleY="1" />
+                </Image.RenderTransform>
+            </Image>
+            <Border.Effect>
+                <hc:BrightnessEffect Brightness="0.4" />
+            </Border.Effect>
+        </Border>
 
         <TextBlock
             Margin="0,20,0,0"
