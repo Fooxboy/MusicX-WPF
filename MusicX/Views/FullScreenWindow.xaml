@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wpfui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui" xmlns:controls="clr-namespace:MusicX.Controls"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:behaviors="clr-namespace:MusicX.Behaviors"
     Title="FullScreenWindow"
     Width="1280"
     Height="720"
@@ -65,10 +66,14 @@
         </wpfui:Button>
 
 
-        <StackPanel
+        <Grid
             Margin="40,0,0,0"
-            VerticalAlignment="Center"
-            Orientation="Horizontal">
+            VerticalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
             <Grid>
                 <Rectangle Width="500"
                            Height="500"
@@ -103,20 +108,32 @@
                                Symbol="MusicNote124" />
             </Grid>
 
-            <StackPanel Margin="30,0,0,0" VerticalAlignment="Center">
-                <TextBlock
-                    x:Name="TrackName"
-                    FontFamily="{StaticResource VKSansDemiBold}"
-                    FontSize="60"
-                    
-                    Text="Название трека" />
-                <TextBlock
-                    x:Name="ArtistName"
-                    FontFamily="{StaticResource VKSansMedium}"
-                    FontSize="40"
-                    
-                    Opacity="0.6"
-                    Text="Имя исполнителя" />
+            <StackPanel Grid.Column="1" Margin="30,0,0,0" VerticalAlignment="Center">
+                <ScrollViewer HorizontalAlignment="Left"
+                              VerticalAlignment="Center" 
+                              behaviors:AutoScrollBehavior.AutoScroll="True"
+                              HorizontalScrollBarVisibility="Hidden"
+                              VerticalScrollBarVisibility="Hidden"
+                              MaxWidth="1000">
+                    <TextBlock
+                        x:Name="TrackName"
+                        FontFamily="{StaticResource VKSansDemiBold}"
+                        FontSize="60"
+                        Text="Название трека" />
+                </ScrollViewer>
+                <ScrollViewer HorizontalAlignment="Left"
+                              VerticalAlignment="Center" 
+                              behaviors:AutoScrollBehavior.AutoScroll="True"
+                              HorizontalScrollBarVisibility="Hidden"
+                              VerticalScrollBarVisibility="Hidden"
+                              MaxWidth="1000">
+                    <TextBlock
+                        x:Name="ArtistName"
+                        FontFamily="{StaticResource VKSansMedium}"
+                        FontSize="40"
+                        Opacity="0.6"
+                        Text="Имя исполнителя" />
+                </ScrollViewer>
 
                 <hc:PreviewSlider
                     HorizontalAlignment="Left"
@@ -140,9 +157,9 @@
             </StackPanel>
 
 
-            <controls:LyricsControl Margin="30,0,0,0" MaxHeight="500" MaxWidth="500" x:Name="LyricsControlView"/>
+            <controls:LyricsControl Grid.Column="2" Margin="30,0" MaxHeight="500" MaxWidth="500" x:Name="LyricsControlView"/>
 
-        </StackPanel>
+        </Grid>
 
         <TextBlock
             Width="300"
