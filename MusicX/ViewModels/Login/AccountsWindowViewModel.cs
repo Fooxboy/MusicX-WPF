@@ -109,9 +109,15 @@ public class AccountsWindowViewModel : BaseViewModel
 
             Sid = response.Sid;
 
-            if (response is { ProfileExist: true, CanSkipPassword: false })
+            if (response is { ProfileExist: true })
             {
-                OpenPage(AccountsWindowPage.EnterPassword);
+                if (response.CanSkipPassword)
+                {
+                    _grantType = AndroidGrantType.WithoutPassword;
+                    await AuthAsync(null);
+                }
+                else
+                    OpenPage(AccountsWindowPage.EnterPassword);
                 return;
             }
         }
@@ -167,13 +173,15 @@ public class AccountsWindowViewModel : BaseViewModel
         }
     }
 
-    private async Task LoginPasswordAsync(string? arg)
+    private Task LoginPasswordAsync(string? arg)
     {
-        if (string.IsNullOrEmpty(arg))
-            return;
-        
+        return string.IsNullOrEmpty(arg) ? Task.CompletedTask : AuthAsync(arg);
+    }
+
+    private async Task AuthAsync(string? password)
+    {
         await _vkApiAuth.AuthorizeAsync(new AndroidApiAuthParams(Login, Sid, ActionRequestedAsync, 
-                        new[] { LoginWay.Push, LoginWay.Email }, arg)
+            new[] { LoginWay.Push, LoginWay.Email }, password)
         {
             AndroidGrantType = _grantType
         });
@@ -292,6 +300,7 @@ public class AccountsWindowViewModel : BaseViewModel
 
         if (nextStep.VerificationMethod == LoginWay.Codegen)
         {
+            _grantType = AndroidGrantType.PhoneConfirmationSid;
             Vk2FaResponse = new(nextStep.VerificationMethod, LoginWay.None, Sid, 0, 6, false, null);
             OpenPage(AccountsWindowPage.Vk2Fa);
             return;

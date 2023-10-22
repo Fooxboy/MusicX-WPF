@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using JetBrains.Annotations;
 using VkNet.Abstractions;
 using VkNet.Abstractions.Utils;
-using VkNet.AudioBypassService.Abstractions;
 using VkNet.AudioBypassService.Models.Auth;
 using VkNet.Enums.Filters;
 using IAuthCategory = VkNet.AudioBypassService.Abstractions.Categories.IAuthCategory;
@@ -16,16 +15,14 @@ namespace VkNet.AudioBypassService.Categories;
 public partial class AuthCategory : IAuthCategory
 {
     private readonly IVkApiInvoke _apiInvoke;
-    private readonly IDeviceIdStore _deviceIdStore;
     private readonly IRestClient _restClient;
 
     [CanBeNull] private string _anonToken;
     [CanBeNull] private string _authVerifyHash;
 
-    public AuthCategory(IVkApiInvoke apiInvoke, IDeviceIdStore deviceIdStore, IRestClient restClient)
+    public AuthCategory(IVkApiInvoke apiInvoke, IRestClient restClient)
     {
         _apiInvoke = apiInvoke;
-        _deviceIdStore = deviceIdStore;
         _restClient = restClient;
     }
 
@@ -108,7 +105,7 @@ public partial class AuthCategory : IAuthCategory
             { "client_secret", "hHbZxrka2uZ6jB1inYsH" },
         }, true);
         
-        return response.Success[0].AccessToken;
+        return response.Success.Count > 0 ? response.Success[0].AccessToken : null;
     }
 
     public Task<ExchangeTokenResponse> GetExchangeToken(UsersFields fields = null)
