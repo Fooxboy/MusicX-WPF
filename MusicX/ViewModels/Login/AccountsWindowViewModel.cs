@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -15,6 +16,8 @@ using VkNet.Abstractions;
 using VkNet.AudioBypassService.Abstractions;
 using VkNet.AudioBypassService.Abstractions.Categories;
 using VkNet.AudioBypassService.Models.Auth;
+using VkNet.AudioBypassService.Models.Ecosystem;
+using VkNet.Enums.SafetyEnums;
 using Wpf.Ui;
 using Wpf.Ui.Common;
 using IAuthCategory = VkNet.AudioBypassService.Abstractions.Categories.IAuthCategory;
@@ -43,7 +46,9 @@ public class AccountsWindowViewModel : BaseViewModel
     public ICommand Vk2FaCompleteCommand { get; }
     
     public ICommand RequestPasswordLogin { get; }
-    
+
+    public ICommand OpenTgChannelCommand { get; }
+
     public AccountsWindowPage CurrentPage { get; set; } = AccountsWindowPage.EnterLogin;
     
     public string? Sid { get; set; }
@@ -57,6 +62,8 @@ public class AccountsWindowViewModel : BaseViewModel
     public AuthValidatePhoneResponse? Vk2FaResponse { get; set; }
 
     public bool Vk2FaCanUsePassword { get; set; } = true;
+
+    public EcosystemProfile? Profile { get; set; }
 
     public event EventHandler? LoggedIn;
 
@@ -94,6 +101,11 @@ public class AccountsWindowViewModel : BaseViewModel
             Vk2FaResponse = null;
             OpenPage(AccountsWindowPage.EnterPassword);
         });
+
+        OpenTgChannelCommand = new RelayCommand(() =>
+        {
+            Process.Start(new ProcessStartInfo("https://t.me/MusicXPlayer") { UseShellExecute = true });
+        });
         // maybe later (cannot get token as vk android app)
         // LoadQrCode().SafeFireAndForget();
     }
@@ -106,6 +118,8 @@ public class AccountsWindowViewModel : BaseViewModel
         if (_grantType == AndroidGrantType.PhoneConfirmationSid)
         {
             var response = await _ecosystemCategory.CheckOtpAsync(Sid, Vk2FaResponse!.ValidationType, arg);
+
+            Profile = response.Profile;
 
             Sid = response.Sid;
 
@@ -128,6 +142,8 @@ public class AccountsWindowViewModel : BaseViewModel
             _codeTask = null;
             return;
         }
+
+        _snackbarService.Show("Ошибка", $"Отправка кода с типом {_grantType} не реализована!");
     }
 
     private async Task LoadQrCode(bool forceRegenerate = false)
@@ -279,6 +295,7 @@ public class AccountsWindowViewModel : BaseViewModel
         
         if (nextStep is null || nextStep.VerificationMethod == LoginWay.Password)
         {
+            Profile = new EcosystemProfile("Незнакомец", string.Empty, Login, false, false, "https://vk.com/images/camera_200.png");
             OpenPage(AccountsWindowPage.EnterPassword);
             return;
         }
@@ -302,9 +319,13 @@ public class AccountsWindowViewModel : BaseViewModel
         {
             _grantType = AndroidGrantType.PhoneConfirmationSid;
             Vk2FaResponse = new(nextStep.VerificationMethod, LoginWay.None, Sid, 0, 6, false, null);
+            _grantType = AndroidGrantType.PhoneConfirmationSid;
+
             OpenPage(AccountsWindowPage.Vk2Fa);
             return;
         }
+
+        _snackbarService.Show("Ошибка", $"Вход с помощью {nextStep.VerificationMethod} пока что не реализован.");
 
         // TODO nextStep.HasAnotherVerificationMethods
     }
