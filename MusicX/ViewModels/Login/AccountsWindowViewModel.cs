@@ -292,6 +292,7 @@ public class AccountsWindowViewModel : BaseViewModel
 
         if (nextStep.VerificationMethod == LoginWay.Codegen)
         {
+            _grantType = AndroidGrantType.PhoneConfirmationSid;
             Vk2FaResponse = new(nextStep.VerificationMethod, LoginWay.None, Sid, 0, 6, false, null);
             OpenPage(AccountsWindowPage.Vk2Fa);
             return;
