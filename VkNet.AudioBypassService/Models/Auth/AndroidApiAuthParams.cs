@@ -14,7 +14,7 @@ namespace VkNet.AudioBypassService.Models.Auth;
 public delegate ValueTask<string> ActionRequestedDelegate(LoginWay requestedLoginWay, [CanBeNull] AuthState state);
 
 public record AndroidApiAuthParams(string Login, string Sid, ActionRequestedDelegate ActionRequestedAsync, IEnumerable<LoginWay> SupportedWays,
-    string Password = null, AndroidGrantType AndroidGrantType = null) : IApiAuthParams
+    string Password = null, AndroidGrantType AndroidGrantType = null, string PasskeyData = null) : IApiAuthParams
 {
     public AndroidApiAuthParams() : this(null, null, null, null)
     {

@@ -1,13 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using VkNet.Abstractions;
+using VkNet.Abstractions.Core;
 using VkNet.Abstractions.Utils;
 using VkNet.AudioBypassService.Models.Auth;
 using VkNet.Enums.Filters;
+using VkNet.Extensions.DependencyInjection;
+using VkNet.Utils;
 using IAuthCategory = VkNet.AudioBypassService.Abstractions.Categories.IAuthCategory;
 
 namespace VkNet.AudioBypassService.Categories;
@@ -16,14 +20,18 @@ public partial class AuthCategory : IAuthCategory
 {
     private readonly IVkApiInvoke _apiInvoke;
     private readonly IRestClient _restClient;
+    private readonly IVkTokenStore _tokenStore;
+    private readonly IVkApiVersionManager _versionManager;
 
     [CanBeNull] private string _anonToken;
     [CanBeNull] private string _authVerifyHash;
 
-    public AuthCategory(IVkApiInvoke apiInvoke, IRestClient restClient)
+    public AuthCategory(IVkApiInvoke apiInvoke, IRestClient restClient, IVkTokenStore tokenStore, IVkApiVersionManager versionManager)
     {
         _apiInvoke = apiInvoke;
         _restClient = restClient;
+        _tokenStore = tokenStore;
+        _versionManager = versionManager;
     }
 
     [GeneratedRegex("""\"anonymous_token\"\:\s?\"(?<token>[\w\.\=\-]*)\"\,?""", RegexOptions.Multiline)]
@@ -119,5 +127,23 @@ public partial class AuthCategory : IAuthCategory
             { "needExchangeToken", true },
             { "fields", fields }
         });
+    }
+
+    public async Task<PasskeyBeginResponse> BeginPasskeyAsync(string sid)
+    {
+        var response = await _restClient.PostAsync(new("https://api.vk.com/oauth/passkey_begin"), new VkParameters
+        {
+            { "sid", sid },
+            { "anonymous_token", _tokenStore.Token },
+            { "v", _versionManager.Version },
+            { "https", true }
+        }, Encoding.UTF8);
+
+        var options = new JsonSerializerOptions(JsonSerializerDefaults.Web)
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
+        };
+        
+        return JsonSerializer.Deserialize<PasskeyBeginResponse>(response.Value, options);
     }
 }

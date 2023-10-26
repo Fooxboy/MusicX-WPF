@@ -107,7 +107,7 @@
     <PackageReference Include="HandyControl" Version="3.4.0" />
     <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.2" />
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.2" />
-    <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.18-beta">
+    <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.49-beta">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -116,7 +116,7 @@
     <PackageReference Include="QRCoder.Xaml" Version="1.4.3" />
     <PackageReference Include="System.Linq.Async" Version="6.0.1" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
-    <PackageReference Include="System.Text.Json" Version="8.0.0-preview.7.23375.6" />
+    <PackageReference Include="System.Text.Json" Version="8.0.0-rc.2.23479.6" />
     <PackageReference Include="taglib-sharp-netstandard2.0" Version="2.1.0" />
     <PackageReference Include="WPF-UI" Version="3.0.0-preview.6" />
     <PackageReference Include="WpfScreenHelper" Version="2.1.0" />

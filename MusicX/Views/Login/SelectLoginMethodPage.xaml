@@ -1,0 +1,32 @@
+﻿<UserControl x:Class="MusicX.Views.Login.SelectLoginMethodPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:MusicX.Views.Login"
+             xmlns:login="clr-namespace:MusicX.ViewModels.Login"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:auth="clr-namespace:VkNet.AudioBypassService.Models.Auth;assembly=VkNet.AudioBypassService"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance login:AccountsWindowViewModel}"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <StackPanel Margin="60" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <ui:CardAction Margin="0,10"
+                       Command="{Binding NextStepCommand}"
+                       CommandParameter="{x:Static auth:LoginWay.Passkey}">
+            <ui:CardAction.Icon>
+                <ui:SymbolIcon Symbol="Fingerprint24" />
+            </ui:CardAction.Icon>
+            Использовать ключ OnePass для входа в аккаунт
+        </ui:CardAction>
+        
+        <ui:CardAction Margin="0,10"
+                       Command="{Binding NextStepCommand}"
+                       CommandParameter="{x:Static auth:LoginWay.Sms}">
+            <ui:CardAction.Icon>
+                <ui:SymbolIcon Symbol="PhoneDesktop24" />
+            </ui:CardAction.Icon>
+            Использовать одноразовый код или пароль для входа в аккаунт
+        </ui:CardAction>
+    </StackPanel>
+</UserControl>
