@@ -230,8 +230,36 @@ namespace MusicX.Core.Services
                 throw;
             }
         }
+        
+        public async Task Like(string trackApiId)
+        {
+            try
+            {
+                await RequestAsync($"track/{trackApiId}/like", httpMethod: HttpMethod.Put);
+            }
+            catch (Exception ex)
+            {
+                logger.Error("BOOM API ERROR:");
+                logger.Error(ex, ex.Message);
+                throw;
+            }
+        }
+        
+        public async Task UnLike(string trackApiId)
+        {
+            try
+            {
+                await RequestAsync($"track/{trackApiId}/like", httpMethod: HttpMethod.Delete);
+            }
+            catch (Exception ex)
+            {
+                logger.Error("BOOM API ERROR:");
+                logger.Error(ex, ex.Message);
+                throw;
+            }
+        }
 
-        private async Task<string> RequestAsync(string method, Dictionary<string, string> arguments = null)
+        private async Task<string> RequestAsync(string method, Dictionary<string, string>? arguments = null, HttpMethod? httpMethod = null)
         {
             if(isAuth)
             {
@@ -249,7 +277,7 @@ namespace MusicX.Core.Services
                 }
             } 
 
-            using var response = await Client.GetAsync(method + "?" + parameters);
+            using var response = await Client.SendAsync(new(httpMethod ?? HttpMethod.Get, method + "?" + parameters));
 
             if(response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
             {
