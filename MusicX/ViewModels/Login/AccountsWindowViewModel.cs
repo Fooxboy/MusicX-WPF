@@ -1,12 +1,24 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.Marshalling;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
+using Windows.Win32;
+using Windows.Win32.Foundation;
+using Windows.Win32.Networking.WindowsWebServices;
 using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
 using MusicX.Core.Services;
+using MusicX.Helpers;
 using MusicX.Services;
 using MusicX.Views.Login;
 using NLog;
@@ -48,6 +60,8 @@ public class AccountsWindowViewModel : BaseViewModel
     public ICommand RequestPasswordLogin { get; }
 
     public ICommand OpenTgChannelCommand { get; }
+    
+    public ICommand NextStepCommand { get; }
 
     public AccountsWindowPage CurrentPage { get; set; } = AccountsWindowPage.EnterLogin;
     
@@ -106,6 +120,9 @@ public class AccountsWindowViewModel : BaseViewModel
         {
             Process.Start(new ProcessStartInfo("https://t.me/MusicXPlayer") { UseShellExecute = true });
         });
+
+        NextStepCommand = new AsyncCommand<LoginWay>(NextStepAsync!, onException: Handler);
+
         // maybe later (cannot get token as vk android app)
         // LoadQrCode().SafeFireAndForget();
     }
@@ -202,6 +219,11 @@ public class AccountsWindowViewModel : BaseViewModel
             AndroidGrantType = _grantType
         });
 
+        await LoggedInAsync();
+    }
+
+    private async Task LoggedInAsync()
+    {
         var (token, profile) = await _authCategory.GetExchangeToken();
 
         _vkApi.UserId = profile.Id;
@@ -251,6 +273,8 @@ public class AccountsWindowViewModel : BaseViewModel
             AccountsWindowPage.EnterLogin => new EnterLoginPage(),
             AccountsWindowPage.EnterPassword => new EnterPasswordPage(),
             AccountsWindowPage.Vk2Fa => new Vk2FaPage(),
+            AccountsWindowPage.SelectLoginMethod => new SelectLoginMethodPage(),
+            AccountsWindowPage.Passkey => new PasskeyPage(),
             _ => throw new ArgumentOutOfRangeException(nameof(page), page, null)
         };
 
@@ -258,21 +282,161 @@ public class AccountsWindowViewModel : BaseViewModel
         _navigationService.OpenExternalPage(view);
     }
 
+    private async Task AuthPasskeyAsync()
+    {
+        var hResult = PInvoke.WebAuthNGetCancellationId(out var cancellationId);
+
+        if (hResult.Succeeded)
+        {
+            hResult = PInvoke.WebAuthNCancelCurrentOperation(cancellationId);
+            if (!hResult.Succeeded)
+            {
+                _snackbarService.Show("Не удалось отменить текущий процесс входа", "MusicX не смог отменить текущий процесс входа! Закройте все диалоги входа с ключем и повторите попытку.");
+                return;
+            }
+        }
+        
+        var (_, passkeyData) = await _authCategory.BeginPasskeyAsync(Sid);
+
+        if (!TryBeginPasskey(passkeyData, out var authenticatorData, out var signature, out var userHandle,
+                out var clientDataJson, out var usedCredential))
+            return;
+
+        var json = new JsonObject
+        {
+            ["response"] = new JsonObject
+            {
+                ["authenticatorData"] = authenticatorData.Base64UrlEncode(),
+                ["signature"] = signature.Base64UrlEncode(),
+                ["userHandle"] = userHandle.Base64UrlEncode(),
+                ["clientDataJson"] = clientDataJson.Base64UrlEncode()
+            },
+            ["id"] = usedCredential.Base64UrlEncode(),
+            ["rawId"] = usedCredential.Base64UrlEncode(),
+            ["type"] = PInvoke.WebauthnCredentialTypePublicKey,
+            ["clientExtensionResults"] = new JsonArray()
+        };
+        
+        await _vkApiAuth.AuthorizeAsync(new AndroidApiAuthParams(null, Sid, ActionRequestedAsync, 
+            new[] { LoginWay.Passkey }, PasskeyData: json.ToJsonString())
+        {
+            AndroidGrantType = _grantType
+        });
+
+        await LoggedInAsync();
+    }
+
+    private unsafe bool TryBeginPasskey(string passkeyData, out byte[] authenticatorData, out byte[] signature,
+        out byte[] userHandle, out string clientDataJson, out byte[] usedCredential)
+    {
+        var data = JsonSerializer.Deserialize<PasskeyDataResponse>(passkeyData,
+            new JsonSerializerOptions(JsonSerializerDefaults.Web));
+
+        var hWnd = new WindowInteropHelper(Application.Current.Windows[0]!).EnsureHandle();
+
+        var dwVersion = PInvoke.WebAuthNGetApiVersionNumber();
+
+        var publicKeyPtr = Marshal.StringToHGlobalUni(PInvoke.WebauthnCredentialTypePublicKey);
+
+        var credList = data!.AllowCredentials
+            .Where(b => b.Type == PInvoke.WebauthnCredentialTypePublicKey)
+            .Select(b =>
+            {
+                var id = b.Id.Base64UrlDecode();
+                var ptr = Marshal.AllocHGlobal(id.Length);
+                Marshal.Copy(id, 0, ptr, id.Length);
+            
+                return new WEBAUTHN_CREDENTIAL
+                {
+                    dwVersion = dwVersion,
+                    pwszCredentialType = (char*)publicKeyPtr,
+                    pbId = (byte*)ptr,
+                    cbId = (uint)id.Length
+                };
+        }).ToArray();
+
+        clientDataJson =
+            JsonSerializer.Serialize(new PInvoke.SecurityKeyClientData(PInvoke.SecurityKeyClientData.GetAssertion,
+                data.Challenge, "https://id.vk.ru"));
+        
+        var clientDataJsonPtr = Utf8StringMarshaller.ConvertToUnmanaged(clientDataJson);
+        var sha256Ptr = Marshal.StringToHGlobalUni("SHA-256");
+
+        HRESULT hResult;
+        WEBAUTHN_ASSERTION* assertion;
+        try
+        {
+            fixed (WEBAUTHN_CREDENTIAL* credListPtr = &credList[0])
+                hResult = PInvoke.WebAuthNAuthenticatorGetAssertion(new(hWnd), data.RpId, new()
+                {
+                    pbClientDataJSON = clientDataJsonPtr,
+                    cbClientDataJSON = (uint)Encoding.UTF8.GetByteCount(clientDataJson),
+                    dwVersion = 2,
+                    pwszHashAlgId = (char*)sha256Ptr,
+                }, new WEBAUTHN_AUTHENTICATOR_GET_ASSERTION_OPTIONS
+                {
+                    dwVersion = 4,
+                    dwTimeoutMilliseconds = (uint)data.Timeout,
+                    CredentialList = new()
+                    {
+                        cCredentials = (uint)credList.Length,
+                        pCredentials = credListPtr
+                    },
+                    dwUserVerificationRequirement = data.UserVerification == "required" ? 1u : 0,
+                    dwAuthenticatorAttachment = PInvoke.WebauthnAuthenticatorAttachmentCrossPlatformU2FV2
+                }, out assertion);
+        }
+        finally
+        {
+            Utf8StringMarshaller.Free(clientDataJsonPtr);
+            
+            foreach (var credential in credList)
+            {
+                Marshal.FreeHGlobal((IntPtr)credential.pbId);
+            }
+            
+            Marshal.FreeHGlobal(sha256Ptr);
+            Marshal.FreeHGlobal(publicKeyPtr);
+        }
+
+        if (hResult.Failed)
+        {
+            var ptr = PInvoke.WebAuthNGetErrorName(hResult);
+            throw new COMException(new(ptr.AsSpan()), hResult.Value);
+        }
+
+        authenticatorData = new ReadOnlySpan<byte>(assertion->pbAuthenticatorData, (int)assertion->cbAuthenticatorData)
+            .ToArray();
+        signature = new ReadOnlySpan<byte>(assertion->pbSignature, (int)assertion->cbSignature)
+            .ToArray();
+        userHandle = new ReadOnlySpan<byte>(assertion->pbUserId, (int)assertion->cbUserId)
+            .ToArray();
+        usedCredential = new ReadOnlySpan<byte>(assertion->Credential.pbId, (int)assertion->Credential.cbId)
+            .ToArray();
+        
+        PInvoke.WebAuthNFreeAssertion(assertion);
+        
+        return hResult.Succeeded;
+    }
+
     private async Task LoginAsync(string? arg)
     {
         if (string.IsNullOrEmpty(arg))
             return;
 
-        var (_, isPhone, authFlow, flowNames, sid, nextStep) = await _authCategory.ValidateAccountAsync(arg, loginWays:
+        var (_, isPhone, authFlow, flowNames, sid, nextStep) = await _authCategory.ValidateAccountAsync(arg, passkeySupported: true, loginWays:
             new[]
             {
                 LoginWay.Password, LoginWay.Push, LoginWay.Sms, LoginWay.CallReset, LoginWay.ReserveCode,
-                LoginWay.Codegen, LoginWay.Email
+                LoginWay.Codegen, LoginWay.Email, LoginWay.Passkey
             });
 
-        if (flowNames.All(b => b != AuthType.Password && b != AuthType.Otp))
+        PInvoke.WebAuthNIsUserVerifyingPlatformAuthenticatorAvailable(out var authenticatorAvailable);
+        uint? authenticatorVersion = authenticatorAvailable ? PInvoke.WebAuthNGetApiVersionNumber() : null;
+        
+        if (authenticatorVersion >= 4 && flowNames.All(b => b != AuthType.Password && b != AuthType.Otp))
         {
-            _snackbarService.Show("Упс!", "К сожалению, плеер не поддерживает вход с аккаунтом без пароля, установите пароль.");
+            _snackbarService.Show("Упс!", "К сожалению, ваша система не поддерживает вход с аккаунтом без пароля, установите пароль или обновите систему.");
             return;
         }
 
@@ -292,6 +456,18 @@ public class AccountsWindowViewModel : BaseViewModel
             OpenPage(AccountsWindowPage.Vk2Fa);
             return;
         }*/
+
+        if (flowNames.Any(b => b == AuthType.Passkey))
+        {
+            if (flowNames.Count > 1 && nextStep?.HasAnotherVerificationMethods is null or true)
+            {
+                OpenPage(AccountsWindowPage.SelectLoginMethod);
+                return;
+            }
+
+            await NextStepAsync(LoginWay.Passkey);
+            return;
+        }
         
         if (nextStep is null || nextStep.VerificationMethod == LoginWay.Password)
         {
@@ -299,35 +475,39 @@ public class AccountsWindowViewModel : BaseViewModel
             OpenPage(AccountsWindowPage.EnterPassword);
             return;
         }
-        
+
+        await NextStepAsync(nextStep.VerificationMethod);
+        // TODO nextStep.HasAnotherVerificationMethods
+    }
+
+    private async Task NextStepAsync(LoginWay loginWay)
+    {
         Vk2FaCanUsePassword = false;
 
-        if (nextStep.VerificationMethod == LoginWay.Sms)
+        if (loginWay == LoginWay.Passkey)
         {
-            var (_, otpSid, smsInfo, codeLength) = await _ecosystemCategory.SendOtpSmsAsync(Sid);
+            _grantType = AndroidGrantType.Passkey;
+            OpenPage(AccountsWindowPage.Passkey);
+            await AuthPasskeyAsync();
+            return;
+        }
+        
+        _grantType = AndroidGrantType.PhoneConfirmationSid;
+
+        var codeLength = 6;
+        var phone = Login;
+
+        if (loginWay == LoginWay.Sms)
+        {
+            var (_, otpSid, smsInfo, requestedCodeLength) = await _ecosystemCategory.SendOtpSmsAsync(Sid);
 
             Sid = otpSid;
-            
-            _grantType = AndroidGrantType.PhoneConfirmationSid;
-
-            Vk2FaResponse = new(nextStep.VerificationMethod, LoginWay.None, Sid, 0, codeLength, false, smsInfo);
-            OpenPage(AccountsWindowPage.Vk2Fa);
-            return;
+            codeLength = requestedCodeLength;
+            phone = smsInfo;
         }
 
-        if (nextStep.VerificationMethod == LoginWay.Codegen)
-        {
-            _grantType = AndroidGrantType.PhoneConfirmationSid;
-            Vk2FaResponse = new(nextStep.VerificationMethod, LoginWay.None, Sid, 0, 6, false, null);
-            _grantType = AndroidGrantType.PhoneConfirmationSid;
-
-            OpenPage(AccountsWindowPage.Vk2Fa);
-            return;
-        }
-
-        _snackbarService.Show("Ошибка", $"Вход с помощью {nextStep.VerificationMethod} пока что не реализован.");
-
-        // TODO nextStep.HasAnotherVerificationMethods
+        Vk2FaResponse = new(loginWay, LoginWay.None, Sid, 0, codeLength, false, phone);
+        OpenPage(AccountsWindowPage.Vk2Fa);
     }
 }
 
@@ -335,5 +515,7 @@ public enum AccountsWindowPage
 {
     EnterLogin,
     EnterPassword,
-    Vk2Fa
+    Vk2Fa,
+    Passkey,
+    SelectLoginMethod
 }
