@@ -367,43 +367,39 @@ namespace MusicX.Controls
             try
             {
                 var vkService = StaticService.Container.GetRequiredService<VkService>();
+                var boomService = StaticService.Container.GetRequiredService<BoomService>();
                 var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
-
+                
                 switch (playerService.CurrentTrack?.Data)
                 {
-                    case VkTrackData {IsLiked: true} data:
-                        if(!LikeIcon.Filled)
-                        {
-                            LikeIcon.Filled = true;
-                            await vkService.AudioAddAsync(data.Info.Id, data.Info.OwnerId);
-
-                            snackbarService.Show("Добавлено в вашу библиотеку",
-                                $"Трек {ArtistName.Text} - {TrackTitle.Text} теперь находится в Вашей музыке!");
-                            break;
-                        }
-
-                        LikeIcon.Filled = false;
-                        await vkService.AudioDeleteAsync(data.Info.Id, data.Info.OwnerId);
-                        snackbarService.Show("Удалено из вашей библиотеки",
-                            $"Трек {ArtistName.Text} - {TrackTitle.Text} теперь удален из вашей музыки");
+                    case VkTrackData vkData when LikeIcon.Filled:
+                        await vkService.AudioDeleteAsync(vkData.Info.Id, vkData.Info.OwnerId);
                         break;
-                    case VkTrackData data:
-                        if (LikeIcon.Filled)
-                        {
-                            LikeIcon.Filled = false;
-                            await vkService.AudioDeleteAsync(data.Info.Id, data.Info.OwnerId);
-                            snackbarService.Show("Удалено из вашей библиотеки",
-                                $"Трек {ArtistName.Text} - {TrackTitle.Text} теперь удален из вашей музыки");
-                            break;
-                        }
-
-                        LikeIcon.Filled = true;
-                        await vkService.AudioAddAsync(data.Info.Id, data.Info.OwnerId);
-
-                        snackbarService.Show("Добавлено в вашу библиотеку",
-                            $"Трек {ArtistName.Text} - {TrackTitle.Text} теперь находится в Вашей музыке!");
+                    case VkTrackData vkData:
+                        await vkService.AudioAddAsync(vkData.Info.Id, vkData.Info.OwnerId);
                         break;
+                    case BoomTrackData boomData when LikeIcon.Filled:
+                        await boomService.UnLike(boomData.Id);
+                        break;
+                    case BoomTrackData boomData:
+                        await boomService.Like(boomData.Id);
+                        break;
+                    default:
+                        return;
                 }
+
+                if(!LikeIcon.Filled)
+                {
+                    LikeIcon.Filled = true;
+
+                    snackbarService.Show("Добавлено в вашу библиотеку",
+                        $"Трек {ArtistName.Text} - {TrackTitle.Text} теперь находится в Вашей музыке!");
+                    return;
+                }
+
+                LikeIcon.Filled = false;
+                snackbarService.Show("Удалено из вашей библиотеки",
+                    $"Трек {ArtistName.Text} - {TrackTitle.Text} теперь удален из вашей музыки");
             }
             catch(Exception ex)
             {
