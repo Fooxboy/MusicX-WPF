@@ -104,26 +104,10 @@ internal abstract class VkAndroidAuthorizationBase : IAuthorizationFlow
 
         return await _captchaHandler.Perform(async (sid, key) =>
         {
-            var parameters = new VkParameters
-            {
-                { "username", authParams.Login },
-                { "password", authParams.Password },
-                { "grant_type", authParams.AndroidGrantType },
-                { "2fa_supported", true },
-                { "vk_connect_auth", true },
-                { "libverify_support", false }, // TODO: test lib verify cringe
-                { "sid", authParams.Sid },
-                { "scope", "all" },
-                { "supported_ways", authParams.SupportedWays },
-                { "device_id", await GetDeviceIdAsync() },
-                { "api_id", authParams.ApplicationId },
-                { "https", true },
-                { "lang", _languageService.GetLanguage()?.ToString() ?? "ru" },
-                { "v", _versionManager.Version },
-                { "anonymous_token", _tokenStore.Token },
-                { "captcha_sid", sid },
-                { "captcha_key", key }
-            };
+            var parameters = await BuildParameters(authParams);
+            
+            parameters.Add("captcha_sid", sid);
+            parameters.Add("captcha_key", key);
             
             await _rateLimiter.WaitNextAsync();
 
@@ -187,6 +171,24 @@ internal abstract class VkAndroidAuthorizationBase : IAuthorizationFlow
         
             return result;
         });
+    }
+
+    protected virtual async ValueTask<VkParameters> BuildParameters(AndroidApiAuthParams authParams)
+    {
+        return new()
+        {
+            { "grant_type", authParams.AndroidGrantType },
+            { "libverify_support", false }, // TODO: test lib verify cringe
+            { "sid", authParams.Sid },
+            { "scope", "all" },
+            { "supported_ways", authParams.SupportedWays },
+            { "device_id", await GetDeviceIdAsync() },
+            { "api_id", authParams.ApplicationId },
+            { "https", true },
+            { "lang", _languageService.GetLanguage()?.ToString() ?? "ru" },
+            { "v", _versionManager.Version },
+            { "anonymous_token", _tokenStore.Token },
+        };
     }
 
     private async Task<AnonymousTokenResponse> AuthAnonymousAsync(AndroidApiAuthParams authParams)
