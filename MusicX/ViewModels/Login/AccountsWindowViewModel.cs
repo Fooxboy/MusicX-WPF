@@ -17,10 +17,13 @@ using Windows.Win32.Foundation;
 using Windows.Win32.Networking.WindowsWebServices;
 using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
+using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Services;
 using MusicX.Helpers;
 using MusicX.Services;
+using MusicX.ViewModels.Modals;
 using MusicX.Views.Login;
+using MusicX.Views.Modals;
 using NLog;
 using QRCoder;
 using QRCoder.Xaml;
@@ -62,6 +65,8 @@ public class AccountsWindowViewModel : BaseViewModel
     public ICommand OpenTgChannelCommand { get; }
     
     public ICommand NextStepCommand { get; }
+    
+    public ICommand ShowAnotherVerificationMethodsCommand { get; }
 
     public AccountsWindowPage CurrentPage { get; set; } = AccountsWindowPage.EnterLogin;
     
@@ -78,6 +83,8 @@ public class AccountsWindowViewModel : BaseViewModel
     public bool Vk2FaCanUsePassword { get; set; } = true;
 
     public EcosystemProfile? Profile { get; set; }
+    
+    public bool HasAnotherVerificationMethods { get; set; }
 
     public event EventHandler? LoggedIn;
 
@@ -121,10 +128,33 @@ public class AccountsWindowViewModel : BaseViewModel
             Process.Start(new ProcessStartInfo("https://t.me/MusicXPlayer") { UseShellExecute = true });
         });
 
-        NextStepCommand = new AsyncCommand<LoginWay>(NextStepAsync!, onException: Handler);
+        NextStepCommand = new AsyncCommand<LoginWay>(way => NextStepAsync(way!), onException: Handler);
+
+        ShowAnotherVerificationMethodsCommand =
+            new AsyncCommand(ShowAnotherVerificationMethodsAsync, onException: Handler);
 
         // maybe later (cannot get token as vk android app)
         // LoadQrCode().SafeFireAndForget();
+    }
+
+    private async Task ShowAnotherVerificationMethodsAsync()
+    {
+        if (Sid is null)
+            return;
+        
+        var modal = StaticService.Container.GetRequiredService<LoginVerificationMethodsModalViewModel>();
+        
+        _navigationService.OpenModal<LoginVerificationMethodsModal>(modal);
+        
+        var (loginWay, _, _, info, _) = await await modal.LoadAsync(Sid);
+
+        if (loginWay == LoginWay.Password)
+        {
+            OpenPage(AccountsWindowPage.EnterPassword);
+            return;
+        }
+
+        await NextStepAsync(loginWay, info);
     }
 
     private async Task Vk2FaCompleteAsync(string? arg)
@@ -456,6 +486,8 @@ public class AccountsWindowViewModel : BaseViewModel
             OpenPage(AccountsWindowPage.Vk2Fa);
             return;
         }*/
+        
+        HasAnotherVerificationMethods = nextStep?.HasAnotherVerificationMethods ?? false;
 
         if (flowNames.Any(b => b == AuthType.Passkey))
         {
@@ -475,12 +507,11 @@ public class AccountsWindowViewModel : BaseViewModel
             OpenPage(AccountsWindowPage.EnterPassword);
             return;
         }
-
+        
         await NextStepAsync(nextStep.VerificationMethod);
-        // TODO nextStep.HasAnotherVerificationMethods
     }
 
-    private async Task NextStepAsync(LoginWay loginWay)
+    private async Task NextStepAsync(LoginWay loginWay, string? phone = null)
     {
         Vk2FaCanUsePassword = false;
 
@@ -495,7 +526,6 @@ public class AccountsWindowViewModel : BaseViewModel
         _grantType = AndroidGrantType.PhoneConfirmationSid;
 
         var codeLength = 6;
-        var phone = Login;
 
         if (loginWay == LoginWay.Sms)
         {
@@ -503,8 +533,26 @@ public class AccountsWindowViewModel : BaseViewModel
 
             Sid = otpSid;
             codeLength = requestedCodeLength;
-            phone = smsInfo;
+            phone ??= smsInfo;
         }
+        else if (loginWay == LoginWay.CallReset)
+        {
+            var (_, otpSid, smsInfo, requestedCodeLength) = await _ecosystemCategory.SendOtpCallResetAsync(Sid);
+
+            Sid = otpSid;
+            codeLength = requestedCodeLength;
+            phone ??= smsInfo;
+        }
+        else if (loginWay == LoginWay.Push)
+        {
+            var (_, otpSid, smsInfo, requestedCodeLength) = await _ecosystemCategory.SendOtpPushAsync(Sid);
+            
+            Sid = otpSid;
+            codeLength = requestedCodeLength;
+            phone ??= smsInfo;
+        }
+        
+        phone ??= Login;
 
         Vk2FaResponse = new(loginWay, LoginWay.None, Sid, 0, codeLength, false, phone);
         OpenPage(AccountsWindowPage.Vk2Fa);

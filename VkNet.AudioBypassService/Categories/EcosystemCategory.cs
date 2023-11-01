@@ -15,9 +15,27 @@ public class EcosystemCategory : IEcosystemCategory
         _invoke = invoke;
     }
 
-    public Task<EcosystemSendOtpSmsResponse> SendOtpSmsAsync(string sid)
+    public Task<EcosystemSendOtpResponse> SendOtpSmsAsync(string sid)
     {
-        return _invoke.CallAsync<EcosystemSendOtpSmsResponse>("ecosystem.sendOtpSms", new()
+        return _invoke.CallAsync<EcosystemSendOtpResponse>("ecosystem.sendOtpSms", new()
+        {
+            { "sid", sid },
+            { "api_id", 2274003 }
+        });
+    }
+    
+    public Task<EcosystemSendOtpResponse> SendOtpPushAsync(string sid)
+    {
+        return _invoke.CallAsync<EcosystemSendOtpResponse>("ecosystem.sendOtpPush", new()
+        {
+            { "sid", sid },
+            { "api_id", 2274003 }
+        });
+    }
+    
+    public Task<EcosystemSendOtpResponse> SendOtpCallResetAsync(string sid)
+    {
+        return _invoke.CallAsync<EcosystemSendOtpResponse>("ecosystem.sendOtpCallReset", new()
         {
             { "sid", sid },
             { "api_id", 2274003 }
@@ -32,6 +50,15 @@ public class EcosystemCategory : IEcosystemCategory
             { "api_id", 2274003 },
             { "verification_method", verificationMethod },
             { "code", code }
+        });
+    }
+
+    public Task<EcosystemGetVerificationMethodsResponse> GetVerificationMethodsAsync(string sid)
+    {
+        return _invoke.CallAsync<EcosystemGetVerificationMethodsResponse>("ecosystem.getVerificationMethods", new()
+        {
+            { "sid", sid },
+            { "api_id", 2274003 }
         });
     }
 }

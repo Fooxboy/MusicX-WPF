@@ -100,6 +100,7 @@ namespace MusicX.Views
                 collection.AddTransient<LyricsViewModel>();
                 collection.AddTransient<CaptchaModalViewModel>();
                 collection.AddTransient<AccountsWindowViewModel>();
+                collection.AddTransient<LoginVerificationMethodsModalViewModel>();
 
                 collection.AddSingleton<NavigationService>();
                 collection.AddSingleton<ConfigService>();
