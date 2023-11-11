@@ -124,6 +124,10 @@
                            Visibility="{Binding Vk2FaCanUsePassword, Converter={StaticResource BooleanToVisibilityConverter}}">
                     Войти с помощью пароля
                 </ui:Button>
+                <ui:Button Width="272" Margin="0,10,0,0" Appearance="Light" Command="{Binding ShowAnotherVerificationMethodsCommand}"
+                           Visibility="{Binding HasAnotherVerificationMethods, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    Друие варианты входа
+                </ui:Button>
             </StackPanel>
         </Grid>
     </ui:Card>

@@ -18,4 +18,6 @@ public interface IAuthCategory
     [ItemCanBeNull] Task<TokenInfo> RefreshTokensAsync(string oldToken, string exchangeToken);
 
     Task<ExchangeTokenResponse> GetExchangeToken([CanBeNull] UsersFields fields = null);
+    
+    Task<PasskeyBeginResponse> BeginPasskeyAsync(string sid);
 }

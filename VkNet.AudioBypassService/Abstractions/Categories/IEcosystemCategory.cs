@@ -6,6 +6,9 @@ namespace VkNet.AudioBypassService.Abstractions.Categories;
 
 public interface IEcosystemCategory
 {
-    Task<EcosystemSendOtpSmsResponse> SendOtpSmsAsync(string sid);
+    Task<EcosystemSendOtpResponse> SendOtpSmsAsync(string sid);
+    Task<EcosystemSendOtpResponse> SendOtpPushAsync(string sid);
+    Task<EcosystemSendOtpResponse> SendOtpCallResetAsync(string sid);
     Task<EcosystemCheckOtpResponse> CheckOtpAsync(string sid, LoginWay verificationMethod, string code);
+    Task<EcosystemGetVerificationMethodsResponse> GetVerificationMethodsAsync(string sid);
 }
