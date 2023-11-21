@@ -53,7 +53,7 @@ public class MusicXWindow : FluentWindow
 
         Dispatcher.BeginInvoke(DispatcherPriority.Loaded, () =>
         {
-            if (GetTemplateChild("PART_SnackbarPresenter") is SnackbarPresenter snackbarPresenter)
+            if (GetSnackbarPresenter() is { } snackbarPresenter)
                 _snackbarService.SetSnackbarPresenter(snackbarPresenter);
             else _snackbarService.SetSnackbarPresenter(null!);
 
@@ -63,6 +63,11 @@ public class MusicXWindow : FluentWindow
             _navigationService.ModalOpenRequested += NavigationServiceOnModalOpenRequested;
             _navigationService.ModalCloseRequested += NavigationServiceOnModalCloseRequested;
         });
+    }
+
+    protected virtual SnackbarPresenter? GetSnackbarPresenter()
+    {
+        return GetTemplateChild("PART_SnackbarPresenter") as SnackbarPresenter;
     }
 
     protected override void OnClosed(EventArgs e)
