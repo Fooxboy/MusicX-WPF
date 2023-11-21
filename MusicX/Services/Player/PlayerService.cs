@@ -130,9 +130,7 @@ public class PlayerService
             _tokenSource?.Cancel();
             _tokenSource?.Dispose();
             _tokenSource = new();
-
-
-            player.PlaybackSession.Position = TimeSpan.Zero;
+            
             player.Pause();
 
             if (track is null) return;

@@ -1,16 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.Foundation.Collections;
 using Windows.Media.Core;
 using Windows.Media.MediaProperties;
 using Windows.Media.Playback;
 using FFMediaToolkit;
 using FFMediaToolkit.Audio;
 using FFMediaToolkit.Decoding;
+using FFmpegInteropX;
 using MusicX.Helpers;
 using MusicX.Shared.Player;
 
@@ -147,5 +150,35 @@ public abstract class MediaSourceBase : ITrackMediaSource
         }
 
         return new (MediaSource.CreateFromMediaStreamSource(streamingSource));
+    }
+
+    private static FFmpegMediaSource? _source;
+
+    public static async Task<MediaPlaybackItem?> CreateWinRtMediaPlaybackItem(MediaPlaybackSession playbackSession, TrackData data, IReadOnlyDictionary<string, string>? customOptions = null)
+    {
+        _source?.Dispose();
+
+        var options = new PropertySet
+        {
+            ["reconnect"] = "1",
+            ["reconnect_streamed"] = "1",
+            ["reconnect_delay_max"] = "5",
+            ["stimeout"] = "10"
+        };
+        
+        if (customOptions != null)
+            foreach (var (key, value) in customOptions)
+                options[key] = value;
+
+        _source = await FFmpegMediaSource.CreateFromUriAsync(data.Url, new()
+        {
+            FFmpegOptions = options,
+            ReadAheadBufferEnabled = true
+        });
+
+        _source.PlaybackSession = playbackSession;
+        _source.StartBuffering();
+
+        return _source.CreateMediaPlaybackItem();
     }
 }
