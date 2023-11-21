@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -198,6 +199,10 @@ public class DownloaderViewModel : BaseViewModel
                 await downloaderService.DownloadAudioAsync(audio, progress, token);
                 await Application.Current.Dispatcher.InvokeAsync(() => DownloadQueue.Remove(audio));
                 DownloadProgress = 0;
+            }
+            catch (Exception e) when (e is TypeInitializationException or COMException)
+            {
+                _snackbarService.Show("Упс!", "Кажется ваша система не поддерживает загрузку треков.. Попробуйте обновить Windows до последней версии.");
             }
             catch (OperationCanceledException)
             {
