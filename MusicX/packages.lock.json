@@ -56,9 +56,9 @@
       },
       "Microsoft.VCRTForwarders.140": {
         "type": "Direct",
-        "requested": "[1.0.7, )",
-        "resolved": "1.0.7",
-        "contentHash": "ihE2cKWZuQjkSrJOVw7p4ppKGLVr2+HEgbS+a79G0YPKvAD3n61Mqitg3DL+X2/kuKD5C3edfP//HyToz+M11A=="
+        "requested": "[1.0.8-pre, )",
+        "resolved": "1.0.8-pre",
+        "contentHash": "KhAP4zat4NFaJ2MedW4pM0PpV8dERXdA8VHo0HkNp1NGTVvbn55ixDMsPrqJA5mNS5bnakIq9kOfI/e/jWnqLA=="
       },
       "Microsoft.Windows.CsWin32": {
         "type": "Direct",
@@ -594,9 +594,9 @@
       },
       "Microsoft.VCRTForwarders.140": {
         "type": "Direct",
-        "requested": "[1.0.7, )",
-        "resolved": "1.0.7",
-        "contentHash": "ihE2cKWZuQjkSrJOVw7p4ppKGLVr2+HEgbS+a79G0YPKvAD3n61Mqitg3DL+X2/kuKD5C3edfP//HyToz+M11A=="
+        "requested": "[1.0.8-pre, )",
+        "resolved": "1.0.8-pre",
+        "contentHash": "KhAP4zat4NFaJ2MedW4pM0PpV8dERXdA8VHo0HkNp1NGTVvbn55ixDMsPrqJA5mNS5bnakIq9kOfI/e/jWnqLA=="
       },
       "System.Text.Encoding.CodePages": {
         "type": "Direct",
