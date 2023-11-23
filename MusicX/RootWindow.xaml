@@ -176,14 +176,19 @@
 
             </Grid>
 
-            <Grid Grid.Column="1" Grid.Row="1">
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" /> 
+                </Grid.RowDefinitions>
+                
                 <Frame
                     x:Name="RootFrame"
                     Navigating="RootFrame_Navigating"
-                    Grid.Column="1" />
+                    Grid.Row="1" />
                 <ui:AutoSuggestBox
                     x:Name="SearchBox"
-                    Grid.Row="1"
+                    Grid.Row="0"
                     Width="500"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Top"
