@@ -89,7 +89,7 @@ jobs:
       name: Download previous release
       
     - name: Build package
-      run: csq --csq-version=3.0.210-g5f9f594 pack -r rel -p pub -u MusicX.WPF -v ${{ needs.compute-version.outputs.version }} --packTitle "MusicX Player" -e MusicX.exe -i MusicX/StoreLogo.scale-400.ico --appIcon MusicX/StoreLogo.scale-400.ico --msi x64 --includePdb --packAuthors "Fooxboy, zznty" --releaseNotes notes.md -s MusicX/StoreLogo.scale-400.png
+      run: csq --csq-version=3.0.210-g5f9f594 pack -f vcredist140 -r rel -p pub -u MusicX.WPF -v ${{ needs.compute-version.outputs.version }} --packTitle "MusicX Player" -e MusicX.exe -i MusicX/StoreLogo.scale-400.ico --appIcon MusicX/StoreLogo.scale-400.ico --msi x64 --includePdb --packAuthors "Fooxboy, zznty" --releaseNotes notes.md -s MusicX/StoreLogo.scale-400.png
       
     - name: Push package
       run: csq --csq-version=3.0.210-g5f9f594 github-up -r rel --repoUrl https://github.com/Fooxboy/MusicX-WPF --publish --token ${{ secrets.GITHUB_TOKEN }}
