@@ -16,6 +16,8 @@ public static partial class TrackExtensions
 
         if (track.FeaturedArtists?.Any() == true)
         {
+            builder.Remove(builder.Length - 2, 2);
+            
             builder.Append("feat. ");
             foreach (var (name, _) in track.FeaturedArtists)
             {
