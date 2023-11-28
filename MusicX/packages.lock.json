@@ -36,6 +36,16 @@
         "resolved": "3.4.0",
         "contentHash": "MgD5lxIm23oCv3+mFWH6EARLCOmR/spFaWeb813QtUDIQeUsbGK02xm1xDQEd0UGBcba6aho1FgCtiU4q7hHDw=="
       },
+      "MdXaml": {
+        "type": "Direct",
+        "requested": "[1.22.0, )",
+        "resolved": "1.22.0",
+        "contentHash": "wrt+KlEgAA6XoSLPH7KDFk1efcNGCSfZfbI5XcpR14/VpKaDy/vlnELsZrWQjkUahFpt01jleDHclEsXNvQoCQ==",
+        "dependencies": {
+          "AvalonEdit": "6.0.0",
+          "MdXaml.Plugins": "1.22.0"
+        }
+      },
       "Microsoft.AppCenter.Analytics": {
         "type": "Direct",
         "requested": "[5.0.2, )",
@@ -147,6 +157,11 @@
         "resolved": "6.0.6",
         "contentHash": "5JwyXsa0357gUCfrm741ae10LuWRl/V3JmBLL/7ddTeyA0ajWm4Ze+WCzweSzz2Pd8MT6T9PDVNK8pjZ9ezt6A=="
       },
+      "AvalonEdit": {
+        "type": "Transitive",
+        "resolved": "6.0.0",
+        "contentHash": "QMbyJrlhOuWzLRPqvW724ly9XbSEkp8Xg2mQY7tvsh1se1pDEJnmDjS6c6OuqDe2Q37uCnXwKdV8tJUx2iLUnw=="
+      },
       "FFmpeg.AutoGen": {
         "type": "Transitive",
         "resolved": "5.1.2.3",
@@ -166,6 +181,11 @@
         "type": "Transitive",
         "resolved": "1.11.43",
         "contentHash": "C2gpt+S2tdFlQMOC3DK7rHZ8iv6EpDuIo4v0UTUSGX1F1bZ+NAQ3gp77HK8/JfCDszUm3Y2rHoyTp/TpO4KOIA=="
+      },
+      "MdXaml.Plugins": {
+        "type": "Transitive",
+        "resolved": "1.22.0",
+        "contentHash": "asC2GP5AsGQZboc1DKSfgQpk1pkvGF8brfdQtLEAweRGcTgbbuzuonVTal4Bhmje4IJWeMF8QBai5lOLEUmUVQ=="
       },
       "Microsoft.AppCenter": {
         "type": "Transitive",

@@ -105,6 +105,7 @@
     <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="6.0.6" />
     <PackageReference Include="Clowd.Squirrel" Version="3.0.210-g5f9f594" />
     <PackageReference Include="FFmpegInteropX.Desktop" Version="2.0.0-pre2" />
+    <PackageReference Include="MdXaml" Version="1.22.0" />
     <PackageReference Include="Microsoft.VCRTForwarders.140" Version="1.0.8-pre" />
     <PackageReference Include="HandyControl" Version="3.4.0" />
     <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.2" />
