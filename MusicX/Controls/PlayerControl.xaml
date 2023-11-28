@@ -303,9 +303,6 @@
                             <TextBlock
                                 x:Name="ArtistName"
                                 FontFamily="{StaticResource VKSansRegular}"
-                                MouseEnter="ArtistName_MouseEnter"
-                                MouseLeave="ArtistName_MouseLeave"
-                                MouseLeftButtonDown="ArtistName_MouseLeftButtonDown"
                                 Opacity="0.7"
                                 Text="Artist name">
                                 <TextBlock.ToolTip>
