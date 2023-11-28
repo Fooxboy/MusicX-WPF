@@ -9,6 +9,7 @@ using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
+using MusicX.Helpers;
 using MusicX.Services;
 using Wpf.Ui;
 using Button = MusicX.Core.Models.Button;
@@ -98,7 +99,7 @@ namespace MusicX.Controls.Blocks
 
                 var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
 
-                snackbarService.Show("Ошибка", "Music X не смог открыть контент");
+                snackbarService.ShowException("Music X не смог открыть контент", ex);
             }
 
         }

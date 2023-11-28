@@ -16,6 +16,7 @@ using VkNet.Abstractions.Core;
 using VkNet.Exception;
 using WinRT.Interop;
 using Wpf.Ui;
+using Wpf.Ui.Extensions;
 using NavigationService = MusicX.Services.NavigationService;
 
 namespace MusicX.Views

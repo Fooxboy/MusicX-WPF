@@ -132,9 +132,9 @@
       },
       "WPF-UI": {
         "type": "Direct",
-        "requested": "[3.0.0-preview.6, )",
-        "resolved": "3.0.0-preview.6",
-        "contentHash": "/tn3OQUucHlNNfyxM9Iyf1I7nEryU95tQr85MKehu5UBRvyPVVhWLrz8IxZS7mPeeIzJnjA04/ryUP4zeKHmPQ=="
+        "requested": "[3.0.0-preview.11, )",
+        "resolved": "3.0.0-preview.11",
+        "contentHash": "wPTCMHQvjCQT096NzYix5Z+VVvitfmRoDYL+K9V679f7z0eLIts02ehnunjypKkg4w9bO8WCwffktb8+kiRiBQ=="
       },
       "WpfScreenHelper": {
         "type": "Direct",

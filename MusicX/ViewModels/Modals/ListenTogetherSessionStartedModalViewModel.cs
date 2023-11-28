@@ -2,9 +2,11 @@
 using System.Windows.Input;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Services;
+using MusicX.Helpers;
 using MusicX.Services;
 using Wpf.Ui;
 using Wpf.Ui.Common;
+using Wpf.Ui.Extensions;
 using NavigationService = MusicX.Services.NavigationService;
 
 namespace MusicX.ViewModels.Modals

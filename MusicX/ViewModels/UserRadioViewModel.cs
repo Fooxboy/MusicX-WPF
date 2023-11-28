@@ -16,6 +16,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using MusicX.Helpers;
 using Wpf.Ui;
 using NavigationService = MusicX.Services.NavigationService;
 
@@ -105,7 +106,7 @@ namespace MusicX.ViewModels
                 var logger = StaticService.Container.GetRequiredService<Logger>();
 
                 logger.Error(ex);
-                snackbarService.Show("Ошибка", "Мы не смогли загрузить список станций пользователей");
+                snackbarService.ShowException("Ошибка", "Мы не смогли загрузить список станций пользователей");
 
                 var properties = new Dictionary<string, string>
                 {
@@ -126,7 +127,7 @@ namespace MusicX.ViewModels
 
                 if(userRadioService.IsStarted)
                 {
-                    snackbarService.Show("Стоп стоп стоп", "Вы не можете подключиться к радиостанции, потому что вы сами владелец радиостанции :)");
+                    snackbarService.ShowException("Стоп стоп стоп", "Вы не можете подключиться к радиостанции, потому что вы сами владелец радиостанции :)");
                     return;
                 }
 
@@ -136,14 +137,14 @@ namespace MusicX.ViewModels
 
                 if(listenTogetherService.IsConnectedToServer && listenTogetherService.PlayerMode == Core.Models.PlayerMode.Listener)
                 {
-                    snackbarService.Show("Стоп стоп стоп", "Ты уже подключен к серверу совместного прослушивания");
+                    snackbarService.ShowException("Стоп стоп стоп", "Ты уже подключен к серверу совместного прослушивания");
 
                     return;
                 }
 
                 if (listenTogetherService.IsConnectedToServer && listenTogetherService.PlayerMode == Core.Models.PlayerMode.Owner)
                 {
-                    snackbarService.Show("Стоп стоп стоп", "У тебя уже запущена сессия совместного прослушивания");
+                    snackbarService.ShowException("Стоп стоп стоп", "У тебя уже запущена сессия совместного прослушивания");
                 }
 
                 await listenTogetherService.ConnectToServerAsync(config.UserId);
@@ -155,7 +156,7 @@ namespace MusicX.ViewModels
                 var logger = StaticService.Container.GetRequiredService<Logger>();
 
                 logger.Error(ex);
-                snackbarService.Show("Ошибка", "Мы не смогли подключиться к радиостанции :(");
+                snackbarService.ShowException("Ошибка", "Мы не смогли подключиться к радиостанции :(");
             }
            
         }
@@ -169,14 +170,14 @@ namespace MusicX.ViewModels
 
             if (!playerService.IsPlaying)
             {
-                snackbarService.Show("Притормози-ка!", "Сначала запусти трек. Можешь запустить радиостанцию через меню совместного прослушивания :)");
+                snackbarService.ShowException("Притормози-ка!", "Сначала запусти трек. Можешь запустить радиостанцию через меню совместного прослушивания :)");
 
                 return;
             }
 
             if (userRadioService.IsStarted)
             {
-                snackbarService.Show("Стоп стоп стоп", "У Вас уже запущена радиостанция. Зачем создавать ещё одну?");
+                snackbarService.ShowException("Стоп стоп стоп", "У Вас уже запущена радиостанция. Зачем создавать ещё одну?");
                 return;
             }
 

@@ -8,6 +8,7 @@ using AsyncAwaitBestPractices.MVVM;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Services;
+using MusicX.Helpers;
 using MusicX.Services;
 using NLog;
 using Squirrel;
@@ -52,8 +53,8 @@ public sealed class AvailableNewUpdateModalViewModel : BaseViewModel, IDisposabl
             Crashes.TrackError(ex, properties);
             logger.Error(ex, ex.Message);
 
-            snackbarService.Show("Неудалось получить список изменений",
-                $"Произошла ошибка при получении списка изменений: {ex.GetType().FullName}");
+            snackbarService.ShowException("Неудалось получить список изменений",
+                $"Произошла ошибка при получении списка изменений: {ex.Message}");
             Changelog = "Нет информации.";
         });
     }
@@ -98,8 +99,8 @@ public sealed class AvailableNewUpdateModalViewModel : BaseViewModel, IDisposabl
             Crashes.TrackError(ex, properties);
             logger.Error(ex, ex.Message);
 
-            snackbarService.Show("Неудалось обновить приложение",
-                $"Произошла ошибка при обновлении приложения: {ex.GetType().FullName}");
+            snackbarService.ShowException("Неудалось обновить приложение",
+                $"Произошла ошибка при обновлении приложения: {ex.Message}");
         }
         finally
         {

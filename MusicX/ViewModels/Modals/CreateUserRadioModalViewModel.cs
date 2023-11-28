@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using MusicX.Helpers;
 using VkNet.Abstractions;
 using VkNet.Enums.Filters;
 using Wpf.Ui;
@@ -61,19 +62,19 @@ namespace MusicX.ViewModels.Modals
 
             if(string.IsNullOrEmpty(TitleRadio))
             {
-                snackbarService.Show("Ошибка", "Вы не заполнили название");
+                snackbarService.ShowException("Ошибка", "Вы не заполнили название");
                 return;
             }
 
             if (string.IsNullOrEmpty(DescriptionRadio))
             {
-                snackbarService.Show("Ошибка", "Вы не заполнили описание");
+                snackbarService.ShowException("Ошибка", "Вы не заполнили описание");
                 return;
             }
 
             if(listenTogetherService.IsConnectedToServer && listenTogetherService.PlayerMode == Core.Models.PlayerMode.Listener)
             {
-                snackbarService.Show("Ошибка", "Сначала Вам необходимо отключиться от совместного просшуливания");
+                snackbarService.ShowException("Ошибка", "Сначала Вам необходимо отключиться от совместного просшуливания");
                 return;
             }
 
@@ -116,7 +117,7 @@ namespace MusicX.ViewModels.Modals
             catch(Exception ex)
             {
                 logger.Error(ex);
-                snackbarService.Show("Ошибка", "Мы не смогли создать радиостанцию");
+                snackbarService.ShowException("Ошибка", $"Мы не смогли создать радиостанцию: {ex.Message}");
             }
         }
     }

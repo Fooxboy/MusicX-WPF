@@ -84,7 +84,7 @@ public abstract class BoomViewModelBase : BaseViewModel
             };
             Crashes.TrackError(ex, properties);
 
-            SnackbarService.Show("Ошибка загрузки микса", "Мы не смогли загрузить микс, попробуйте ещё раз");
+            SnackbarService.ShowException("Ошибка загрузки микса", "Мы не смогли загрузить микс, попробуйте ещё раз");
             Logger.Error(ex, ex.Message);
         }
     }
@@ -134,7 +134,7 @@ public abstract class BoomViewModelBase : BaseViewModel
             };
             Crashes.TrackError(ex, properties);
 
-            SnackbarService.Show("Ошибка загрузки микса", "Мы не смогли загрузить микс, попробуйте ещё раз");
+            SnackbarService.ShowException("Ошибка загрузки микса", "Мы не смогли загрузить микс, попробуйте ещё раз");
 
             Logger.Error(ex, ex.Message);
         }
@@ -168,7 +168,7 @@ public abstract class BoomViewModelBase : BaseViewModel
             };
             Crashes.TrackError(ex, properties);
 
-            SnackbarService.Show("Ошибка загрузки", "Мы не смогли авторизоваться в ВК Музыке, попробуйте ещё раз");
+            SnackbarService.ShowException("Ошибка загрузки", "Мы не смогли авторизоваться в ВК Музыке, попробуйте ещё раз");
 
             IsLoaded = true;
 
