@@ -120,7 +120,7 @@
     <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
     <PackageReference Include="System.Text.Json" Version="8.0.0-rc.2.23479.6" />
     <PackageReference Include="taglib-sharp-netstandard2.0" Version="2.1.0" />
-    <PackageReference Include="WPF-UI" Version="3.0.0-preview.6" />
+    <PackageReference Include="WPF-UI" Version="3.0.0-preview.11" />
     <PackageReference Include="WpfScreenHelper" Version="2.1.0" />
   </ItemGroup>
 

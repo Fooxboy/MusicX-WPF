@@ -109,7 +109,7 @@ public class AccountsWindowViewModel : BaseViewModel
 
         void Handler(Exception e)
         {
-            snackbarService.Show("Не удалось авторизоваться!", e.Message);
+            snackbarService.ShowException("Не удалось авторизоваться!", e);
             logger.Error(e);
         }
         
@@ -190,7 +190,7 @@ public class AccountsWindowViewModel : BaseViewModel
             return;
         }
 
-        _snackbarService.Show("Ошибка", $"Отправка кода с типом {_grantType} не реализована!");
+        _snackbarService.ShowException("Ошибка", $"Отправка кода с типом {_grantType} не реализована!");
     }
 
     private async Task LoadQrCode(bool forceRegenerate = false)
@@ -321,7 +321,7 @@ public class AccountsWindowViewModel : BaseViewModel
             hResult = PInvoke.WebAuthNCancelCurrentOperation(cancellationId);
             if (!hResult.Succeeded)
             {
-                _snackbarService.Show("Не удалось отменить текущий процесс входа", "MusicX не смог отменить текущий процесс входа! Закройте все диалоги входа с ключем и повторите попытку.");
+                _snackbarService.ShowException("Не удалось отменить текущий процесс входа", "MusicX не смог отменить текущий процесс входа! Закройте все диалоги входа с ключем и повторите попытку.");
                 return;
             }
         }
@@ -464,9 +464,9 @@ public class AccountsWindowViewModel : BaseViewModel
         PInvoke.WebAuthNIsUserVerifyingPlatformAuthenticatorAvailable(out var authenticatorAvailable);
         uint? authenticatorVersion = authenticatorAvailable ? PInvoke.WebAuthNGetApiVersionNumber() : null;
         
-        if (authenticatorVersion >= 4 && flowNames.All(b => b != AuthType.Password && b != AuthType.Otp))
+        if (authenticatorVersion is null or <= 4 && flowNames.All(b => b != AuthType.Password && b != AuthType.Otp))
         {
-            _snackbarService.Show("Упс!", "К сожалению, ваша система не поддерживает вход с аккаунтом без пароля, установите пароль или обновите систему.");
+            _snackbarService.ShowException("Упс!", "К сожалению, ваша система не поддерживает вход с аккаунтом без пароля, установите пароль или обновите систему.");
             return;
         }
 

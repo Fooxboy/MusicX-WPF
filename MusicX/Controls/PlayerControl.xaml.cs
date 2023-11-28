@@ -12,6 +12,7 @@ using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Behaviors;
 using MusicX.Core.Services;
+using MusicX.Helpers;
 using MusicX.Models;
 using MusicX.Services;
 using MusicX.Services.Player;
@@ -24,6 +25,7 @@ using MusicX.Views.Modals;
 using NLog;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
+using Wpf.Ui.Extensions;
 using WpfScreenHelper;
 using NavigationService = MusicX.Services.NavigationService;
 
@@ -393,13 +395,13 @@ namespace MusicX.Controls
                     LikeIcon.Filled = true;
 
                     snackbarService.Show("Добавлено в вашу библиотеку",
-                        $"Трек {ArtistName.Text} - {TrackTitle.Text} теперь находится в Вашей музыке!");
+                        $"Трек {ArtistName.Text} - {TrackTitle.Text} теперь находится в Вашей музыке!", ControlAppearance.Success);
                     return;
                 }
 
                 LikeIcon.Filled = false;
                 snackbarService.Show("Удалено из вашей библиотеки",
-                    $"Трек {ArtistName.Text} - {TrackTitle.Text} теперь удален из вашей музыки");
+                    $"Трек {ArtistName.Text} - {TrackTitle.Text} теперь удален из вашей музыки", ControlAppearance.Success);
             }
             catch(Exception ex)
             {
@@ -418,7 +420,7 @@ namespace MusicX.Controls
 
                 var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
 
-                snackbarService.Show("Ошибка", "Мы не смогли добавить этот трек :с");
+                snackbarService.ShowException("Мы не смогли добавить этот трек :с", ex);
             }
         }
 

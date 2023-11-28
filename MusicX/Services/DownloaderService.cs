@@ -11,6 +11,7 @@ using Windows.Storage;
 using FFMediaToolkit;
 using FFmpegInteropX;
 using MusicX.Core.Services;
+using MusicX.Helpers;
 using MusicX.Services.Player.Playlists;
 using MusicX.Shared.Player;
 using TagLib;
@@ -118,7 +119,7 @@ public class DownloaderService
 
             if (!prepareOp.CanTranscode)
             {
-                _snackbarService.Show("Упс!",
+                _snackbarService.ShowException("Упс!",
                     prepareOp.FailureReason == TranscodeFailureReason.CodecNotFound
                         ? "Кажется ваша система не поддерживает загрузку треков.. Попробуйте обновить Windows до последней версии."
                         : "Не удалось загрузить трек");

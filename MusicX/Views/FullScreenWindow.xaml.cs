@@ -9,6 +9,7 @@ using System.Windows.Threading;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Services;
+using MusicX.Helpers;
 using MusicX.Services;
 using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
@@ -119,7 +120,7 @@ namespace MusicX.Views
             catch (Exception ex)
             {
                 logger.Error(ex, ex.Message);
-                _snackbarService.Show("Произошла ошибка", "MusicX не смог запустить полноэкранный режим");
+                _snackbarService.ShowException("Произошла ошибка", "MusicX не смог запустить полноэкранный режим");
 
                 this.Close();
 

@@ -32,36 +32,6 @@ public class MusicXSnackbarService : ISnackbarService
         return _presenter;
     }
 
-    public void Show(string title, string message)
-    {
-        Show(title, message, ControlAppearance.Secondary, null, DefaultTimeOut);
-    }
-
-    public void Show(string title, string message, ControlAppearance appearance)
-    {
-        Show(title, message, appearance, null, DefaultTimeOut);
-    }
-
-    public void Show(string title, string message, IconElement icon)
-    {
-        Show(title, message, ControlAppearance.Secondary, icon, DefaultTimeOut);
-    }
-
-    public void Show(string title, string message, TimeSpan timeout)
-    {
-        Show(title, message, ControlAppearance.Secondary, null, timeout);
-    }
-
-    public void Show(string title, string message, ControlAppearance appearance, TimeSpan timeout)
-    {
-        Show(title, message, appearance, null, timeout);
-    }
-
-    public void Show(string title, string message, IconElement icon, TimeSpan timeout)
-    {
-        Show(title, message, ControlAppearance.Secondary, icon, timeout);
-    }
-
     public void Show(string title, string message, ControlAppearance appearance, IconElement? icon, TimeSpan timeout)
     {
         if (Application.Current.Dispatcher.CheckAccess())

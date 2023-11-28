@@ -6,6 +6,7 @@ using System.Windows.Threading;
 using Microsoft.AppCenter.Crashes;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
+using MusicX.Helpers;
 using MusicX.Services;
 using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
@@ -93,7 +94,7 @@ namespace MusicX.ViewModels.Modals
                 Crashes.TrackError(ex, properties);
 
                 _logger.Error(ex);
-                _snackbarService.Show("Ошибка", "Мы не смогли загрузить текст песни :(");
+                _snackbarService.ShowException("Ошибка", "Мы не смогли загрузить текст песни :(");
 
                 Texts = new List<string>() { "Ошибка загрузки" };
                 IsLoading = false;

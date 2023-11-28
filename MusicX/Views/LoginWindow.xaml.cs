@@ -6,6 +6,7 @@ using System.Windows;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Services;
+using MusicX.Helpers;
 using MusicX.Models;
 using MusicX.Services;
 using NLog;
@@ -95,7 +96,7 @@ namespace MusicX.Views
 
             if(tokenRefresh)
             {
-                _snackbarService.Show("Токен устарел", "Войдите в аккаунт снова, чтобы продолжить пользоваться MusicX");
+                _snackbarService.ShowException("Токен устарел", "Войдите в аккаунт снова, чтобы продолжить пользоваться MusicX");
             }
         }
 
@@ -147,7 +148,7 @@ namespace MusicX.Views
                 loading.Visibility = Visibility.Collapsed;
                 content.Visibility = Visibility.Visible;
 
-                _snackbarService.Show("Неверные данные", "Вы ввели неверно логин или пароль");
+                _snackbarService.ShowException("Неверные данные", "Вы ввели неверно логин или пароль");
             }
             catch (Exception ex)
             {
@@ -167,7 +168,7 @@ namespace MusicX.Views
                 loading.Visibility = Visibility.Collapsed;
                 content.Visibility = Visibility.Visible;
 
-                _snackbarService.Show("Ошибка", $"Произошла неизвестная ошибка при входе: {ex.Message}");
+                _snackbarService.ShowException("Ошибка", $"Произошла неизвестная ошибка при входе: {ex.Message}");
             }
         }
 

@@ -26,6 +26,7 @@ using MusicX.Views.Modals;
 using NLog;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
+using Wpf.Ui.Extensions;
 using NavigationService = MusicX.Services.NavigationService;
 using TextBlock = System.Windows.Controls.TextBlock;
 
@@ -359,7 +360,7 @@ namespace MusicX.Controls
 
                 logger.Error(ex, ex.Message);
                 StaticService.Container.GetRequiredService<ISnackbarService>()
-                    .Show("Ошибка", "Нам не удалось перейти на эту секцию");
+                    .ShowException("Нам не удалось перейти на эту секцию", ex);
             }
 
         }
@@ -609,7 +610,7 @@ namespace MusicX.Controls
 
                 logger.Error(ex, ex.Message);
                 StaticService.Container.GetRequiredService<ISnackbarService>()
-                    .Show("Ошибка", "Нам не удалось перейти на эту секцию");
+                    .ShowException("Нам не удалось перейти на эту секцию", ex);
             }
         }
 
@@ -717,7 +718,7 @@ namespace MusicX.Controls
             {
                 var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
 
-                snackbarService.Show("Уже ищем", "Сейчас мы найдем похожие треки, подождите");
+                snackbarService.Show("Уже ищем", "Сейчас мы найдем похожие треки, подождите", ControlAppearance.Success);
 
                 var vk = StaticService.Container.GetRequiredService<VkService>();
 
@@ -758,7 +759,7 @@ namespace MusicX.Controls
                 logger.Error(ex, ex.Message);
                 var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
 
-                snackbarService.Show("Ошибка", "Мы не смогли найти подходящие треки");
+                snackbarService.ShowException("Мы не смогли найти подходящие треки", ex);
 
             }
 
@@ -826,7 +827,7 @@ namespace MusicX.Controls
             {
                 await vk.AddToPlaylistAsync(Audio, playlist.OwnerId, playlist.Id);
 
-                snackbarService.Show("Трек добавлен", $"Трек '{Audio.Title}' добавлен в плейлист '{playlist.Title}'");
+                snackbarService.Show("Трек добавлен", $"Трек '{Audio.Title}' добавлен в плейлист '{playlist.Title}'", ControlAppearance.Success);
 
 
             }
@@ -844,7 +845,7 @@ namespace MusicX.Controls
 
                 logger.Error(ex, ex.Message);
 
-                snackbarService.Show("Ошибка", "Произошла ошибка при добавлении трека в плейлист");
+                snackbarService.ShowException("Ошибка при добавлении трека в плейлист", ex);
             }
         }
 
@@ -864,7 +865,7 @@ namespace MusicX.Controls
 
                 await configService.SetConfig(config);
 
-                snackbarService.Show("Готово!", "Теперь треки с этим исполнителем будет автоматически пропускаться");
+                snackbarService.Show("Готово!", "Теперь треки с этим исполнителем будет автоматически пропускаться", ControlAppearance.Success);
             }
             catch (Exception ex)
             {
@@ -876,7 +877,7 @@ namespace MusicX.Controls
 
                 logger.Error(ex, ex.Message);
 
-                snackbarService.Show("Ошибка",
+                snackbarService.ShowException("Ошибка",
                     "Произошла ошибка при добавлении добавлении исполнителя в черный список");
             }
         }

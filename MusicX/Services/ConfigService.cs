@@ -3,6 +3,7 @@ using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Win32;
+using MusicX.Helpers;
 using MusicX.Models;
 using NLog;
 using Wpf.Ui;
@@ -35,7 +36,7 @@ namespace MusicX.Services
             catch (Exception e)
             {
                 logger.Error(e, "Failed to migrate config");
-                snackbarService.Show("Ошибка миграции!",
+                snackbarService.ShowException("Ошибка миграции!",
                     "Неудалось использовать настройки из прошлой установки приложения.");
             }
         }

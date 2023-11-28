@@ -20,6 +20,7 @@ using MusicX.Services.Player.TrackStats;
 using MusicX.Shared.Player;
 using NLog;
 using Wpf.Ui;
+using Wpf.Ui.Extensions;
 
 namespace MusicX.Services.Player;
 
@@ -201,7 +202,7 @@ public class PlayerService
             };
             Crashes.TrackError(e, properties);
             logger.Error(e);
-            _snackbarService.Show("Ошибка", "Произошла ошибка при воспроизведении");
+            _snackbarService.ShowException("Ошибка", "Произошла ошибка при воспроизведении");
         }
        
     }
@@ -281,7 +282,7 @@ public class PlayerService
                 };
             Crashes.TrackError(e, properties);
             logger.Error(e);
-            _snackbarService.Show("Ошибка", "Произошла ошибка при воспроизведении");
+            _snackbarService.ShowException("Ошибка", "Произошла ошибка при воспроизведении");
         }
         finally
         {
@@ -387,7 +388,7 @@ public class PlayerService
             logger.Error("Error in playerService => NextTrack");
             logger.Error(ex, ex.Message);
 
-            _snackbarService.Show("Ошибка", "Произошла ошибка при воспроизведении");
+            _snackbarService.ShowException("Ошибка", "Произошла ошибка при воспроизведении");
 
         }
     }
@@ -500,7 +501,7 @@ public class PlayerService
             logger.Error("Error in playerService => PreviousTrack");
             logger.Error(e, e.Message);
 
-            _snackbarService.Show("Ошибка", "Произошла ошибка при воспроизведении");
+            _snackbarService.ShowException("Ошибка", "Произошла ошибка при воспроизведении");
         }
 
     }
@@ -533,7 +534,7 @@ public class PlayerService
 
             logger.Error(e, e.Message);
 
-            _snackbarService.Show("Ошибка", "Произошла ошибка при воспроизведении");
+            _snackbarService.ShowException("Ошибка", "Произошла ошибка при воспроизведении");
 
         }
 
@@ -565,7 +566,7 @@ public class PlayerService
                 };
             Crashes.TrackError(e, properties);
 
-            _snackbarService.Show("Ошибка", "Произошла ошибка при воспроизведении");
+            _snackbarService.ShowException("Ошибка", "Произошла ошибка при воспроизведении");
 
             logger.Error(e, e.Message);
         }
@@ -604,7 +605,7 @@ public class PlayerService
                 };
             Crashes.TrackError(ex, properties);
 
-            _snackbarService.Show("Ошибка", "Произошла ошибка при перемешивании");
+            _snackbarService.ShowException("Ошибка", "Произошла ошибка при перемешивании");
 
             logger.Error(ex, ex.Message);
         }
@@ -625,7 +626,7 @@ public class PlayerService
         {
             logger.Error("Error SourceNotSupported player");
 
-            _snackbarService.Show("Ошибка", "Произошла ошибкба SourceNotSupported");
+            _snackbarService.ShowException("Ошибка", "Произошла ошибкба SourceNotSupported");
 
             if(CurrentTrack is not null && CurrentTrack.Data.Url.EndsWith(".mp3"))
             {
@@ -676,7 +677,7 @@ public class PlayerService
         }
         else if (args.Error == MediaPlayerError.NetworkError)
         {
-            _snackbarService.Show("Ошибка", "Мы не смогли воспроизвести трек из-за проблем с сетью");
+            _snackbarService.ShowException("Ошибка", "Мы не смогли воспроизвести трек из-за проблем с сетью");
 
             logger.Error("Network Error player");
         }

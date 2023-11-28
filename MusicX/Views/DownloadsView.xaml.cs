@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Controls;
+using MusicX.Helpers;
 using MusicX.Services;
 using MusicX.ViewModels;
 using NLog;
@@ -82,7 +83,7 @@ public partial class DownloadsView : Page, IMenuPage
         catch (Exception ex)
         {
             var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
-            snackbarService.Show("Произошла ошибка",
+            snackbarService.ShowException("Произошла ошибка",
                 "Мы не смогли скачать дополнительный компонент, попробуйте перезапустить приложение.");
 
             var logger = StaticService.Container.GetRequiredService<Logger>();

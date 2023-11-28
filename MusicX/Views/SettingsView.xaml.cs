@@ -22,6 +22,7 @@ using VkNet.Abstractions;
 using VkNet.AudioBypassService.Models.Auth;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
+using Wpf.Ui.Extensions;
 using Button = Wpf.Ui.Controls.Button;
 using NavigationService = MusicX.Services.NavigationService;
 

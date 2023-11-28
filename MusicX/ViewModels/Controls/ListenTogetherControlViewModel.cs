@@ -19,6 +19,8 @@ using NLog;
 using VkNet.Abstractions;
 using VkNet.Enums.Filters;
 using Wpf.Ui;
+using Wpf.Ui.Controls;
+using Wpf.Ui.Extensions;
 using NavigationService = MusicX.Services.NavigationService;
 
 namespace MusicX.ViewModels.Controls;
@@ -81,7 +83,7 @@ public class ListenTogetherControlViewModel : BaseViewModel
 
         if(userRadioService.IsStarted)
         {
-            snackbarService.Show("Стоп стоп стоп", "У Вас уже запущена радиостанция. Зачем создавать ещё одну?");
+            snackbarService.ShowException("Стоп стоп стоп", "У Вас уже запущена радиостанция. Зачем создавать ещё одну?");
             return;
         }
 
@@ -99,7 +101,6 @@ public class ListenTogetherControlViewModel : BaseViewModel
             Analytics.TrackEvent("Started session", properties);
 
             IsLoading = true;
-            OnPropertyChanged("IsLoading");
             var sessionId = await _service.StartSessionAsync(_configService.Config.UserId);
 
             await _service.ChangeTrackAsync(_playerService.CurrentTrack);
@@ -107,18 +108,16 @@ public class ListenTogetherControlViewModel : BaseViewModel
             Clipboard.SetText(sessionId);
 
             _navigationService.OpenModal<ListenTogetherSessionStartedModal>(new ListenTogetherSessionStartedModalViewModel(_service));
-            _snackbarService.Show("Успешно", "Сессия успешно создана. Id скопирован в буффер обмена");
+            _snackbarService.Show("Успешно", "Сессия успешно создана. Id скопирован в буффер обмена", ControlAppearance.Success);
 
             IsLoading = false;
-            OnPropertyChanged("IsLoading");
 
         }
         catch (Exception e)
         {
             IsLoading = false;
-            OnPropertyChanged("IsLoading");
 
-            _snackbarService.Show("Ошибка", "Ошибка создания сессии");
+            _snackbarService.ShowException("Ошибка", "Ошибка создания сессии");
             _logger.Error(e, e.Message);
         }
     }
@@ -132,7 +131,6 @@ public class ListenTogetherControlViewModel : BaseViewModel
         }
 
         IsLoading = true;
-        OnPropertyChanged("IsLoading");
         try
         {
 
@@ -149,12 +147,11 @@ public class ListenTogetherControlViewModel : BaseViewModel
         }
         catch (Exception e)
         {
-            _snackbarService.Show("Ошибка подключении к сессии", e.Message);
+            _snackbarService.ShowException("Ошибка подключении к сессии", e);
             _logger.Error(e, e.Message);
         }
 
         IsLoading = false;
-        OnPropertyChanged("IsLoading");
     }
 
     private async Task OpenLinkModalAsync() 

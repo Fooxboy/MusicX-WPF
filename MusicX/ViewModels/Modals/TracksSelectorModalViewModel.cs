@@ -7,6 +7,7 @@ using System.Windows.Input;
 using Microsoft.AppCenter.Crashes;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
+using MusicX.Helpers;
 using MusicX.Services;
 using NLog;
 using Wpf.Ui;
@@ -97,7 +98,7 @@ namespace MusicX.ViewModels.Modals
 
                 logger.Error(ex, ex.Message);
 
-                _snackbarService.Show("Ошибка", "Music X не смог загрузить список Ваших треков. Попробуйте ещё раз");
+                _snackbarService.ShowException("Ошибка", "Music X не смог загрузить список Ваших треков. Попробуйте ещё раз");
             }
            
         }

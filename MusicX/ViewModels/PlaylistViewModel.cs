@@ -87,7 +87,7 @@ namespace MusicX.ViewModels
                 logger.Error("Fatal error in load playlist");
                 logger.Error(ex, ex.Message);
 
-                _snackbarService.Show("Произошла ошибка", "MusicX не смог загрузить плейлист, попробуйте ещё раз");
+                _snackbarService.ShowException("Произошла ошибка", "MusicX не смог загрузить плейлист, попробуйте ещё раз");
 
                 VisibleLoadingMore = Visibility.Collapsed;
             }
@@ -222,7 +222,7 @@ namespace MusicX.ViewModels
                 logger.Error("Fatal error in load playlist");
                 logger.Error(ex, ex.Message);
 
-                _snackbarService.Show("Произошла ошибка", "MusicX не смог загрузить контент");
+                _snackbarService.ShowException("Произошла ошибка", "MusicX не смог загрузить контент");
 
                 PlaylistNotLoaded?.Invoke(this, this.Playlist);
 
@@ -256,7 +256,7 @@ namespace MusicX.ViewModels
                 logger.Error("Fatal error in load playlist from data");
                 logger.Error(ex, ex.Message);
 
-                _snackbarService.Show("Произошла ошибка", "MusicX не смог загрузить контент");
+                _snackbarService.ShowException("Произошла ошибка", "MusicX не смог загрузить контент");
 
             }
 
@@ -287,7 +287,7 @@ namespace MusicX.ViewModels
 
                 logger.Error("Error in add playlist");
                 logger.Error(ex, ex.Message);
-                _snackbarService.Show("Произошла ошибка", "MusicX не смог добавить плейлист");
+                _snackbarService.ShowException("Произошла ошибка", "MusicX не смог добавить плейлист");
 
                 return false;
             }
@@ -314,7 +314,7 @@ namespace MusicX.ViewModels
 
                 logger.Error("Error in remove playlist");
                 logger.Error(ex, ex.Message);
-                _snackbarService.Show("Произошла ошибка", "MusicX не смог удалить плейлист");
+                _snackbarService.ShowException("Произошла ошибка", "MusicX не смог удалить плейлист");
 
                 return false;
             }
