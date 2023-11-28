@@ -34,7 +34,7 @@ jobs:
           if [ ${{ github.ref }} == 'refs/heads/master' ]; then
             echo "previous-version=${{ steps.version.outputs.previous-version }}" >> $GITHUB_OUTPUT
           else
-            echo "previous-version=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
+            echo "previous-version=$(git ls-remote --refs --sort="refname" -t -q | cut -d/ -f3- | tail -n1)" >> $GITHUB_OUTPUT
           fi
   
   build:
@@ -43,53 +43,62 @@ jobs:
     needs: [compute-version]
     if: "!contains(github.event.commits[0].message, '[skip ci]')"
     steps:
-    - uses: actions/checkout@v3
-      with:
-        ref: ${{ github.head_ref }}
-        fetch-depth: 0
-        submodules: 'true'
-        
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v2
-      with:
-        dotnet-version: | 
-          7.0.x
-          6.0.x
-        
-    - name: Restore dependencies
-      run: dotnet restore MusicX/MusicX.csproj --locked-mode
-        
-    - name: Build
-      run: dotnet publish MusicX/MusicX.csproj --no-restore -o pub -p:Platform=x64 -p:InformationalVersion=${{ needs.compute-version.outputs.version }} -c Release -r win10-x64 --sc
-      
-    - name: Set current tag
-      if: ${{ github.ref == 'refs/heads/develop' }}
-      run: git config user.email "you@example.com" && git config user.name "Your Name" && git tag -a ${{ needs.compute-version.outputs.version }} -m ${{ needs.compute-version.outputs.version }}
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+          submodules: 'true'
 
-    - name: Build Changelog
-      if: ${{ github.ref == 'refs/heads/develop' }}
-      uses: mikepenz/release-changelog-builder-action@v3
-      with:
-        outputFile: notes.md
-        configurationJson: |
-          {
-            "template": "#{{UNCATEGORIZED}}"
-          }
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
-    - name: Install csq
-      run: dotnet tool install --global csq --version 3.0.210-g5f9f594
-      
-    - run: mkdir rel
-      
-    - run: curl.exe --remove-on-error -sfLO https://github.com/Fooxboy/MusicX-WPF/releases/download/${{ needs.compute-version.outputs.previous-version }}/RELEASES && curl.exe --remove-on-error -sfLO https://github.com/Fooxboy/MusicX-WPF/releases/download/${{ needs.compute-version.outputs.previous-version }}/MusicX.WPF-${{ needs.compute-version.outputs.previous-version }}-full.nupkg
-      continue-on-error: true
-      working-directory: ./rel
-      name: Download previous release
-      
-    - name: Build package
-      run: csq --csq-version=3.0.210-g5f9f594 pack -f vcredist140 -r rel -p pub -u MusicX.WPF -v ${{ needs.compute-version.outputs.version }} --packTitle "MusicX Player" -e MusicX.exe -i MusicX/StoreLogo.scale-400.ico --appIcon MusicX/StoreLogo.scale-400.ico --msi x64 --includePdb --packAuthors "Fooxboy, zznty" --releaseNotes notes.md -s MusicX/StoreLogo.scale-400.png
-      
-    - name: Push package
-      run: csq --csq-version=3.0.210-g5f9f594 github-up -r rel --repoUrl https://github.com/Fooxboy/MusicX-WPF --publish --token ${{ secrets.GITHUB_TOKEN }}
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: |
+            7.0.x
+            6.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore MusicX/MusicX.csproj --locked-mode
+
+      - name: Build
+        run: dotnet publish MusicX/MusicX.csproj --no-restore -o pub -p:Platform=x64 -p:InformationalVersion=${{ needs.compute-version.outputs.version }} -c Release -r win10-x64 --sc
+
+      - name: Set current tag
+        if: ${{ github.ref == 'refs/heads/develop' }}
+        run: git config user.email "you@example.com" && git config user.name "Your Name" && git tag -a ${{ needs.compute-version.outputs.version }} -m ${{ needs.compute-version.outputs.version }} && git push --follow-tags
+
+      - name: Build Changelog
+        id: changelog
+        if: ${{ github.ref == 'refs/heads/develop' }}
+        uses: requarks/changelog-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fromTag: ${{ needs.compute-version.outputs.version }}
+          toTag: ${{ needs.compute-version.outputs.previous-version }}
+          includeInvalidCommits: true
+          writeToFile: false
+          excludeTypes: 'docs'
+          useGitmojis: false
+
+      - name: Write Changelog
+        if: ${{ github.ref == 'refs/heads/develop' }}
+        uses: DamianReeves/write-file-action@master
+        with:
+          path: notes.md
+          contents: ${{ steps.changelog.outputs.changes }}
+          write-mode: overwrite
+
+      - name: Install csq
+        run: dotnet tool install --global csq --version 3.0.210-g5f9f594
+
+      - run: mkdir rel
+
+      - run: curl.exe --remove-on-error -sfLO https://github.com/Fooxboy/MusicX-WPF/releases/download/${{ needs.compute-version.outputs.previous-version }}/RELEASES && curl.exe --remove-on-error -sfLO https://github.com/Fooxboy/MusicX-WPF/releases/download/${{ needs.compute-version.outputs.previous-version }}/MusicX.WPF-${{ needs.compute-version.outputs.previous-version }}-full.nupkg
+        continue-on-error: true
+        working-directory: ./rel
+        name: Download previous release
+
+      - name: Build package
+        run: csq --csq-version=3.0.210-g5f9f594 pack -f vcredist140 -r rel -p pub -u MusicX.WPF -v ${{ needs.compute-version.outputs.version }} --packTitle "MusicX Player" -e MusicX.exe -i MusicX/StoreLogo.scale-400.ico --appIcon MusicX/StoreLogo.scale-400.ico --msi x64 --includePdb --packAuthors "Fooxboy, zznty" --releaseNotes notes.md -s MusicX/StoreLogo.scale-400.png
+
+      - name: Push package
+        run: csq --csq-version=3.0.210-g5f9f594 github-up -r rel --repoUrl https://github.com/Fooxboy/MusicX-WPF --publish --token ${{ secrets.GITHUB_TOKEN }}
