@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
@@ -136,21 +137,38 @@ namespace MusicX.Controls
                 }
 
                 TrackTitle.Text = playerService.CurrentTrack.Title;
-                string s = string.Empty;
+                
+                if (ArtistName.Inlines.Count > 0)
+                    ArtistName.Inlines.Clear();
+                
                 if (playerService.CurrentTrack!.MainArtists.Any())
                 {
-                    foreach (var trackArtist in playerService.CurrentTrack.MainArtists)
+                    ArtistName.Inlines.AddRange(playerService.CurrentTrack.MainArtists.Select(b =>
                     {
-                        s += trackArtist.Name + ", ";
-                    }
+                        var run = new Run(b.Name + ", ")
+                        {
+                            Tag = b
+                        };
+                        
+                        run.MouseEnter += ArtistName_MouseEnter;
+                        run.MouseLeave += ArtistName_MouseLeave;
+                        run.MouseLeftButtonUp += ArtistName_MouseLeftButtonUp;
+                            
+                        return run;
+                    }));
 
-                    var artists = s.Remove(s.Length - 2);
-
-                    ArtistName.Text = artists;
+                    var lastInline = (Run)ArtistName.Inlines.LastInline;
+                    lastInline.Text = lastInline.Text[..^2];
                 }
                 else
                 {
-                    ArtistName.Text = playerService.CurrentTrack.GetArtistsString();
+                    var run = new Run(playerService.CurrentTrack.GetArtistsString());
+                            
+                    run.MouseEnter += ArtistName_MouseEnter;
+                    run.MouseLeave += ArtistName_MouseLeave;
+                    run.MouseLeftButtonUp += ArtistName_MouseLeftButtonUp;
+                    
+                    ArtistName.Inlines.Add(run);
                 }
 
 
@@ -297,22 +315,17 @@ namespace MusicX.Controls
 
         private void ArtistName_MouseEnter(object sender, MouseEventArgs e)
         {
-            //if (playerService.CurrentTrack.MainArtists == null) return;
-            ArtistName.TextDecorations.Add(TextDecorations.Underline);
-                this.Cursor = Cursors.Hand;
-
+            ((Run)sender).TextDecorations.Add(TextDecorations.Underline);
+            this.Cursor = Cursors.Hand;
         }
 
         private void ArtistName_MouseLeave(object sender, MouseEventArgs e)
         {
-            //if (playerService.CurrentTrack.MainArtists == null) return;
-
             foreach (var dec in TextDecorations.Underline)
             {
-                ArtistName.TextDecorations.Remove(dec);
+                ((Run)sender).TextDecorations.Remove(dec);
             }
             this.Cursor = Cursors.Arrow;
-
         }
 
         private async Task SaveVolume()
@@ -331,13 +344,13 @@ namespace MusicX.Controls
             await configService.SetConfig(conf);
         }
 
-        private async void ArtistName_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private async void ArtistName_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             try
             {
                 var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
 
-                if (playerService.CurrentTrack?.MainArtists.First().Id is {Type: ArtistIdType.Vk} artistId)
+                if (((Run)sender).Tag is TrackArtist { Id: { Type: ArtistIdType.Vk } artistId })
                 {
                     navigationService.OpenSection(artistId.Id, SectionType.Artist);
                 }
@@ -395,13 +408,13 @@ namespace MusicX.Controls
                     LikeIcon.Filled = true;
 
                     snackbarService.Show("Добавлено в вашу библиотеку",
-                        $"Трек {ArtistName.Text} - {TrackTitle.Text} теперь находится в Вашей музыке!", ControlAppearance.Success);
+                        $"Трек {playerService.CurrentTrack.GetArtistsString()} - {playerService.CurrentTrack.Title} теперь находится в Вашей музыке!", ControlAppearance.Success);
                     return;
                 }
 
                 LikeIcon.Filled = false;
                 snackbarService.Show("Удалено из вашей библиотеки",
-                    $"Трек {ArtistName.Text} - {TrackTitle.Text} теперь удален из вашей музыки", ControlAppearance.Success);
+                    $"Трек {playerService.CurrentTrack.GetArtistsString()} - {playerService.CurrentTrack.Title} теперь удален из вашей музыки", ControlAppearance.Success);
             }
             catch(Exception ex)
             {
