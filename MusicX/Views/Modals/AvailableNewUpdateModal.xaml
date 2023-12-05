@@ -35,6 +35,7 @@
                 x:Name="Scroll"
                 Margin="20 20"
                 hc:ScrollViewerAttach.AutoHide="True"
+                Foreground="White"
                 Markdown="{Binding Changelog}" />
 
         </StackPanel>
