@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
@@ -64,7 +64,8 @@ namespace MusicX.Controls
             }
 
 
-            new Thread(AutoNext).Start();
+            if (Banners.Count > 1)
+                AutoNext();
         }
 
         CatalogBanner CurrentBanner;
@@ -143,37 +144,36 @@ namespace MusicX.Controls
             amim.Begin();
         }
 
-        bool runAutoNext = true;
+        bool runAutoNext;
 
-        private void AutoNext()
+        private async void AutoNext()
         {
-
-            while(runAutoNext)
+            await Task.Delay(6000);
+            runAutoNext = true; 
+            
+            do
             {
-                Thread.Sleep(5000);
                 try
                 {
-                    Application.Current.Dispatcher.Invoke(() =>
+                    var bannerService = StaticService.Container.GetRequiredService<BannerService>();
+
+                    var currentIndex = Banners.IndexOf(CurrentBanner);
+
+                    if (currentIndex + 1 > Banners.Count - 1)
                     {
-                        var bannerService = StaticService.Container.GetRequiredService<BannerService>();
+                        currentIndex = -1;
+                    }
 
-                        var currentIndex = Banners.IndexOf(CurrentBanner);
-
-                        if (currentIndex + 1 > Banners.Count - 1)
-                        {
-                            currentIndex = -1;
-                        }
-
-                        bannerService.OpenBanner(Banners[currentIndex + 1]);
-
-                    });
-                }catch (Exception ex)
+                    bannerService.OpenBanner(Banners[currentIndex + 1]);
+                }
+                catch
                 {
                     runAutoNext = false;
                 }
-                
-            }
-           
+
+                await Task.Delay(5000);
+            } while (runAutoNext);
+
         }
     }
 }
