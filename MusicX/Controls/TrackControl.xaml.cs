@@ -47,11 +47,6 @@ namespace MusicX.Controls
             InitializeComponent();
             logger = StaticService.Container.GetRequiredService<Logger>();
             player = StaticService.Container.GetRequiredService<PlayerService>();
-
-
-            player.TrackChangedEvent += Player_TrackChangedEvent;
-            player.PlayStateChangedEvent += Player_PlayStateChangedEvent;
-
         }
 
         private void Player_PlayStateChangedEvent(object? sender, EventArgs e)
@@ -137,6 +132,8 @@ namespace MusicX.Controls
         {
             try
             {
+                player.TrackChangedEvent += Player_TrackChangedEvent;
+                player.PlayStateChangedEvent += Player_PlayStateChangedEvent;
 
                 IconPlay.Symbol = SymbolRegular.Play24;
 
