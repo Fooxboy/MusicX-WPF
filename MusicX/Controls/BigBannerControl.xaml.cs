@@ -4,6 +4,7 @@ using MusicX.Views;
 using NLog;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Windows;
@@ -84,13 +85,26 @@ namespace MusicX.Controls
         {
             try
             {
-                var url = new Uri(CurrentBanner.ClickAction.Action.Url);
+                if ((CurrentBanner.ClickAction?.Action ?? CurrentBanner.Buttons?.FirstOrDefault()?.Action) is not { } action)
+                    return;
+                
+                var url = new Uri(action.Url);
 
-                var data = url.Segments.LastOrDefault().Split("_");
+                if (url.Segments.LastOrDefault() is not { } lastSegment || !lastSegment.Contains('_'))
+                {
+                    Process.Start(new ProcessStartInfo
+                    {
+                        UseShellExecute = true,
+                        FileName = action.Url
+                    });
+                    return;
+                }
+                
+                var data = lastSegment.Split("_");
 
                 var ownerId = long.Parse(data[0]);
                 var playlistId = long.Parse(data[1]);
-                var accessKey = data[2];
+                var accessKey = data.Length == 2 ? string.Empty : data[2];
 
                 var notificationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
 
