@@ -221,6 +221,13 @@ public class PlayerService
 
         try
         {
+            if (CurrentPlaylist?.Equals(playlist) is true && Tracks.Count > 0)
+            {
+                var index = Tracks.IndexOf(firstTrack ?? CurrentTrack ?? Tracks[0]);
+                await PlayTrackFromQueueAsync(index);
+                return;
+            }
+            
             CurrentPlaylist = playlist;
             Application.Current.Dispatcher.BeginInvoke(
                 () => CurrentPlaylistChanged?.Invoke(this, EventArgs.Empty));
