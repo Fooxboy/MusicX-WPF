@@ -7,6 +7,7 @@ using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using MusicX.Core.Exceptions.Boom;
 using MusicX.Core.Services;
+using MusicX.Helpers;
 using MusicX.Services;
 using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
@@ -99,7 +100,7 @@ namespace MusicX.ViewModels
                 };
                 Crashes.TrackError(ex, properties);
 
-                SnackbarService.Show("Ошибка загрузки микса", "Мы не смогли загрузить микс, попробуйте ещё раз");
+                SnackbarService.ShowException("Ошибка загрузки микса", "Мы не смогли загрузить микс, попробуйте ещё раз");
 
                 IsLoaded = true;
 
@@ -159,7 +160,7 @@ namespace MusicX.ViewModels
                 Crashes.TrackError(ex, properties);
 
 
-                SnackbarService.Show("Ошибка загрузки микса", "Мы не смогли загрузить микс, попробуйте ещё раз");
+                SnackbarService.ShowException("Ошибка загрузки микса", "Мы не смогли загрузить микс, попробуйте ещё раз");
 
                 Logger.Error(ex, ex.Message);
             }

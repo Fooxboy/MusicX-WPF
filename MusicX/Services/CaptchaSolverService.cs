@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using MusicX.Helpers;
 using MusicX.ViewModels.Modals;
 using MusicX.Views.Modals;
 using VkNet.Extensions.DependencyInjection;
@@ -34,7 +35,7 @@ public class CaptchaSolverService : IAsyncCaptchaSolver
 
     public ValueTask SolveFailedAsync()
     {
-        _snackbarService.Show("Ошибка!", "Вы ввели неправильную капчу");
+        _snackbarService.ShowException("Ошибка!", "Вы ввели неправильную капчу");
         return ValueTask.CompletedTask;
     }
 }

@@ -8,6 +8,7 @@
            xmlns:modals="clr-namespace:MusicX.ViewModels.Modals"
            xmlns:hc="https://handyorg.github.io/handycontrol"
            xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+           xmlns:mdXaml="https://github.com/whistyun/MdXaml"
            d:DesignHeight="450" d:DesignWidth="800"
            Width="550" Height="450"
            Title="Доступно обновление"
@@ -18,6 +19,11 @@
     </Page.Resources>
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+    
         <StackPanel Margin="0 30 0 0">
             <StackPanel Margin="20 10 0 0" HorizontalAlignment="Center" Orientation="Horizontal">
                 <TextBlock FontSize="18"  Opacity="0.4" Text="{Binding UpdateInfo.LatestLocalReleaseEntry.Version, FallbackValue=1.0}"/>
@@ -25,20 +31,16 @@
                 <TextBlock FontSize="18"  Text="{Binding UpdateInfo.FutureReleaseEntry.Version, FallbackValue=1.1}"/>
             </StackPanel>
 
-            <hc:ScrollViewer
+            <mdXaml:MarkdownScrollViewer
                 x:Name="Scroll"
                 Margin="20 20"
                 hc:ScrollViewerAttach.AutoHide="True"
-                Focusable="False"
-                HorizontalScrollBarVisibility="Disabled"
-                IsInertiaEnabled="True"
-                VerticalScrollBarVisibility="Auto">
-                <TextBlock  TextWrapping="Wrap" Text="{Binding Changelog}" />
-            </hc:ScrollViewer>
+                Foreground="White"
+                Markdown="{Binding Changelog}" />
 
         </StackPanel>
 
-        <Grid VerticalAlignment="Bottom" Margin="20 30">
+        <Grid Grid.Row="1" VerticalAlignment="Bottom" Margin="20 30">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />

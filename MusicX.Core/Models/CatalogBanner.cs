@@ -11,7 +11,7 @@ namespace MusicX.Core.Models
         public int Id { get; set; }
 
         [JsonProperty("click_action")]
-        public ClickAction ClickAction { get; set; }
+        public ClickAction? ClickAction { get; set; }
 
         [JsonProperty("buttons")]
         public List<Button> Buttons { get; set; }

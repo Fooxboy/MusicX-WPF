@@ -18,6 +18,7 @@ using MusicX.Views;
 using NLog;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
+using Wpf.Ui.Extensions;
 using NavigationService = MusicX.Services.NavigationService;
 
 namespace MusicX.Controls
@@ -348,7 +349,7 @@ namespace MusicX.Controls
 
                 await vkService.AddPlaylistAsync(Playlist.Id, Playlist.OwnerId, Playlist.AccessKey);
 
-                snackbarService.Show("Плейлист добавлен", "Плейлист теперь находится в Вашей библиотеке");
+                snackbarService.Show("Плейлист добавлен", "Плейлист теперь находится в Вашей библиотеке", ControlAppearance.Success);
             }
             catch(Exception ex)
             {
@@ -358,7 +359,7 @@ namespace MusicX.Controls
                 };
                 Crashes.TrackError(ex, properties);
 
-                snackbarService.Show("Ошибка", "Мы не смогли добавить плейлист к Вам в библиотеку");
+                snackbarService.ShowException("Мы не смогли добавить плейлист к Вам в библиотеку", ex);
 
             }
 
@@ -374,7 +375,7 @@ namespace MusicX.Controls
 
                 var vkService = StaticService.Container.GetRequiredService<VkService>();
 
-                snackbarService.Show("Подождите", "Мы получаем треки из плейлиста и добавляем их в очередь");
+                snackbarService.Show("Подождите", "Мы получаем треки из плейлиста и добавляем их в очередь", ControlAppearance.Caution);
 
                 var result = await vkService.LoadFullPlaylistAsync( Playlist.Id, Playlist.OwnerId, Playlist.AccessKey);
 
@@ -385,7 +386,7 @@ namespace MusicX.Controls
                     playerService.InsertToQueue(audio.ToTrack(result.Playlist), true);
                 }
 
-                snackbarService.Show("Готово!", "Треки из плейлиста добавлены в очередь!");
+                snackbarService.Show("Готово!", "Треки из плейлиста добавлены в очередь!", ControlAppearance.Success);
 
 
             }
@@ -397,7 +398,7 @@ namespace MusicX.Controls
                 };
                 Crashes.TrackError(ex, properties);
 
-                snackbarService.Show("Ошибка", "Мы не смогли обновить очередь");
+                snackbarService.ShowException("Мы не смогли обновить очередь", ex);
             }
         }
 

@@ -2,7 +2,7 @@
 
 namespace MusicX.Core.Models.Boom
 {
-    public class Radio
+    public class Radio : IEquatable<Radio>
     {
         [JsonProperty("currentClusterId")]
         public string CurrentClusterId { get; set; }
@@ -24,5 +24,25 @@ namespace MusicX.Core.Models.Boom
 
         [JsonProperty("apiId")]
         public string ApiId { get; set; }
+
+        public bool Equals(Radio? other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return ApiId == other.ApiId;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Radio)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return ApiId.GetHashCode();
+        }
     }
 }

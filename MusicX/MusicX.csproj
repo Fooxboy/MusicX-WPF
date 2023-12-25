@@ -9,8 +9,8 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>StoreLogo.scale-400.ico</ApplicationIcon>
     <Version>0.40</Version>
-    <Platforms>x86;x64;arm64</Platforms>
-    <RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
+    <PlatformTarget>x64</PlatformTarget>
+    <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <TieredPGO>true</TieredPGO>
@@ -104,6 +104,9 @@
   <ItemGroup>
     <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="6.0.6" />
     <PackageReference Include="Clowd.Squirrel" Version="3.0.210-g5f9f594" />
+    <PackageReference Include="FFmpegInteropX.Desktop" Version="2.0.0-pre2" />
+    <PackageReference Include="MdXaml" Version="1.22.0" />
+    <PackageReference Include="Microsoft.VCRTForwarders.140" Version="1.0.8-pre" />
     <PackageReference Include="HandyControl" Version="3.4.0" />
     <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.2" />
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.2" />
@@ -118,7 +121,7 @@
     <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
     <PackageReference Include="System.Text.Json" Version="8.0.0-rc.2.23479.6" />
     <PackageReference Include="taglib-sharp-netstandard2.0" Version="2.1.0" />
-    <PackageReference Include="WPF-UI" Version="3.0.0-preview.6" />
+    <PackageReference Include="WPF-UI" Version="3.0.0-preview.11" />
     <PackageReference Include="WpfScreenHelper" Version="2.1.0" />
   </ItemGroup>
 
@@ -167,10 +170,6 @@
 
   <ItemGroup>
     <Manifest Include="app.manifest" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="..\ffmpeg\*.dll" Visible="false" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
   </ItemGroup>
 
 </Project>

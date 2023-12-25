@@ -11,6 +11,7 @@ using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Controls.Blocks;
 using MusicX.Core.Models;
+using MusicX.Helpers;
 using MusicX.Services;
 using MusicX.ViewModels.Controls;
 using NLog;
@@ -471,7 +472,7 @@ namespace MusicX.Controls
 
                 var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
 
-                snackbarService.Show("Произошла ошибка", $"Music X не смог показать блок");
+                snackbarService.ShowException("Произошла ошибка", $"Music X не смог показать блок");
 
             }
         }

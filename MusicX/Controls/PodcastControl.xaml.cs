@@ -5,6 +5,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Models;
+using MusicX.Helpers;
 using MusicX.Services;
 using Wpf.Ui;
 
@@ -43,7 +44,7 @@ namespace MusicX.Controls
         {
             var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
 
-            snackbarService.Show("Невозможно воспроизвести подкаст",
+            snackbarService.ShowException("Невозможно воспроизвести подкаст",
                 "Music X пока что не умеет воспроизводить подкасты.");
         }
     }

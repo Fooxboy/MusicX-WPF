@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AppCenter.Crashes;
 using MusicX.Core.Services;
+using MusicX.Helpers;
 using MusicX.Models.Enums;
 using MusicX.Shared.Player;
 using NLog;
@@ -51,7 +52,7 @@ public class VkTrackBroadcastStats : ITrackStatsListener
             logger.Error("Fatal error in load playlist");
             logger.Error(ex, ex.Message);
 
-            _snackbarService.Show("Произошла ошибка", "MusicX не смог установить муызку в статус ВКонтакте");
+            _snackbarService.ShowException("Произошла ошибка", $"MusicX не смог установить муызку в статус ВКонтакте: {ex.Message}");
 
             return Task.CompletedTask;
         }
@@ -83,7 +84,7 @@ public class VkTrackBroadcastStats : ITrackStatsListener
             logger.Error("Fatal error in load playlist");
             logger.Error(ex, ex.Message);
 
-            _snackbarService.Show("Произошла ошибка", "MusicX не смог установить музыку в статус ВКонтакте");
+            _snackbarService.ShowException("Произошла ошибка", $"MusicX не смог установить музыку в статус ВКонтакте: {ex.Message}");
 
             return Task.CompletedTask;
         }

@@ -1,22 +1,22 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Mime;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.Media.MediaProperties;
+using Windows.Media.Transcoding;
+using Windows.Storage;
 using FFMediaToolkit;
-using FFMediaToolkit.Audio;
-using FFMediaToolkit.Decoding;
-using FFMediaToolkit.Encoding;
+using FFmpegInteropX;
 using MusicX.Core.Services;
 using MusicX.Helpers;
 using MusicX.Services.Player.Playlists;
 using MusicX.Shared.Player;
 using TagLib;
 using TagLib.Id3v2;
-using AudioCodec = FFMediaToolkit.Encoding.AudioCodec;
+using Wpf.Ui;
 using File = System.IO.File;
 using Tag = TagLib.Id3v2.Tag;
 
@@ -24,15 +24,20 @@ namespace MusicX.Services;
 
 public class DownloaderService
 {
-    private static readonly Semaphore FFmpegSemaphore = new(1, 1, "MusicX_FFmpegSemaphore");
-    
     private readonly ConfigService configService;
     private readonly BoomService _boomService;
+    private readonly ISnackbarService _snackbarService;
+    private readonly VkService _vkService;
 
-    public DownloaderService(ConfigService configService, BoomService boomService)
+    private readonly MediaTranscoder _mediaTranscoder = new();
+    private readonly HttpClient _httpClient = new HttpClient();
+
+    public DownloaderService(ConfigService configService, BoomService boomService, ISnackbarService snackbarService, VkService vkService)
     {
         this.configService = configService;
         _boomService = boomService;
+        _snackbarService = snackbarService;
+        _vkService = vkService;
 
         FFmpegLoader.FFmpegPath = AppContext.BaseDirectory;
     }
@@ -84,77 +89,54 @@ public class DownloaderService
             fileDownloadPath += $"({++i}).mp3";
         }
 
-        var options = new MediaOptions
+        if (audio.Data is BoomTrackData)
         {
-            StreamsToLoad = MediaMode.Audio,
-            DemuxerOptions =
+            await using var stream = await _boomService.Client.GetStreamAsync(audio.Data.Url, cancellationToken);
+            await using var fileStream = File.Create(fileDownloadPath);
+            await stream.CopyToAsync(fileStream, cancellationToken);
+            progress?.Report((TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1)));
+        }
+        else
+        {
+            using var ffmpegMediaSource = await FFmpegMediaSource.CreateFromUriAsync(audio.Data.Url, new()
             {
-                FlagDiscardCorrupt = true,
-                PrivateOptions =
+                FFmpegOptions =
                 {
                     ["http_persistent"] = "false"
                 }
-            }
-        };
+            }).AsTask(cancellationToken);
 
-        using var mediaFile = audio.Data is BoomTrackData ? MediaFile.Open(_boomService.Client.GetStreamAsync(audio.Data.Url, cancellationToken).Result, options) : MediaFile.Open(audio.Data.Url, options);
+            var encodingProfile = MediaEncodingProfile.CreateMp3(AudioEncodingQuality.Auto);
+            
+            var destinationFolder = await StorageFolder.GetFolderFromPathAsync(Path.GetDirectoryName(fileDownloadPath))
+                .AsTask(cancellationToken);
+            var destination = await destinationFolder.CreateFileAsync(Path.GetFileName(fileDownloadPath)).AsTask(cancellationToken);
+            using var destinationStream = await destination.OpenAsync(FileAccessMode.ReadWrite).AsTask(cancellationToken);
+            
+            var prepareOp =
+                await _mediaTranscoder.PrepareMediaStreamSourceTranscodeAsync(ffmpegMediaSource.GetMediaStreamSource(),
+                    destinationStream, encodingProfile).AsTask(cancellationToken);
 
-        using (var outputFile = MediaBuilder.CreateContainer(fileDownloadPath)
-                   .WithAudio(new(mediaFile.Audio.Info.SampleRate, mediaFile.Audio.Info.NumChannels, AudioCodec.MP3)
-                   {
-                       Bitrate = 320_000,
-                       SampleFormat = mediaFile.Audio.Info.SampleFormat,
-                       SamplesPerFrame = mediaFile.Audio.Info.SamplesPerFrame
-                   })
-                   .UseMetadata(new()
-                   {
-                       Title = audio.Title,
-                       Metadata =
-                       {
-                           ["artist"] = audio.MainArtists.First().Name,
-                           ["comment"] = "Загружено с помощью Music X. https://t.me/MusicXPlayer",
-                           ["conductor"] = "Music X Player"
-                       },
-                       Album = audio.AlbumId?.Name ?? "",
-                       Copyright = "Music X Player - https://t.me/MusicXPlayer"
-                   }).Create())
-        {
-            bool ProcessSample()
+            if (!prepareOp.CanTranscode)
             {
-                AudioData audioData;
-                try
-                {
-                    if (!mediaFile.Audio.TryGetNextFrame(out audioData))
-                        return false;
-                }
-                catch (FFmpegException)
-                {
-                    return true;
-                }
-                finally
-                {
-                    FFmpegSemaphore.Release();
-                }
-
-                progress?.Report((mediaFile.Audio.Position, audio.Data.Duration));
-
-                outputFile.Audio.AddFrame(audioData);
-                audioData.Dispose();
-                return true;
+                _snackbarService.ShowException("Упс!",
+                    prepareOp.FailureReason == TranscodeFailureReason.CodecNotFound
+                        ? "Кажется ваша система не поддерживает загрузку треков.. Попробуйте обновить Windows до последней версии."
+                        : "Не удалось загрузить трек");
+                return;
             }
 
-            do
+            var transcodeOp = prepareOp.TranscodeAsync();
+
+            transcodeOp.Progress += (sender, position) =>
             {
-                await FFmpegSemaphore.WaitOneAsync(cancellationToken);
-            } while (ProcessSample());
+                progress?.Report((TimeSpan.FromSeconds(position), TimeSpan.FromSeconds(1)));
+            };
+
+            await transcodeOp.AsTask(cancellationToken);
         }
-        
-        await AddMetadataAsync(audio, fileDownloadPath, cancellationToken);
-    }
 
-    private void Ffmpeg_Data(object sender, DataReceivedEventArgs e)
-    {
-        Debug.WriteLine(e.Data);
+        await AddMetadataAsync(audio, fileDownloadPath, cancellationToken);
     }
 
     private string ReplaceSymbols(string fileName)
@@ -167,14 +149,31 @@ public class DownloaderService
         Tag.DefaultVersion = 3;
         Tag.ForceDefaultVersion = true;
 
-        var tfile = TagLib.File.Create(filePath);
-        
-        // TODO: Stop using taglib
+        using var tfile = TagLib.File.Create(filePath);
+
+        tfile.Tag.Title = audio.Title;
+        tfile.Tag.AlbumArtists = audio.MainArtists.Select(b => b.Name).ToArray();
+        tfile.Tag.Comment = "Загружено с помощью Music X. https://t.me/MusicXPlayer";
+        tfile.Tag.Conductor = "Music X Player - https://t.me/MusicXPlayer";
+        tfile.Tag.Copyright = "Music X Player - https://t.me/MusicXPlayer";
+        if (audio.FeaturedArtists != null) 
+            tfile.Tag.Performers = audio.FeaturedArtists.Select(b => b.Name).ToArray();
+
+        if (audio.Data is VkTrackData { HasLyrics: true } vkTrackData)
+        {
+            var vkLyrics = await _vkService.GetLyrics($"{vkTrackData.Info.OwnerId}_{vkTrackData.Info.Id}");
+
+            tfile.Tag.Lyrics = string.Join(Environment.NewLine,
+                vkLyrics.LyricsInfo.Timestamps is { Count: > 0 }
+                    ? vkLyrics.LyricsInfo.Timestamps.Select(b => b.Line)
+                    : vkLyrics.LyricsInfo.Text);
+        }
 
         if (audio.AlbumId != null)
         {
-            using var httpClient = new HttpClient();
-            var thumbData = await httpClient.GetByteArrayAsync(audio.AlbumId.BigCoverUrl ?? audio.AlbumId.CoverUrl, cancellationToken);
+            tfile.Tag.Album = audio.AlbumId.Name;
+            
+            var thumbData = await _httpClient.GetByteArrayAsync(audio.AlbumId.BigCoverUrl ?? audio.AlbumId.CoverUrl, cancellationToken);
 
             var cover = new AttachedPictureFrame
             {

@@ -2,21 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using System.Windows.Interop;
 using System.Windows.Media.Animation;
-using Windows.Win32;
-using Windows.Win32.Graphics.Dwm;
 using AsyncAwaitBestPractices;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Win32;
 using MusicX.Controls;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
@@ -79,9 +73,9 @@ namespace MusicX
 
             Width = configService.Config.Width;
             Height = configService.Config.Height;
-
-            _snackbarService.SetSnackbarPresenter(RootSnackbar);
         }
+
+        protected override SnackbarPresenter? GetSnackbarPresenter() => RootSnackbar;
 
         private async Task TogetherServiceOnConnectedToSession(PlaylistTrack arg)
         {

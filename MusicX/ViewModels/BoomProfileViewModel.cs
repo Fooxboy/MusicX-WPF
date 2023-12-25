@@ -105,7 +105,7 @@ namespace MusicX.ViewModels
                 };
                 Crashes.TrackError(ex, properties);
 
-                SnackbarService.Show("Ошибка загрузки", "Мы не смогли открыть Ваш профиль  в ВК музыке");
+                SnackbarService.ShowException("Ошибка загрузки", "Мы не смогли открыть Ваш профиль  в ВК музыке");
 
                 IsLoaded = true;
 
@@ -166,7 +166,7 @@ namespace MusicX.ViewModels
                 };
                 Crashes.TrackError(ex, properties);
 
-                SnackbarService.Show("Ошибка загрузки", "Мы не смогли открыть Ваш профиль в ВК музыке");
+                SnackbarService.ShowException("Ошибка загрузки", "Мы не смогли открыть Ваш профиль в ВК музыке");
 
                 IsLoaded = true;
 

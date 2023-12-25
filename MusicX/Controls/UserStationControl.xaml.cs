@@ -17,6 +17,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MusicX.Helpers;
 using Wpf.Ui;
 
 namespace MusicX.Controls
@@ -66,20 +67,20 @@ namespace MusicX.Controls
 
             if (userRadioService.IsStarted)
             {
-                snackbarService.Show("Стоп стоп стоп", "Вы не можете подключиться к радиостанции, потому что вы сами владелец радиостанции :)");
+                snackbarService.ShowException("Стоп стоп стоп", "Вы не можете подключиться к радиостанции, потому что вы сами владелец радиостанции :)");
                 return;
             }
 
             if (listenTogetherService.IsConnectedToServer && listenTogetherService.PlayerMode == Core.Models.PlayerMode.Listener)
             {
-                snackbarService.Show("Стоп стоп стоп", "Ты уже подключен к серверу совместного прослушивания");
+                snackbarService.ShowException("Стоп стоп стоп", "Ты уже подключен к серверу совместного прослушивания");
 
                 return;
             }
 
             if (listenTogetherService.IsConnectedToServer && listenTogetherService.PlayerMode == Core.Models.PlayerMode.Owner)
             {
-                snackbarService.Show("Стоп стоп стоп", "У тебя уже запущена сессия совместного прослушивания");
+                snackbarService.ShowException("Стоп стоп стоп", "У тебя уже запущена сессия совместного прослушивания");
             }
 
             try
@@ -93,7 +94,7 @@ namespace MusicX.Controls
                 var logger = StaticService.Container.GetRequiredService<Logger>();
                 logger.Error(ex);
 
-                snackbarService.Show("Ошибка", "Мы не смогли подключиться к радиостанции");
+                snackbarService.ShowException("Мы не смогли подключиться к радиостанции", ex);
             }
         }
     }

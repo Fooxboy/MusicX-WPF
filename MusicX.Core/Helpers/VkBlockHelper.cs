@@ -725,14 +725,12 @@ namespace MusicX.Core.Helpers
             response.Section.Blocks.RemoveAll(block =>
                 block is { DataType: "radiostations" } or { Layout.Title: "Радиостанции" } ||
                 (
-                    block is { Banners.Count: > 0 } &&
-                    (
-                        block.Banners[0].ClickAction.Action.Url.Contains("subscription") ||
-                        block.Banners[0].ClickAction.Action.Url.Contains("combo") ||
-                        block.Banners[0].ClickAction.Action.Url.Contains("https://vk.com/app") ||
-                        block.Banners[0].ClickAction.Action.Url.Contains("https://vk.com/vk_music"
-                        )
-                    )
+                    block is { Banners.Count: > 0 } && 
+                    block.Banners.RemoveAll(banner => banner.ClickAction?.Action.Url.Contains("subscription") is true ||
+                                                           banner.ClickAction?.Action.Url.Contains("combo") is true ||
+                                                           banner.ClickAction?.Action.Url.Contains("https://vk.com/app") is true ||
+                                                           banner.ClickAction?.Action.Url.Contains("https://vk.com/vk_music") is true) > 0 &&
+                    block.Banners.Count == 0
                 )
             );
 
