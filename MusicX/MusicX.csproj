@@ -23,30 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Assets\icon.ico" />
-    <None Remove="Assets\icons\albums_white.png" />
-    <None Remove="Assets\icons\follows_white.png" />
-    <None Remove="Assets\icons\github-mark-white.png" />
-    <None Remove="Assets\icons\playlists_white.png" />
-    <None Remove="Assets\icons\recent_white.png" />
-    <None Remove="Assets\lottie\play.json" />
-    <None Remove="Assets\newyear\newyearblock.png" />
-    <None Remove="Assets\newyear\snow1.png" />
-    <None Remove="Assets\newyear\snow2.png" />
-    <None Remove="Assets\newyear\snow3.png" />
-    <None Remove="Assets\newyear\snow4.png" />
-    <None Remove="Assets\newyear\snow5.png" />
-    <None Remove="Assets\newyear\snow6.png" />
-    <None Remove="Assets\newyear\snow7.png" />
-    <None Remove="Assets\newyear\snow8.png" />
-    <None Remove="Assets\newyear\snow9.png" />
-    <None Remove="Assets\newyear\snowfall.png" />
-    <None Remove="Fonts\VKSansDisplay-Bold.ttf" />
-    <None Remove="Fonts\VKSansDisplay-DemiBold.ttf" />
-    <None Remove="Fonts\VKSansDisplay-Medium.ttf" />
-    <None Remove="Fonts\VKSansDisplay-Regular.ttf" />
-    <None Remove="NLog.config" />
-    <None Remove="Resources\logo.png" />
+    <AdditionalFiles Include="NativeMethods.txt" />
   </ItemGroup>
 
   <ItemGroup>
@@ -84,19 +61,12 @@
 
 	  <Content Include="StoreLogo.scale-400.ico" />
 
-	  <None Remove="Assets\icons\ic_fluent_next_24_regular.png" />
-
 	  <Resource Include="Assets\icons\ic_fluent_next_24_regular.png" />
 
-	  <None Remove="Assets\icons\ic_fluent_previous_24_regular.png" />
 
 	  <Resource Include="Assets\icons\ic_fluent_previous_24_regular.png" />
 
-	  <None Remove="Assets\icons\ic_fluent_video_play_pause_24_regular.png" />
-
 	  <Resource Include="Assets\icons\ic_fluent_video_play_pause_24_regular.png" />
-
-	  <None Remove="StoreLogo.scale-400.png" />
 
 	  <Resource Include="StoreLogo.scale-400.png" />
   </ItemGroup>
@@ -112,14 +82,13 @@
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.2" />
     <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.49-beta">
       <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.1" />
     <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" PrivateAssets="All" />
     <PackageReference Include="QRCoder.Xaml" Version="1.4.3" />
     <PackageReference Include="System.Linq.Async" Version="6.0.1" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
-    <PackageReference Include="System.Text.Json" Version="8.0.0-rc.2.23479.6" />
+    <PackageReference Include="System.Text.Json" Version="8.0.3" />
     <PackageReference Include="taglib-sharp-netstandard2.0" Version="2.1.0" />
     <PackageReference Include="WPF-UI" Version="3.0.0-preview.11" />
     <PackageReference Include="WpfScreenHelper" Version="2.1.0" />

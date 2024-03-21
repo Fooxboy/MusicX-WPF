@@ -32,10 +32,21 @@ namespace VkNet.AudioBypassService.Extensions
 			services.TryAddSingleton<IRestClient, RestClientWithUserAgent>();
 			services.TryAddSingleton<IDeviceIdStore, DefaultDeviceIdStore>();
 			services.TryAddSingleton<ITokenRefreshHandler, TokenRefreshHandler>();
-			services.TryAddSingleton<IVkApiInvoke, VkApiInvoke>();
 			services.TryAddSingleton<IVkApiAuthAsync, VkApiAuth>();
-			
-			services.TryAddKeyedSingleton<IAuthorizationFlow, PasswordAuthorizationFlow>(AndroidGrantType.Password);
+
+			services.RemoveAll<IVkApiInvoke>();
+
+			services.TryAddSingleton<IVkApiInvoke, VkApiInvoke>();
+			services.AddHttpClient<IVkApiInvoke, VkApiInvoke>(client =>
+			{
+				client.BaseAddress = new("https://api.vk.com/method/");
+				client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "VKAndroidApp/8.50-17564 (Android 12; SDK 32; arm64-v8a; MusicX; ru; 2960x1440)");
+				client.DefaultRequestHeaders.TryAddWithoutValidation("X-VK-Android-Client", "new");
+				client.DefaultRequestHeaders.TryAddWithoutValidation("X-Quic", "1");
+			});
+
+
+            services.TryAddKeyedSingleton<IAuthorizationFlow, PasswordAuthorizationFlow>(AndroidGrantType.Password);
 			services.TryAddKeyedSingleton(AndroidGrantType.PhoneConfirmationSid,
 				(s, _) => s.GetRequiredKeyedService<IAuthorizationFlow>(AndroidGrantType.Password));
 			services.TryAddKeyedSingleton<IAuthorizationFlow, WithoutPasswordAuthorizationFlow>(AndroidGrantType.WithoutPassword);

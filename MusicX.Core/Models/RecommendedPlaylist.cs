@@ -26,8 +26,10 @@ namespace MusicX.Core.Models
         [JsonProperty("cover")]
         public string Cover { get; set; }
 
+        [JsonIgnore]
         public Playlist Playlist { get; set; }
 
+        [JsonIgnore]
         public List<Audio> Audios { get; set; } = new List<Audio>();
     }
 }
