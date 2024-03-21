@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Wpf.Ui.Controls;
+using System.Globalization;
 
 namespace MusicX.Controls
 {
@@ -47,7 +48,7 @@ namespace MusicX.Controls
 
                 try
                 {
-                    value = Convert.ToDouble(Playlist.Percentage);
+                    value = Convert.ToDouble(Playlist.Percentage, CultureInfo.InvariantCulture);
 
                 }catch(Exception ex)
                 {
