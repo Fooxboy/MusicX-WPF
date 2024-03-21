@@ -363,11 +363,18 @@ public class PlayerService
             {
                 if (CurrentPlaylist?.CanLoad == true)
                     await LoadMore();
-                else
-                    nextTrack = Tracks[0];
+            }
+            else
+            {
+                nextTrack = Tracks[CurrentIndex + 1];
+            }
+
+            if (nextTrack is null)
+            {
+                Pause();
+                return;
             }
             
-            nextTrack ??= Tracks[CurrentIndex + 1];
             CurrentIndex = Tracks.IndexOf(nextTrack);
             
             // its last track and we can load more
@@ -555,7 +562,7 @@ public class PlayerService
             if(IsRepeat)
             {
                 this.player.Pause();
-                Seek(TimeSpan.Zero);
+                player.Position = TimeSpan.Zero;
                 this.player.Play();
                 return;
             }
