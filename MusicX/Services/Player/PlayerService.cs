@@ -144,6 +144,16 @@ public class PlayerService
 
             if (config.IgnoredArtists is null) config.IgnoredArtists = new List<string>();
 
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                TrackChangedEvent?.Invoke(this, EventArgs.Empty);
+                NextTrackChanged?.Invoke(this, EventArgs.Empty);
+                PlayStateChangedEvent?.Invoke(this, EventArgs.Empty);
+                TrackLoadingStateChanged?.Invoke(this, new(PlayerLoadingState.Started));
+            });
+
+            if (CurrentTrack.Data.Url is null) await NextTrack();
+
             foreach (var ignoreArtist in config.IgnoredArtists)
             {
 
@@ -155,17 +165,6 @@ public class PlayerService
                     await NextTrack();
                 }
             }
-
-            Application.Current.Dispatcher.BeginInvoke(() =>
-            {
-                TrackChangedEvent?.Invoke(this, EventArgs.Empty);
-                NextTrackChanged?.Invoke(this, EventArgs.Empty);
-                PlayStateChangedEvent?.Invoke(this, EventArgs.Empty);
-                TrackLoadingStateChanged?.Invoke(this, new(PlayerLoadingState.Started));
-            });
-
-            if (CurrentTrack.Data.Url is null) await NextTrack();
-
 
             MediaPlaybackItem?[] sources;
 
