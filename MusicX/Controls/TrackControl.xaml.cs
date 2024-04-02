@@ -228,7 +228,7 @@ namespace MusicX.Controls
                 }
                 else
                 {
-                    AddRemoveIcon.Symbol = SymbolRegular.Add24;
+                    AddRemoveIcon.Symbol = SymbolRegular.Add20;
                     AddRemoveText.Text = "Добавить к себе";
 
                 }

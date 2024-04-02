@@ -76,7 +76,16 @@
             <MenuItem
                 x:Name="GoToArtistMenu"
                 
-                Header="Перейти к артисту" />
+                Header="Перейти к артисту">
+                <MenuItem.HeaderTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <iconElements:SymbolIcon Symbol="PeopleSearch20" />
+                            <ContentPresenter Margin="10,0,0,0" Content="{Binding}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </MenuItem.HeaderTemplate>
+            </MenuItem>
 
             <StackPanel x:Name="AddToPlaylist" MouseDown="AddToPlaylist_MouseDown"  Orientation="Horizontal">
                 <iconElements:SymbolIcon Symbol="AlbumAdd20"  />
@@ -87,7 +96,7 @@
             </StackPanel>
 
             <StackPanel x:Name="AddArtistIgnore" MouseDown="AddArtistIgnore_MouseDown"  Orientation="Horizontal">
-                <iconElements:SymbolIcon Symbol="PresenceDnd24"  />
+                <iconElements:SymbolIcon Symbol="PresenceDnd20"  />
                 <TextBlock
                     Margin="10,0,0,0"
                     
@@ -95,7 +104,7 @@
             </StackPanel>
 
             <StackPanel MouseDown="Download_MouseDown" Orientation="Horizontal">
-                <iconElements:SymbolIcon Symbol="ArrowDownload24"  />
+                <iconElements:SymbolIcon Symbol="ArrowDownload20"  />
                 <TextBlock
                     Margin="10,0,0,0"
                     
@@ -103,7 +112,7 @@
             </StackPanel>
             
             <StackPanel MouseDown="PlayNext_MouseDown" Orientation="Horizontal">
-                <iconElements:SymbolIcon Symbol="TextAddSpaceBefore24"  />
+                <iconElements:SymbolIcon Symbol="TextAddSpaceBefore20"  />
                 <TextBlock
                     Margin="10,0,0,0"
                     
@@ -111,7 +120,7 @@
             </StackPanel>
 
             <StackPanel MouseDown="AddToQueue_MouseDown" Orientation="Horizontal">
-                <iconElements:SymbolIcon Symbol="TextAddSpaceAfter24"  />
+                <iconElements:SymbolIcon Symbol="TextAddSpaceAfter20"  />
                 <TextBlock
                     Margin="10,0,0,0"
                     
