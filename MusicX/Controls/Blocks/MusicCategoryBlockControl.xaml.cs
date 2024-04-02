@@ -7,7 +7,12 @@ using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Linq;
+using System.Web;
 using Microsoft.AppCenter.Crashes;
+using Wpf.Ui;
+using Wpf.Ui.Controls;
+using Wpf.Ui.Extensions;
 
 namespace MusicX.Controls.Blocks
 {
@@ -32,10 +37,8 @@ namespace MusicX.Controls.Blocks
 
         private async void CardAction_Click(object sender, RoutedEventArgs e)
         {
-            var link = Links[0];
-
-            await OpenPage(link);
-
+            if (GetLinkBySection("recent") is { } link)
+                await OpenPage(link);
         }
 
         private async Task OpenPage(Link link)
@@ -63,23 +66,33 @@ namespace MusicX.Controls.Blocks
 
         private async void CardAction_Click_1(object sender, RoutedEventArgs e)
         {
-            var link = Links[1];
-
-            await OpenPage(link);
+            if (GetLinkBySection("my_playlists") is { } link)
+                await OpenPage(link);
         }
 
         private async void CardAction_Click_2(object sender, RoutedEventArgs e)
         {
-            var link = Links[2];
-
-            await OpenPage(link);
+            if (GetLinkBySection("albums") is { } link)
+                await OpenPage(link);
         }
 
         private async void CardAction_Click_3(object sender, RoutedEventArgs e)
         {
-            var link = Links[5];
+            if (GetLinkBySection("followings") is { } link)
+                await OpenPage(link);
+        }
 
-            await OpenPage(link);
+        private Link? GetLinkBySection(string section)
+        {
+            var link = Links.FirstOrDefault(b =>
+                HttpUtility.ParseQueryString(new Uri(b.Url).Query)["section"]
+                    ?.Equals(section, StringComparison.OrdinalIgnoreCase) is true);
+
+            if (link is null)
+                StaticService.Container.GetRequiredService<ISnackbarService>().Show("Ошибка",
+                    $"Ссылка {section} не найдена", ControlAppearance.Danger);
+            
+            return link;
         }
     }
 }
