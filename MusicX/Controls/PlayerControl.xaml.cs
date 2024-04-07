@@ -54,8 +54,8 @@ namespace MusicX.Controls
             get => (bool)GetValue(IsPlayingProperty);
             set => SetValue(IsPlayingProperty, value);
         }
-        
-        private readonly PlayerService playerService;
+
+        public PlayerService PlayerService { get; }
         private readonly ListenTogetherService listenTogetherService;
         private readonly Logger logger;
         private ConfigModel config;
@@ -64,20 +64,26 @@ namespace MusicX.Controls
         {
             InitializeComponent();
 
-            this.playerService = StaticService.Container.GetRequiredService<PlayerService>();
+            this.PlayerService = StaticService.Container.GetRequiredService<PlayerService>();
             this.logger = StaticService.Container.GetRequiredService<Logger>();
             this.listenTogetherService = StaticService.Container.GetRequiredService<ListenTogetherService>();
-            playerService.PlayStateChangedEvent += PlayerService_PlayStateChangedEvent;
-            playerService.PositionTrackChangedEvent += PlayerService_PositionTrackChangedEvent;
-            playerService.TrackChangedEvent += PlayerService_TrackChangedEvent;
-            playerService.QueueLoadingStateChanged += PlayerService_QueueLoadingStateChanged;
-            playerService.TrackLoadingStateChanged += PlayerService_TrackLoadingStateChanged;
+            PlayerService.PlayStateChangedEvent += PlayerService_PlayStateChangedEvent;
+            PlayerService.PositionTrackChangedEvent += PlayerService_PositionTrackChangedEvent;
+            PlayerService.TrackChangedEvent += PlayerService_TrackChangedEvent;
+            PlayerService.QueueLoadingStateChanged += PlayerService_QueueLoadingStateChanged;
+            PlayerService.TrackLoadingStateChanged += PlayerService_TrackLoadingStateChanged;
+            PlayerService.CurrentPlaylistChanged += PlayerService_CurrentPlaylistChanged;
             listenTogetherService.ConnectedToSession += ListenTogetherService_ConnectedToSession;
             listenTogetherService.LeaveSession += ListenTogetherService_LeaveSession;
             listenTogetherService.SessionOwnerStoped += ListenTogetherService_LeaveSession;
             this.MouseWheel += PlayerControl_MouseWheel;
             
-            Queue.ItemsSource = playerService.Tracks;
+            Queue.ItemsSource = PlayerService.Tracks;
+        }
+
+        private void PlayerService_CurrentPlaylistChanged(object? sender, EventArgs e)
+        {
+            ShuffleButton.IsChecked = false;
         }
 
         private Task ListenTogetherService_LeaveSession()
@@ -112,7 +118,7 @@ namespace MusicX.Controls
         {
             if (!mouseEnteredInVolume) return;
 
-            if (playerService == null) return;
+            if (PlayerService == null) return;
 
             var delta = e.Delta/1000d;
             Volume.Value += delta;
@@ -123,9 +129,9 @@ namespace MusicX.Controls
             try
             {
 
-                if (playerService == null) return;
-                DataContext = playerService.CurrentTrack;
-                if (playerService.CurrentTrack!.Data.IsExplicit)
+                if (PlayerService == null) return;
+                DataContext = PlayerService.CurrentTrack;
+                if (PlayerService.CurrentTrack!.Data.IsExplicit)
                 {
                     explicitBadge.Visibility = Visibility.Visible;
 
@@ -136,14 +142,14 @@ namespace MusicX.Controls
 
                 }
 
-                TrackTitle.Text = playerService.CurrentTrack.Title;
+                TrackTitle.Text = PlayerService.CurrentTrack.Title;
                 
                 if (ArtistName.Inlines.Count > 0)
                     ArtistName.Inlines.Clear();
                 
-                if (playerService.CurrentTrack!.MainArtists.Any())
+                if (PlayerService.CurrentTrack!.MainArtists.Any())
                 {
-                    ArtistName.Inlines.AddRange(playerService.CurrentTrack.MainArtists.Select(b =>
+                    ArtistName.Inlines.AddRange(PlayerService.CurrentTrack.MainArtists.Select(b =>
                     {
                         var run = new Run(b.Name + ", ")
                         {
@@ -162,7 +168,7 @@ namespace MusicX.Controls
                 }
                 else
                 {
-                    var run = new Run(playerService.CurrentTrack.GetArtistsString());
+                    var run = new Run(PlayerService.CurrentTrack.GetArtistsString());
                             
                     run.MouseEnter += ArtistName_MouseEnter;
                     run.MouseLeave += ArtistName_MouseLeave;
@@ -172,22 +178,22 @@ namespace MusicX.Controls
                 }
 
 
-                TimeSpan t = playerService.Position;
+                TimeSpan t = PlayerService.Position;
                 if (t.Hours > 0)
                     CurrentPosition.Text = t.ToString("h\\:mm\\:ss");
                 CurrentPosition.Text = t.ToString("m\\:ss");
 
-                PositionSlider.Maximum = playerService.CurrentTrack.Data.Duration.TotalSeconds;
+                PositionSlider.Maximum = PlayerService.CurrentTrack.Data.Duration.TotalSeconds;
 
-                MaxPosition.Text = playerService.CurrentTrack.Data.Duration.ToString("m\\:ss");
+                MaxPosition.Text = PlayerService.CurrentTrack.Data.Duration.ToString("m\\:ss");
 
 
 
-                if (playerService.CurrentTrack.AlbumId?.CoverUrl != null)
+                if (PlayerService.CurrentTrack.AlbumId?.CoverUrl != null)
                 {
                     var amim = (Storyboard)(this.Resources["BackgroundAmimate"]);
                     amim.Begin();
-                    var bitmapImage = new BitmapImage(new Uri(playerService.CurrentTrack.AlbumId.CoverUrl));
+                    var bitmapImage = new BitmapImage(new Uri(PlayerService.CurrentTrack.AlbumId.CoverUrl));
                     TrackCover.ImageSource = bitmapImage;
                     BackgroundCard.ImageSource = bitmapImage;
                 }else
@@ -196,9 +202,9 @@ namespace MusicX.Controls
                     BackgroundCard.ImageSource = null;
                 }
 
-                LikeIcon.Filled = playerService.CurrentTrack.Data.IsLiked;
+                LikeIcon.Filled = PlayerService.CurrentTrack.Data.IsLiked;
                 DownloadButton.IsEnabled = true;
-                Queue.ScrollIntoView(playerService.CurrentTrack);
+                Queue.ScrollIntoView(PlayerService.CurrentTrack);
 
                 await SaveVolume();
             }
@@ -225,7 +231,7 @@ namespace MusicX.Controls
         {
             try
             {
-                if (playerService == null) return;
+                if (PlayerService == null) return;
 
                 Application.Current.Dispatcher.BeginInvoke(() =>
                 {
@@ -256,29 +262,29 @@ namespace MusicX.Controls
 
         private void PlayerService_PlayStateChangedEvent(object? sender, EventArgs e)
         {
-            IsPlaying = playerService.IsPlaying;
+            IsPlaying = PlayerService.IsPlaying;
         }
 
         private void PositionSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (playerService == null || !PositionSlider.IsMouseOver) return;
+            if (PlayerService == null || !PositionSlider.IsMouseOver) return;
 
-            playerService.Seek(TimeSpan.FromSeconds(e.NewValue));
+            PlayerService.Seek(TimeSpan.FromSeconds(e.NewValue));
         }
 
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (playerService == null) return;
-            playerService.SetVolume(e.NewValue);
-            playerService.IsMuted = false;
+            if (PlayerService == null) return;
+            PlayerService.SetVolume(e.NewValue);
+            PlayerService.IsMuted = false;
             UpdateSpeakerIcon();
         }
 
         private void UpdateSpeakerIcon()
         {
-            SpeakerIcon.Icon = playerService.Volume switch
+            SpeakerIcon.Icon = PlayerService.Volume switch
             {
-                _ when playerService.IsMuted => new SymbolIcon(SymbolRegular.SpeakerOff28),
+                _ when PlayerService.IsMuted => new SymbolIcon(SymbolRegular.SpeakerOff28),
                 0.0 => new SymbolIcon(SymbolRegular.SpeakerOff28),
                 > 0.0 and < 0.30 => new SymbolIcon(SymbolRegular.Speaker032),
                 > 0.30 and < 0.60 => new SymbolIcon(SymbolRegular.Speaker132),
@@ -289,28 +295,28 @@ namespace MusicX.Controls
 
         private async void PlayPauseButton_Click(object sender, RoutedEventArgs e)
         {
-            if (playerService == null) return;
+            if (PlayerService == null) return;
 
             await SaveVolume();
 
-            if (playerService.IsPlaying) playerService.Pause();
-            else playerService.Play();
+            if (PlayerService.IsPlaying) PlayerService.Pause();
+            else PlayerService.Play();
         }
 
         private async void NextButton_Click(object sender, RoutedEventArgs e)
         {
-            if (playerService == null) return;
+            if (PlayerService == null) return;
 
             await SaveVolume();
 
-            await playerService.NextTrack();
+            await PlayerService.NextTrack();
         }
 
         private async void PrevButton_Click(object sender, RoutedEventArgs e)
         {
-            if (playerService == null) return;
+            if (PlayerService == null) return;
 
-            await playerService.PreviousTrack();
+            await PlayerService.PreviousTrack();
         }
 
         private void ArtistName_MouseEnter(object sender, MouseEventArgs e)
@@ -336,7 +342,7 @@ namespace MusicX.Controls
 
             var conf = await configService.GetConfig();
             conf.Volume = (int)value;
-            conf.IsMuted = playerService.IsMuted;
+            conf.IsMuted = PlayerService.IsMuted;
 
             var mixerVolume = windowsAudioService.GetVolume();
             conf.MixerVolume= (int)mixerVolume;
@@ -356,7 +362,7 @@ namespace MusicX.Controls
                 }
                 else
                 {
-                    navigationService.OpenSection(playerService.CurrentTrack!.GetArtistsString(), SectionType.Search);
+                    navigationService.OpenSection(PlayerService.CurrentTrack!.GetArtistsString(), SectionType.Search);
                 }
 
             }
@@ -385,7 +391,7 @@ namespace MusicX.Controls
                 var boomService = StaticService.Container.GetRequiredService<BoomService>();
                 var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
                 
-                switch (playerService.CurrentTrack?.Data)
+                switch (PlayerService.CurrentTrack?.Data)
                 {
                     case VkTrackData vkData when LikeIcon.Filled:
                         await vkService.AudioDeleteAsync(vkData.Info.Id, vkData.Info.OwnerId);
@@ -408,13 +414,13 @@ namespace MusicX.Controls
                     LikeIcon.Filled = true;
 
                     snackbarService.Show("Добавлено в вашу библиотеку",
-                        $"Трек {playerService.CurrentTrack.GetArtistsString()} - {playerService.CurrentTrack.Title} теперь находится в Вашей музыке!", ControlAppearance.Success);
+                        $"Трек {PlayerService.CurrentTrack.GetArtistsString()} - {PlayerService.CurrentTrack.Title} теперь находится в Вашей музыке!", ControlAppearance.Success);
                     return;
                 }
 
                 LikeIcon.Filled = false;
                 snackbarService.Show("Удалено из вашей библиотеки",
-                    $"Трек {playerService.CurrentTrack.GetArtistsString()} - {playerService.CurrentTrack.Title} теперь удален из вашей музыки", ControlAppearance.Success);
+                    $"Трек {PlayerService.CurrentTrack.GetArtistsString()} - {PlayerService.CurrentTrack.Title} теперь удален из вашей музыки", ControlAppearance.Success);
             }
             catch(Exception ex)
             {
@@ -460,10 +466,10 @@ namespace MusicX.Controls
             mixerService.SetVolume((float)config.MixerVolume);
             var value = (config.Volume.Value / 100D);
 
-            playerService.SetVolume(value);
+            PlayerService.SetVolume(value);
             
             Volume.Value = value;
-            playerService.IsMuted = config.IsMuted;
+            PlayerService.IsMuted = config.IsMuted;
             UpdateSpeakerIcon();
         }
 
@@ -475,12 +481,12 @@ namespace MusicX.Controls
 
         private void ShuffleButton_Click(object sender, RoutedEventArgs e)
         {
-            this.playerService.SetShuffle(true);
+            this.PlayerService.SetShuffle(ShuffleButton.IsChecked.Value);
         }
 
         private void RepeatButton_Click(object sender, RoutedEventArgs e)
         {
-            this.playerService.SetRepeat(RepeatButton.IsChecked.Value);
+            this.PlayerService.SetRepeat(RepeatButton.IsChecked.Value);
 
         }
 
@@ -491,7 +497,7 @@ namespace MusicX.Controls
 
             if (fullScreenWindow is not null || mainWindow is null)
                 return;
-            fullScreenWindow = new(logger, playerService, snackbarService);
+            fullScreenWindow = new(logger, PlayerService, snackbarService);
 
             ShowOnMonitor(fullScreenWindow, mainWindow);
             fullScreenWindow.Closed += FullScreenWindowOnClosed;
@@ -525,7 +531,7 @@ namespace MusicX.Controls
                 DownloadButton.IsEnabled = false;
                 var downloader = StaticService.Container.GetRequiredService<DownloaderViewModel>();
 
-                downloader.DownloadQueue.Add(playerService.CurrentTrack!);
+                downloader.DownloadQueue.Add(PlayerService.CurrentTrack!);
                 downloader.StartDownloadingCommand.Execute(null);
             }catch(FileNotFoundException ex)
             {
@@ -555,7 +561,7 @@ namespace MusicX.Controls
             else
                 AutoScrollBehavior.SetAutoScroll(TitleScroll, true);
             
-            if (playerService.CurrentTrack!.AlbumId != null)
+            if (PlayerService.CurrentTrack!.AlbumId != null)
             {
                 TrackTitle.TextDecorations.Add(TextDecorations.Underline);
                 this.Cursor = Cursors.Hand;
@@ -576,7 +582,7 @@ namespace MusicX.Controls
 
         private void TrackTitle_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (playerService.CurrentTrack?.AlbumId is VkAlbumId albumId)
+            if (PlayerService.CurrentTrack?.AlbumId is VkAlbumId albumId)
             {
                 var (id, ownerId, accessKey, _, _, _) = albumId;
                 var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
@@ -604,7 +610,7 @@ namespace MusicX.Controls
         private void DeleteFromQueue_OnClick(object sender, RoutedEventArgs e)
         {
             if (sender is FrameworkElement {DataContext: PlaylistTrack audio})
-                playerService.RemoveFromQueue(audio);
+                PlayerService.RemoveFromQueue(audio);
         }
         private void ReorderButton_OnMouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -616,7 +622,7 @@ namespace MusicX.Controls
             var source = (PlaylistTrack)e.Data.GetData(typeof(PlaylistTrack))!;
             var target = (PlaylistTrack)((ListBoxItem)sender).DataContext;
 
-            var list = playerService.Tracks;
+            var list = PlayerService.Tracks;
             
             var removedIdx = list.IndexOf(source);
             var targetIdx = list.IndexOf(target);
@@ -634,19 +640,19 @@ namespace MusicX.Controls
                 list.RemoveAt(removedIdx);
             }
 
-            var currentIndex = list.IndexOf(playerService.CurrentTrack);
+            var currentIndex = list.IndexOf(PlayerService.CurrentTrack);
             
             // insert index is next track
             if (currentIndex + 1 == targetIdx)
-                playerService.NextPlayTrack = source;
+                PlayerService.NextPlayTrack = source;
             else if (currentIndex + 1 < list.Count)
-                playerService.NextPlayTrack = list[currentIndex + 1];
+                PlayerService.NextPlayTrack = list[currentIndex + 1];
 
-            playerService.CurrentIndex = currentIndex;
+            PlayerService.CurrentIndex = currentIndex;
         }
         private void SpeakerIcon_OnClick(object sender, RoutedEventArgs e)
         {
-            playerService.IsMuted = !playerService.IsMuted;
+            PlayerService.IsMuted = !PlayerService.IsMuted;
             UpdateSpeakerIcon();
         }
 
@@ -654,7 +660,7 @@ namespace MusicX.Controls
         {
             var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
             var lyricsViewModel = StaticService.Container.GetRequiredService<LyricsViewModel>();
-            lyricsViewModel.Track = playerService.CurrentTrack;
+            lyricsViewModel.Track = PlayerService.CurrentTrack;
 
             navigationService.OpenModal<LyricsModal>(lyricsViewModel);
         }

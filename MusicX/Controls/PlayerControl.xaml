@@ -10,6 +10,7 @@
     xmlns:player="clr-namespace:MusicX.Shared.Player;assembly=MusicX.Shared"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:wpfui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
+    xmlns:helpers="clr-namespace:MusicX.Helpers"
     x:Name="Control"
     d:DataContext="{d:DesignInstance player:PlaylistTrack}"
     Loaded="UserControl_Loaded"
@@ -347,21 +348,21 @@
                         Grid.Column="1"
                         HorizontalAlignment="Center"
                         Orientation="Horizontal">
-
-                        <wpfui:Button
+                        
+                        <ToggleButton
                             x:Name="ShuffleButton"
                             Width="40"
                             Height="40"
                             Margin="0,0,10,0"
-                            Appearance="Transparent"
-                            Click="ShuffleButton_Click">
-                            <wpfui:Button.Icon>
-                                <ui:SymbolIcon Symbol="ArrowWrap20" />
-                            </wpfui:Button.Icon>
-                            <wpfui:Button.ToolTip>
+                            Padding="0"
+                            HorizontalContentAlignment="Center"
+                            Click="ShuffleButton_Click"
+                            Style="{StaticResource TransparentToggleButtonStyle}">
+                            <ui:SymbolIcon Symbol="ArrowWrap20" />
+                            <ToggleButton.ToolTip>
                                 <ToolTip Content="В рандомном порядке" />
-                            </wpfui:Button.ToolTip>
-                        </wpfui:Button>
+                            </ToggleButton.ToolTip>
+                        </ToggleButton>
 
                         <wpfui:Button
                             x:Name="PrevButton"

@@ -30,7 +30,7 @@ namespace MusicX.Helpers;
 		{
 		}
 
-		public void AddRangeSequential(IEnumerable<T> collection)
+		public virtual void AddRangeSequential(IEnumerable<T> collection)
 		{
 			if (collection == null)
 				throw new ArgumentNullException(nameof(collection));
@@ -172,7 +172,7 @@ namespace MusicX.Helpers;
 			return itemAdded;
 		}
 
-        private void RaiseChangeNotificationEvents(NotifyCollectionChangedAction action, List<T>? changedItems = null, int startingIndex = -1)
+		protected void RaiseChangeNotificationEvents(NotifyCollectionChangedAction action, List<T>? changedItems = null, int startingIndex = -1)
         {
             OnPropertyChanged(new PropertyChangedEventArgs(nameof(Count)));
             OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
