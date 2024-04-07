@@ -86,10 +86,10 @@ public class PlayerService
         SubscribeToListenTogetherEvents();
     }
 
-
-    public async Task JoinToListenTogetherSession(string sessionId)
+    public async Task RestoreFromStateAsync(PlayerState state)
     {
-        
+        await PlayAsync(state.Playlist, state.Track);
+        Seek(state.Position);
     }
 
     public async void Play()

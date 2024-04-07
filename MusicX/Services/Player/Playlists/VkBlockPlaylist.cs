@@ -1,14 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
+using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Services;
 using MusicX.Helpers;
 using MusicX.Shared.Player;
 
 namespace MusicX.Services.Player.Playlists;
 
+[JsonConverter(typeof(PlaylistJsonConverter<VkBlockPlaylist, string>))]
 public class VkBlockPlaylist : PlaylistBase<string>
 {
     private readonly VkService _vkService;
+    
+    [ActivatorUtilitiesConstructor]
+    // ReSharper disable once RedundantOverload.Global
+    public VkBlockPlaylist(VkService vkService, string blockId) : this(vkService, blockId, true) {}
 
     public VkBlockPlaylist(VkService vkService, string blockId, bool loadOther = true)
     {
