@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Helpers;
@@ -7,6 +8,7 @@ using MusicX.ViewModels;
 
 namespace MusicX.Services.Player.Playlists;
 
+[JsonConverter(typeof(PlaylistJsonConverter<VkPlaylistPlaylist, PlaylistData>))]
 public class VkPlaylistPlaylist : PlaylistBase<PlaylistData>
 {
     private readonly VkService _vkService;

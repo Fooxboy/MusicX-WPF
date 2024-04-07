@@ -23,12 +23,11 @@ using MusicX.ViewModels.Modals;
 using MusicX.Views;
 using MusicX.Views.Modals;
 using NLog;
-using Squirrel;
-using Squirrel.Sources;
+using Velopack;
+using Velopack.Sources;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 using Wpf.Ui.Extensions;
-using GithubSource = MusicX.Core.Helpers.GithubSource;
 using NavigationService = MusicX.Services.NavigationService;
 
 namespace MusicX
@@ -470,18 +469,17 @@ namespace MusicX
 
                 var getBetaUpdates = config.GetBetaUpdates.GetValueOrDefault(false);
                 var manager = new UpdateManager(new GithubSource("https://github.com/Fooxboy/MusicX-WPF",
-                    string.Empty, getBetaUpdates, new HttpClientFileDownloader()));
-
-                var updateInfo = await manager.CheckForUpdate(manager.Config.CurrentlyInstalledVersion.HasMetadata ? !getBetaUpdates : getBetaUpdates);
-                
-                if (updateInfo.ReleasesToApply.Count == 0)
+                    string.Empty, getBetaUpdates, new HttpClientFileDownloader()), new()
                 {
-                    manager.Dispose();
-                    return;
-                }
+                    ExplicitChannel = getBetaUpdates ? "win-beta" : "win"
+                });
 
-                var viewModel = new AvailableNewUpdateModalViewModel(manager, updateInfo,
-                    StaticService.Container.GetRequiredService<GithubService>());
+                var updateInfo = await manager.CheckForUpdatesAsync();
+                
+                if (updateInfo is null)
+                    return;
+
+                var viewModel = new AvailableNewUpdateModalViewModel(manager, updateInfo);
 
                 navigationService.OpenModal<AvailableNewUpdateModal>(viewModel);
             }catch(Exception ex)
