@@ -1,22 +1,25 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using MusicX.Core.Models.Boom;
 using MusicX.Core.Services;
 using MusicX.Shared.Player;
 
 namespace MusicX.Services.Player.Playlists;
 
-public class RadioPlaylist : PlaylistBase<Radio>
+public record RadioData(Radio Playlist, BoomRadioType PlaylistType);
+
+[JsonConverter(typeof(PlaylistJsonConverter<RadioPlaylist, RadioData>))]
+public class RadioPlaylist : PlaylistBase<RadioData>
 {
     private readonly BoomService _boomService;
     private bool _firstCall = true;
-    private BoomRadioType _radioType;
-
-    public RadioPlaylist(BoomService boomService, Radio data, BoomRadioType radioType)
+    
+    public RadioPlaylist(BoomService boomService, RadioData radioData)
     {
         _boomService = boomService;
-        Data = data;
-        _radioType = radioType;
+        Data = radioData;
     }
 
     public override IAsyncEnumerable<PlaylistTrack> LoadAsync()
@@ -25,25 +28,18 @@ public class RadioPlaylist : PlaylistBase<Radio>
             return LoadAsyncInternal();
         
         _firstCall = false;
-        return Data.Tracks.Select(TrackExtensions.ToTrack).ToAsyncEnumerable();
+        return Data.Playlist.Tracks.Select(TrackExtensions.ToTrack).ToAsyncEnumerable();
     }
 
     private async IAsyncEnumerable<PlaylistTrack> LoadAsyncInternal()
     {
-        Radio radio;
-        if(_radioType == BoomRadioType.Artist)
+        var radio = Data.PlaylistType switch
         {
-            radio = await _boomService.GetArtistMixAsync(Data.Artist.ApiId);
-        }else if(_radioType == BoomRadioType.Personal)
-        {
-            radio = await _boomService.GetPersonalMixAsync();
-        }else if(_radioType == BoomRadioType.Tag)
-        {
-            radio = await _boomService.GetTagMixAsync(Data.Tag.ApiId);
-        }else
-        {
-            radio = null;
-        }
+            BoomRadioType.Artist => await _boomService.GetArtistMixAsync(Data.Playlist.Artist.ApiId),
+            BoomRadioType.Personal => await _boomService.GetPersonalMixAsync(),
+            BoomRadioType.Tag => await _boomService.GetTagMixAsync(Data.Playlist.Tag.ApiId),
+            _ => throw new ArgumentOutOfRangeException(null, "Unknown radio type")
+        };
 
         foreach (var track in radio.Tracks)
         {
@@ -52,5 +48,5 @@ public class RadioPlaylist : PlaylistBase<Radio>
     }
 
     public override bool CanLoad => true;
-    public override Radio Data { get; }
+    public override RadioData Data { get; }
 }

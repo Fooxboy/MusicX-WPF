@@ -55,6 +55,11 @@ jobs:
           dotnet-version: |
             7.0.x
             6.0.x
+          
+      - uses: GuillaumeFalourd/setup-windows10-sdk-action@v2
+        name: Setup Windows 10 SDK
+        with:
+          sdk-version: 22621
 
       - name: Restore dependencies
         run: dotnet restore MusicX/MusicX.csproj --locked-mode
@@ -87,18 +92,19 @@ jobs:
           contents: ${{ steps.changelog.outputs.changes }}
           write-mode: overwrite
 
-      - name: Install csq
-        run: dotnet tool install --global csq --version 3.0.210-g5f9f594
+      - name: Install vpk
+        run: dotnet tool install -g vpk
 
-      - run: mkdir rel
-
-      - run: curl.exe --remove-on-error -sfLO https://github.com/Fooxboy/MusicX-WPF/releases/download/${{ needs.compute-version.outputs.previous-version }}/RELEASES && curl.exe --remove-on-error -sfLO https://github.com/Fooxboy/MusicX-WPF/releases/download/${{ needs.compute-version.outputs.previous-version }}/MusicX.WPF-${{ needs.compute-version.outputs.previous-version }}-full.nupkg
-        continue-on-error: true
-        working-directory: ./rel
+      - run: vpk download github --repoUrl https://github.com/Fooxboy/MusicX-WPF -c ${{ github.ref == 'refs/heads/develop' && 'win-beta' || 'win' }} --pre --token ${{ secrets.GITHUB_TOKEN }}
         name: Download previous release
 
       - name: Build package
-        run: csq --csq-version=3.0.210-g5f9f594 pack -f vcredist140 -r rel -p pub -u MusicX.WPF -v ${{ needs.compute-version.outputs.version }} --packTitle "MusicX Player" -e MusicX.exe -i MusicX/StoreLogo.scale-400.ico --appIcon MusicX/StoreLogo.scale-400.ico --msi x64 --includePdb --packAuthors "Fooxboy, zznty" --releaseNotes notes.md -s MusicX/StoreLogo.scale-400.png
+        run: vpk pack -c ${{ github.ref == 'refs/heads/develop' && 'win-beta' || 'win' }} -f vcredist140-x64 -p pub -u MusicX.WPF -v ${{ needs.compute-version.outputs.version }} --packTitle "MusicX Player" -e MusicX.exe -i MusicX/StoreLogo.scale-400.ico --includePdb --skipVeloAppCheck --packAuthors "Fooxboy, zznty" --releaseNotes notes.md -s MusicX/StoreLogo.scale-400.png
 
-      - name: Push package
-        run: csq --csq-version=3.0.210-g5f9f594 github-up -r rel --repoUrl https://github.com/Fooxboy/MusicX-WPF --publish --token ${{ secrets.GITHUB_TOKEN }}
+      - name: Push pre-release package
+        if: ${{ github.ref == 'refs/heads/develop' }}
+        run: vpk upload github -c ${{ github.ref == 'refs/heads/develop' && 'win-beta' || 'win' }} --repoUrl https://github.com/Fooxboy/MusicX-WPF --publish --pre --token ${{ secrets.GITHUB_TOKEN }}
+        
+      - name: Push release package
+        if: ${{ github.ref != 'refs/heads/develop' }}
+        run: vpk upload github -c ${{ github.ref == 'refs/heads/develop' && 'win-beta' || 'win' }} --repoUrl https://github.com/Fooxboy/MusicX-WPF --publish --token ${{ secrets.GITHUB_TOKEN }}

@@ -65,32 +65,33 @@
                                  HorizontalScrollBarVisibility="Auto"
                                  IsInertiaEnabled="True"
                                  hc:ScrollViewerAttach.AutoHide="True">
-                    <ListView Margin="0,20,0,0" MouseLeftButtonDown="ArtistSelected" SelectedItem="{Binding SelectedArtist, Mode=TwoWay}" ItemsSource="{Binding Artists}">
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource {x:Type ListViewItem}}">
+                    <wpfui:ListView Margin="0,20,0,0" MouseLeftButtonDown="ArtistSelected" SelectedItem="{Binding SelectedArtist, Mode=TwoWay}" ItemsSource="{Binding Artists}">
+                        <wpfui:ListView.ItemContainerStyle>
+                            <Style TargetType="{x:Type wpfui:ListViewItem}" BasedOn="{StaticResource {x:Type wpfui:ListViewItem}}">
                                 <Setter Property="Margin" Value="0,1,10,1" />
+                                <Setter Property="Padding" Value="0" />
                                 <EventSetter Event="PreviewMouseLeftButtonDown" Handler="ArtistSelected" />
                             </Style>
-                        </ListView.ItemContainerStyle>
+                        </wpfui:ListView.ItemContainerStyle>
 
-                        <ListView.Template>
+                        <wpfui:ListView.Template>
                             <ControlTemplate>
                                 <ItemsPresenter/>
                             </ControlTemplate>
-                        </ListView.Template>
+                        </wpfui:ListView.Template>
 
-                        <ListView.ItemsPanel>
+                        <wpfui:ListView.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <VirtualizingStackPanel Orientation="Horizontal"/>
                             </ItemsPanelTemplate>
-                        </ListView.ItemsPanel>
+                        </wpfui:ListView.ItemsPanel>
 
-                        <ListView.ItemTemplate >
+                        <wpfui:ListView.ItemTemplate >
                             <DataTemplate DataType="{x:Type models:Artist}">
                                 <boom:ArtistControl Artist="{Binding}"/>
                             </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
+                        </wpfui:ListView.ItemTemplate>
+                    </wpfui:ListView>
                 </hc:ScrollViewer>
                 
                 <TextBlock Text="Микс по жанрам" FontSize="20" Margin="0,25,0,0" FontFamily="{StaticResource VKSansMedium}" />
@@ -101,33 +102,34 @@
                               HorizontalScrollBarVisibility="Auto"
                               IsInertiaEnabled="True"
                               hc:ScrollViewerAttach.AutoHide="True">
-                    <ListView Margin="0,20,0,0" SelectedItem="{Binding SelectedTag}" ItemsSource="{Binding Tags}">
+                    <wpfui:ListView Margin="0,20,0,0" SelectedItem="{Binding SelectedTag}" ItemsSource="{Binding Tags}">
 
                         
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource {x:Type ListViewItem}}">
+                        <wpfui:ListView.ItemContainerStyle>
+                            <Style TargetType="{x:Type wpfui:ListViewItem}" BasedOn="{StaticResource {x:Type wpfui:ListViewItem}}">
                                 <Setter Property="Margin" Value="0,1,10,1" />
+                                <Setter Property="Padding" Value="0" />
                                 <EventSetter Event="PreviewMouseLeftButtonDown" Handler="TagSelected" />
                             </Style>
-                        </ListView.ItemContainerStyle>
+                        </wpfui:ListView.ItemContainerStyle>
 
-                        <ListView.Template>
+                        <wpfui:ListView.Template>
                             <ControlTemplate>
                                 <ItemsPresenter/>
                             </ControlTemplate>
-                        </ListView.Template>
+                        </wpfui:ListView.Template>
 
-                        <ListView.ItemsPanel>
+                        <wpfui:ListView.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <VirtualizingStackPanel Orientation="Horizontal"/>
                             </ItemsPanelTemplate>
-                        </ListView.ItemsPanel>
-                        <ListView.ItemTemplate >
+                        </wpfui:ListView.ItemsPanel>
+                        <wpfui:ListView.ItemTemplate>
                             <DataTemplate DataType="{x:Type models:Tag}">
                                 <boom:TagControl Margin="0,0,0,0" TagBoom="{Binding}"/>
                             </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
+                        </wpfui:ListView.ItemTemplate>
+                    </wpfui:ListView>
                 </hc:ScrollViewer>
                 
             </StackPanel>

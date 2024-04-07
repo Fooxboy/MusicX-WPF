@@ -173,7 +173,10 @@ public abstract class MediaSourceBase : ITrackMediaSource
         _source = await FFmpegMediaSource.CreateFromUriAsync(data.Url, new()
         {
             FFmpegOptions = options,
-            ReadAheadBufferEnabled = true
+            General =
+            {
+                ReadAheadBufferEnabled = true
+            }
         });
 
         _source.PlaybackSession = playbackSession;
