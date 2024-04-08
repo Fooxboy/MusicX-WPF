@@ -81,7 +81,7 @@
                 <ItemsControl ItemsSource="{Binding Playlist.Audios, RelativeSource={RelativeSource AncestorType=local:RecommendedPlaylistControl}}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate DataType="models:Audio">
-                            <local:TrackControl Audio="{Binding}" Width="284" Margin="0 5 0 0" />
+                            <local:TrackControl Audio="{Binding}" Margin="0 5 0 0" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
