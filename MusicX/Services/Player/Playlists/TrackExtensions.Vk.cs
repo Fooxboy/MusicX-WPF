@@ -47,6 +47,6 @@ public static partial class TrackExtensions
 
     public static VkAlbumId ToAlbumId(this Album album)
     {
-        return new(album.Id, album.OwnerId, album.AccessKey, album.Title, album.Cover!.ToString(), album.Thumb?.Photo1200 ?? album.Thumb?.Photo600);
+        return new(album.Id, album.OwnerId, album.AccessKey, album.Title, album.Cover?.ToString(), album.Thumb?.Photo1200 ?? album.Thumb?.Photo600);
     }
 }

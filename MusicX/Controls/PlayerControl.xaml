@@ -598,16 +598,8 @@
                 x:Name="QueueGrid"
                 Grid.Row="1"
                 Height="0">
-                <ListBox x:Name="Queue" AllowDrop="True">
-                    <ListBox.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <VirtualizingStackPanel
-                                CacheLength="10"
-                                CacheLengthUnit="Item"
-                                Orientation="Vertical" />
-                        </ItemsPanelTemplate>
-                    </ListBox.ItemsPanel>
-                    <ListBox.ItemTemplate>
+                <ui:ListView x:Name="Queue" Style="{StaticResource ItemsListViewStyle}" AllowDrop="True">
+                    <ui:ListView.ItemTemplate>
                         <DataTemplate DataType="{x:Type player:PlaylistTrack}">
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -630,14 +622,14 @@
                                 </wpfui:Button>
                             </Grid>
                         </DataTemplate>
-                    </ListBox.ItemTemplate>
-                    <ListBox.ItemContainerStyle>
-                        <Style BasedOn="{StaticResource {x:Type ListBoxItem}}" TargetType="{x:Type ListBoxItem}">
-                            <Setter Property="Focusable" Value="False" />
+                    </ui:ListView.ItemTemplate>
+                    <ui:ListView.ItemContainerStyle>
+                        <Style BasedOn="{StaticResource ItemsListViewItemStyle}" TargetType="{x:Type ListViewItem}">
                             <EventSetter Event="Drop" Handler="ListBoxItem_OnDrop" />
                         </Style>
-                    </ListBox.ItemContainerStyle>
-                </ListBox>
+                    </ui:ListView.ItemContainerStyle>
+                </ui:ListView>
+                
                 <wpfui:ProgressRing
                     x:Name="QueueLoadingRing"
                     HorizontalAlignment="Center"

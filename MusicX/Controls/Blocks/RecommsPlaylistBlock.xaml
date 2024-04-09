@@ -7,28 +7,27 @@
              xmlns:hc="https://handyorg.github.io/handycontrol"
              xmlns:controls="clr-namespace:MusicX.Controls"
              xmlns:models="clr-namespace:MusicX.Core.Models;assembly=MusicX.Core"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Template>
         <ControlTemplate TargetType="local:RecommsPlaylistBlock">
-            <hc:ScrollViewer VerticalScrollBarVisibility="Disabled"
-                             CanMouseWheel="False"
-                             HorizontalScrollBarVisibility="Auto"
-                             IsInertiaEnabled="True"
-                             hc:ScrollViewerAttach.AutoHide="True">
-                <ItemsControl ItemsSource="{TemplateBinding Playlists}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <VirtualizingStackPanel IsItemsHost="True" Orientation="Horizontal" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate DataType="{x:Type models:Playlist}">
-                            <controls:RecommsPlaylist Margin="0,0,10,0" Playlist="{Binding}" />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </hc:ScrollViewer>
+            <ui:ListView Style="{StaticResource ItemsListViewStyle}" ItemsSource="{TemplateBinding Playlists}"
+                         ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                         ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                <ui:ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel Orientation="Horizontal" IsItemsHost="True"
+                                                IsVirtualizing="{TemplateBinding VirtualizingPanel.IsVirtualizing}"
+                                                VirtualizationMode="{TemplateBinding VirtualizingPanel.VirtualizationMode}" />
+                    </ItemsPanelTemplate>
+                </ui:ListView.ItemsPanel>
+                <ui:ListView.ItemTemplate>
+                    <DataTemplate DataType="{x:Type models:Playlist}">
+                        <controls:RecommsPlaylist Margin="0,0,10,0" Playlist="{Binding}" />
+                    </DataTemplate>
+                </ui:ListView.ItemTemplate>
+            </ui:ListView>
         </ControlTemplate>
     </UserControl.Template>
 </UserControl>
