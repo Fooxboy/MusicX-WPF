@@ -14,15 +14,15 @@
     <StackPanel>
         <wpfui:ProgressRing IsIndeterminate="True" Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
-        <ListView MaxWidth="700" SelectedItem="{Binding SelectedPlaylist, Mode=TwoWay}" ItemsSource="{Binding Playlists}" Margin="2 0 2 15">
+        <wpfui:ListView MaxWidth="700" SelectedItem="{Binding SelectedPlaylist, Mode=TwoWay}" ItemsSource="{Binding Playlists}" Margin="2 0 2 15">
 
-            <ListView.ItemsPanel>
+            <wpfui:ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <wpfui:VirtualizingWrapPanel Orientation="Vertical" IsItemsHost="True" />
                 </ItemsPanelTemplate>
-            </ListView.ItemsPanel>
+            </wpfui:ListView.ItemsPanel>
 
-            <ListView.ItemTemplate>
+            <wpfui:ListView.ItemTemplate>
                 <DataTemplate DataType="{x:Type models:Playlist}">
                     <Grid>
                         <controls:PlaylistControl Margin="5,0" Width="200" Playlist="{Binding}" ShowFull="False" />
@@ -30,9 +30,9 @@
                         <Rectangle Fill="Transparent"/>
                     </Grid>
                 </DataTemplate>
-            </ListView.ItemTemplate>
+            </wpfui:ListView.ItemTemplate>
             
-        </ListView>
+        </wpfui:ListView>
 
         <Grid HorizontalAlignment="Center" Visibility="Collapsed" VerticalAlignment="Center">
             <StackPanel>
