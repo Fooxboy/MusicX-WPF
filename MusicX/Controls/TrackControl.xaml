@@ -136,6 +136,7 @@
                             <x:Static MemberType="{x:Type TextDecorations}" Member="Underline" />
                         </Setter.Value>
                     </Setter>
+                    <Setter Property="Cursor" Value="Hand" />
                 </DataTrigger>
             </Style.Triggers>
         </Style>
@@ -224,7 +225,8 @@
             
             <TextBlock Grid.Row="0" Grid.Column="2"
                        TextTrimming="CharacterEllipsis"
-                       VerticalAlignment="Bottom">
+                       VerticalAlignment="Bottom"
+                       HorizontalAlignment="Left">
                 <Run FontSize="16"
                      FontWeight="DemiBold"
                      Style="{StaticResource UnderlineOnHoverStyle}"
@@ -244,6 +246,7 @@
             <TextBlock
                 Grid.Row="1" Grid.Column="2"
                 VerticalAlignment="Top"
+                HorizontalAlignment="Left"
                 x:Name="Artists"
                 Margin="0,2,0,0"
                 FontSize="11"
