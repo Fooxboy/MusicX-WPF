@@ -2,7 +2,8 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="clr-namespace:MusicX.Controls"
-    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:converters="clr-namespace:MusicX.Converters">
     <Style x:Key="NavigationBarItem" TargetType="{x:Type controls:NavigationBarItem}">
         <Setter Property="Width" Value="60" />
         <Setter Property="Height" Value="60" />
@@ -216,6 +217,8 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+    
+    <converters:CountToVisibillityConverter x:Key="CountToVisibillityConverter" />
 
     <Style TargetType="{x:Type controls:NavigationBar}">
         <Setter Property="SnapsToDevicePixels" Value="True" />
@@ -224,17 +227,32 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type controls:NavigationBar}">
-                    <ItemsControl ItemsSource="{TemplateBinding Items}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel
-                                    HorizontalAlignment="Left"
-                                    CanHorizontallyScroll="False"
-                                    IsItemsHost="True"
-                                    Orientation="Vertical" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                    </ItemsControl>
+                    <DockPanel>
+                        <ItemsControl ItemsSource="{TemplateBinding Items}" DockPanel.Dock="Top">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel
+                                        HorizontalAlignment="Left"
+                                        CanHorizontallyScroll="False"
+                                        IsItemsHost="True"
+                                        Orientation="Vertical" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
+                        <ItemsControl ItemsSource="{TemplateBinding FooterItems}" 
+                                      Margin="0,20,0,6" VerticalAlignment="Bottom" DockPanel.Dock="Bottom"
+                                      Visibility="{Binding FooterItems, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource CountToVisibillityConverter}}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel
+                                        HorizontalAlignment="Left"
+                                        CanHorizontallyScroll="False"
+                                        IsItemsHost="True"
+                                        Orientation="Vertical" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
+                    </DockPanel>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
