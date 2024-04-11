@@ -12,11 +12,7 @@ public interface IPlaylist<out TData> : IPlaylist where TData : class, IEquatabl
     TData Data { get; }
 }
 
-[JsonDerivedType(typeof(SinglePlaylist), "single")]
-[JsonDerivedType(typeof(ListPlaylist), "list")]
-[JsonDerivedType(typeof(RadioPlaylist), "radio")]
-[JsonDerivedType(typeof(VkBlockPlaylist), "vkBlock")]
-[JsonDerivedType(typeof(VkPlaylistPlaylist), "vkPlaylist")]
+[JsonConverter(typeof(PlaylistJsonConverter))]
 public interface IPlaylist : IEquatable<IPlaylist>
 {
     bool CanLoad { get; }
@@ -51,5 +47,64 @@ public class PlaylistJsonConverter<TPlaylist, TData> : JsonConverter<TPlaylist> 
     public override void Write(Utf8JsonWriter writer, TPlaylist value, JsonSerializerOptions options)
     {
         JsonSerializer.Serialize(writer, value.Data, options);
+    }
+}
+
+public class PlaylistJsonConverter : JsonConverter<IPlaylist>
+{
+    public override IPlaylist? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        if (reader.TokenType is not JsonTokenType.StartObject || !reader.Read())
+            throw new JsonException("Unexpected end when reading playlist.");
+
+        reader.Read();
+        var type = reader.GetString();
+        reader.Read();
+        reader.Read();
+
+        return type switch
+        {
+            "single" => JsonSerializer.Deserialize<SinglePlaylist>(ref reader, options),
+            "list" => JsonSerializer.Deserialize<ListPlaylist>(ref reader, options),
+            "radio" => JsonSerializer.Deserialize<RadioPlaylist>(ref reader, options),
+            "vkBlock" => JsonSerializer.Deserialize<VkBlockPlaylist>(ref reader, options),
+            "vkPlaylist" => JsonSerializer.Deserialize<VkPlaylistPlaylist>(ref reader, options),
+            _ => throw new JsonException("Unsupported playlist type.")
+        };
+    }
+
+    public override void Write(Utf8JsonWriter writer, IPlaylist value, JsonSerializerOptions options)
+    {
+        writer.WriteStartObject();
+
+        void WriteObject<T>(string type, T data)
+        {
+            writer.WriteString("$type", type);
+            writer.WritePropertyName("Data");
+            JsonSerializer.Serialize(writer, data, options);
+        }
+        
+        switch (value)
+        {
+            case SinglePlaylist playlist:
+                WriteObject("single", playlist);
+                break;
+            case ListPlaylist playlist:
+                WriteObject("list", playlist);
+                break;
+            case RadioPlaylist playlist:
+                WriteObject("radio", playlist);
+                break;
+            case VkBlockPlaylist playlist:
+                WriteObject("vkBlock", playlist);
+                break;
+            case VkPlaylistPlaylist playlist:
+                WriteObject("vkPlaylist", playlist);
+                break;
+            default:
+                throw new JsonException("Unsupported playlist type.");
+        }
+        
+        writer.WriteEndObject();
     }
 }

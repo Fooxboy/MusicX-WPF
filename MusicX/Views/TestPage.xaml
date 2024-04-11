@@ -229,6 +229,15 @@
 
 
                 <wpfui:Button Content="GoToTray" Click="Button_Click_1"/>
+            
+            <wpfui:Button
+                x:Name="PlaylistSerialize"
+                Width="300"
+                Margin="0,10,0,0"
+                HorizontalAlignment="Left"
+                Appearance="Secondary"
+                Click="PlaylistSerialize_OnClick"
+                Content="Получить json плеера" />
             </StackPanel>
 
     </Grid>
