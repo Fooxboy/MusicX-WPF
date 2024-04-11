@@ -172,18 +172,21 @@ public class DownloaderService
         if (audio.AlbumId != null)
         {
             tfile.Tag.Album = audio.AlbumId.Name;
-            
-            var thumbData = await _httpClient.GetByteArrayAsync(audio.AlbumId.BigCoverUrl ?? audio.AlbumId.CoverUrl, cancellationToken);
 
-            var cover = new AttachedPictureFrame
+            if (audio.AlbumId.CoverUrl != null)
             {
-                Type = PictureType.FrontCover,
-                Description = "Cover",
-                MimeType = MediaTypeNames.Image.Jpeg,
-                Data = thumbData,
-                TextEncoding = StringType.UTF16
-            };
-            tfile.Tag.Pictures = new IPicture[] {cover};
+                var thumbData = await _httpClient.GetByteArrayAsync(audio.AlbumId.BigCoverUrl ?? audio.AlbumId.CoverUrl, cancellationToken);
+
+                var cover = new AttachedPictureFrame
+                {
+                    Type = PictureType.FrontCover,
+                    Description = "Cover",
+                    MimeType = MediaTypeNames.Image.Jpeg,
+                    Data = thumbData,
+                    TextEncoding = StringType.UTF16
+                };
+                tfile.Tag.Pictures = new IPicture[] {cover};
+            }
         }
         
         tfile.Save();

@@ -183,7 +183,7 @@ namespace MusicX.Controls
 
 
 
-                if (playerService.CurrentTrack.AlbumId != null)
+                if (playerService.CurrentTrack.AlbumId?.CoverUrl != null)
                 {
                     var amim = (Storyboard)(this.Resources["BackgroundAmimate"]);
                     amim.Begin();
