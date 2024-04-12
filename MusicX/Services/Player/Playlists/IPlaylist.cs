@@ -60,9 +60,8 @@ public class PlaylistJsonConverter : JsonConverter<IPlaylist>
         reader.Read();
         var type = reader.GetString();
         reader.Read();
-        reader.Read();
 
-        return type switch
+        IPlaylist? playlist = type switch
         {
             "single" => JsonSerializer.Deserialize<SinglePlaylist>(ref reader, options),
             "list" => JsonSerializer.Deserialize<ListPlaylist>(ref reader, options),
@@ -71,6 +70,11 @@ public class PlaylistJsonConverter : JsonConverter<IPlaylist>
             "vkPlaylist" => JsonSerializer.Deserialize<VkPlaylistPlaylist>(ref reader, options),
             _ => throw new JsonException("Unsupported playlist type.")
         };
+        
+        if (playlist is null || !reader.Read())
+            throw new JsonException("Unexpected end when reading playlist.");
+        
+        return playlist;
     }
 
     public override void Write(Utf8JsonWriter writer, IPlaylist value, JsonSerializerOptions options)
