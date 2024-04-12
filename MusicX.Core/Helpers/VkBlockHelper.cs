@@ -723,7 +723,7 @@ namespace MusicX.Core.Helpers
             }
 
             response.Section.Blocks.RemoveAll(block =>
-                block is { DataType: "radiostations" } or { Layout.Title: "Радиостанции" } ||
+                block is { DataType: "radiostations" } or { Layout.Title: "Радиостанции" or "Эфиры" } ||
                 (
                     block is { Banners.Count: > 0 } && 
                     block.Banners.RemoveAll(banner => banner.ClickAction?.Action.Url.Contains("subscription") is true ||
