@@ -73,6 +73,13 @@
 	  <Resource Include="StoreLogo.scale-400.png" />
 
 	  <Content Include="Shaders\ColorOverlayShader.fx" />
+
+	  <Resource Include="Assets\icons\ic_fluent_megaphone_24_regular.png" />
+    
+	  <Resource Include="Assets\icons\ic_fluent_arrow_trending_24_regular.png" />
+	  <Resource Include="Assets\icons\ic_fluent_people_24_regular.png" />
+	  <Resource Include="Assets\icons\ic_fluent_people_community_24_regular.png" />
+	  <Resource Include="Assets\icons\ic_fluent_headphones_sound_wave_24_regular.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -108,16 +115,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Assets\icons\albums_white.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Assets\icons\follows_white.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
     <Resource Include="Assets\icons\playlists_white.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Assets\icons\recent_white.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\lottie\play.json">
@@ -149,8 +147,8 @@
     <ProjectReference Include="..\pscompiler\pscompiler.csproj" Private="false" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="dotnet --roll-forward LatestMajor ../PsCompiler/bin/$(Configuration)/net7.0/PsCompiler.dll Shaders Shaders/bin" />
+  <Target Name="PreBuild" BeforeTargets="Build">
+    <Exec Command="dotnet --roll-forward LatestMajor ../PsCompiler/bin/$(Configuration)/net7.0/win10-x64/PsCompiler.dll Shaders Shaders/bin" />
     <ItemGroup>
       <Resource Include="Shaders\bin\*.ps" />
     </ItemGroup>

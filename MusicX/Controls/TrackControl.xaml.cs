@@ -365,7 +365,7 @@ namespace MusicX.Controls
                 if (this.FindAncestor<PlaylistView>() is { DataContext: PlaylistViewModel viewModel })
                     await player.PlayAsync(new VkPlaylistPlaylist(vkService, viewModel.PlaylistData), Audio.ToTrack());
                 //костыль для реков, да мне лень править.
-                else if (Audio.ParentBlockId == "recomms" && this.FindAncestor<BlockControl>() is { DataContext: Block { Audios.Count: > 0 } block })
+                else if (Audio.ParentBlockId is "recomms" or "track_recomms_full" && this.FindAncestor<BlockControl>() is { DataContext: Block { Audios.Count: > 0 } block })
                     await player.PlayAsync(new ListPlaylist(block.Audios.Select(TrackExtensions.ToTrack).ToImmutableList()), Audio.ToTrack());
                 else
                     await player.PlayAsync(new VkBlockPlaylist(vkService, Audio.ParentBlockId, LoadOtherTracks), Audio.ToTrack());

@@ -141,13 +141,13 @@ namespace MusicX.Controls
 
                 if (Link.Meta.ContentType is "group" or "user" or "chat")
                 {
-                    if (Regex.IsMatch(Link.Id, CustomSectionsService.CustomLinkRegex))
+                    if (CustomSectionsService.CustomLinkRegex().IsMatch(Link.Id))
                     {
                         navigationService.OpenSection(Link.Id);
                         return;
                     }
                     
-                    var match = Regex.Match(Link.Url, "https://vk.com/audios[0-9]+$");
+                    var match = UserProfileRegex().Match(Link.Url);
                     if(match.Success)
                     {
                         var music = await vkService.GetAudioCatalogAsync(Link.Url);
@@ -190,5 +190,8 @@ namespace MusicX.Controls
             }
            
         }
+
+        [GeneratedRegex("https://vk.com/audios\\-?[0-9]+$")]
+        private static partial Regex UserProfileRegex();
     }
 }

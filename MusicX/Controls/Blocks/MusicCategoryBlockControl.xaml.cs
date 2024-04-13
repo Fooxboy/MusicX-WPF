@@ -41,6 +41,12 @@ namespace MusicX.Controls.Blocks
         {
             try
             {
+                if (link.Meta?.ContentType is "custom")
+                {
+                    navigationService.OpenSection(link.Meta.TrackCode);
+                    return;
+                }
+                
                 var music = await vkService.GetAudioCatalogAsync(link.Url);
                 navigationService.OpenSection(music.Catalog.DefaultSection);
 
