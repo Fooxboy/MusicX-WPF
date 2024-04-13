@@ -15,6 +15,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <TieredPGO>true</TieredPGO>
     <Platforms>x64</Platforms>
+    <ValidateExecutableReferencesMatchSelfContained>false</ValidateExecutableReferencesMatchSelfContained>
   </PropertyGroup>
   
   <ItemGroup>
@@ -70,6 +71,8 @@
 	  <Resource Include="Assets\icons\ic_fluent_video_play_pause_24_regular.png" />
 
 	  <Resource Include="StoreLogo.scale-400.png" />
+
+	  <Content Include="Shaders\ColorOverlayShader.fx" />
   </ItemGroup>
 
   <ItemGroup>
@@ -141,5 +144,16 @@
   <ItemGroup>
     <Manifest Include="app.manifest" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\pscompiler\pscompiler.csproj" Private="false" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="dotnet --roll-forward LatestMajor ../PsCompiler/bin/$(Configuration)/net7.0/PsCompiler.dll Shaders Shaders/bin" />
+    <ItemGroup>
+      <Resource Include="Shaders\bin\*.ps" />
+    </ItemGroup>
+  </Target>
 
 </Project>

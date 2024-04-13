@@ -35,11 +35,7 @@ namespace MusicX.Controls.Blocks
 
         public List<Link> Links => (DataContext as Block)?.Links ?? new();
 
-        private async void CardAction_Click(object sender, RoutedEventArgs e)
-        {
-            if (GetLinkBySection("recent") is { } link)
-                await OpenPage(link);
-        }
+        
 
         private async Task OpenPage(Link link)
         {
@@ -64,35 +60,10 @@ namespace MusicX.Controls.Blocks
 
         }
 
-        private async void CardAction_Click_1(object sender, RoutedEventArgs e)
+        private async void CardAction_Click(object sender, RoutedEventArgs e)
         {
-            if (GetLinkBySection("my_playlists") is { } link)
+            if (sender is Control { DataContext: Link link })
                 await OpenPage(link);
-        }
-
-        private async void CardAction_Click_2(object sender, RoutedEventArgs e)
-        {
-            if (GetLinkBySection("albums") is { } link)
-                await OpenPage(link);
-        }
-
-        private async void CardAction_Click_3(object sender, RoutedEventArgs e)
-        {
-            if (GetLinkBySection("followings") is { } link)
-                await OpenPage(link);
-        }
-
-        private Link? GetLinkBySection(string section)
-        {
-            var link = Links.FirstOrDefault(b =>
-                HttpUtility.ParseQueryString(new Uri(b.Url).Query)["section"]
-                    ?.Equals(section, StringComparison.OrdinalIgnoreCase) is true);
-
-            if (link is null)
-                StaticService.Container.GetRequiredService<ISnackbarService>().Show("Ошибка",
-                    $"Ссылка {section} не найдена", ControlAppearance.Danger);
-            
-            return link;
         }
     }
 }
