@@ -278,7 +278,7 @@ namespace MusicX
                     PageType = typeof(SettingsView)
                 };
 
-                navigationBar.FooterItems.Add(item2);
+                navigationBar.Items.Add(item2);
 
                 navigationBar.Items[0].RaiseEvent(new(ButtonBase.ClickEvent));
 

@@ -22,15 +22,6 @@ public class NavigationBar : Control
         get => (ObservableCollection<NavigationBarItem>)GetValue(ItemsProperty);
         init => SetValue(ItemsProperty, value);
     }
-
-    public static readonly DependencyProperty FooterItemsProperty = DependencyProperty.Register(
-        nameof(FooterItems), typeof(ObservableCollection<NavigationBarItem>), typeof(NavigationBar));
-
-    public ObservableCollection<NavigationBarItem> FooterItems
-    {
-        get => (ObservableCollection<NavigationBarItem>)GetValue(FooterItemsProperty);
-        set => SetValue(FooterItemsProperty, value);
-    }
     
     public static readonly DependencyProperty FrameProperty = DependencyProperty.Register(
         nameof(Frame), typeof(Frame), typeof(NavigationBar), new(OnFrameChanged));
@@ -53,9 +44,7 @@ public class NavigationBar : Control
     public NavigationBar()
     {
         Items = new();
-        FooterItems = new();
         Items.CollectionChanged += CollectionChanged;
-        FooterItems.CollectionChanged += CollectionChanged;
     }
     private void CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
@@ -99,7 +88,7 @@ public class NavigationBar : Control
     private void FrameOnNavigated(object sender, NavigationEventArgs e)
     {
         if (e.Content is IMenuPage menuView)
-            CurrentItem = Items.Concat(FooterItems).FirstOrDefault(b => b.Tag == menuView.MenuTag);
+            CurrentItem = Items.FirstOrDefault(b => b.Tag == menuView.MenuTag);
         else
             CurrentItem = null;
         
