@@ -204,36 +204,39 @@
             </Rectangle.Effect>
         </Rectangle>-->
             </Grid>
-            
-            <controls:PlayerControl
-                Grid.Column="1" x:Name="playerControl"
-                VerticalAlignment="Bottom"
-                MouseDoubleClick="playerControl_MouseDoubleClick"
-                RenderTransformOrigin="0.5,0.5"
-                Margin="18,0,12,0"
-                Visibility="Collapsed">
-                <controls:PlayerControl.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform />
-                        <SkewTransform />
-                        <RotateTransform />
-                        <TranslateTransform />
-                    </TransformGroup>
-                </controls:PlayerControl.RenderTransform>
-            </controls:PlayerControl>
         </Grid>
-        
-        <ui:SnackbarPresenter
-            x:Name="RootSnackbar"
-            MaxWidth="600"
-            Margin="0,0,0,20"
-            VerticalAlignment="Bottom"
-            HorizontalAlignment="Center" />
-        <wpfui:Card Margin="{StaticResource ListenTogetherHiddenThickness}"
-                    HorizontalAlignment="Right"
-                    Name="ListenTogetherCard"
-                    Background="#232323">
-            <controls:ListenTogetherControl />
-        </wpfui:Card>
+
+        <Grid>
+            <StackPanel VerticalAlignment="Bottom">
+                <Grid>
+                    <ui:SnackbarPresenter
+                        x:Name="RootSnackbar"
+                        MaxWidth="600"
+                        Margin="0,0,0,20"
+                        HorizontalAlignment="Center" />
+                    <wpfui:Card Margin="{StaticResource ListenTogetherHiddenThickness}"
+                                HorizontalAlignment="Right"
+                                Name="ListenTogetherCard"
+                                Background="#232323">
+                        <controls:ListenTogetherControl />
+                    </wpfui:Card>
+                </Grid>
+                <controls:PlayerControl
+                    x:Name="playerControl"
+                    MouseDoubleClick="playerControl_MouseDoubleClick"
+                    RenderTransformOrigin="0.5,0.5"
+                    Margin="18,0,12,0"
+                    Visibility="Collapsed">
+                    <controls:PlayerControl.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform />
+                            <SkewTransform />
+                            <RotateTransform />
+                            <TranslateTransform />
+                        </TransformGroup>
+                    </controls:PlayerControl.RenderTransform>
+                </controls:PlayerControl>
+            </StackPanel>
+        </Grid>
     </Grid>
 </views:MusicXWindow>
