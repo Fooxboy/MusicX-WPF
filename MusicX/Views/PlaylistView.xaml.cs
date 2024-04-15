@@ -40,18 +40,17 @@ namespace MusicX.Views
 
         public PlaylistView(PlaylistViewModel? viewModel = null)
         {
-            ViewModel = viewModel ?? StaticService.Container.GetRequiredService<PlaylistViewModel>();;
+            DataContext = ViewModel = viewModel ?? StaticService.Container.GetRequiredService<PlaylistViewModel>();
             InitializeComponent();
             ViewModel.PlaylistLoaded += ViewModel_PlaylistLoaded;
             ViewModel.PlaylistNotLoaded += ViewModel_PlaylistNotLoaded;
             logger = StaticService.Container.GetRequiredService<Logger>();
-            DataContext = ViewModel;
         }
 
         private void ViewModel_PlaylistNotLoaded(object? sender, Playlist e)
         {
             FuckYouVK.Visibility = Visibility.Visible;
-            LoadingContentGrid.Visibility = Visibility.Collapsed;
+            PlaylistScrollViewer.Visibility = Visibility.Collapsed;
         }
 
         public PlaylistView(Playlist playlist) : this()
@@ -119,12 +118,6 @@ namespace MusicX.Views
                         await ViewModel.LoadPlaylistFromData(playlistId, ownerId, accessKey);
                     }
                 }
-
-               
-
-                CardPlaylist.Visibility = Visibility.Visible;
-                var amim = (Storyboard)(this.Resources["LoadedPlaylist"]);
-                amim.Begin();
             }
             catch(Exception ex)
             {

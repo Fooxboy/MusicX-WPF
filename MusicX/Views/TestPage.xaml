@@ -238,9 +238,17 @@
                 Appearance="Secondary"
                 Click="PlaylistSerialize_OnClick"
                 Content="Получить json плеера" />
+            
+            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                <wpfui:ToggleSwitch IsChecked="{Binding IsLoading, ElementName=LoadingBorder}">Загрузка</wpfui:ToggleSwitch>
+
+                <music:LoadingBorder Margin="10,0,0,0" x:Name="LoadingBorder" Padding="8">
+                    <TextBlock Width="300" HorizontalAlignment="Center">этого не видно</TextBlock>
+                </music:LoadingBorder>
+            </StackPanel>
             </StackPanel>
 
-    </Grid>
+        </Grid>
 
     </ScrollViewer>
 

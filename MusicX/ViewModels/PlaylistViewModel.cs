@@ -27,12 +27,10 @@ namespace MusicX.ViewModels
         public string Year { get; set; }
         public string Plays { get; set; }
         public string Description { get; set; }
-        public Visibility VisibleLoading { get; set; } = Visibility.Visible;
-        public Visibility VisibleContent { get; set; } = Visibility.Collapsed;
+        public bool IsLoading { get; set; } = true;
+        public bool IsLoaded { get; set; }
         public string Cover { get; set; }
         public ObservableRangeCollection<Audio> Tracks { get; } = new();
-
-        public Visibility VisibileAddInfo { get; set; } = Visibility.Visible;
 
         public Playlist Playlist { get; private set; }
         public PlaylistData PlaylistData { get; set; }
@@ -107,8 +105,8 @@ namespace MusicX.ViewModels
                     else
                         await Application.Current.Dispatcher.InvokeAsync(Tracks.Clear);
                 }
-                VisibleContent = Visibility.Collapsed;
-                VisibleLoading = Visibility.Visible;
+                IsLoaded = false;
+                IsLoading = true;
 
                 var p = await vkService.GetPlaylistAsync(40, playlist.Id, playlist.AccessKey, playlist.OwnerId);
                 this.PlaylistLoaded.Invoke(this, p.Playlist);
@@ -201,8 +199,8 @@ namespace MusicX.ViewModels
 
                 
 
-                VisibleContent = Visibility.Visible;
-                VisibleLoading = Visibility.Collapsed;
+                IsLoaded = true;
+                IsLoading = false;
 
                 this.PlaylistLoaded?.Invoke(this, playlist);
 
