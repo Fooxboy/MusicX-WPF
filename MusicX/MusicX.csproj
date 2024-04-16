@@ -72,7 +72,7 @@
 
 	  <Resource Include="StoreLogo.scale-400.png" />
 
-	  <Content Include="Shaders\ColorOverlayShader.fx" />
+	  <None Include="Shaders\ColorOverlayShader.hlsl" />
 
 	  <Resource Include="Assets\icons\ic_fluent_megaphone_24_regular.png" />
     
@@ -145,6 +145,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\pscompiler\pscompiler.csproj" Private="false" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Shaders\MixNoiseShader.hlsl" />
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="ResolveReferences">

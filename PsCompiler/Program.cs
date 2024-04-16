@@ -59,7 +59,7 @@ public static class Program
         var dst = Directory.CreateDirectory(argv[1]);
         var ret = 0;
 
-        foreach (var fx in new DirectoryInfo(argv[0]).GetFiles("*.fx"))
+        foreach (var fx in new DirectoryInfo(argv[0]).GetFiles("*.hlsl"))
         {
             var ps = $@"{dst.FullName}\{fx.Name.Replace(fx.Extension, "")}.ps";
             var psi = new ProcessStartInfo
