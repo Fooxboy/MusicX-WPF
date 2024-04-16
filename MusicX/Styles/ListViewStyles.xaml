@@ -19,18 +19,53 @@
             CanContentScroll="{TemplateBinding ScrollViewer.CanContentScroll}"
             Focusable="False"
             IsInertiaEnabled="True"
+            CanMouseWheel="False"
             hc:ScrollViewerAttach.AutoHide="True">
             <ItemsPresenter />
         </hc:ScrollViewer>
     </ControlTemplate>
     
-    <Style x:Key="ItemsListViewStyle" TargetType="ui:ListView" BasedOn="{StaticResource ListViewStyle}">
+    <Style x:Key="ItemsListViewStyle" TargetType="ui:ListView">
         <Setter Property="ItemContainerStyle" Value="{StaticResource ItemsListViewItemStyle}" />
         <Setter Property="Template" Value="{StaticResource ItemsListViewTemplate}" />
         
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
+        
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        
+        <Setter Property="VirtualizingPanel.IsVirtualizing" Value="True" />
+        <Setter Property="VirtualizingPanel.VirtualizationMode" Value="Standard" />
         <Setter Property="VirtualizingPanel.ScrollUnit" Value="Pixel" />
         <Setter Property="VirtualizingPanel.CacheLengthUnit" Value="Item" />
         <Setter Property="VirtualizingPanel.CacheLength" Value="2" />
+        
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <VirtualizingStackPanel Orientation="Vertical" IsItemsHost="True"
+                                            IsVirtualizing="{TemplateBinding VirtualizingPanel.IsVirtualizing}"
+                                            VirtualizationMode="{TemplateBinding VirtualizingPanel.VirtualizationMode}" />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+    <Style x:Key="ItemsListViewStyleHorizontal" TargetType="ui:ListView" BasedOn="{StaticResource ItemsListViewStyle}">
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <VirtualizingStackPanel Orientation="Horizontal" IsItemsHost="True"
+                                            IsVirtualizing="{TemplateBinding VirtualizingPanel.IsVirtualizing}"
+                                            VirtualizationMode="{TemplateBinding VirtualizingPanel.VirtualizationMode}" />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 </ResourceDictionary>
