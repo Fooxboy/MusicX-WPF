@@ -154,7 +154,7 @@
                                                                             <Border.Background>
                                                                                 <SolidColorBrush Color="Black" Opacity="0.2" />
                                                                             </Border.Background>
-                                                                            <ui:SymbolIcon Symbol="Note48" FontSize="48" />
+                                                                            <ui:SymbolIcon Symbol="MusicNote124" FontSize="36" Foreground="White" />
                                                                         </Border>
                                                                     </VisualBrush.Visual>
                                                                 </VisualBrush>

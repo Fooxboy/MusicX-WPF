@@ -101,7 +101,7 @@
     <PackageReference Include="System.Text.Json" Version="8.0.3" />
     <PackageReference Include="taglib-sharp-netstandard2.0" Version="2.1.0" />
     <PackageReference Include="Velopack" Version="0.0.359" />
-    <PackageReference Include="WPF-UI" Version="3.0.3" />
+    <PackageReference Include="WPF-UI" Version="3.0.4" />
     <PackageReference Include="WpfScreenHelper" Version="2.1.0" />
   </ItemGroup>
 
