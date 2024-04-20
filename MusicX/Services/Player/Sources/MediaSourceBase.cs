@@ -49,6 +49,13 @@ public abstract class MediaSourceBase : ITrackMediaSource
 
     protected static MediaPlaybackItem CreateMediaPlaybackItem(MediaFile file)
     {
+        var streamingSource = CreateFFMediaStreamSource(file);
+
+        return new (MediaSource.CreateFromMediaStreamSource(streamingSource));
+    }
+
+    public static MediaStreamSource CreateFFMediaStreamSource(MediaFile file)
+    {
         var properties =
             AudioEncodingProperties.CreatePcm((uint)file.Audio.Info.SampleRate, (uint)file.Audio.Info.NumChannels, 16);
 
@@ -99,9 +106,6 @@ public abstract class MediaSourceBase : ITrackMediaSource
 
         streamingSource.SampleRequested += (_, args) =>
         {
-            //var deferral = args.Request.GetDeferral();
-            
-            //await FFmpegSemaphore.WaitOneAsync();
             FFmpegSemaphore.WaitOne();
             
             try
@@ -116,7 +120,6 @@ public abstract class MediaSourceBase : ITrackMediaSource
             finally
             {
                 FFmpegSemaphore.Release();
-                //deferral.Complete();
             }
         };
         
@@ -149,15 +152,11 @@ public abstract class MediaSourceBase : ITrackMediaSource
             return array;
         }
 
-        return new (MediaSource.CreateFromMediaStreamSource(streamingSource));
+        return streamingSource;
     }
-
-    private static FFmpegMediaSource? _source;
 
     public static async Task<MediaPlaybackItem?> CreateWinRtMediaPlaybackItem(MediaPlaybackSession playbackSession, TrackData data, IReadOnlyDictionary<string, string>? customOptions = null)
     {
-        _source?.Dispose();
-
         var options = new PropertySet
         {
             ["reconnect"] = "1",
@@ -170,7 +169,7 @@ public abstract class MediaSourceBase : ITrackMediaSource
             foreach (var (key, value) in customOptions)
                 options[key] = value;
 
-        _source = await FFmpegMediaSource.CreateFromUriAsync(data.Url, new()
+        var source = await FFmpegMediaSource.CreateFromUriAsync(data.Url, new()
         {
             FFmpegOptions = options,
             General =
@@ -179,9 +178,9 @@ public abstract class MediaSourceBase : ITrackMediaSource
             }
         });
 
-        _source.PlaybackSession = playbackSession;
-        _source.StartBuffering();
+        source.PlaybackSession = playbackSession;
+        source.StartBuffering();
 
-        return _source.CreateMediaPlaybackItem();
+        return source.CreateMediaPlaybackItem();
     }
 }

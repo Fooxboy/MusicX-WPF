@@ -9,10 +9,13 @@ using Windows.Media.MediaProperties;
 using Windows.Media.Transcoding;
 using Windows.Storage;
 using FFMediaToolkit;
+using FFMediaToolkit.Audio;
+using FFMediaToolkit.Decoding;
 using FFmpegInteropX;
 using MusicX.Core.Services;
 using MusicX.Helpers;
 using MusicX.Services.Player.Playlists;
+using MusicX.Services.Player.Sources;
 using MusicX.Shared.Player;
 using TagLib;
 using TagLib.Id3v2;
@@ -98,13 +101,30 @@ public class DownloaderService
         }
         else
         {
-            using var ffmpegMediaSource = await FFmpegMediaSource.CreateFromUriAsync(audio.Data.Url, new()
+            // blocked by FFmpegMediaSource working only with active media player
+            // using var ffmpegMediaSource = await FFmpegMediaSource.CreateFromUriAsync(audio.Data.Url, new()
+            // {
+            //     FFmpegOptions =
+            //     {
+            //         ["http_persistent"] = "false"
+            //     }
+            // }).AsTask(cancellationToken);
+            // var streamSource = ffmpegMediaSource.GetMediaStreamSource();
+
+            var inputFile = MediaFile.Open(audio.Data.Url, new()
             {
-                FFmpegOptions =
+                StreamsToLoad = MediaMode.Audio,
+                AudioSampleFormat = SampleFormat.SignedWord,
+                DemuxerOptions =
                 {
-                    ["http_persistent"] = "false"
+                    FlagDiscardCorrupt = true,
+                    PrivateOptions =
+                    {
+                        ["http_persistent"] = "false"
+                    }
                 }
-            }).AsTask(cancellationToken);
+            });
+            var streamSource = MediaSourceBase.CreateFFMediaStreamSource(inputFile);
 
             var encodingProfile = MediaEncodingProfile.CreateMp3(AudioEncodingQuality.Auto);
             
@@ -114,7 +134,7 @@ public class DownloaderService
             using var destinationStream = await destination.OpenAsync(FileAccessMode.ReadWrite).AsTask(cancellationToken);
             
             var prepareOp =
-                await _mediaTranscoder.PrepareMediaStreamSourceTranscodeAsync(ffmpegMediaSource.GetMediaStreamSource(),
+                await _mediaTranscoder.PrepareMediaStreamSourceTranscodeAsync(streamSource,
                     destinationStream, encodingProfile).AsTask(cancellationToken);
 
             if (!prepareOp.CanTranscode)
@@ -128,9 +148,9 @@ public class DownloaderService
 
             var transcodeOp = prepareOp.TranscodeAsync();
 
-            transcodeOp.Progress += (sender, position) =>
+            transcodeOp.Progress += (_, position) =>
             {
-                progress?.Report((TimeSpan.FromSeconds(position), TimeSpan.FromSeconds(1)));
+                progress?.Report((TimeSpan.FromSeconds(position), inputFile.Info.Duration));
             };
 
             await transcodeOp.AsTask(cancellationToken);
