@@ -166,24 +166,12 @@ public class PlayerService
                 }
             }
 
-            MediaPlaybackItem?[] sources;
-
-        try
-        {
-            sources = await Task.WhenAll(_mediaSources.Select(b => b.CreateMediaSourceAsync(player.PlaybackSession, track, _tokenSource.Token)));
-        }
-        catch (TaskCanceledException)
-        {
-            return;
-        }
-
-            if (sources.FirstOrDefault(m => m is { }) is not { } source)
+            if (!(await Task.WhenAll(_mediaSources.Select(b => b.OpenWithMediaPlayerAsync(player, track, _tokenSource.Token)))).Any())
             {
                 await NextTrack();
                 return;
             }
 
-            player.Source = source;
             player.Play();
             UpdateWindowsData().SafeFireAndForget();
 

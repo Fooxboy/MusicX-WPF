@@ -7,5 +7,5 @@ namespace MusicX.Services.Player;
 
 public interface ITrackMediaSource
 {
-    Task<MediaPlaybackItem?> CreateMediaSourceAsync(MediaPlaybackSession playbackSession, PlaylistTrack track, CancellationToken cancellationToken = default);
+    Task<bool> OpenWithMediaPlayerAsync(MediaPlayer player, PlaylistTrack track, CancellationToken cancellationToken = default);
 }

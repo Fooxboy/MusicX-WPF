@@ -16,6 +16,7 @@ using FFMediaToolkit.Decoding;
 using FFmpegInteropX;
 using MusicX.Helpers;
 using MusicX.Shared.Player;
+using WinRT;
 
 namespace MusicX.Services.Player.Sources;
 
@@ -45,9 +46,7 @@ public abstract class MediaSourceBase : ITrackMediaSource
         }
     };
 
-    public abstract Task<MediaPlaybackItem?> CreateMediaSourceAsync(MediaPlaybackSession playbackSession,
-        PlaylistTrack track,
-        CancellationToken cancellationToken = default);
+    public abstract Task<bool> OpenWithMediaPlayerAsync(MediaPlayer player, PlaylistTrack track, CancellationToken cancellationToken = default);
 
     protected static MediaPlaybackItem CreateMediaPlaybackItem(MediaFile file)
     {
@@ -162,32 +161,48 @@ public abstract class MediaSourceBase : ITrackMediaSource
         return streamingSource;
     }
 
-    public static async Task<MediaPlaybackItem?> CreateWinRtMediaPlaybackItem(MediaPlaybackSession playbackSession, TrackData data, IReadOnlyDictionary<string, string>? customOptions = null)
+    public static Task<FFmpegMediaSource> CreateWinRtMediaSource(TrackData data, IReadOnlyDictionary<string, string>? customOptions = null, CancellationToken cancellationToken = default)
     {
-        var options = new PropertySet
+        var options = new PropertySet();
+        
+        foreach (var option in MediaOptions.DemuxerOptions.PrivateOptions)
         {
-            ["reconnect"] = "1",
-            ["reconnect_streamed"] = "1",
-            ["reconnect_delay_max"] = "5",
-            ["stimeout"] = "10"
-        };
+            options.Add(option.Key, option.Value);
+        }
         
         if (customOptions != null)
             foreach (var (key, value) in customOptions)
                 options[key] = value;
 
-        var source = await FFmpegMediaSource.CreateFromUriAsync(data.Url, new()
+        return FFmpegMediaSource.CreateFromUriAsync(data.Url, new()
         {
             FFmpegOptions = options,
             General =
             {
-                ReadAheadBufferEnabled = true
+                ReadAheadBufferEnabled = true,
+                SkipErrors = uint.MaxValue,
+                KeepMetadataOnMediaSourceClosed = false
             }
-        });
+        }).AsTask(cancellationToken);
+    }
 
-        source.PlaybackSession = playbackSession;
-        source.StartBuffering();
+    protected static void RegisterSourceObjectReference(MediaPlayer player, IWinRTObject rtObject)
+    {
+        GC.SuppressFinalize(rtObject.NativeObject);
+        
+        player.SourceChanged += PlayerOnSourceChanged;
 
-        return source.CreateMediaPlaybackItem();
+        void PlayerOnSourceChanged(MediaPlayer sender, object args)
+        {
+            if (!ReferenceEquals(player.Source, rtObject))
+                return;
+            
+            player.SourceChanged -= PlayerOnSourceChanged;
+            
+            if (rtObject is IDisposable disposable)
+                disposable.Dispose();
+            else
+                GC.ReRegisterForFinalize(rtObject);
+        }
     }
 }
