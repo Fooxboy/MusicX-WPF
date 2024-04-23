@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.AppCenter.Analytics;
@@ -177,7 +178,7 @@ namespace MusicX.Views
                                 var rootWindow = ActivatorUtilities.CreateInstance<RootWindow>(container);
                                 rootWindow.Show();
 
-                                if(_args != null && _args.Length > 0)
+                                if(_args is { Length: > 0 })
                                 {
                                     var arg = _args[0].Split(":");
 
@@ -185,6 +186,13 @@ namespace MusicX.Views
                                     {
                                         await rootWindow.StartListenTogether(arg[1]);
                                     }
+
+                                    var playArgIndex = Array.BinarySearch(_args, "--play",
+                                        StringComparer.OrdinalIgnoreCase);
+                                    if (playArgIndex >= 0 && playArgIndex + 1 < _args.Length &&
+                                        JsonSerializer.Deserialize<PlayerState>(string.Join(string.Empty, _args[(playArgIndex + 1)..])) is { } state)
+                                        await container.GetRequiredService<PlayerService>()
+                                            .RestoreFromStateAsync(state);
                                 }
 
                                 this.Close();

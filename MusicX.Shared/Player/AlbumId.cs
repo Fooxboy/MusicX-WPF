@@ -8,7 +8,7 @@ namespace MusicX.Shared.Player;
 [ProtoContract(ImplicitFields = ImplicitFields.AllPublic, SkipConstructor = true)]
 [ProtoInclude(100, typeof(BoomAlbumId))]
 [ProtoInclude(101, typeof(VkAlbumId))]
-public abstract record AlbumId(string Name, string CoverUrl, string? BigCoverUrl);
+public abstract record AlbumId(string Name, string? CoverUrl, string? BigCoverUrl);
 
 [ProtoContract(ImplicitFields = ImplicitFields.AllPublic, SkipConstructor = true)]
 public sealed record VkAlbumId

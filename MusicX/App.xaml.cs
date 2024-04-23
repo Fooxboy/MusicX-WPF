@@ -1,5 +1,4 @@
-﻿// ReSharper disable once RedundantUsingDirective
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Windows;
 using Microsoft.AppCenter;
@@ -7,7 +6,6 @@ using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using MusicX.Services;
 using MusicX.Views;
-using Squirrel;
 
 namespace MusicX
 {
@@ -19,7 +17,7 @@ namespace MusicX
         protected async override void OnStartup(StartupEventArgs e)
         {
 #if !DEBUG
-            SquirrelAwareApp.HandleEvents((_, tools) => tools.CreateShortcutForThisExe(), onAppUninstall: (_, tool) => tool.RemoveShortcutForThisExe());
+            Velopack.VelopackApp.Build().Run();
             
             if (!InstanceCheck())
             {
@@ -32,8 +30,7 @@ namespace MusicX
                 return;
             }
 #endif
-           
-
+            
             base.OnStartup(e);
 
             AppCenter.Start("02130c6d-0a3b-4aa2-b46c-8aeb66c3fd71",

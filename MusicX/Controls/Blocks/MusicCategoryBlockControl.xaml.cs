@@ -7,7 +7,12 @@ using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Linq;
+using System.Web;
 using Microsoft.AppCenter.Crashes;
+using Wpf.Ui;
+using Wpf.Ui.Controls;
+using Wpf.Ui.Extensions;
 
 namespace MusicX.Controls.Blocks
 {
@@ -30,18 +35,18 @@ namespace MusicX.Controls.Blocks
 
         public List<Link> Links => (DataContext as Block)?.Links ?? new();
 
-        private async void CardAction_Click(object sender, RoutedEventArgs e)
-        {
-            var link = Links[0];
-
-            await OpenPage(link);
-
-        }
+        
 
         private async Task OpenPage(Link link)
         {
             try
             {
+                if (link.Meta?.ContentType is "custom")
+                {
+                    navigationService.OpenSection(link.Meta.TrackCode);
+                    return;
+                }
+                
                 var music = await vkService.GetAudioCatalogAsync(link.Url);
                 navigationService.OpenSection(music.Catalog.DefaultSection);
 
@@ -61,25 +66,10 @@ namespace MusicX.Controls.Blocks
 
         }
 
-        private async void CardAction_Click_1(object sender, RoutedEventArgs e)
+        private async void CardAction_Click(object sender, RoutedEventArgs e)
         {
-            var link = Links[1];
-
-            await OpenPage(link);
-        }
-
-        private async void CardAction_Click_2(object sender, RoutedEventArgs e)
-        {
-            var link = Links[2];
-
-            await OpenPage(link);
-        }
-
-        private async void CardAction_Click_3(object sender, RoutedEventArgs e)
-        {
-            var link = Links[5];
-
-            await OpenPage(link);
+            if (sender is Control { DataContext: Link link })
+                await OpenPage(link);
         }
     }
 }

@@ -17,7 +17,6 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <BitmapImage x:Key="TrackIcon" UriSource="../Assets/icons/albums_white.png" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <converters:TrackArtistsToStringConverter x:Key="ArtistsToStringConverter" />
     </Page.Resources>
@@ -138,9 +137,33 @@
                                         Height="100"
                                         RadiusX="10"
                                         RadiusY="10">
-                                        <Rectangle.Fill>
-                                            <ImageBrush ImageSource="{Binding CurrentDownloadingAudio.AlbumId.CoverUrl, FallbackValue={StaticResource TrackIcon}}" />
-                                        </Rectangle.Fill>
+                                        <Rectangle.Style>
+                                            <Style TargetType="Rectangle">
+                                                <Setter Property="Fill">
+                                                    <Setter.Value>
+                                                        <ImageBrush ImageSource="{Binding CurrentDownloadingAudio.AlbumId.CoverUrl, FallbackValue={x:Null}}" />
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding CurrentDownloadingAudio.AlbumId.CoverUrl, FallbackValue={x:Null}}" Value="{x:Null}">
+                                                        <Setter Property="Fill">
+                                                            <Setter.Value>
+                                                                <VisualBrush>
+                                                                    <VisualBrush.Visual>
+                                                                        <Border>
+                                                                            <Border.Background>
+                                                                                <SolidColorBrush Color="Black" Opacity="0.2" />
+                                                                            </Border.Background>
+                                                                            <ui:SymbolIcon Symbol="MusicNote124" FontSize="36" Foreground="White" />
+                                                                        </Border>
+                                                                    </VisualBrush.Visual>
+                                                                </VisualBrush>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Rectangle.Style>
                                     </Rectangle>
 
                                     <StackPanel Margin="15,0,0,0" VerticalAlignment="Center">

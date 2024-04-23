@@ -79,7 +79,7 @@ namespace MusicX.Views
                 PositionSlider.Maximum = playerService.CurrentTrack!.Data.Duration.TotalSeconds;
 
 
-                if (playerService.CurrentTrack.AlbumId != null)
+                if (playerService.CurrentTrack.AlbumId?.CoverUrl != null)
                 {
 
                     var bitmapImage = new BitmapImage(new Uri(playerService.CurrentTrack.AlbumId.BigCoverUrl ?? playerService.CurrentTrack.AlbumId.CoverUrl));
@@ -96,7 +96,7 @@ namespace MusicX.Views
 
                 if (playerService.NextPlayTrack != null)
                 {
-                    if (playerService.NextPlayTrack.AlbumId != null)
+                    if (playerService.NextPlayTrack.AlbumId?.CoverUrl != null)
                     {
                         NextTrackCover.ImageSource = new BitmapImage(new Uri(playerService.NextPlayTrack.AlbumId.CoverUrl));
                         NextTrackNote.Visibility = Visibility.Collapsed;

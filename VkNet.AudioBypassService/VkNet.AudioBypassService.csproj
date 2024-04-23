@@ -16,9 +16,9 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="JetBrains.Annotations" Version="2021.3.0" PrivateAssets="all" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0-rc.2.23479.6" />
-		<PackageReference Include="SonarAnalyzer.CSharp" Version="8.33.0.40503" PrivateAssets="all" />
-		<PackageReference Include="System.Text.Json" Version="8.0.0-rc.2.23479.6" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
+		<PackageReference Include="System.Text.Json" Version="8.0.3" />
 		<PackageReference Include="VkNet" Version="1.70.0" />
 		<PackageReference Include="protobuf-net" Version="3.0.101" />
 	</ItemGroup>

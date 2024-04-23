@@ -60,7 +60,7 @@ public abstract class BoomViewModelBase : BaseViewModel
             IsLoadingMix = true;
             var radioByArtist = await BoomService.GetArtistMixAsync(SelectedArtist.ApiId);
 
-            await PlayerService.PlayAsync(new RadioPlaylist(BoomService, radioByArtist, BoomRadioType.Artist), radioByArtist.Tracks[0].ToTrack());
+            await PlayerService.PlayAsync(new RadioPlaylist(BoomService, new(radioByArtist, BoomRadioType.Artist)), radioByArtist.Tracks[0].ToTrack());
 
             IsLoadingMix = false;
         }catch(UnauthorizedException ex)
@@ -108,7 +108,7 @@ public abstract class BoomViewModelBase : BaseViewModel
 
             var radio = await BoomService.GetTagMixAsync(SelectedTag.ApiId);
 
-            await PlayerService.PlayAsync(new RadioPlaylist(BoomService, radio, BoomRadioType.Tag), radio.Tracks[0].ToTrack());
+            await PlayerService.PlayAsync(new RadioPlaylist(BoomService, new(radio, BoomRadioType.Tag)), radio.Tracks[0].ToTrack());
 
             IsLoadingMix = false;
         }

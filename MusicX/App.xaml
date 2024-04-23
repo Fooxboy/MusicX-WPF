@@ -17,6 +17,7 @@
                 <ResourceDictionary x:Name="NavBarStyles" Source="Styles/NavigationBarStyles.xaml" />
                 <ResourceDictionary x:Name="ModalFrameStyles" Source="Styles/ModalFrameStyles.xaml" />
                 <ResourceDictionary x:Name="MusicXWindowStyles" Source="Styles/MusicXWindowStyles.xaml" />
+                <ResourceDictionary x:Name="LoadingBorderStyles" Source="Styles/LoadingBorderStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <FontFamily x:Key="SegoeFluentIcons">pack://application:,,,/;component/Fonts/#Segoe Fluent Icons</FontFamily>
@@ -27,6 +28,8 @@
 
             <convertes:ListToVisibilityConverter x:Key="ListToVisibilityConverter" />
             <convertes:InversionBooleanToVisibilityConverter x:Key="InversionBooleanToVisibilityConverter" />
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            <convertes:BooleanToHiddenVisibilityConverter x:Key="BooleanToHiddenVisibilityConverter" />
 
         </ResourceDictionary>
     </Application.Resources>

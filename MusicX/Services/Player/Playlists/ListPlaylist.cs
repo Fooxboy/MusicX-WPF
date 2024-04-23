@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using MusicX.Shared.Player;
 
 namespace MusicX.Services.Player.Playlists;
 
+[JsonConverter(typeof(PlaylistJsonConverter<ListPlaylist, EquatableList<PlaylistTrack>>))]
 public class ListPlaylist : PlaylistBase<EquatableList<PlaylistTrack>>
 {
     private bool _canLoad = true;

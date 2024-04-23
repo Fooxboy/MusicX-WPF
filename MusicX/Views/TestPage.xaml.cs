@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
@@ -8,6 +10,7 @@ using MusicX.Controls;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Services;
+using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
 using MusicX.ViewModels;
 using MusicX.ViewModels.Modals;
@@ -231,6 +234,28 @@ namespace MusicX.Views
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
+        }
+
+        private void PlaylistSerialize_OnClick(object sender, RoutedEventArgs e)
+        {
+            var playerState = PlayerState.CreateOrNull(StaticService.Container.GetRequiredService<PlayerService>());
+            
+            var json = JsonSerializer.Serialize(playerState);
+
+            bool valid;
+            try
+            {
+                var playlist = JsonSerializer.Deserialize<Playlist>(json);
+                valid = playlist is not null;
+            }
+            catch (JsonException)
+            {
+                valid = false;
+            }
+            
+            StaticService.Container.GetRequiredService<ISnackbarService>().Show($"Valid: {valid}", json);
+            Debug.WriteLine(json);
+            Debug.WriteLine($"valid: {valid}");
         }
     }
 }

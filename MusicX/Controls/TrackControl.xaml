@@ -6,60 +6,16 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:iconElements="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:helpers="clr-namespace:MusicX.Helpers"
+    xmlns:system="clr-namespace:System;assembly=System.Runtime"
     d:DesignHeight="100"
     d:DesignWidth="800"
+    x:Name="Control"
     Loaded="UserControl_Loaded"
     Unloaded="TrackControl_OnUnloaded"
     MouseEnter="Grid_MouseEnter"
     MouseLeave="Grid_MouseLeave"
     mc:Ignorable="d">
-    <!--<UserControl.Resources>
-        <Storyboard x:Key="OpenAnimation">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="border" Storyboard.TargetProperty="(UIElement.Opacity)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
-                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0.2" />
-            </DoubleAnimationUsingKeyFrames>
-
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="IconRecommended" Storyboard.TargetProperty="(UIElement.Opacity)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.7" />
-                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="1" />
-            </DoubleAnimationUsingKeyFrames>
-        </Storyboard>
-
-        <Storyboard x:Key="CloseAnimation">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="border" Storyboard.TargetProperty="(UIElement.Opacity)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.2" />
-                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
-            </DoubleAnimationUsingKeyFrames>
-
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="IconRecommended" Storyboard.TargetProperty="(UIElement.Opacity)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="1" />
-                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0.7" />
-            </DoubleAnimationUsingKeyFrames>
-        </Storyboard>
-
-        <Storyboard x:Key="LoadedAnimation">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="rectangle" Storyboard.TargetProperty="(Shape.Fill).(Brush.Opacity)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
-                <EasingDoubleKeyFrame KeyTime="00:00:01.9000000" Value="1" />
-            </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="rectangle" Storyboard.TargetProperty="(Shape.Fill).(Brush.RelativeTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="1.1" />
-                <EasingDoubleKeyFrame KeyTime="00:00:01.9000000" Value="1" />
-            </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="rectangle" Storyboard.TargetProperty="(Shape.Fill).(Brush.RelativeTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="1.1" />
-                <EasingDoubleKeyFrame KeyTime="00:00:01.9000000" Value="1" />
-            </DoubleAnimationUsingKeyFrames>
-        </Storyboard>
-    </UserControl.Resources>
-
-    <UserControl.Triggers>
-        <EventTrigger RoutedEvent="Loaded">
-            <BeginStoryboard Storyboard="{StaticResource LoadedAnimation}" />
-        </EventTrigger>
-    </UserControl.Triggers>-->
-
     <UserControl.ContextMenu>
         <ContextMenu>
             <StackPanel
@@ -76,7 +32,16 @@
             <MenuItem
                 x:Name="GoToArtistMenu"
                 
-                Header="Перейти к артисту" />
+                Header="Перейти к артисту">
+                <MenuItem.HeaderTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <iconElements:SymbolIcon Symbol="PeopleSearch20" />
+                            <ContentPresenter Margin="10,0,0,0" Content="{Binding}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </MenuItem.HeaderTemplate>
+            </MenuItem>
 
             <StackPanel x:Name="AddToPlaylist" MouseDown="AddToPlaylist_MouseDown"  Orientation="Horizontal">
                 <iconElements:SymbolIcon Symbol="AlbumAdd20"  />
@@ -87,7 +52,7 @@
             </StackPanel>
 
             <StackPanel x:Name="AddArtistIgnore" MouseDown="AddArtistIgnore_MouseDown"  Orientation="Horizontal">
-                <iconElements:SymbolIcon Symbol="PresenceDnd24"  />
+                <iconElements:SymbolIcon Symbol="PresenceDnd20"  />
                 <TextBlock
                     Margin="10,0,0,0"
                     
@@ -95,7 +60,7 @@
             </StackPanel>
 
             <StackPanel MouseDown="Download_MouseDown" Orientation="Horizontal">
-                <iconElements:SymbolIcon Symbol="ArrowDownload24"  />
+                <iconElements:SymbolIcon Symbol="ArrowDownload20"  />
                 <TextBlock
                     Margin="10,0,0,0"
                     
@@ -103,7 +68,7 @@
             </StackPanel>
             
             <StackPanel MouseDown="PlayNext_MouseDown" Orientation="Horizontal">
-                <iconElements:SymbolIcon Symbol="TextAddSpaceBefore24"  />
+                <iconElements:SymbolIcon Symbol="TextAddSpaceBefore20"  />
                 <TextBlock
                     Margin="10,0,0,0"
                     
@@ -111,7 +76,7 @@
             </StackPanel>
 
             <StackPanel MouseDown="AddToQueue_MouseDown" Orientation="Horizontal">
-                <iconElements:SymbolIcon Symbol="TextAddSpaceAfter24"  />
+                <iconElements:SymbolIcon Symbol="TextAddSpaceAfter20"  />
                 <TextBlock
                     Margin="10,0,0,0"
                     
@@ -120,227 +85,190 @@
 
         </ContextMenu>
     </UserControl.ContextMenu>
-
-
-    <Grid HorizontalAlignment="Stretch" MouseLeftButtonDown="Grid_MouseDown">
-        <TextBlock Background="Transparent" />
-
-        <ui:Card
-            x:Name="Card"
-            Margin="0,0,15,0">
-            <ui:Card.Style>
-                <Style TargetType="{x:Type ui:Card}" BasedOn="{StaticResource {x:Type ui:Card}}">
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="{x:Type ui:Card}">
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="*" />
-                                        <RowDefinition Height="Auto" />
-                                    </Grid.RowDefinitions>
-
-                                    <Border
-                                        x:Name="ContentBorder"
-                                        Padding="{TemplateBinding Padding}"
-                                        HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
-                                        VerticalAlignment="{TemplateBinding VerticalAlignment}"
-                                        Background="{TemplateBinding Background}"
-                                        BorderBrush="{TemplateBinding BorderBrush}"
-                                        BorderThickness="{TemplateBinding BorderThickness}"
-                                        CornerRadius="{TemplateBinding Border.CornerRadius}">
-                                        <ContentPresenter
-                                            x:Name="ContentPresenter"
-                                            Margin="12"
-                                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
-                                    </Border>
-
-                                    <Border
-                                        x:Name="FooterBorder"
-                                        Grid.Row="1"
-                                        Padding="{TemplateBinding Padding}"
-                                        BorderBrush="{TemplateBinding BorderBrush}"
-                                        BorderThickness="1"
-                                        CornerRadius="0,0,4,4"
-                                        Visibility="Collapsed">
-                                        <Border.Background>
-                                            <SolidColorBrush Color="{DynamicResource ControlStrokeColorSecondary}" />
-                                        </Border.Background>
-                                        <ContentPresenter x:Name="FooterContentPresenter"
-                                                          Content="{TemplateBinding Footer}" />
-                                    </Border>
-                                </Grid>
-
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="HasFooter" Value="True">
-                                        <Setter TargetName="FooterBorder" Property="Visibility" Value="Visible" />
-                                        <Setter TargetName="ContentBorder" Property="CornerRadius" Value="4,4,0,0" />
-                                        <Setter TargetName="ContentBorder" Property="BorderThickness" Value="1,1,1,0" />
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </ui:Card.Style>
-        </ui:Card>
-
-        <Grid HorizontalAlignment="Stretch">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0" Orientation="Horizontal">
-                <Grid Margin="8,6.5,6,6" VerticalAlignment="Center">
-
-                    <Rectangle
-                        Grid.Row="0"
+    
+    <UserControl.Resources>
+        <helpers:NullTemplateSelector x:Key="TrackIconTemplateSelector">
+            <helpers:NullTemplateSelector.NullTemplate>
+                <DataTemplate>
+                    <Border
                         Width="45"
                         Height="45"
-                        Fill="Black"
-                        Opacity="0.1"
-                        RadiusX="5"
-                        RadiusY="5" />
-                    <iconElements:SymbolIcon
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontSize="20"
-                        Foreground="White"
-                        Symbol="MusicNote124" />
-
-                    <Rectangle
-                        x:Name="rectangle"
-                        Width="45"
-                        Height="45"
-                        RadiusX="3"
-                        RadiusY="3">
-                        <Rectangle.Fill>
-                            <ImageBrush x:Name="Cover" Stretch="UniformToFill">
-                                <ImageBrush.RelativeTransform>
-                                    <TransformGroup>
-                                        <ScaleTransform CenterX="0.5" CenterY="0.5" />
-                                        <SkewTransform CenterX="0.5" CenterY="0.5" />
-                                        <RotateTransform CenterX="0.5" CenterY="0.5" />
-                                        <TranslateTransform />
-                                    </TransformGroup>
-                                </ImageBrush.RelativeTransform>
-                            </ImageBrush>
-                        </Rectangle.Fill>
-                    </Rectangle>
-
-                    <Grid x:Name="PlayButtons" Visibility="Collapsed">
-                        <Rectangle
-                            Width="45"
-                            Height="45"
-                            Fill="Black"
-                            Opacity="0.6"
-                            RadiusX="3"
-                            RadiusY="3" />
+                        CornerRadius="5">
+                        <Border.Background>
+                            <SolidColorBrush Color="Black" Opacity="0.1" />
+                        </Border.Background>
                         <iconElements:SymbolIcon
-                            x:Name="IconPlay"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="20"
                             Foreground="White"
-                            Symbol="Play24" />
+                            Symbol="MusicNote124" />
+                    </Border>
+                </DataTemplate>
+            </helpers:NullTemplateSelector.NullTemplate>
+            <DataTemplate DataType="{x:Type system:Uri}">
+                <Rectangle
+                    Width="45"
+                    Height="45"
+                    RadiusX="5"
+                    RadiusY="5">
+                    <Rectangle.Fill>
+                        <ImageBrush Stretch="UniformToFill" ImageSource="{Binding}">
+                            <ImageBrush.RelativeTransform>
+                                <TransformGroup>
+                                    <ScaleTransform CenterX="0.5" CenterY="0.5" />
+                                    <SkewTransform CenterX="0.5" CenterY="0.5" />
+                                    <RotateTransform CenterX="0.5" CenterY="0.5" />
+                                    <TranslateTransform />
+                                </TransformGroup>
+                            </ImageBrush.RelativeTransform>
+                        </ImageBrush>
+                    </Rectangle.Fill>
+                </Rectangle>
+            </DataTemplate>
+        </helpers:NullTemplateSelector>
+        
+        <Style x:Key="UnderlineOnHoverStyle" TargetType="Run">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True">
+                    <Setter Property="TextDecorations">
+                        <Setter.Value>
+                            <x:Static MemberType="{x:Type TextDecorations}" Member="Underline" />
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="Cursor" Value="Hand" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        
+        <Style x:Key="TrackBorderStyle" TargetType="Border">
+            <Setter Property="Background" Value="{DynamicResource CardBackground}" />
+            <Setter Property="TextBlock.Foreground" Value="{DynamicResource CardForeground}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}" />
+            <Setter Property="BorderThickness" Value="{StaticResource CardBorderThemeThickness}" />
+            <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Padding" Value="8,6" />
+            
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource CardBackgroundPointerOver}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource ControlElevationBorderBrush}" />
+                    <Setter Property="TextBlock.Foreground" Value="{DynamicResource CardForegroundPointerOver}" />
+                </Trigger>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="False" />
+                        <Condition Binding="{Binding ShowCard, ElementName=Control}" Value="False" />
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="BorderBrush" Value="Transparent" />
+                </MultiDataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
 
-                    </Grid>
-                </Grid>
-                <Grid x:Name="ChartGrid" Visibility="Collapsed">
-                    <Rectangle
-                        Width="25"
-                        Height="25"
+    <Border Style="{StaticResource TrackBorderStyle}"
+            MouseLeftButtonDown="Grid_MouseDown"
+            MouseEnter="MainGrid_OnMouseEnter"
+            MouseLeave="MainGrid_OnMouseLeave">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="0" Name="RecommendedAudioColumn" />
+                <ColumnDefinition Width="Auto" Name="ExplicitBadgeColumn" />
+                <ColumnDefinition Width="Auto" Name="TimeColumn" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            
+            <Grid Grid.RowSpan="2" Margin="0,0.5,6,0" VerticalAlignment="Center">
+                <ContentPresenter Content="{Binding Audio.Album.Cover, ElementName=Control, Mode=OneWay, TargetNullValue={x:Null}, FallbackValue={x:Null}}"
+                                  ContentTemplateSelector="{StaticResource TrackIconTemplateSelector}" />
+                <Border x:Name="PlayButtons" 
+                        Visibility="Collapsed"
+                        CornerRadius="5">
+                    <Border.Background>
+                        <SolidColorBrush Color="Black" Opacity="0.6" />
+                    </Border.Background>
+                    <iconElements:SymbolIcon
+                        x:Name="IconPlay"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Fill="Black"
-                        Opacity="0.2"
-                        RadiusX="100"
-                        RadiusY="100" />
-                    <TextBlock
-                        x:Name="ChartPositionText"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontWeight="ExtraBlack"
-                        
-                        Text="1" />
-                </Grid>
-                <StackPanel Margin="5,0,0,0" VerticalAlignment="Center" MaxWidth="170" x:Name="TextsPanel">
-                    <StackPanel x:Name="NamePanel" Orientation="Horizontal">
-
-                        <TextBlock
-                            x:Name="Title"
-                            FontSize="16"
-                            FontWeight="DemiBold"
-                            
-                            MouseEnter="Title_MouseEnter"
-                            MouseLeave="Title_MouseLeave"
-                            MouseLeftButtonDown="Title_MouseLeftButtonDown"
-                            Text="Title"
-                            TextTrimming="CharacterEllipsis">
-                            <TextBlock.ToolTip>
-                                <ToolTip Content="Перейти к альбому" />
-                            </TextBlock.ToolTip>
-                        </TextBlock>
-                        <TextBlock
-                            x:Name="Subtitle"
-                            Margin="5,3,2,0"
-                            
-                            Opacity="0.3"
-                            Text="Subtitle"
-                            TextTrimming="CharacterEllipsis" />
-
-                        <Border
-                            x:Name="explicitBadge"
-                            Width="16"
-                            Height="16"
-                            Margin="5,0,0,0"
-                            BorderBrush="White"
-                            BorderThickness="1"
-                            CornerRadius="2"
-                            Opacity="0.4"
-                            Visibility="Collapsed">
-                            <TextBlock
-                                Margin="0,0,0,1"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontFamily="{StaticResource VKSansBold}"
-                                FontSize="12"
-                                
-                                Text="E" />
-                        </Border>
-
-                    </StackPanel>
-                    <Grid x:Name="ArtistTextGrid" HorizontalAlignment="Left" Width="900">
-                        <TextBlock
-                            HorizontalAlignment="Left"
-                            x:Name="Artists"
-                            Margin="0,2,0,0"
-                            FontSize="11"
-                            
-                            Opacity="0.6"
-                            Text="Artist"
-                            TextWrapping="NoWrap"
-                            TextTrimming="CharacterEllipsis">
-                            <TextBlock.ToolTip>
-                                <ToolTip Content="Перейти к исполнителю" />
-                            </TextBlock.ToolTip>
-                        </TextBlock>
-                    </Grid>
-
-                </StackPanel>
-            </StackPanel>
-
+                        FontSize="20"
+                        Foreground="White"
+                        Symbol="Play24" />
+                </Border>
+            </Grid>
+            
+            <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" x:Name="ChartGrid" Visibility="Collapsed"
+                    Margin="0,0,5,0"
+                    Width="25"
+                    Height="25"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    CornerRadius="100">
+                <Border.Background>
+                    <SolidColorBrush Color="Black" Opacity="0.2" />
+                </Border.Background>
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontWeight="ExtraBlack"
+                    Text="{Binding ChartPosition, ElementName=Control, Mode=OneWay}" />
+            </Border>
+            
+            <TextBlock Grid.Row="0" Grid.Column="2"
+                       TextTrimming="CharacterEllipsis"
+                       VerticalAlignment="Bottom"
+                       HorizontalAlignment="Left">
+                <Run FontSize="16"
+                     FontWeight="DemiBold"
+                     Style="{StaticResource UnderlineOnHoverStyle}"
+                     MouseLeftButtonDown="Title_MouseLeftButtonDown"
+                     Text="{Binding Audio.Title, ElementName=Control, Mode=OneWay}">
+                    <Run.ToolTip>
+                        <ToolTip Content="Перейти к альбому" />
+                    </Run.ToolTip>
+                </Run>
+                <Run Text="{Binding Audio.Subtitle, ElementName=Control, Mode=OneWay}">
+                    <Run.Foreground>
+                        <SolidColorBrush Color="White" Opacity="0.3" />
+                    </Run.Foreground>
+                </Run>
+            </TextBlock>
+            
+            <TextBlock
+                Grid.Row="1" Grid.Column="2"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                x:Name="Artists"
+                Margin="0,2,0,0"
+                FontSize="11"
+                Opacity="0.6"
+                Text="Artist"
+                TextWrapping="NoWrap"
+                TextTrimming="CharacterEllipsis">
+                <TextBlock.ToolTip>
+                    <ToolTip Content="Перейти к исполнителю" />
+                </TextBlock.ToolTip>
+            </TextBlock>
 
             <ui:Button
-                x:Name="RecommendedAudio"
+                Grid.Row="0" Grid.RowSpan="2"
+                Grid.Column="3"
                 Margin="0,0,10,0"
                 HorizontalAlignment="Right"
                 Cursor="Hand"
                 ForceCursor="True"
                 Click="RecommendedAudio_Click"
                 FontSize="20"
-                Appearance="Transparent"
-                Visibility="Collapsed">
+                Appearance="Transparent">
                 <ui:Button.Icon>
                     <iconElements:SymbolIcon Symbol="Sparkle48" />
                 </ui:Button.Icon>
@@ -348,21 +276,37 @@
                     <ToolTip Content="Показать похожие треки" />
                 </ui:Button.ToolTip>
             </ui:Button>
-
-
-
+            
+            <Border
+                Grid.Row="0" Grid.RowSpan="2"
+                Grid.Column="4"
+                x:Name="explicitBadge"
+                Width="16"
+                Height="16"
+                VerticalAlignment="Center"
+                BorderBrush="White"
+                BorderThickness="1"
+                CornerRadius="2"
+                Opacity="0.4"
+                Visibility="Collapsed">
+                <TextBlock
+                    Margin="0,0,0,1"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontFamily="{StaticResource VKSansBold}"
+                    FontSize="12"
+                    Text="E" />
+            </Border>
 
             <TextBlock
+                Grid.Row="0" Grid.RowSpan="2"
+                Grid.Column="5"
                 x:Name="Time"
-                Grid.Column="1"
-                Margin="3,0,25,0"
+                Margin="6,0,0,0"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
-                
                 Opacity="0.5"
                 Text="02:20" />
         </Grid>
-
-
-    </Grid>
+    </Border>
 </UserControl>

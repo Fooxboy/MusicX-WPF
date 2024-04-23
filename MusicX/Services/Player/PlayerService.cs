@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,8 +28,9 @@ namespace MusicX.Services.Player;
 public class PlayerService
 {
     public int CurrentIndex;
-    
-    public readonly ObservableRangeCollection<PlaylistTrack> Tracks = new();
+    private readonly TrackCollection _tracks = new();
+
+    public TrackCollectionBase Tracks => _tracks;
     public PlaylistTrack? CurrentTrack { get; private set; }
     public PlaylistTrack? NextPlayTrack
     {
@@ -42,7 +44,6 @@ public class PlayerService
     private DispatcherTimer _positionTimer;
     private readonly MediaPlayer player;
 
-    public bool IsShuffle { get; set; }
     public bool IsRepeat { get; set; }
 
     public event EventHandler? NextTrackChanged;
@@ -86,10 +87,10 @@ public class PlayerService
         SubscribeToListenTogetherEvents();
     }
 
-
-    public async Task JoinToListenTogetherSession(string sessionId)
+    public async Task RestoreFromStateAsync(PlayerState state)
     {
-        
+        await PlayAsync(state.Playlist, state.Track);
+        Seek(state.Position);
     }
 
     public async void Play()
@@ -144,6 +145,16 @@ public class PlayerService
 
             if (config.IgnoredArtists is null) config.IgnoredArtists = new List<string>();
 
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                TrackChangedEvent?.Invoke(this, EventArgs.Empty);
+                NextTrackChanged?.Invoke(this, EventArgs.Empty);
+                PlayStateChangedEvent?.Invoke(this, EventArgs.Empty);
+                TrackLoadingStateChanged?.Invoke(this, new(PlayerLoadingState.Started));
+            });
+
+            if (CurrentTrack.Data.Url is null) await NextTrack();
+
             foreach (var ignoreArtist in config.IgnoredArtists)
             {
 
@@ -156,35 +167,12 @@ public class PlayerService
                 }
             }
 
-            Application.Current.Dispatcher.BeginInvoke(() =>
-            {
-                TrackChangedEvent?.Invoke(this, EventArgs.Empty);
-                NextTrackChanged?.Invoke(this, EventArgs.Empty);
-                PlayStateChangedEvent?.Invoke(this, EventArgs.Empty);
-                TrackLoadingStateChanged?.Invoke(this, new(PlayerLoadingState.Started));
-            });
-
-            if (CurrentTrack.Data.Url is null) await NextTrack();
-
-
-            MediaPlaybackItem?[] sources;
-
-        try
-        {
-            sources = await Task.WhenAll(_mediaSources.Select(b => b.CreateMediaSourceAsync(player.PlaybackSession, track, _tokenSource.Token)));
-        }
-        catch (TaskCanceledException)
-        {
-            return;
-        }
-
-            if (sources.FirstOrDefault(m => m is { }) is not { } source)
+            if (!(await Task.WhenAll(_mediaSources.Select(b => b.OpenWithMediaPlayerAsync(player, track, _tokenSource.Token)))).Any())
             {
                 await NextTrack();
                 return;
             }
 
-            player.Source = source;
             player.Play();
             UpdateWindowsData().SafeFireAndForget();
 
@@ -316,7 +304,7 @@ public class PlayerService
 
 
 
-            if (CurrentTrack.AlbumId is not null)
+            if (CurrentTrack.AlbumId?.CoverUrl is not null)
             {
                 player.SystemMediaTransportControls.DisplayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri(CurrentTrack.AlbumId.CoverUrl));
 
@@ -352,6 +340,7 @@ public class PlayerService
             {
                 if (CurrentPlaylist is null) return;
                 var array = await CurrentPlaylist!.LoadAsync().ToArrayAsync();
+                
                 if (Application.Current.Dispatcher.CheckAccess())
                     Tracks.AddRangeSequential(array);
                 else
@@ -363,11 +352,18 @@ public class PlayerService
             {
                 if (CurrentPlaylist?.CanLoad == true)
                     await LoadMore();
-                else
-                    nextTrack = Tracks[0];
+            }
+            else
+            {
+                nextTrack = Tracks[CurrentIndex + 1];
+            }
+
+            if (nextTrack is null)
+            {
+                Pause();
+                return;
             }
             
-            nextTrack ??= Tracks[CurrentIndex + 1];
             CurrentIndex = Tracks.IndexOf(nextTrack);
             
             // its last track and we can load more
@@ -555,7 +551,7 @@ public class PlayerService
             if(IsRepeat)
             {
                 this.player.Pause();
-                Seek(TimeSpan.Zero);
+                player.Position = TimeSpan.Zero;
                 this.player.Play();
                 return;
             }
@@ -580,26 +576,16 @@ public class PlayerService
     }
 
 
-    public async void SetShuffle(bool shuffle)
+    public void SetShuffle(bool shuffle)
     {
         try
         {
             logger.Info($"SET SHUFFLE: {shuffle}");
-            this.IsShuffle = shuffle;
-            if (!shuffle)
-                return;
-
-            var list = Tracks.ToList();
-            for (var i = list.Count - 1; i >= 0; i--)
-            {
-                var k = Random.Shared.Next(i + 1);
-                (list[k], list[i]) = (list[i], list[k]);
-            }
-            Tracks.ReplaceRange(list);
-
-            if (CurrentTrack != Tracks[0])
-                await PlayTrackAsync(Tracks[0]).ConfigureAwait(false);
-
+            
+            if (shuffle)
+                _tracks.ShuffleTracks(CurrentIndex);
+            else
+                _tracks.RevertShuffle();
         }
         catch(Exception ex)
         {
@@ -822,4 +808,114 @@ public class PlayerService
             Seek(position, true);
         }
     }
+
+    private class TrackCollection : TrackCollectionBase
+    {
+        private List<PlaylistTrack>? _originalTracks;
+        private List<int>? _shuffledIndexes;
+        
+        public override bool Shuffle { get; protected set; } 
+        
+        protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
+        {
+            base.OnCollectionChanged(e);
+            
+            if (Shuffle && e.Action == NotifyCollectionChangedAction.Reset)
+            {
+                _originalTracks = null;
+                _shuffledIndexes = null;
+                Shuffle = false;
+            }
+        }
+
+        public void ShuffleTracks(int? startingIndex)
+        {
+            if (Shuffle)
+                throw new InvalidOperationException("Already shuffled");
+            
+            CheckReentrancy();
+            
+            var shuffledIndexes = new int[Items.Count];
+            
+            if (startingIndex is > 0)
+            {
+                (Items[startingIndex.Value], Items[0]) = (Items[0], Items[startingIndex.Value]);
+                shuffledIndexes[0] = 0;
+            }
+            
+            _originalTracks = Items.ToList();
+            
+            for (var i = Items.Count - 1; i > 0; i--)
+            {
+                var k = Random.Shared.Next(1, i + 1);
+                (Items[k], Items[i]) = (Items[i], Items[k]);
+                shuffledIndexes[k] = i;
+            }
+            
+            _shuffledIndexes = new(shuffledIndexes);
+
+            RaiseChangeNotificationEvents(NotifyCollectionChangedAction.Reset);
+            Shuffle = true;
+        }
+
+        public void RevertShuffle()
+        {
+            if (!Shuffle)
+                throw new InvalidOperationException("Not shuffled");
+            
+            Shuffle = false;
+            ReplaceRange(_originalTracks!);
+        }
+
+        public override void AddRangeSequential(IEnumerable<PlaylistTrack> collection)
+        {
+            if (collection == null)
+                throw new ArgumentNullException(nameof(collection));
+
+            CheckReentrancy();
+
+            var enumerable = collection as IList<PlaylistTrack> ?? collection.ToArray();
+
+            if (Shuffle)
+            {
+                _originalTracks!.AddRange(enumerable);
+                
+                var shuffledIndexes = new int[enumerable.Count];
+                
+                for (var i = enumerable.Count - 1; i >= 0; i--)
+                {
+                    var k = Random.Shared.Next(i + 1);
+                    (enumerable[k], enumerable[i]) = (enumerable[i], enumerable[k]);
+                    shuffledIndexes[k] = _shuffledIndexes!.Count + i;
+                }
+                
+                _shuffledIndexes!.AddRange(shuffledIndexes);
+            }
+            
+            base.AddRangeSequential(enumerable);
+        }
+
+        protected override void InsertItem(int index, PlaylistTrack item)
+        {
+            base.InsertItem(index, item);
+            if (!Shuffle) return;
+            
+            _originalTracks!.Add(item);
+            _shuffledIndexes!.Add(index);
+        }
+
+        protected override void RemoveItem(int index)
+        {
+            base.RemoveItem(index);
+            if (!Shuffle) return;
+            
+            _originalTracks!.RemoveAt(_shuffledIndexes![index]);
+            _shuffledIndexes.RemoveAt(index);
+        }
+    }
+}
+
+public abstract class TrackCollectionBase : ObservableRangeCollection<PlaylistTrack>
+{
+    public abstract bool Shuffle { get; protected set; }
 }

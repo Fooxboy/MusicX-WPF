@@ -1,25 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
-using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
-using MusicX.Core.Services;
 using MusicX.Helpers;
 using MusicX.Services;
+using MusicX.Services.Player;
 using NLog;
-using Squirrel;
+using NuGet.Versioning;
+using Velopack;
 using Wpf.Ui;
 
 namespace MusicX.ViewModels.Modals;
 
-public sealed class AvailableNewUpdateModalViewModel : BaseViewModel, IDisposable
+public sealed class AvailableNewUpdateModalViewModel : BaseViewModel
 {
     private readonly UpdateManager _updateManager;
-    private readonly GithubService _githubService;
+
+    public SemanticVersion? CurrentVersion => _updateManager.CurrentVersion;
 
     public UpdateInfo UpdateInfo { get; set; }
     
@@ -29,47 +31,11 @@ public sealed class AvailableNewUpdateModalViewModel : BaseViewModel, IDisposabl
     
     public int Progress { get; set; }
 
-    public string Changelog { get; private set; } = "Загрузка...";
-
-    public AvailableNewUpdateModalViewModel(UpdateManager updateManager, UpdateInfo updateInfo,
-        GithubService githubService)
+    public AvailableNewUpdateModalViewModel(UpdateManager updateManager, UpdateInfo updateInfo)
     {
         _updateManager = updateManager;
-        _githubService = githubService;
         UpdateInfo = updateInfo;
         ApplyUpdatesCommand = new AsyncCommand(Execute);
-        LoadChangelogAsync().SafeFireAndForget(ex =>
-        {
-            var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
-            var logger = StaticService.Container.GetRequiredService<Logger>();
-            
-            var properties = new Dictionary<string, string>
-            {
-#if DEBUG
-                { "IsDebug", "True" },
-#endif
-                {"Version", StaticService.Version }
-            };
-            Crashes.TrackError(ex, properties);
-            logger.Error(ex, ex.Message);
-
-            snackbarService.ShowException("Неудалось получить список изменений",
-                $"Произошла ошибка при получении списка изменений: {ex.Message}");
-            Changelog = "Нет информации.";
-        });
-    }
-
-    private async Task LoadChangelogAsync()
-    {
-        var sb = new StringBuilder();
-        foreach (var entry in UpdateInfo.ReleasesToApply)
-        {
-            var release = await _githubService.GetReleaseByTag(entry.Version.ToFullString());
-
-            sb.AppendLine($"- {entry.Version.ToFullString()}:").AppendLine(release.Body);
-        }
-
-        Changelog = sb.ToString();
     }
 
     private async Task Execute()
@@ -79,10 +45,17 @@ public sealed class AvailableNewUpdateModalViewModel : BaseViewModel, IDisposabl
         {
             void ProgressHandler(int i) => Progress = i;
 
-            await _updateManager.DownloadReleases(UpdateInfo.ReleasesToApply, ProgressHandler);
-            await _updateManager.ApplyReleases(UpdateInfo, ProgressHandler);
+            await _updateManager.DownloadUpdatesAsync(UpdateInfo, ProgressHandler);
 
-            UpdateManager.RestartApp();
+            var playerState = PlayerState.CreateOrNull(StaticService.Container.GetRequiredService<PlayerService>());
+            
+            _updateManager.WaitExitThenApplyUpdates(UpdateInfo, restartArgs: new []
+            {
+                "--play",
+                playerState is null ? "null" : JsonSerializer.Serialize(playerState)
+            });
+            
+            Application.Current.Shutdown();
         }
         catch (Exception ex)
         {
@@ -101,15 +74,7 @@ public sealed class AvailableNewUpdateModalViewModel : BaseViewModel, IDisposabl
 
             snackbarService.ShowException("Неудалось обновить приложение",
                 $"Произошла ошибка при обновлении приложения: {ex.Message}");
-        }
-        finally
-        {
             IsUpdating = false;
         }
-    }
-
-    public void Dispose()
-    {
-        _updateManager.Dispose();
     }
 }

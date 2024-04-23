@@ -22,6 +22,7 @@ public sealed record PlaylistTrack(string Title, string Subtitle, AlbumId? Album
 
 [JsonDerivedType(typeof(VkTrackData), "vk")]
 [JsonDerivedType(typeof(BoomTrackData), "boom")]
+[JsonDerivedType(typeof(DownloaderData), "downloader")]
 [ProtoContract(ImplicitFields = ImplicitFields.AllPublic, SkipConstructor = true)]
 [ProtoInclude(100, typeof(BoomTrackData))]
 [ProtoInclude(101, typeof(VkTrackData))]

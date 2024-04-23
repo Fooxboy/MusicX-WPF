@@ -106,7 +106,7 @@ public partial class SectionView : Page, IProvideCustomContentState, IMenuPage
         if (e.PropertyName == "Next")
             Dispatcher.BeginInvoke(async () =>
             {
-                var scroll = (ScrollViewer)BlocksScrollView.Template.FindName("Scroll", BlocksScrollView);
+                var scroll = (ScrollViewer)BlocksScrollView.Template.FindName("PART_ScrollViewer", BlocksScrollView);
                 if (!_loading && scroll.ScrollableHeight < scroll.ViewportHeight)
                     await ((SectionViewModel)DataContext).LoadMore();
             });

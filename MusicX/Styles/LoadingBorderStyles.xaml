@@ -1,0 +1,42 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:MusicX.Controls">
+    <Style x:Key="DefaultLoadingBorderStyle" TargetType="controls:LoadingBorder">
+        <Style.Resources>
+            <Storyboard x:Key="LoadingBorderLoaderAnimation">
+                <ColorAnimation Storyboard.TargetProperty="Background.(SolidColorBrush.Color)"
+                                AutoReverse="True"
+                                RepeatBehavior="Forever"
+                                Duration="0:0:1"
+                                From="#383838" To="#7f7f7f7f">
+                    <ColorAnimation.EasingFunction>
+                        <ExponentialEase EasingMode="EaseIn" />
+                    </ColorAnimation.EasingFunction>
+                </ColorAnimation>
+            </Storyboard>
+        </Style.Resources>
+        
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="BorderThickness" Value="{StaticResource CardBorderThemeThickness}" />
+        
+        <Style.Triggers>
+            <Trigger Property="IsLoading" Value="True">
+                <Trigger.EnterActions>
+                    <BeginStoryboard Name="LoadingBorderLoaderAnimation" Storyboard="{StaticResource LoadingBorderLoaderAnimation}" />
+                </Trigger.EnterActions>
+                <Trigger.ExitActions>
+                    <RemoveStoryboard BeginStoryboardName="LoadingBorderLoaderAnimation" />
+                </Trigger.ExitActions>
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <SolidColorBrush Color="#383838" />
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}" />
+                <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    
+    <Style TargetType="controls:LoadingBorder" BasedOn="{StaticResource DefaultLoadingBorderStyle}" />
+</ResourceDictionary>

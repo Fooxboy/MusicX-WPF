@@ -39,8 +39,6 @@ namespace MusicX.Controls
     {
         private readonly Logger logger;
         private readonly PlayerService player;
-        
-        public BitmapImage BitImage { get; set; }
 
         public TrackControl()
         {
@@ -61,23 +59,11 @@ namespace MusicX.Controls
         {
             if (player.CurrentTrack is { Data: VkTrackData data } && data.Info.Id == Audio.Id)
             {
-
-                if(!ShowCard)
-                {
-                    Card.Opacity = 1;
-                }
-
-
                 PlayButtons.Visibility = Visibility.Visible;
             }
             else
             {
                 PlayButtons.Visibility = Visibility.Collapsed;
-
-                if (!ShowCard)
-                {
-                    Card.Opacity = 0;
-                }
 
                 IconPlay.Symbol = SymbolRegular.Play24;
             }
@@ -136,61 +122,17 @@ namespace MusicX.Controls
                 player.PlayStateChangedEvent += Player_PlayStateChangedEvent;
 
                 IconPlay.Symbol = SymbolRegular.Play24;
+                if (ChartPosition != 0) ChartGrid.Visibility = Visibility.Visible;
 
-                if (ShowCard)
+                if(!Audio.IsAvailable || string.IsNullOrEmpty(Audio.Url))
                 {
-                    Card.Opacity = 1;
-                }
-                else
-                {
-                    TextsPanel.MaxWidth = double.PositiveInfinity;
-                    Card.Opacity = 0;
-                }
-
-                Subtitle.Visibility = string.IsNullOrEmpty(Audio.Subtitle) ? Visibility.Collapsed : Visibility.Visible;
-
-                Title.Text = Audio.Title;
-                Subtitle.Text = Audio.Subtitle;
-                if (ChartPosition != 0)
-                {
-                    ChartGrid.Visibility = Visibility.Visible;
-                    ChartPositionText.Text = ChartPosition.ToString();
-                }
-
-                if(!Audio.IsAvailable || Audio.Url == String.Empty)
-                {
-                    Title.Text = Audio.Title;
-                    Subtitle.Text = Audio.Subtitle;
                     Artists.Text = Audio.Artist;
                     Opacity = 0.3;
                     return;
                 }
 
-              
-                if(BitImage != null)
-                {
-                    Cover.ImageSource = BitImage;
-                }else
-                {
-                    if (Audio.Album != null)
-                    {
-                        if (Audio.Album.Cover != null)
-                            Cover.ImageSource = new BitmapImage(new Uri(Audio.Album.Cover))
-                            {
-                                DecodePixelHeight = 45, 
-                                DecodePixelWidth = 45, 
-                                UriCachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.Default)
-                            };
-
-                    }
-                }
-
-                var time = string.Empty;
-                TimeSpan t = TimeSpan.FromSeconds(Audio.Duration);
-                if (t.Hours > 0) time = t.ToString("h\\:mm\\:ss");
-                time = t.ToString("m\\:ss");
-
-
+                var t = TimeSpan.FromSeconds(Audio.Duration);
+                var time = t.ToString(t.Hours > 0 ? @"h\:mm\:ss" : @"m\:ss");
                 Time.Text = time;
 
                 if (Audio.MainArtists is null or {Count: 0})
@@ -213,9 +155,6 @@ namespace MusicX.Controls
                 if (Audio.FeaturedArtists is not null)
                     AddArtists(Audio.FeaturedArtists);
                 
-                
-
-
                 var configService = StaticService.Container.GetRequiredService<ConfigService>();
 
 
@@ -228,7 +167,7 @@ namespace MusicX.Controls
                 }
                 else
                 {
-                    AddRemoveIcon.Symbol = SymbolRegular.Add24;
+                    AddRemoveIcon.Symbol = SymbolRegular.Add20;
                     AddRemoveText.Text = "Добавить к себе";
 
                 }
@@ -243,42 +182,15 @@ namespace MusicX.Controls
 
                 }
 
-               
-                if(ActualWidth > 110)
-                {
-                    NamePanel.MaxWidth = ActualWidth - 110;
-
-                    if (Audio.IsExplicit)
-                    {
-                        Title.MaxWidth = (NamePanel.MaxWidth - 20);
-
-                    }
-                    else
-                    {
-                        Title.MaxWidth = (NamePanel.MaxWidth);
-                    }
-
-                    Artists.MaxWidth = ActualWidth;
-                }
-
 
                 if (player.CurrentTrack is { Data: VkTrackData data } && data.Info.Id == Audio.Id)
                 {
                     PlayButtons.Visibility = Visibility.Visible;
                     IconPlay.Symbol = SymbolRegular.Pause24;
-
-                    if (!ShowCard)
-                    {
-                        Card.Opacity = 1;
-                    }
                 }
-                  
-
-
             }
             catch (Exception ex)
             {
-
                 var properties = new Dictionary<string, string>
                 {
 #if DEBUG
@@ -290,11 +202,7 @@ namespace MusicX.Controls
 
                 logger.Error("Failed load track control");
                 logger.Error(ex, ex.Message);
-
-                Title.Text = "Невозможно загрузить";
-                Subtitle.Text = "это аудио";
-
-                Artists.Text = "Попробуйте позже";
+                Opacity = 0.3;
             }
             
         }
@@ -370,36 +278,11 @@ namespace MusicX.Controls
         {
             try
             {
-                RecommendedAudio.Visibility = Visibility.Visible;
-
                 if (player.CurrentTrack is not { Data: VkTrackData data } || data.Info.Id != Audio.Id)
                 {
                     PlayButtons.Visibility = Visibility.Visible;
                 }
-
-                if (ShowCard)
-                {
-                    oldWidth = Title.ActualWidth;
-                    oldWidthArtists = Artists.ActualWidth;
-                    Title.MaxWidth = 120;
-                    Subtitle.Visibility = Visibility.Collapsed;
-                    //Artists.MaxWidth = 120;
-
-                    explicitBadge.Margin = new Thickness(7, 0, 0, 0);
-
-                }
-             
-                if (!ShowCard)
-                {
-                    if (player.CurrentTrack is not { Data: VkTrackData data1 } || data1.Info.Id != Audio.Id)
-                    {
-                        Card.Opacity = 1;
-
-                    }
-
-                }
-
-                Card.Opacity = 0.5;
+                
             }catch(Exception ex)
             {
 
@@ -422,31 +305,9 @@ namespace MusicX.Controls
         {
             try
             {
-                RecommendedAudio.Visibility = Visibility.Collapsed;
-
                 if (player.CurrentTrack is not { Data: VkTrackData data } || data.Info.Id != Audio.Id)
                 {
                     PlayButtons.Visibility = Visibility.Collapsed;
-                }
-
-                if (ShowCard)
-                {
-                    Title.MaxWidth = oldWidth + 2;
-                    Subtitle.Visibility = Visibility.Visible;
-
-                    Artists.MaxWidth = oldWidthArtists + 2;
-
-                    explicitBadge.Margin = new Thickness(0, 0, 0, 0);
-                    Card.Opacity = 1;
-                }
-                
-                if (player.CurrentTrack is not { Data: VkTrackData data1 } || data1.Info.Id != Audio.Id)
-                {
-                    Card.Opacity = ShowCard ? 1 : 0;
-                } 
-                else if (data1.Info.Id == Audio.Id)
-                {
-                    Card.Opacity = 1;
                 }
             }catch(Exception ex)
             {
@@ -481,7 +342,7 @@ namespace MusicX.Controls
                 if (e.Source is TextBlock)
                     return;
 
-                if (Audio.Url == String.Empty)
+                if (string.IsNullOrEmpty(Audio.Url))
                 {
                     var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
                     var modalViewModel = StaticService.Container.GetRequiredService<TrackNotAvalibleModalViewModel>();
@@ -494,9 +355,8 @@ namespace MusicX.Controls
                 //костыль для бума, да мне лень править.
                 if (Audio.Url.EndsWith(".mp3"))
                 {
-                    var boomService = StaticService.Container.GetRequiredService<BoomService>();
-
-                    await player.PlayAsync(new SinglePlaylist(this.Audio.ToTrack()), Audio.ToTrack());
+                    await player.PlayAsync(new SinglePlaylist(Audio.ToTrack()), Audio.ToTrack());
+                    return;
                 }
 
                 var vkService = StaticService.Container.GetRequiredService<VkService>();
@@ -505,7 +365,7 @@ namespace MusicX.Controls
                 if (this.FindAncestor<PlaylistView>() is { DataContext: PlaylistViewModel viewModel })
                     await player.PlayAsync(new VkPlaylistPlaylist(vkService, viewModel.PlaylistData), Audio.ToTrack());
                 //костыль для реков, да мне лень править.
-                else if (Audio.ParentBlockId == "recomms" && this.FindAncestor<BlockControl>() is { DataContext: Block { Audios.Count: > 0 } block })
+                else if (Audio.ParentBlockId is "recomms" or "track_recomms_full" && this.FindAncestor<BlockControl>() is { DataContext: Block { Audios.Count: > 0 } block })
                     await player.PlayAsync(new ListPlaylist(block.Audios.Select(TrackExtensions.ToTrack).ToImmutableList()), Audio.ToTrack());
                 else
                     await player.PlayAsync(new VkBlockPlaylist(vkService, Audio.ParentBlockId, LoadOtherTracks), Audio.ToTrack());
@@ -578,7 +438,7 @@ namespace MusicX.Controls
 
         }
 
-        private async void Artists_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void Artists_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             try
             {
@@ -661,24 +521,6 @@ namespace MusicX.Controls
                 var navigation = StaticService.Container.GetRequiredService<NavigationService>();
                 navigation.OpenMenuSection("downloads");
             }
-        }
-
-        private void Title_MouseEnter(object sender, MouseEventArgs e)
-        {
-            if (Audio.Album != null)
-            {
-                Title.TextDecorations.Add(TextDecorations.Underline);
-                Cursor = Cursors.Hand;
-            }
-        }
-
-        private void Title_MouseLeave(object sender, MouseEventArgs e)
-        {
-            foreach (var dec in TextDecorations.Underline)
-            {
-                Title.TextDecorations.Remove(dec);
-            }
-            Cursor = Cursors.Arrow;
         }
 
         private async void Title_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -883,6 +725,20 @@ namespace MusicX.Controls
         {
             player.TrackChangedEvent -= Player_TrackChangedEvent;
             player.PlayStateChangedEvent -= Player_PlayStateChangedEvent;
+        }
+
+        private void MainGrid_OnMouseEnter(object sender, MouseEventArgs e)
+        {
+            RecommendedAudioColumn.Width = GridLength.Auto;
+            ExplicitBadgeColumn.Width = new(0);
+            TimeColumn.Width = new(0);
+        }
+
+        private void MainGrid_OnMouseLeave(object sender, MouseEventArgs e)
+        {
+            RecommendedAudioColumn.Width = new(0);
+            ExplicitBadgeColumn.Width = GridLength.Auto;
+            TimeColumn.Width = GridLength.Auto;
         }
     }
 }

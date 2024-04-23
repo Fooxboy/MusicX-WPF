@@ -9,10 +9,13 @@ using Windows.Media.MediaProperties;
 using Windows.Media.Transcoding;
 using Windows.Storage;
 using FFMediaToolkit;
+using FFMediaToolkit.Audio;
+using FFMediaToolkit.Decoding;
 using FFmpegInteropX;
 using MusicX.Core.Services;
 using MusicX.Helpers;
 using MusicX.Services.Player.Playlists;
+using MusicX.Services.Player.Sources;
 using MusicX.Shared.Player;
 using TagLib;
 using TagLib.Id3v2;
@@ -55,8 +58,8 @@ public class DownloaderService
         if (string.IsNullOrEmpty(audio.Data.Url))
             return;
         
-        var fileName = $"{audio.GetArtistsString()} - {audio.Title}.mp3";
-        fileName = ReplaceSymbols(fileName);
+        var fileName = $"{audio.GetArtistsString()} - {audio.Title}";
+        fileName = ReplaceSymbols(fileName) + ".mp3";
             
         string fileDownloadPath;
         var musicFolder = GetDownloadDirectoryAsync();
@@ -98,13 +101,17 @@ public class DownloaderService
         }
         else
         {
-            using var ffmpegMediaSource = await FFmpegMediaSource.CreateFromUriAsync(audio.Data.Url, new()
-            {
-                FFmpegOptions =
-                {
-                    ["http_persistent"] = "false"
-                }
-            }).AsTask(cancellationToken);
+            // blocked by FFmpegMediaSource working only with active media player
+            // using var ffmpegMediaSource = await FFmpegMediaSource.CreateFromUriAsync(audio.Data.Url, new()
+            // {
+            //     FFmpegOptions =
+            //     {
+            //         ["http_persistent"] = "false"
+            //     }
+            // }).AsTask(cancellationToken);
+            // var streamSource = ffmpegMediaSource.GetMediaStreamSource();
+
+            var streamSource = MediaSourceBase.CreateFFMediaStreamSource(audio.Data.Url);
 
             var encodingProfile = MediaEncodingProfile.CreateMp3(AudioEncodingQuality.Auto);
             
@@ -114,7 +121,7 @@ public class DownloaderService
             using var destinationStream = await destination.OpenAsync(FileAccessMode.ReadWrite).AsTask(cancellationToken);
             
             var prepareOp =
-                await _mediaTranscoder.PrepareMediaStreamSourceTranscodeAsync(ffmpegMediaSource.GetMediaStreamSource(),
+                await _mediaTranscoder.PrepareMediaStreamSourceTranscodeAsync(streamSource,
                     destinationStream, encodingProfile).AsTask(cancellationToken);
 
             if (!prepareOp.CanTranscode)
@@ -128,9 +135,10 @@ public class DownloaderService
 
             var transcodeOp = prepareOp.TranscodeAsync();
 
-            transcodeOp.Progress += (sender, position) =>
+            var duration = streamSource.Duration;
+            transcodeOp.Progress += (_, position) =>
             {
-                progress?.Report((TimeSpan.FromSeconds(position), TimeSpan.FromSeconds(1)));
+                progress?.Report((TimeSpan.FromSeconds(position), duration));
             };
 
             await transcodeOp.AsTask(cancellationToken);
@@ -141,7 +149,7 @@ public class DownloaderService
 
     private string ReplaceSymbols(string fileName)
     {
-        return string.Join("_", fileName.Split(Path.GetInvalidFileNameChars()));
+        return string.Join("_", fileName.Split(Path.GetInvalidFileNameChars())).Replace('.', '_');
     }
 
     private async Task AddMetadataAsync(PlaylistTrack audio, string filePath, CancellationToken cancellationToken)
@@ -172,18 +180,21 @@ public class DownloaderService
         if (audio.AlbumId != null)
         {
             tfile.Tag.Album = audio.AlbumId.Name;
-            
-            var thumbData = await _httpClient.GetByteArrayAsync(audio.AlbumId.BigCoverUrl ?? audio.AlbumId.CoverUrl, cancellationToken);
 
-            var cover = new AttachedPictureFrame
+            if (audio.AlbumId.CoverUrl != null)
             {
-                Type = PictureType.FrontCover,
-                Description = "Cover",
-                MimeType = MediaTypeNames.Image.Jpeg,
-                Data = thumbData,
-                TextEncoding = StringType.UTF16
-            };
-            tfile.Tag.Pictures = new IPicture[] {cover};
+                var thumbData = await _httpClient.GetByteArrayAsync(audio.AlbumId.BigCoverUrl ?? audio.AlbumId.CoverUrl, cancellationToken);
+
+                var cover = new AttachedPictureFrame
+                {
+                    Type = PictureType.FrontCover,
+                    Description = "Cover",
+                    MimeType = MediaTypeNames.Image.Jpeg,
+                    Data = thumbData,
+                    TextEncoding = StringType.UTF16
+                };
+                tfile.Tag.Pictures = new IPicture[] {cover};
+            }
         }
         
         tfile.Save();

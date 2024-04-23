@@ -9,33 +9,39 @@ namespace MusicX.Controls.Blocks
     /// </summary>
     public partial class LinksBlockControl : UserControl
     {
-        public LinksBlockControl()
-        {
-            InitializeComponent();
-            this.Loaded += LinksBlockControl_Loaded;
-        }
+        public static readonly DependencyProperty BlockProperty = DependencyProperty.Register(
+            nameof(Block), typeof(Block), typeof(LinksBlockControl), new(default(Block), BlockChanged));
 
-        private void LinksBlockControl_Loaded(object sender, RoutedEventArgs e)
+        private static void BlockChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (DataContext is not Block block)
+            if (d is not LinksBlockControl control || e.NewValue is not Block block)
                 return;
-            LinksBlock.Visibility = Visibility.Visible;
-
+            
             if (block.Layout.Name == "list")
             {
                 foreach (var link in block.Links)
                 {
-                    ListLinks.Children.Add(new LinkControl() { Height = 80, Width = 300, Link = link, FullLink = true, Margin = new Thickness(0, 0, 10, 10) });
+                    control.ListLinks.Children.Add(new LinkControl() { Height = 80, Width = 300, Link = link, FullLink = true, Margin = new Thickness(0, 0, 10, 10) });
                 }
-
             }
             else
             {
                 foreach (var link in block.Links)
                 {
-                    ListLinksRec.Children.Add(new LinkControl() { Height = 140, Width = 140, Link = link, Margin = new Thickness(0, 0, 10, 0) });
+                    control.ListLinksRec.Children.Add(new LinkControl() { Height = 140, Width = 140, Link = link, Margin = new Thickness(0, 0, 10, 0) });
                 }
             }
+        }
+
+        public Block Block
+        {
+            get => (Block)GetValue(BlockProperty);
+            set => SetValue(BlockProperty, value);
+        }
+        
+        public LinksBlockControl()
+        {
+            InitializeComponent();
         }
     }
 }

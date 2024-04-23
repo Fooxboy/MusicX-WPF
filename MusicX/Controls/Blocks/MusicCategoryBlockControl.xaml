@@ -3,117 +3,39 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:controls1="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:models="clr-namespace:MusicX.Core.Models;assembly=MusicX.Core"
+             xmlns:controls="clr-namespace:MusicX.Controls"
+             xmlns:shaders="clr-namespace:MusicX.Shaders"
              mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance models:Block}"
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid x:Name="Root">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition x:Name="c0"/>
-            <ColumnDefinition x:Name="c1"/>
-        </Grid.ColumnDefinitions>
-
-        <Grid.RowDefinitions>
-            <RowDefinition x:Name="r0"/>
-            <RowDefinition x:Name="r1"/>
-        </Grid.RowDefinitions>
-
-        <controls1:CardAction
-            Height="80"
-            Grid.Row="0"
-            Grid.Column="0"
-            Margin="0 10 10 0"
-            Click="CardAction_Click"
-            HorizontalAlignment="Stretch"
-            IsChevronVisible="True">
-            <StackPanel Orientation="Horizontal" x:Name="StackPanelLink">
-                <Image Height="55" Width="55" Source="/Assets/icons/recent_white.png"/>
-
-                <TextBlock
-                    Margin="20,5,0,0"
-                    VerticalAlignment="Center"
-                    HorizontalAlignment="Center"
-                    FontFamily="{StaticResource VKSansRegular}"
-                    Text="Недавнее"
-                    TextTrimming="CharacterEllipsis" />
-
-
-            </StackPanel>
-        </controls1:CardAction>
-
-        <controls1:CardAction
-
-            Height="80"
-            Grid.Row="0"
-            Grid.Column="1"
-            Click="CardAction_Click_1"
-            Margin="0 10 10 0"
-            HorizontalAlignment="Stretch"
-            IsChevronVisible="True">
-            <StackPanel Orientation="Horizontal">
-                <Image Height="55" Width="55" Source="/Assets/icons/playlists_white.png"/>
-
-                <TextBlock
-                 
-                    Margin="20,5,0,0"
-                    VerticalAlignment="Center"
-                    HorizontalAlignment="Center"
-                    FontFamily="{StaticResource VKSansRegular}"
-                    Text="Плейлисты"
-                    TextTrimming="CharacterEllipsis" />
-
-
-            </StackPanel>
-        </controls1:CardAction>
-
-        <controls1:CardAction
-            Height="80"
-            Grid.Row="1"
-            Grid.Column="0"
-            Click="CardAction_Click_2"
-            Margin="0 10 10 0"
-            HorizontalAlignment="Stretch"
-            IsChevronVisible="True">
-            <StackPanel Orientation="Horizontal">
-                <Image Height="55" Width="55" Source="/Assets/icons/albums_white.png"/>
-
-                <TextBlock
-                 
-                    Margin="20,5,0,0"
-                    VerticalAlignment="Center"
-                    HorizontalAlignment="Center"
-                    FontFamily="{StaticResource VKSansRegular}"
-                    Text="Альбомы"
-                    TextTrimming="CharacterEllipsis" />
-
-
-            </StackPanel>
-        </controls1:CardAction>
-
-        <controls1:CardAction
-
-            Height="80"
-            Grid.Row="1"
-            Grid.Column="1"
-            Margin="0 10 10 0"
-            Click="CardAction_Click_3"
-            HorizontalAlignment="Stretch"
-            IsChevronVisible="True">
-            <StackPanel Orientation="Horizontal">
-                <Image Height="55" Width="55" Source="/Assets/icons/follows_white.png"/>
-
-                <TextBlock
-                 
-                    Margin="20,5,0,0"
-                    VerticalAlignment="Center"
-                    HorizontalAlignment="Center"
-                    FontFamily="{StaticResource VKSansRegular}"
-                    Text="Подписки"
-                    TextTrimming="CharacterEllipsis" />
-
-
-            </StackPanel>
-        </controls1:CardAction>
-
-    </Grid>
-    
+    <ui:ListView Style="{StaticResource ItemsListViewStyle}" ItemsSource="{Binding Links, Mode=OneTime}">
+        <ui:ListView.ItemsPanel>
+            <ItemsPanelTemplate>
+                <controls:DynamicUniformGrid IsItemsHost="True" Columns="2" />
+            </ItemsPanelTemplate>
+        </ui:ListView.ItemsPanel>
+        
+        <ui:ListView.ItemTemplate>
+            <DataTemplate DataType="{x:Type models:Link}">
+                <ui:CardAction
+                    Height="80"
+                    Margin="0 0 10 10"
+                    Click="CardAction_Click"
+                    IsChevronVisible="True">
+                    <ui:CardAction.Icon>
+                        <ui:ImageIcon Source="{Binding Image[0].Url}">
+                            <ui:ImageIcon.Effect>
+                                <shaders:ColorOverlayEffect />
+                            </ui:ImageIcon.Effect>
+                        </ui:ImageIcon>
+                    </ui:CardAction.Icon>
+                    <TextBlock FontFamily="{StaticResource VKSansRegular}"
+                               Text="{Binding Title}"
+                               TextTrimming="CharacterEllipsis" />
+                </ui:CardAction>
+            </DataTemplate>
+        </ui:ListView.ItemTemplate>
+    </ui:ListView>
 </UserControl>

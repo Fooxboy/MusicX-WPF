@@ -25,7 +25,7 @@ namespace MusicX.Core.Helpers
                             var id = (playlist.Original.OwnerId * -1);
                             if(response.Groups != null)
                             {
-                                var value = response.Groups.SingleOrDefault(g => g.Id == id);
+                                var value = response.Groups.FirstOrDefault(g => g.Id == id);
                                 playlist.OwnerName = value?.Name;
 
                             }
@@ -33,7 +33,7 @@ namespace MusicX.Core.Helpers
                         }
                         else
                         {
-                            var value = response.Profiles.SingleOrDefault(p => p.Id == playlist.Original?.OwnerId);
+                            var value = response.Profiles.FirstOrDefault(p => p.Id == playlist.Original?.OwnerId);
 
                             playlist.OwnerName = value?.FirstName + " " + value?.LastName;
                         }
@@ -45,14 +45,14 @@ namespace MusicX.Core.Helpers
                             var id = (playlist.OwnerId * -1);
                             if(response.Groups != null)
                             {
-                                var value = response.Groups.SingleOrDefault(g => g.Id == id);
+                                var value = response.Groups.FirstOrDefault(g => g.Id == id);
 
                                 playlist.OwnerName = value?.Name;
                             }
                         }
                         else
                         {
-                            var value = response.Profiles.SingleOrDefault(p => p.Id == playlist?.OwnerId);
+                            var value = response.Profiles.FirstOrDefault(p => p.Id == playlist?.OwnerId);
 
                             playlist.OwnerName = value?.FirstName + " " + value?.LastName;
                         }
@@ -75,7 +75,7 @@ namespace MusicX.Core.Helpers
                                 var audioId = long.Parse(audioArray[1]);
                                 var ownerId = long.Parse(audioArray[0]);
 
-                                var audio = response.Audios.SingleOrDefault(a => a.Id == audioId && a.OwnerId == ownerId);
+                                var audio = response.Audios.FirstOrDefault(a => a.Id == audioId && a.OwnerId == ownerId);
 
                                 if (audio == null) continue;
 
@@ -94,7 +94,7 @@ namespace MusicX.Core.Helpers
                                 var playlistId = long.Parse(playlistArray[1]);
                                 var ownerId = long.Parse(playlistArray[0]);
 
-                                var playlist = response.Playlists.SingleOrDefault(p => p.Id == playlistId && p.OwnerId == ownerId);
+                                var playlist = response.Playlists.FirstOrDefault(p => p.Id == playlistId && p.OwnerId == ownerId);
 
                                 if (playlist == null) continue;
 
@@ -108,7 +108,7 @@ namespace MusicX.Core.Helpers
                             foreach (var bannerId in block.CatalogBannerIds)
                             {
 
-                                var banner = response.CatalogBanners.SingleOrDefault(b => b.Id == bannerId);
+                                var banner = response.CatalogBanners.FirstOrDefault(b => b.Id == bannerId);
 
                                 if (banner == null) continue;
 
@@ -122,7 +122,7 @@ namespace MusicX.Core.Helpers
                             foreach (var linkId in block.LinksIds)
                             {
 
-                                var link = response.Links.SingleOrDefault(b => b.Id == linkId);
+                                var link = response.Links.FirstOrDefault(b => b.Id == linkId);
 
                                 if (link == null) continue;
 
@@ -135,7 +135,7 @@ namespace MusicX.Core.Helpers
                         {
                             foreach (var suggestionId in block.SuggestionsIds)
                             {
-                                var suggestion = response.Suggestions.SingleOrDefault(b => b.Id == suggestionId);
+                                var suggestion = response.Suggestions.FirstOrDefault(b => b.Id == suggestionId);
 
                                 if (suggestion == null) continue;
 
@@ -148,7 +148,7 @@ namespace MusicX.Core.Helpers
                         {
                             foreach (var artistId in block.ArtistsIds)
                             {
-                                var artist = response.Artists.SingleOrDefault(b => b.Id == artistId);
+                                var artist = response.Artists.FirstOrDefault(b => b.Id == artistId);
 
                                 if (artist == null) continue;
 
@@ -161,7 +161,7 @@ namespace MusicX.Core.Helpers
                         {
                             foreach (var textId in block.TextIds)
                             {
-                                var text = response.Texts.SingleOrDefault(b => b.Id == textId);
+                                var text = response.Texts.FirstOrDefault(b => b.Id == textId);
 
                                 if (text == null) continue;
 
@@ -174,7 +174,7 @@ namespace MusicX.Core.Helpers
                         {
                             foreach (var groupId in block.GroupIds)
                             {
-                                var group = response.Groups.SingleOrDefault(b => b.Id == groupId);
+                                var group = response.Groups.FirstOrDefault(b => b.Id == groupId);
 
                                 if (group == null) continue;
 
@@ -187,7 +187,7 @@ namespace MusicX.Core.Helpers
                         {
                             foreach (var groupId in block.GroupsItemsIds)
                             {
-                                var group = response.Groups.SingleOrDefault(b => b.Id == groupId.Id);
+                                var group = response.Groups.FirstOrDefault(b => b.Id == groupId.Id);
 
                                 if (group == null) continue;
 
@@ -200,7 +200,7 @@ namespace MusicX.Core.Helpers
                         {
                             foreach (var curatorId in block.CuratorsIds)
                             {
-                                var curator = response.Curators.SingleOrDefault(b => b.Id == curatorId);
+                                var curator = response.Curators.FirstOrDefault(b => b.Id == curatorId);
 
                                 if (curator == null) continue;
 
@@ -213,7 +213,7 @@ namespace MusicX.Core.Helpers
                         {
                             foreach (var ownerId in block.MusicOwnerIds)
                             {
-                                var owner = response.MusicOwners.SingleOrDefault(b => b.Id == ownerId);
+                                var owner = response.MusicOwners.FirstOrDefault(b => b.Id == ownerId);
                         
                                 if (owner == null) continue;
                         
@@ -225,7 +225,7 @@ namespace MusicX.Core.Helpers
                         {
                             foreach (var updateInfoId in block.FollowingUpdateInfoIds)
                             {
-                                var updateInfo = response.FollowingsUpdateInfos.SingleOrDefault(b => b.Id == updateInfoId);
+                                var updateInfo = response.FollowingsUpdateInfos.FirstOrDefault(b => b.Id == updateInfoId);
                         
                                 if (updateInfo == null) continue;
 
@@ -248,7 +248,7 @@ namespace MusicX.Core.Helpers
                         var audioId = long.Parse(audioArray[1]);
                         var ownerId = long.Parse(audioArray[0]);
 
-                        var audio = response.Audios.SingleOrDefault(a => a.Id == audioId && a.OwnerId == ownerId);
+                        var audio = response.Audios.FirstOrDefault(a => a.Id == audioId && a.OwnerId == ownerId);
 
                         if (audio == null) continue;
 
@@ -268,7 +268,7 @@ namespace MusicX.Core.Helpers
                         var playlistId = long.Parse(playlistArray[1]);
                         var ownerId = long.Parse(playlistArray[0]);
 
-                        var playlist = response.Playlists.SingleOrDefault(p => p.Id == playlistId && p.OwnerId == ownerId);
+                        var playlist = response.Playlists.FirstOrDefault(p => p.Id == playlistId && p.OwnerId == ownerId);
 
                         if (playlist == null) continue;
 
@@ -283,7 +283,7 @@ namespace MusicX.Core.Helpers
                     {
 
 
-                        var banner = response.CatalogBanners.SingleOrDefault(b => b.Id == bannerId);
+                        var banner = response.CatalogBanners.FirstOrDefault(b => b.Id == bannerId);
 
                         if (banner == null) continue;
 
@@ -296,7 +296,7 @@ namespace MusicX.Core.Helpers
                 {
                     foreach (var linkId in response.Block.LinksIds)
                     {
-                        var link = response.Links.SingleOrDefault(b => b.Id == linkId);
+                        var link = response.Links.FirstOrDefault(b => b.Id == linkId);
 
                         if (link == null) continue;
 
@@ -309,7 +309,7 @@ namespace MusicX.Core.Helpers
                 {
                     foreach (var suggestionId in response.Block.SuggestionsIds)
                     {
-                        var suggestion = response.Suggestions.SingleOrDefault(b => b.Id == suggestionId);
+                        var suggestion = response.Suggestions.FirstOrDefault(b => b.Id == suggestionId);
 
                         if (suggestion == null) continue;
 
@@ -322,7 +322,7 @@ namespace MusicX.Core.Helpers
                 {
                     foreach (var placeholderId in response.Block.PlaceholdersIds)
                     {
-                        var placeholder = response.Placeholders.SingleOrDefault(b => b.Id == placeholderId);
+                        var placeholder = response.Placeholders.FirstOrDefault(b => b.Id == placeholderId);
 
                         if (placeholder == null) continue;
 
@@ -335,7 +335,7 @@ namespace MusicX.Core.Helpers
                 {
                     foreach (var artistId in response.Block.ArtistsIds)
                     {
-                        var artist = response.Artists.SingleOrDefault(b => b.Id == artistId);
+                        var artist = response.Artists.FirstOrDefault(b => b.Id == artistId);
 
                         if (artist == null) continue;
 
@@ -348,7 +348,7 @@ namespace MusicX.Core.Helpers
                 {
                     foreach (var textId in response.Block.TextIds)
                     {
-                        var text = response.Texts.SingleOrDefault(b => b.Id == textId);
+                        var text = response.Texts.FirstOrDefault(b => b.Id == textId);
 
                         if (text == null) continue;
 
@@ -361,7 +361,7 @@ namespace MusicX.Core.Helpers
                 {
                     foreach (var groupId in response.Block.GroupIds)
                     {
-                        var group = response.Groups.SingleOrDefault(b => b.Id == groupId);
+                        var group = response.Groups.FirstOrDefault(b => b.Id == groupId);
 
                         if (group == null) continue;
 
@@ -374,7 +374,7 @@ namespace MusicX.Core.Helpers
                 {
                     foreach (var groupId in response.Block.GroupsItemsIds)
                     {
-                        var group = response.Groups.SingleOrDefault(b => b.Id == groupId.Id);
+                        var group = response.Groups.FirstOrDefault(b => b.Id == groupId.Id);
 
                         if (group == null) continue;
 
@@ -387,7 +387,7 @@ namespace MusicX.Core.Helpers
                 {
                     foreach (var curatorId in response.Block.CuratorsIds)
                     {
-                        var curator = response.Curators.SingleOrDefault(b => b.Id == curatorId);
+                        var curator = response.Curators.FirstOrDefault(b => b.Id == curatorId);
 
                         if (curator == null) continue;
 
@@ -400,7 +400,7 @@ namespace MusicX.Core.Helpers
                 {
                     foreach (var ownerId in response.Block.MusicOwnerIds)
                     {
-                        var owner = response.MusicOwners.SingleOrDefault(b => b.Id == ownerId);
+                        var owner = response.MusicOwners.FirstOrDefault(b => b.Id == ownerId);
                         
                         if (owner == null) continue;
                         
@@ -412,7 +412,7 @@ namespace MusicX.Core.Helpers
                 {
                     foreach (var updateInfoId in response.Block.FollowingUpdateInfoIds)
                     {
-                        var updateInfo = response.FollowingsUpdateInfos.SingleOrDefault(b => b.Id == updateInfoId);
+                        var updateInfo = response.FollowingsUpdateInfos.FirstOrDefault(b => b.Id == updateInfoId);
                         
                         if (updateInfo == null) continue;
 
@@ -435,7 +435,7 @@ namespace MusicX.Core.Helpers
                         var audioId = long.Parse(audioArray[1]);
                         var ownerId = long.Parse(audioArray[0]);
 
-                        var audio = response.Audios.SingleOrDefault(a=> a.Id == audioId && a.OwnerId == ownerId);
+                        var audio = response.Audios.FirstOrDefault(a=> a.Id == audioId && a.OwnerId == ownerId);
 
                         if (audio == null) continue;
 
@@ -453,11 +453,11 @@ namespace MusicX.Core.Helpers
                     {
                         foreach (var lid in block.PlaylistsIds)
                         {
-                            var p = response.RecommendedPlaylists.SingleOrDefault(b => b.OwnerId + "_" + b.Id == lid);
+                            var p = response.RecommendedPlaylists.FirstOrDefault(b => b.OwnerId + "_" + b.Id == lid);
 
                             if (p == null) continue;
 
-                            var pp = response.Playlists.SingleOrDefault(b => b.OwnerId + "_" + b.Id == lid);
+                            var pp = response.Playlists.FirstOrDefault(b => b.OwnerId + "_" + b.Id == lid);
 
                             p.Playlist = pp;
                             block.RecommendedPlaylists.Add(p);
@@ -468,7 +468,7 @@ namespace MusicX.Core.Helpers
                         {
                             foreach (var aid in r.AudiosIds)
                             {
-                                var a = response.Audios.SingleOrDefault(b => b.OwnerId + "_" + b.Id == aid);
+                                var a = response.Audios.FirstOrDefault(b => b.OwnerId + "_" + b.Id == aid);
 
                                 if (a == null) continue;
 
@@ -488,7 +488,7 @@ namespace MusicX.Core.Helpers
                             var playlistId = long.Parse(playlistArray[1]);
                             var ownerId = long.Parse(playlistArray[0]);
 
-                            var playlist = response.Playlists.SingleOrDefault(p => p.Id == playlistId && p.OwnerId == ownerId);
+                            var playlist = response.Playlists.FirstOrDefault(p => p.Id == playlistId && p.OwnerId == ownerId);
 
                             if (playlist == null) continue;
 
@@ -503,7 +503,7 @@ namespace MusicX.Core.Helpers
                     foreach (var bannerId in block.CatalogBannerIds)
                     {
                        
-                        var banner = response.CatalogBanners.SingleOrDefault(b => b.Id == bannerId );
+                        var banner = response.CatalogBanners.FirstOrDefault(b => b.Id == bannerId );
 
                         if (banner == null) continue;
 
@@ -517,7 +517,7 @@ namespace MusicX.Core.Helpers
                     foreach (var linkId in block.LinksIds)
                     {
 
-                        var link = response.Links.SingleOrDefault(b => b.Id == linkId);
+                        var link = response.Links.FirstOrDefault(b => b.Id == linkId);
 
                         if (link == null) continue;
 
@@ -531,7 +531,7 @@ namespace MusicX.Core.Helpers
                     foreach (var placeholderId in block.PlaceholdersIds)
                     {
 
-                        var placeholder = response.Placeholders.SingleOrDefault(b => b.Id == placeholderId);
+                        var placeholder = response.Placeholders.FirstOrDefault(b => b.Id == placeholderId);
 
                         if (placeholder == null) continue;
 
@@ -558,7 +558,7 @@ namespace MusicX.Core.Helpers
                 {
                     foreach (var artistId in block.ArtistsIds)
                     {
-                        var artist = response.Artists.SingleOrDefault(b => b.Id == artistId);
+                        var artist = response.Artists.FirstOrDefault(b => b.Id == artistId);
 
                         if (artist == null) continue;
 
@@ -571,7 +571,7 @@ namespace MusicX.Core.Helpers
                 {
                     foreach (var textId in block.TextIds)
                     {
-                        var text = response.Texts.SingleOrDefault(b => b.Id == textId);
+                        var text = response.Texts.FirstOrDefault(b => b.Id == textId);
 
                         if (text == null) continue;
 
@@ -584,7 +584,7 @@ namespace MusicX.Core.Helpers
                 {
                     foreach (var groupId in block.GroupIds)
                     {
-                        var group = response.Groups.SingleOrDefault(b => b.Id == groupId);
+                        var group = response.Groups.FirstOrDefault(b => b.Id == groupId);
 
                         if (group == null) continue;
 
@@ -597,7 +597,7 @@ namespace MusicX.Core.Helpers
                 {
                     foreach (var groupId in block.GroupsItemsIds)
                     {
-                        var group = response.Groups.SingleOrDefault(b => b.Id == groupId.Id);
+                        var group = response.Groups.FirstOrDefault(b => b.Id == groupId.Id);
 
                         if (group == null) continue;
 
@@ -610,7 +610,7 @@ namespace MusicX.Core.Helpers
                 {
                     foreach (var curatorId in block.CuratorsIds)
                     {
-                        var curator = response.Curators.SingleOrDefault(b => b.Id == curatorId);
+                        var curator = response.Curators.FirstOrDefault(b => b.Id == curatorId);
 
                         if (curator == null) continue;
 
@@ -625,7 +625,7 @@ namespace MusicX.Core.Helpers
                     {
                         try
                         {
-                            var ps = response.PodcastSliderItems.SingleOrDefault(b => b.ItemId == psid);
+                            var ps = response.PodcastSliderItems.FirstOrDefault(b => b.ItemId == psid);
                             if (ps == null) continue;
 
                             block.PodcastSliderItems.Add(ps);
@@ -641,7 +641,7 @@ namespace MusicX.Core.Helpers
                 {
                     foreach (var peid in block.PodcastEpisodesIds)
                     {
-                        var pe = response.PodcastEpisodes.SingleOrDefault(b => b.OwnerId+"_"+b.Id == peid);
+                        var pe = response.PodcastEpisodes.FirstOrDefault(b => b.OwnerId+"_"+b.Id == peid);
 
                         if (pe == null) continue;
 
@@ -654,7 +654,7 @@ namespace MusicX.Core.Helpers
                 {
                     foreach (var lid in block.LongreadsIds)
                     {
-                        var l = response.Longreads.SingleOrDefault(b => b.OwnerId + "_" + b.Id == lid);
+                        var l = response.Longreads.FirstOrDefault(b => b.OwnerId + "_" + b.Id == lid);
 
                         if (l == null) continue;
 
@@ -667,7 +667,7 @@ namespace MusicX.Core.Helpers
                 {
                     foreach (var vid in block.VideosIds)
                     {
-                        var v = response.Videos.SingleOrDefault(b => b.OwnerId + "_" + b.Id == vid);
+                        var v = response.Videos.FirstOrDefault(b => b.OwnerId + "_" + b.Id == vid);
 
                         if (v == null) continue;
 
@@ -680,7 +680,7 @@ namespace MusicX.Core.Helpers
                 {
                     foreach (var vid in block.ArtistVideosIds)
                     {
-                        var v = response.ArtistVideos.SingleOrDefault(b => b.OwnerId + "_" + b.Id == vid);
+                        var v = response.ArtistVideos.FirstOrDefault(b => b.OwnerId + "_" + b.Id == vid);
 
                         if (v == null) continue;
 
@@ -693,7 +693,7 @@ namespace MusicX.Core.Helpers
                 {
                     foreach (var ownerId in block.MusicOwnerIds)
                     {
-                        var owner = response.MusicOwners.SingleOrDefault(b => b.Id == ownerId);
+                        var owner = response.MusicOwners.FirstOrDefault(b => b.Id == ownerId);
                         
                         if (owner == null) continue;
                         
@@ -705,7 +705,7 @@ namespace MusicX.Core.Helpers
                 {
                     foreach (var updateInfoId in block.FollowingUpdateInfoIds)
                     {
-                        var updateInfo = response.FollowingsUpdateInfos.SingleOrDefault(b => b.Id == updateInfoId);
+                        var updateInfo = response.FollowingsUpdateInfos.FirstOrDefault(b => b.Id == updateInfoId);
                         
                         if (updateInfo == null) continue;
 
@@ -723,7 +723,7 @@ namespace MusicX.Core.Helpers
             }
 
             response.Section.Blocks.RemoveAll(block =>
-                block is { DataType: "radiostations" } or { Layout.Title: "Радиостанции" } ||
+                block is { DataType: "radiostations" } or { Layout.Title: "Радиостанции" or "Эфиры" } ||
                 (
                     block is { Banners.Count: > 0 } && 
                     block.Banners.RemoveAll(banner => banner.ClickAction?.Action.Url.Contains("subscription") is true ||
@@ -731,6 +731,14 @@ namespace MusicX.Core.Helpers
                                                            banner.ClickAction?.Action.Url.Contains("https://vk.com/app") is true ||
                                                            banner.ClickAction?.Action.Url.Contains("https://vk.com/vk_music") is true) > 0 &&
                     block.Banners.Count == 0
+                ) ||
+                (
+                    block is { Links.Count: > 0 } && 
+                    block.Links.RemoveAll(link => link.Url.Contains("audio_offline") || 
+                                                  link.Url.Contains("radiostations") || 
+                                                  link.Url.Contains("music_transfer") || 
+                                                  link.Url.Contains("subscription")) > 0 && 
+                    block.Links.Count == 0
                 )
             );
 

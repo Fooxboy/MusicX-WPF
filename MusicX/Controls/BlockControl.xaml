@@ -86,7 +86,7 @@
             <blocks:LinksNewsfeedBlockControl Links="{Binding Links}" />
         </DataTemplate>
         <DataTemplate x:Key="links" DataType="models:Block">
-            <blocks:LinksBlockControl />
+            <blocks:LinksBlockControl Block="{Binding}" />
         </DataTemplate>
         <DataTemplate x:Key="links_categories_list" DataType="models:Block">
             <blocks:MusicCategoryBlockControl />

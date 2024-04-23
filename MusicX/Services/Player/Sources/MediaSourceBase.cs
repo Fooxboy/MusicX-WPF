@@ -16,6 +16,7 @@ using FFMediaToolkit.Decoding;
 using FFmpegInteropX;
 using MusicX.Helpers;
 using MusicX.Shared.Player;
+using WinRT;
 
 namespace MusicX.Services.Player.Sources;
 
@@ -23,7 +24,7 @@ public abstract class MediaSourceBase : ITrackMediaSource
 {
     private static readonly Semaphore FFmpegSemaphore = new(1, 1, "MusicX_FFmpegSemaphore");
     
-    protected readonly MediaOptions MediaOptions = new()
+    protected static readonly MediaOptions MediaOptions = new()
     {
         StreamsToLoad = MediaMode.Audio,
         AudioSampleFormat = SampleFormat.SignedWord,
@@ -38,16 +39,28 @@ public abstract class MediaSourceBase : ITrackMediaSource
                 ["reconnect"] = "1",
                 ["reconnect_streamed"] = "1",
                 ["reconnect_delay_max"] = "5",
-                ["stimeout"] = "10"
+                ["stimeout"] = "10",
+                ["timeout"] = "10",
+                ["rw_timeout"] = "10"
             }
         }
     };
 
-    public abstract Task<MediaPlaybackItem?> CreateMediaSourceAsync(MediaPlaybackSession playbackSession,
-        PlaylistTrack track,
-        CancellationToken cancellationToken = default);
+    public abstract Task<bool> OpenWithMediaPlayerAsync(MediaPlayer player, PlaylistTrack track, CancellationToken cancellationToken = default);
 
     protected static MediaPlaybackItem CreateMediaPlaybackItem(MediaFile file)
+    {
+        var streamingSource = CreateFFMediaStreamSource(file);
+
+        return new (MediaSource.CreateFromMediaStreamSource(streamingSource));
+    }
+
+    public static MediaStreamSource CreateFFMediaStreamSource(string url)
+    {
+        return CreateFFMediaStreamSource(MediaFile.Open(url, MediaOptions));
+    }
+
+    public static MediaStreamSource CreateFFMediaStreamSource(MediaFile file)
     {
         var properties =
             AudioEncodingProperties.CreatePcm((uint)file.Audio.Info.SampleRate, (uint)file.Audio.Info.NumChannels, 16);
@@ -72,7 +85,7 @@ public abstract class MediaSourceBase : ITrackMediaSource
 
             try
             {
-                FFmpegSemaphore.WaitOne();
+                FFmpegSemaphore.WaitOne(TimeSpan.FromSeconds(10));
                 file.Audio.GetFrame(position);
             }
             catch (FFmpegException)
@@ -84,9 +97,9 @@ public abstract class MediaSourceBase : ITrackMediaSource
             }
         };
 
-        streamingSource.Closed += async (_, _) =>
+        streamingSource.Closed += (_, _) =>
         {
-            await FFmpegSemaphore.WaitOneAsync();
+            FFmpegSemaphore.WaitOne(TimeSpan.FromSeconds(10));
             try
             {
                 file.Dispose();
@@ -99,10 +112,7 @@ public abstract class MediaSourceBase : ITrackMediaSource
 
         streamingSource.SampleRequested += (_, args) =>
         {
-            //var deferral = args.Request.GetDeferral();
-            
-            //await FFmpegSemaphore.WaitOneAsync();
-            FFmpegSemaphore.WaitOne();
+            FFmpegSemaphore.WaitOne(TimeSpan.FromSeconds(10));
             
             try
             {
@@ -116,7 +126,6 @@ public abstract class MediaSourceBase : ITrackMediaSource
             finally
             {
                 FFmpegSemaphore.Release();
-                //deferral.Complete();
             }
         };
         
@@ -149,36 +158,51 @@ public abstract class MediaSourceBase : ITrackMediaSource
             return array;
         }
 
-        return new (MediaSource.CreateFromMediaStreamSource(streamingSource));
+        return streamingSource;
     }
 
-    private static FFmpegMediaSource? _source;
-
-    public static async Task<MediaPlaybackItem?> CreateWinRtMediaPlaybackItem(MediaPlaybackSession playbackSession, TrackData data, IReadOnlyDictionary<string, string>? customOptions = null)
+    public static Task<FFmpegMediaSource> CreateWinRtMediaSource(TrackData data, IReadOnlyDictionary<string, string>? customOptions = null, CancellationToken cancellationToken = default)
     {
-        _source?.Dispose();
-
-        var options = new PropertySet
+        var options = new PropertySet();
+        
+        foreach (var option in MediaOptions.DemuxerOptions.PrivateOptions)
         {
-            ["reconnect"] = "1",
-            ["reconnect_streamed"] = "1",
-            ["reconnect_delay_max"] = "5",
-            ["stimeout"] = "10"
-        };
+            options.Add(option.Key, option.Value);
+        }
         
         if (customOptions != null)
             foreach (var (key, value) in customOptions)
                 options[key] = value;
 
-        _source = await FFmpegMediaSource.CreateFromUriAsync(data.Url, new()
+        return FFmpegMediaSource.CreateFromUriAsync(data.Url, new()
         {
             FFmpegOptions = options,
-            ReadAheadBufferEnabled = true
-        });
+            General =
+            {
+                ReadAheadBufferEnabled = true,
+                SkipErrors = uint.MaxValue,
+                KeepMetadataOnMediaSourceClosed = false
+            }
+        }).AsTask(cancellationToken);
+    }
 
-        _source.PlaybackSession = playbackSession;
-        _source.StartBuffering();
+    protected static void RegisterSourceObjectReference(MediaPlayer player, IWinRTObject rtObject)
+    {
+        GC.SuppressFinalize(rtObject.NativeObject);
+        
+        player.SourceChanged += PlayerOnSourceChanged;
 
-        return _source.CreateMediaPlaybackItem();
+        void PlayerOnSourceChanged(MediaPlayer sender, object args)
+        {
+            if (!ReferenceEquals(player.Source, rtObject))
+                return;
+            
+            player.SourceChanged -= PlayerOnSourceChanged;
+            
+            if (rtObject is IDisposable disposable)
+                disposable.Dispose();
+            else
+                GC.ReRegisterForFinalize(rtObject);
+        }
     }
 }

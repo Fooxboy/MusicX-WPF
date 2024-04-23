@@ -23,22 +23,23 @@ public class BoomMediaSource : MediaSourceBase
         _logger = logger;
     }
 
-    public override async Task<MediaPlaybackItem?> CreateMediaSourceAsync(MediaPlaybackSession playbackSession,
-        PlaylistTrack track,
+    public override async Task<bool> OpenWithMediaPlayerAsync(MediaPlayer player, PlaylistTrack track,
         CancellationToken cancellationToken = default)
     {
         if (track.Data is not BoomTrackData boomData)
-            return null;
+            return false;
         
         try
         {
-            return await CreateWinRtMediaPlaybackItem(
-                playbackSession,
-                boomData,
+            var rtMediaSource = await CreateWinRtMediaSource(boomData,
                 new Dictionary<string, string>
                 {
                     ["headers"] = $"Authorization: {_boomService.Client.DefaultRequestHeaders.Authorization}"
-                });
+                }, cancellationToken);
+            
+            RegisterSourceObjectReference(player, rtMediaSource);
+            
+            await rtMediaSource.OpenWithMediaPlayerAsync(player).AsTask(cancellationToken);
         }
         catch (Exception e)
         {
@@ -48,9 +49,11 @@ public class BoomMediaSource : MediaSourceBase
 
             var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
 
-            return new(MediaSource.CreateFromStream(stream.AsRandomAccessStream(),
+            player.Source = new MediaPlaybackItem(MediaSource.CreateFromStream(stream.AsRandomAccessStream(),
                 response.Content.Headers.ContentType?.MediaType ??
                 "audio/mpeg"));
         }
+        
+        return true;
     }
 }

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net7.0-windows10.0.22000.0</TargetFramework>
+    <TargetFramework>net7.0-windows10.0.22621.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
     <SupportedOSPlatform>10.0.19041.0</SupportedOSPlatform>
     <Nullable>enable</Nullable>
@@ -14,6 +14,8 @@
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <TieredPGO>true</TieredPGO>
+    <Platforms>x64</Platforms>
+    <ValidateExecutableReferencesMatchSelfContained>false</ValidateExecutableReferencesMatchSelfContained>
   </PropertyGroup>
   
   <ItemGroup>
@@ -23,30 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Assets\icon.ico" />
-    <None Remove="Assets\icons\albums_white.png" />
-    <None Remove="Assets\icons\follows_white.png" />
-    <None Remove="Assets\icons\github-mark-white.png" />
-    <None Remove="Assets\icons\playlists_white.png" />
-    <None Remove="Assets\icons\recent_white.png" />
-    <None Remove="Assets\lottie\play.json" />
-    <None Remove="Assets\newyear\newyearblock.png" />
-    <None Remove="Assets\newyear\snow1.png" />
-    <None Remove="Assets\newyear\snow2.png" />
-    <None Remove="Assets\newyear\snow3.png" />
-    <None Remove="Assets\newyear\snow4.png" />
-    <None Remove="Assets\newyear\snow5.png" />
-    <None Remove="Assets\newyear\snow6.png" />
-    <None Remove="Assets\newyear\snow7.png" />
-    <None Remove="Assets\newyear\snow8.png" />
-    <None Remove="Assets\newyear\snow9.png" />
-    <None Remove="Assets\newyear\snowfall.png" />
-    <None Remove="Fonts\VKSansDisplay-Bold.ttf" />
-    <None Remove="Fonts\VKSansDisplay-DemiBold.ttf" />
-    <None Remove="Fonts\VKSansDisplay-Medium.ttf" />
-    <None Remove="Fonts\VKSansDisplay-Regular.ttf" />
-    <None Remove="NLog.config" />
-    <None Remove="Resources\logo.png" />
+    <AdditionalFiles Include="NativeMethods.txt" />
   </ItemGroup>
 
   <ItemGroup>
@@ -84,49 +63,50 @@
 
 	  <Content Include="StoreLogo.scale-400.ico" />
 
-	  <None Remove="Assets\icons\ic_fluent_next_24_regular.png" />
-
 	  <Resource Include="Assets\icons\ic_fluent_next_24_regular.png" />
 
-	  <None Remove="Assets\icons\ic_fluent_previous_24_regular.png" />
 
 	  <Resource Include="Assets\icons\ic_fluent_previous_24_regular.png" />
 
-	  <None Remove="Assets\icons\ic_fluent_video_play_pause_24_regular.png" />
-
 	  <Resource Include="Assets\icons\ic_fluent_video_play_pause_24_regular.png" />
 
-	  <None Remove="StoreLogo.scale-400.png" />
-
 	  <Resource Include="StoreLogo.scale-400.png" />
+
+	  <None Include="Shaders\ColorOverlayShader.hlsl" />
+
+	  <Resource Include="Assets\icons\ic_fluent_megaphone_24_regular.png" />
+    
+	  <Resource Include="Assets\icons\ic_fluent_arrow_trending_24_regular.png" />
+	  <Resource Include="Assets\icons\ic_fluent_people_24_regular.png" />
+	  <Resource Include="Assets\icons\ic_fluent_people_community_24_regular.png" />
+	  <Resource Include="Assets\icons\ic_fluent_headphones_sound_wave_24_regular.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="6.0.6" />
-    <PackageReference Include="Clowd.Squirrel" Version="3.0.210-g5f9f594" />
-    <PackageReference Include="FFmpegInteropX.Desktop" Version="2.0.0-pre2" />
-    <PackageReference Include="MdXaml" Version="1.22.0" />
+    <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="7.0.0" />
+    <PackageReference Include="FFmpegInteropX" Version="2.0.0-pre3" />
+    <PackageReference Include="MdXaml" Version="1.27.0" />
     <PackageReference Include="Microsoft.VCRTForwarders.140" Version="1.0.8-pre" />
-    <PackageReference Include="HandyControl" Version="3.4.0" />
-    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.2" />
-    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.2" />
+    <PackageReference Include="HandyControl" Version="3.5.1" />
+    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.3" />
+    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.3" />
     <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.49-beta">
       <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.1" />
     <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" PrivateAssets="All" />
     <PackageReference Include="QRCoder.Xaml" Version="1.4.3" />
     <PackageReference Include="System.Linq.Async" Version="6.0.1" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
-    <PackageReference Include="System.Text.Json" Version="8.0.0-rc.2.23479.6" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
+    <PackageReference Include="System.Text.Json" Version="8.0.3" />
     <PackageReference Include="taglib-sharp-netstandard2.0" Version="2.1.0" />
-    <PackageReference Include="WPF-UI" Version="3.0.0-preview.11" />
+    <PackageReference Include="Velopack" Version="0.0.359" />
+    <PackageReference Include="WPF-UI" Version="3.0.4" />
     <PackageReference Include="WpfScreenHelper" Version="2.1.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FFMediaToolkit\FFMediaToolkit\FFMediaToolkit.csproj" />
+    <ProjectReference Include="..\FFMediaToolkit\FFMediaToolkit.csproj" />
     <ProjectReference Include="..\MusicX.Core\MusicX.Core.csproj" />
   </ItemGroup>
 
@@ -135,16 +115,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Assets\icons\albums_white.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Assets\icons\follows_white.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
     <Resource Include="Assets\icons\playlists_white.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Assets\icons\recent_white.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\lottie\play.json">
@@ -171,5 +142,20 @@
   <ItemGroup>
     <Manifest Include="app.manifest" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\pscompiler\pscompiler.csproj" Private="false" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Shaders\MixNoiseShader.hlsl" />
+  </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="ResolveReferences">
+    <Exec Command="dotnet --roll-forward LatestMajor ../PsCompiler/bin/$(Configuration)/net7.0/win10-x64/PsCompiler.dll Shaders Shaders/bin" />
+    <ItemGroup>
+      <Resource Include="Shaders\bin\*.ps" />
+    </ItemGroup>
+  </Target>
 
 </Project>

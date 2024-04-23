@@ -138,10 +138,7 @@ namespace MusicX.Core.Services
                     parameters.Add("url", url);
                 }
 
-                var json = await apiInvoke.InvokeAsync("catalog.getAudio", parameters);
-                logger.Debug("RESULT OF 'catalog.getAudio'" + json);
-
-                var model = JsonConvert.DeserializeObject<ResponseData>(json);
+                var model = await apiInvoke.CallAsync<ResponseData>("catalog.getAudio", parameters);
 
                 logger.Info("Successful invoke 'catalog.getAudio' ");
 
@@ -180,11 +177,7 @@ namespace MusicX.Core.Services
                 if (startFrom != null) parameters.Add("start_from", startFrom);
 
 
-                var json = await apiInvoke.InvokeAsync("catalog.getSection", parameters);
-                logger.Debug("RESULT OF 'catalog.getSection'" + json);
-
-
-                model = JsonConvert.DeserializeObject<ResponseData>(json);
+                model = await apiInvoke.CallAsync<ResponseData>("catalog.getSection", parameters);
 
                  logger.Info("Successful invoke 'catalog.getSection' ");
 
@@ -214,11 +207,7 @@ namespace MusicX.Core.Services
                 };
 
 
-                var json = await apiInvoke.InvokeAsync("catalog.getBlockItems", parameters);
-                logger.Debug("RESULT OF 'catalog.getBlockItems'" + json);
-
-
-                var model = JsonConvert.DeserializeObject<ResponseData>(json);
+                var model = await apiInvoke.CallAsync<ResponseData>("catalog.getBlockItems", parameters);
 
                 logger.Info("Successful invoke 'catalog.getBlockItems' ");
 
@@ -253,11 +242,7 @@ namespace MusicX.Core.Services
                 if (context != null) parameters.Add("context", context);
 
 
-                var json = await apiInvoke.InvokeAsync("catalog.getAudioSearch", parameters);
-                logger.Debug("RESULT OF 'catalog.getAudioSearch'" + json);
-
-
-                var model = JsonConvert.DeserializeObject<ResponseData>(json);
+                var model = await apiInvoke.CallAsync<ResponseData>("catalog.getAudioSearch", parameters);
                 logger.Info("Successful invoke 'catalog.getAudioSearch' ");
 
                 return model.Proccess();
@@ -286,11 +271,7 @@ namespace MusicX.Core.Services
                 };
 
 
-                var json = await apiInvoke.InvokeAsync("catalog.getAudioArtist", parameters);
-                logger.Debug("RESULT OF 'catalog.getAudioArtist'" + json);
-
-
-                var model = JsonConvert.DeserializeObject<ResponseData>(json);
+                var model = await apiInvoke.CallAsync<ResponseData>("catalog.getAudioArtist", parameters);
 
                 logger.Info("Successful invoke 'catalog.getAudioArtist' ");
 
@@ -321,11 +302,7 @@ namespace MusicX.Core.Services
                 };
 
 
-                var json = await apiInvoke.InvokeAsync("catalog.getAudioCurator", parameters);
-                logger.Debug("RESULT OF 'catalog.getAudioCurator'" + json);
-
-
-                var model = JsonConvert.DeserializeObject<ResponseData>(json);
+                var model = await apiInvoke.CallAsync<ResponseData>("catalog.getAudioCurator", parameters);
 
                 logger.Info("Successful invoke 'catalog.getAudioCurator' ");
 
@@ -362,11 +339,7 @@ namespace MusicX.Core.Services
                     {"need_owner", needOwner }
                 };
 
-                var json  = await apiInvoke.InvokeAsync("execute.getPlaylist", parameters);
-                logger.Debug("RESULT OF 'execute.getPlaylist'" + json);
-
-
-                var model = JsonConvert.DeserializeObject<ResponseData>(json);
+                var model = await apiInvoke.CallAsync<ResponseData>("execute.getPlaylist", parameters);
 
                 logger.Info("Successful invoke 'execute.getPlaylist' ");
 
@@ -594,12 +567,7 @@ namespace MusicX.Core.Services
                 }
 
 
-                var json = await apiInvoke.InvokeAsync("audio.get", parameters);
-
-                logger.Debug("RESULT OF 'audio.get'" + json);
-
-
-                var model = JsonConvert.DeserializeObject<ResponseData>(json);
+                var model = await apiInvoke.CallAsync<ResponseData>("audio.get", parameters);
 
                 logger.Info("Successful invoke 'audio.get' ");
 
@@ -631,12 +599,7 @@ namespace MusicX.Core.Services
 
 
 
-                var json = await apiInvoke.InvokeAsync("catalog.replaceBlocks", parameters);
-
-                logger.Debug("RESULT OF 'catalog.replaceBlocks'" + json);
-
-
-                var model = JsonConvert.DeserializeObject<ResponseData>(json);
+                var model = await apiInvoke.CallAsync<ResponseData>("catalog.replaceBlocks", parameters);
 
                 logger.Info("Successful invoke 'catalog.replaceBlocks' ");
 
@@ -841,11 +804,7 @@ namespace MusicX.Core.Services
                 };
 
 
-                var json = await apiInvoke.InvokeAsync("catalog.getPodcasts", parameters);
-                logger.Debug("RESULT OF 'catalog.getPodcasts'" + json);
-
-
-                var model = JsonConvert.DeserializeObject<ResponseData>(json);
+                var model = await apiInvoke.CallAsync<ResponseData>("catalog.getPodcasts", parameters);
 
                 logger.Info("Successful invoke 'catalog.getAudioCurator' ");
 
@@ -874,12 +833,7 @@ namespace MusicX.Core.Services
                 };
 
 
-            var json = await apiInvoke.InvokeAsync("execute", parameters);
-
-
-            var model = JsonConvert.DeserializeObject<ResponseData>(json);
-
-            logger.Debug("RESULT OF 'execute'" + json);
+            var model = await apiInvoke.CallAsync<ResponseData>("execute", parameters);
 
             return model.Proccess();
         }
@@ -897,10 +851,7 @@ namespace MusicX.Core.Services
                 };
 
 
-                var json = await apiInvoke.InvokeAsync("audio.getRecommendations", parameters);
-
-
-                var model = JsonConvert.DeserializeObject<ResponseData>(json);
+                var model = await apiInvoke.CallAsync<ResponseData>("audio.getRecommendations", parameters);
 
                 return model;
             }catch (Exception ex)
