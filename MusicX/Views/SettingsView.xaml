@@ -153,14 +153,15 @@
                             </wpfui:Button>
                         </StackPanel>
 
-                        <ListView
+                        <wpfui:ListView
                             x:Name="IgnoredArtistList"
+                            Style="{StaticResource ItemsListViewStyle}"
                             Width="300"
                             Margin="0,10,0,0"
                             HorizontalAlignment="Left">
-                            <ListView.ItemTemplate>
+                            <wpfui:ListView.ItemTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
+                                    <StackPanel Orientation="Horizontal" Margin="0 0 0 5">
                                         <TextBlock
                                             Width="200"
                                             VerticalAlignment="Center"
@@ -169,12 +170,15 @@
                                             x:Name="DeleteIgnoredArtist"
                                             Height="35"
                                             Click="DeleteIgnoredArtist_Click"
-                                            Icon="Delete20"
-                                            Tag="{Binding}" />
+                                            Tag="{Binding}">
+                                            <wpfui:Button.Icon>
+                                                <wpfui:SymbolIcon Symbol="Delete20" />
+                                            </wpfui:Button.Icon>
+                                        </wpfui:Button>
                                     </StackPanel>
                                 </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
+                            </wpfui:ListView.ItemTemplate>
+                        </wpfui:ListView>
                     </StackPanel>
 
                     <TextBlock
