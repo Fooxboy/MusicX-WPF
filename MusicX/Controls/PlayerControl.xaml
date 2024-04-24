@@ -629,6 +629,19 @@
                             <EventSetter Event="Drop" Handler="ListBoxItem_OnDrop" />
                         </Style>
                     </ui:ListView.ItemContainerStyle>
+                    <ui:ListView.Template>
+                        <ControlTemplate TargetType="ui:ListView">
+                            <hc:ScrollViewer
+                                Name="PART_ScrollViewer"
+                                Padding="{TemplateBinding Control.Padding}"
+                                CanContentScroll="{TemplateBinding ScrollViewer.CanContentScroll}"
+                                Focusable="False"
+                                IsInertiaEnabled="True"
+                                hc:ScrollViewerAttach.AutoHide="True">
+                                <ItemsPresenter />
+                            </hc:ScrollViewer>
+                        </ControlTemplate>
+                    </ui:ListView.Template>
                 </ui:ListView>
                 
                 <wpfui:ProgressRing
