@@ -8,6 +8,7 @@
     xmlns:wpfui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:views="clr-namespace:MusicX.Views"
+    xmlns:tray="http://schemas.lepo.co/wpfui/2022/xaml/tray"
     d:DesignHeight="720"
     d:DesignWidth="1280"
     KeyDown="Window_KeyDown"
@@ -135,6 +136,11 @@
     </Window.Resources>
 
     <Grid x:Name="rootGrid">
+        <tray:NotifyIcon Grid.Row="0" 
+                         x:Name="TrayIcon"
+                         LeftClick="TrayIcon_OnLeftClick"
+                         Icon="/StoreLogo.scale-400.png"
+                         TooltipText="MusicX Player" />
         <Image Visibility="Collapsed" x:Name="WinterBackground" Stretch="UniformToFill"
                Opacity="0.1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                Source="pack://application:,,,/Assets/newyear/snowfall.png" />

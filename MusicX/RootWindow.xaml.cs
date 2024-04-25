@@ -11,6 +11,7 @@ using AsyncAwaitBestPractices;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Toolkit.Uwp.Notifications;
 using MusicX.Controls;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
@@ -28,6 +29,7 @@ using Velopack.Sources;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 using Wpf.Ui.Extensions;
+using Wpf.Ui.Tray.Controls;
 using NavigationService = MusicX.Services.NavigationService;
 
 namespace MusicX
@@ -54,6 +56,7 @@ namespace MusicX
             ConfigService configService, ISnackbarService snackbarService,
                           ListenTogetherService togetherService) : base(snackbarService, navigationService, logger)
         {
+            Application.Current.MainWindow = this;
             InitializeComponent();     
             this.navigationService = navigationService;
             this.vkService = vkService;
@@ -70,6 +73,14 @@ namespace MusicX
 
             Width = configService.Config.Width;
             Height = configService.Config.Height;
+        }
+
+        protected override void OnStateChanged(EventArgs e)
+        {
+            base.OnStateChanged(e);
+            
+            if (WindowState == WindowState.Minimized && TrayIcon.IsRegistered && ConsiderHideToTray()) 
+                Hide();
         }
 
         protected override SnackbarPresenter? GetSnackbarPresenter() => RootSnackbar;
@@ -123,6 +134,44 @@ namespace MusicX
           
         }
 
+        private bool ConsiderHideToTray()
+        {
+            if (configService.Config.MinimizeToTray is not null) return configService.Config.MinimizeToTray.Value;
+
+            new ToastContentBuilder()
+                .AddText("Приложене было скрыто в трее, нажмите на иконку, чтобы снова открыть окно.")
+                .AddText("Поведение можно изменить в настройках. Это уведомление больше не будет показано.")
+                .Show();
+                
+            configService.Config.MinimizeToTray = true;
+            configService.SetConfig(configService.Config).SafeFireAndForget();
+
+            return true;
+        }
+
+        private async void RootWindow_Closing(object? sender, CancelEventArgs e)
+        {
+            try
+            {
+                var listenTogetherService = StaticService.Container.GetRequiredService<ListenTogetherService>();
+
+                if (listenTogetherService.IsConnectedToServer && listenTogetherService.PlayerMode != PlayerMode.None)
+                {
+                    if (listenTogetherService.PlayerMode == PlayerMode.Owner)
+                    {
+                        await listenTogetherService.StopPlaySessionAsync();
+                    }
+                    else
+                    {
+                        await listenTogetherService.LeavePlaySessionAsync();
+                    }
+                }
+            }catch(Exception ex)
+            {
+                //nothing
+            }
+           
+        }
         private void PlayerSerivce_TrackChangedEvent(object? sender, EventArgs e)
         {
             if (PlayerShowed) return;
@@ -305,18 +354,7 @@ namespace MusicX
                     navigationService.OpenModal<WelcomeToListenTogetherModal>();
                 }
 
-                /*if(config.MinimizeToTray != null) // TODO tray
-                {
-                    WpfTitleBar.MinimizeToTray = config.MinimizeToTray.Value;
-                }else
-                {
-                    WpfTitleBar.MinimizeToTray = false;
-                }*/
-
                 this.WindowState = WindowState.Normal;
-
-                
-                // AppNotifyIcon.Register();
             }
             catch (Exception ex)
             {
@@ -573,6 +611,12 @@ namespace MusicX
             SearchBox.Visibility = e.Content is SectionView { DataContext: SectionViewModel { SectionId: "search" } or SectionViewModel { SectionType: SectionType.Search } }
                 ? Visibility.Visible
                 : Visibility.Collapsed;
+        }
+
+        private void TrayIcon_OnLeftClick(NotifyIcon sender, RoutedEventArgs e)
+        {
+            Show();
+            WindowState = WindowState.Normal;
         }
     }
 }
