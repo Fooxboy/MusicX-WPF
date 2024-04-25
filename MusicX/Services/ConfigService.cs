@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Win32;
 using MusicX.Helpers;
@@ -12,6 +13,8 @@ namespace MusicX.Services
 {
     public class ConfigService
     {
+        private static readonly Semaphore ConfigSemaphore = new(1, 1, "MusicX_ConfigSemaphore");
+        
         private readonly JsonSerializerOptions _configSerializerOptions = new(JsonSerializerDefaults.Web)
         {
             PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
@@ -68,9 +71,17 @@ namespace MusicX.Services
             ConfigModel? config = null;
             if(File.Exists(_configPath))
             {
-                await using var stream = File.OpenRead(_configPath);
-
-                config = await JsonSerializer.DeserializeAsync<ConfigModel>(stream, _configSerializerOptions);
+                await ConfigSemaphore.WaitOneAsync();
+                
+                try
+                {
+                    await using var stream = File.OpenRead(_configPath);
+                    config = await JsonSerializer.DeserializeAsync<ConfigModel>(stream, _configSerializerOptions);
+                }
+                finally
+                {
+                    ConfigSemaphore.Release();
+                }
             }
 
             if (config is null)
@@ -83,9 +94,18 @@ namespace MusicX.Services
         public async Task SetConfig(ConfigModel config)
         {
             Config = config;
+            
+            await ConfigSemaphore.WaitOneAsync();
 
-            await using var stream = File.Create(_configPath);
-            await JsonSerializer.SerializeAsync(stream, config, _configSerializerOptions);
+            try
+            {
+                await using var stream = File.Create(_configPath);
+                await JsonSerializer.SerializeAsync(stream, config, _configSerializerOptions);
+            }
+            finally
+            {
+                ConfigSemaphore.Release();
+            }
         }
     }
 }
