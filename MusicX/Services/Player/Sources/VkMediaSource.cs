@@ -26,10 +26,10 @@ public class VkMediaSource : MediaSourceBase
         try
         {
             var rtMediaSource = await CreateWinRtMediaSource(vkData, cancellationToken: cancellationToken);
-            
-            RegisterSourceObjectReference(player, rtMediaSource);
 
             await rtMediaSource.OpenWithMediaPlayerAsync(player).AsTask(cancellationToken);
+            
+            RegisterSourceObjectReference(player, rtMediaSource);
         }
         catch (Exception e)
         {

@@ -194,9 +194,6 @@ public abstract class MediaSourceBase : ITrackMediaSource
 
         void PlayerOnSourceChanged(MediaPlayer sender, object args)
         {
-            if (!ReferenceEquals(player.Source, rtObject))
-                return;
-            
             player.SourceChanged -= PlayerOnSourceChanged;
             
             if (rtObject is IDisposable disposable)

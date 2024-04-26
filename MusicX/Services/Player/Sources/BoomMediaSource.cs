@@ -37,9 +37,9 @@ public class BoomMediaSource : MediaSourceBase
                     ["headers"] = $"Authorization: {_boomService.Client.DefaultRequestHeaders.Authorization}"
                 }, cancellationToken);
             
-            RegisterSourceObjectReference(player, rtMediaSource);
-            
             await rtMediaSource.OpenWithMediaPlayerAsync(player).AsTask(cancellationToken);
+            
+            RegisterSourceObjectReference(player, rtMediaSource);
         }
         catch (Exception e)
         {
