@@ -212,24 +212,15 @@ namespace MusicX.Views
         {
             var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
 
+#if !DEBUG
             try
             {
-                var navigation = StaticService.Container.GetRequiredService<NavigationService>();
-                var github = StaticService.Container.GetRequiredService<GithubService>();
-
-                var release = await github.GetLastRelease();
-
-
-
-                if (release.TagName == StaticService.Version)
+                var updateService = StaticService.Container.GetRequiredService<UpdateService>();
+                
+                if (!await updateService.CheckForUpdates())
                 {
                     snackbarService.Show("Уже обновлено!",
                         "У Вас установлена последняя версия MusicX! Обновлений пока что нет");
-
-                }
-                else
-                {
-                    navigation.OpenModal<AvailableNewUpdateModal>(release);
                 }
             }
             catch (Exception ex)
@@ -237,7 +228,9 @@ namespace MusicX.Views
                 snackbarService.Show("Ошибка", "Произошла ошибка при проверке обновлений");
 
             }
-
+#else
+            snackbarService.Show("В режиме отладки", "Сервис обновлений отключен");
+#endif
         }
 
         private void TelegramButton_Click(object sender, RoutedEventArgs e)

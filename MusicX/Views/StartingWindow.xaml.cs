@@ -112,6 +112,7 @@ namespace MusicX.Views
                 collection.AddSingleton<WindowsAudioMixerService>();
                 collection.AddSingleton<ICustomSectionsService, CustomSectionsService>();
                 collection.AddSingleton<ISnackbarService, MusicXSnackbarService>();
+                collection.AddSingleton<UpdateService>();
 
                 var container = StaticService.Container = collection.BuildServiceProvider();
 

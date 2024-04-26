@@ -458,30 +458,10 @@ namespace MusicX
             try
             {
                 await Task.Delay(2000);
-                /*var github = StaticService.Container.GetRequiredService<GithubService>();
-
-                var release = await github.GetLastRelease();
-
-                if (release.TagName != StaticService.Version)
-                    navigationService.OpenModal<AvalibleNewUpdateModal>(release);*/
-
-                var config = await configService.GetConfig();
-
-                var getBetaUpdates = config.GetBetaUpdates.GetValueOrDefault(false);
-                var manager = new UpdateManager(new GithubSource("https://github.com/Fooxboy/MusicX-WPF",
-                    string.Empty, getBetaUpdates, new HttpClientFileDownloader()), new()
-                {
-                    ExplicitChannel = getBetaUpdates ? "win-beta" : "win"
-                });
-
-                var updateInfo = await manager.CheckForUpdatesAsync();
                 
-                if (updateInfo is null)
-                    return;
-
-                var viewModel = new AvailableNewUpdateModalViewModel(manager, updateInfo);
-
-                navigationService.OpenModal<AvailableNewUpdateModal>(viewModel);
+                var updateService = StaticService.Container.GetRequiredService<UpdateService>();
+                
+                await updateService.CheckForUpdates();
             }catch(Exception ex)
             {
                 var properties = new Dictionary<string, string>
