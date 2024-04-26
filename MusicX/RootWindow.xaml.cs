@@ -64,8 +64,6 @@ namespace MusicX
 
             playerSerivce.TrackChangedEvent += PlayerSerivce_TrackChangedEvent;
 
-            Closing += RootWindow_Closing;
-
             SingleAppService.Instance.RunWitchArgs += Instance_RunWitchArgs;
             
             togetherService.ConnectedToSession += TogetherServiceOnConnectedToSession;
@@ -125,29 +123,6 @@ namespace MusicX
           
         }
 
-        private async void RootWindow_Closing(object? sender, CancelEventArgs e)
-        {
-            try
-            {
-                var listenTogetherService = StaticService.Container.GetRequiredService<ListenTogetherService>();
-
-                if (listenTogetherService.IsConnectedToServer && listenTogetherService.PlayerMode != PlayerMode.None)
-                {
-                    if (listenTogetherService.PlayerMode == PlayerMode.Owner)
-                    {
-                        await listenTogetherService.StopPlaySessionAsync();
-                    }
-                    else
-                    {
-                        await listenTogetherService.LeavePlaySessionAsync();
-                    }
-                }
-            }catch(Exception ex)
-            {
-                //nothing
-            }
-           
-        }
         private void PlayerSerivce_TrackChangedEvent(object? sender, EventArgs e)
         {
             if (PlayerShowed) return;
@@ -315,6 +290,13 @@ namespace MusicX
 
                 if (config.NotifyMessages is null)
                     config.NotifyMessages = new() { ShowListenTogetherModal = true, LastShowedTelegramBlock = null };
+
+                if (config.LastPlayerState is not null)
+                {
+                    await playerControl.PlayerService.RestoreFromStateAsync(config.LastPlayerState);
+
+                    config.LastPlayerState = null;
+                }
 
                 await configService.SetConfig(config);
 
@@ -575,11 +557,35 @@ namespace MusicX
 
         }*/
 
-        private void RootWindow_OnClosing(object? sender, CancelEventArgs e)
+        private async void RootWindow_OnClosing(object? sender, CancelEventArgs e)
         {
             configService.Config.Width = Width;
             configService.Config.Height = Height;
-            configService.SetConfig(configService.Config).SafeFireAndForget(continueOnCapturedContext: true);
+
+            if (configService.Config.SavePlayerState is true)
+                configService.Config.LastPlayerState = PlayerState.CreateOrNull(playerControl.PlayerService);
+
+            await configService.SetConfig(configService.Config);
+            
+            try
+            {
+                var listenTogetherService = StaticService.Container.GetRequiredService<ListenTogetherService>();
+
+                if (listenTogetherService.IsConnectedToServer && listenTogetherService.PlayerMode != PlayerMode.None)
+                {
+                    if (listenTogetherService.PlayerMode == PlayerMode.Owner)
+                    {
+                        await listenTogetherService.StopPlaySessionAsync();
+                    }
+                    else
+                    {
+                        await listenTogetherService.LeavePlaySessionAsync();
+                    }
+                }
+            }catch(Exception ex)
+            {
+                //nothing
+            }
         }
 
         private void RootFrame_Navigating(object sender, System.Windows.Navigation.NavigatingCancelEventArgs e)

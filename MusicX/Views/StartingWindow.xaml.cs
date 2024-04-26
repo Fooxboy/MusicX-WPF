@@ -186,13 +186,6 @@ namespace MusicX.Views
                                     {
                                         await rootWindow.StartListenTogether(arg[1]);
                                     }
-
-                                    var playArgIndex = Array.BinarySearch(_args, "--play",
-                                        StringComparer.OrdinalIgnoreCase);
-                                    if (playArgIndex >= 0 && playArgIndex + 1 < _args.Length &&
-                                        JsonSerializer.Deserialize<PlayerState>(string.Join(string.Empty, _args[(playArgIndex + 1)..])) is { } state)
-                                        await container.GetRequiredService<PlayerService>()
-                                            .RestoreFromStateAsync(state);
                                 }
 
                                 this.Close();

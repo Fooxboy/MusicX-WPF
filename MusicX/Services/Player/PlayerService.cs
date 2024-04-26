@@ -89,8 +89,7 @@ public class PlayerService
 
     public async Task RestoreFromStateAsync(PlayerState state)
     {
-        await PlayAsync(state.Playlist, state.Track);
-        Seek(state.Position);
+        await PlayAsync(state.Playlist, state.Track, state.Position);
     }
 
     public async void Play()
@@ -118,12 +117,13 @@ public class PlayerService
                 _statsListeners.Select(b => b.TrackChangedAsync(previousTrack, CurrentTrack!, ChangeReason.TrackChange)));
     }
     
-    private async Task PlayTrackAsync(PlaylistTrack track)
+    private async Task PlayTrackAsync(PlaylistTrack track, TimeSpan? position = null)
     {
         try
         {
             if (CurrentTrack == track)
             {
+                if (position is not null) Seek(position.Value);
                 player.Play();
                 return;
             }
@@ -172,6 +172,8 @@ public class PlayerService
                 await NextTrack();
                 return;
             }
+            
+            if (position is not null) Seek(position.Value);
 
             player.Play();
             UpdateWindowsData().SafeFireAndForget();
@@ -195,12 +197,12 @@ public class PlayerService
        
     }
 
-    public async Task PlayAsync(IPlaylist playlist, PlaylistTrack? firstTrack = null)
+    public async Task PlayAsync(IPlaylist playlist, PlaylistTrack? firstTrack = null, TimeSpan? startPosition = null)
     {
         if(_listenTogetherService.PlayerMode == PlayerMode.Listener)
         {
             await _listenTogetherService.LeavePlaySessionAsync();
-            await Application.Current.Dispatcher.InvokeAsync(() => PlayAsync(playlist).SafeFireAndForget());
+            await Application.Current.Dispatcher.InvokeAsync(() => PlayAsync(playlist, firstTrack, startPosition).SafeFireAndForget());
             return;
         }
 
@@ -237,7 +239,7 @@ public class PlayerService
                     });
                 }
                 
-                firstTrackTask = PlayTrackAsync(firstTrack);
+                firstTrackTask = PlayTrackAsync(firstTrack, startPosition);
 
                     await Task.WhenAll(
                         _statsListeners.Select(b => b.TrackChangedAsync(CurrentTrack, firstTrack, ChangeReason.PlaylistChange)));
@@ -260,7 +262,7 @@ public class PlayerService
             if (firstTrack is null)
             {
                 var previousTrack = CurrentTrack;
-                await PlayTrackAsync(Tracks[0]);
+                await PlayTrackAsync(Tracks[0], startPosition);
 
                 await Task.WhenAll(
                         _statsListeners.Select(b => b.TrackChangedAsync(previousTrack, CurrentTrack!, ChangeReason.PlaylistChange)));
