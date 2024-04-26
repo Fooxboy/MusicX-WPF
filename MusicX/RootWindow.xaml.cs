@@ -149,29 +149,6 @@ namespace MusicX
             return true;
         }
 
-        private async void RootWindow_Closing(object? sender, CancelEventArgs e)
-        {
-            try
-            {
-                var listenTogetherService = StaticService.Container.GetRequiredService<ListenTogetherService>();
-
-                if (listenTogetherService.IsConnectedToServer && listenTogetherService.PlayerMode != PlayerMode.None)
-                {
-                    if (listenTogetherService.PlayerMode == PlayerMode.Owner)
-                    {
-                        await listenTogetherService.StopPlaySessionAsync();
-                    }
-                    else
-                    {
-                        await listenTogetherService.LeavePlaySessionAsync();
-                    }
-                }
-            }catch(Exception ex)
-            {
-                //nothing
-            }
-           
-        }
         private void PlayerSerivce_TrackChangedEvent(object? sender, EventArgs e)
         {
             if (PlayerShowed) return;
