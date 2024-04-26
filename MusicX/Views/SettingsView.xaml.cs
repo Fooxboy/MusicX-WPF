@@ -96,6 +96,7 @@ namespace MusicX.Views
                 WinterTheme.IsChecked = config.WinterTheme.Value;
                 MinimizeToTray.IsChecked = config.MinimizeToTray.Value;
                 GetBetaUpdates.IsChecked = config.GetBetaUpdates.Value;
+                SavePlayerState.IsChecked = config.SavePlayerState.GetValueOrDefault();
 
                 UserName.Text = config.UserName;
 
@@ -585,6 +586,13 @@ namespace MusicX.Views
         private void CatalogsCard_Click(object sender, RoutedEventArgs e)
         {
             StaticService.Container.GetRequiredService<NavigationService>().OpenSection("profiles");
+        }
+
+        private async void SavePlayerState_OnCheckChanged(object sender, RoutedEventArgs e)
+        {
+            config.SavePlayerState = SavePlayerState.IsChecked;
+            
+            await configService.SetConfig(config);
         }
     }
 }

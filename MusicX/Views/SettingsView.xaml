@@ -261,6 +261,19 @@
                             FontSize="18"
                             Unchecked="MinimizeToTray_Unchecked" />
                     </StackPanel>
+                    
+                    <TextBlock
+                        FontFamily="{StaticResource VKSansMedium}"
+                        FontSize="24"
+                        Text="Воспроизведение" />
+                    <StackPanel Margin="15,10">
+                        <wpfui:ToggleSwitch
+                            x:Name="SavePlayerState"
+                            Checked="SavePlayerState_OnCheckChanged"
+                            Content="Сохранять текущий трек между перезапусками приложения"
+                            FontSize="18"
+                            Unchecked="SavePlayerState_OnCheckChanged" />
+                    </StackPanel>
                 </StackPanel>
             </wpfui:CardExpander>
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using MusicX.Services.Player;
 
 namespace MusicX.Models
 {
@@ -53,5 +54,9 @@ namespace MusicX.Models
         public string? DeviceId { get; set; }
         
         public string? ExchangeToken { get; set; }
+        
+        public bool? SavePlayerState { get; set; }
+        
+        public PlayerState? LastPlayerState { get; set; }
     }
 }

@@ -48,12 +48,11 @@ public sealed class AvailableNewUpdateModalViewModel : BaseViewModel
             await _updateManager.DownloadUpdatesAsync(UpdateInfo, ProgressHandler);
 
             var playerState = PlayerState.CreateOrNull(StaticService.Container.GetRequiredService<PlayerService>());
+            var configService = StaticService.Container.GetRequiredService<ConfigService>();
             
-            _updateManager.WaitExitThenApplyUpdates(UpdateInfo, restartArgs: new []
-            {
-                "--play",
-                playerState is null ? "null" : JsonSerializer.Serialize(playerState)
-            });
+            configService.Config.LastPlayerState = playerState;
+            
+            _updateManager.WaitExitThenApplyUpdates(UpdateInfo);
             
             Application.Current.Shutdown();
         }
