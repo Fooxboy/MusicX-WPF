@@ -65,37 +65,12 @@ namespace MusicX.Views
 
                 this.config = await configService.GetConfig();
 
-                if (config.ShowRPC == null)
-                {
-                    config.ShowRPC = true;
-                }
-
-                if(config.BroadcastVK == null)
-                {
-                    config.BroadcastVK = false;
-                }
-
-                if(config.WinterTheme == null)
-                {
-                    config.WinterTheme = false;
-                }
-
-                if (config.MinimizeToTray == null)
-                {
-                    config.MinimizeToTray = false;
-                }
-                
-                if (config.GetBetaUpdates == null)
-                {
-                    config.GetBetaUpdates = false;
-                }
-
-                ShowRPC.IsChecked = config.ShowRPC.Value;
-                BroacastVK.IsChecked = config.BroadcastVK.Value;
+                ShowRPC.IsChecked = config.ShowRPC.GetValueOrDefault();
+                BroacastVK.IsChecked = config.BroadcastVK.GetValueOrDefault();
                 ShowAmimatedBackground.IsChecked = config.AnimatedBackground;
-                WinterTheme.IsChecked = config.WinterTheme.Value;
-                MinimizeToTray.IsChecked = config.MinimizeToTray.Value;
-                GetBetaUpdates.IsChecked = config.GetBetaUpdates.Value;
+                WinterTheme.IsChecked = config.WinterTheme.GetValueOrDefault();
+                MinimizeToTray.IsChecked = config.MinimizeToTray.GetValueOrDefault();
+                GetBetaUpdates.IsChecked = config.GetBetaUpdates.GetValueOrDefault();
                 SavePlayerState.IsChecked = config.SavePlayerState.GetValueOrDefault();
 
                 UserName.Text = config.UserName;
