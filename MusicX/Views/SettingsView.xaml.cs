@@ -250,6 +250,15 @@ namespace MusicX.Views
             });
         }
 
+        private void TelegramChat_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "https://t.me/+lO37psdwX2s3NjZi",
+                UseShellExecute = true
+            });
+        }
+
         private void OpenLogs_Click(object sender, RoutedEventArgs e)
         {
             Process.Start(new ProcessStartInfo

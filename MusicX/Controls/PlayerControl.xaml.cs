@@ -286,8 +286,8 @@ namespace MusicX.Controls
             {
                 _ when PlayerService.IsMuted => new SymbolIcon(SymbolRegular.SpeakerOff28),
                 0.0 => new SymbolIcon(SymbolRegular.SpeakerOff28),
-                > 0.0 and < 0.30 => new SymbolIcon(SymbolRegular.Speaker032),
-                > 0.30 and < 0.60 => new SymbolIcon(SymbolRegular.Speaker132),
+                > 0.0 and < 0.10 => new SymbolIcon(SymbolRegular.Speaker032),
+                > 0.10 and < 0.60 => new SymbolIcon(SymbolRegular.Speaker132),
                 > 0.80 => new SymbolIcon(SymbolRegular.Speaker232),
                 _ => SpeakerIcon.Icon
             };
