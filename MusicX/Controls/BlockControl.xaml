@@ -12,6 +12,7 @@
     xmlns:viewModels="clr-namespace:MusicX.ViewModels.Controls" xmlns:hc="https://handyorg.github.io/handycontrol"
     d:DesignHeight="450"
     d:DesignWidth="800"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     ContentTemplateSelector="{DynamicResource BlockTemplateSelector}"
     mc:Ignorable="d">
 
@@ -68,6 +69,11 @@
         <DataTemplate x:Key="music_playlists_music_chart_large_slider" DataType="models:Block">
             <controls:ListPlaylists Content="{Binding Playlists}" ShowFull="False" />
         </DataTemplate>
+
+        <DataTemplate x:Key="music_playlists_crop_slider" DataType="models:Block">
+            <controls:ListPlaylists Content="{Binding Playlists}" IsCropped="True" />
+        </DataTemplate>
+        
         <DataTemplate x:Key="music_playlists" DataType="models:Block">
             <controls:ListPlaylists Content="{Binding Playlists}" ShowFull="False" />
         </DataTemplate>

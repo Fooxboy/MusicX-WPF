@@ -1,0 +1,34 @@
+﻿<UserControl x:Class="MusicX.Controls.CroppedPlaylistControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MusicX.Controls"
+             Loaded="UserControl_Loaded"
+             Unloaded="UserControl_Unloaded"
+                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Border Cursor="Hand" MouseLeftButtonDown="OpenFullPlaylist" CornerRadius="10" Height="60"  Width="300" ClipToBounds="True">
+
+            <Grid ClipToBounds="True">
+
+                <Image Stretch="UniformToFill" Source="{Binding Cover, UpdateSourceTrigger=PropertyChanged}">
+                    <Image.Clip>
+                        <RectangleGeometry Rect="0,0,300,60" RadiusX="10" RadiusY="10"/>
+                    </Image.Clip>
+                </Image>
+
+                <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" FontSize="19" VerticalAlignment="Center" FontFamily="{StaticResource VKSansMedium}" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <Border MouseLeftButtonDown="PlayPlaylist" Background="White" MouseEnter="Border_MouseEnter" MouseLeave="Border_MouseLeave" Opacity="0.6" HorizontalAlignment="Right" CornerRadius="9999" Margin="0,0,10,0" Height="35"  Width="35">
+                    <ui:SymbolIcon x:Name="PlayIcon" HorizontalAlignment="Center" VerticalAlignment="Center" Symbol="Play24"/>
+                </Border>
+
+            </Grid>
+            
+        </Border>
+    </Grid>
+</UserControl>
