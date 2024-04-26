@@ -18,6 +18,7 @@
                 <ResourceDictionary x:Name="ModalFrameStyles" Source="Styles/ModalFrameStyles.xaml" />
                 <ResourceDictionary x:Name="MusicXWindowStyles" Source="Styles/MusicXWindowStyles.xaml" />
                 <ResourceDictionary x:Name="LoadingBorderStyles" Source="Styles/LoadingBorderStyles.xaml" />
+                <ResourceDictionary x:Name="HyperlinkButtonStyles" Source="Styles/HyperlinkButtonStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <FontFamily x:Key="SegoeFluentIcons">pack://application:,,,/;component/Fonts/#Segoe Fluent Icons</FontFamily>

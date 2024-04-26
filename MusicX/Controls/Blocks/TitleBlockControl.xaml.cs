@@ -44,12 +44,14 @@ namespace MusicX.Controls.Blocks
                 Title.FontSize = 15;
             }
 
-            Title.Text = block.Layout.Title;
+            Title.Content = block.Layout.Title;
 
             if(block.Layout.TopTitle is not null || block.Layout.Subtitle is not null)
             {
                 Subtitle.Text = block.Layout.TopTitle?.Text ?? block.Layout.Subtitle;
                 Subtitle.Visibility = Visibility.Visible;
+                if (block.Actions.Count == 1)
+                    Subtitle.Margin = new(11, 0, 11, 0);
             }
 
             if (block.Badge != null)
@@ -58,14 +60,13 @@ namespace MusicX.Controls.Blocks
                 BadgeHeader.Visibility = Visibility.Visible;
             }
 
-            if (block.Buttons != null && block.Buttons.Count > 0) //ios
+            if (block.Buttons is { Count: > 0 }) //ios
             {
                 if (block.Buttons[0].Options.Count > 0)
                 {
                     ButtonsGrid.Visibility = Visibility.Visible;
                     TitleButtons.Text = block.Buttons[0].Title;
                     Buttons.Visibility = Visibility.Visible;
-                    MoreButton.Visibility = Visibility.Collapsed;
                     foreach (var option in block.Buttons[0].Options)
                     {
                         Buttons.Items.Add(new TextBlock() { Text = option.Text });
@@ -73,47 +74,24 @@ namespace MusicX.Controls.Blocks
                     //Buttons.SelectedIndex = 0;
                     return;
                 }
-                else
-                {
-                    MoreButton.Visibility = Visibility.Visible;
-
-                    MoreButton.Content = block.Buttons[0].Title;
-
-                    return;
-
-                }
             }
             else
             {
                 
-                if(block.Actions.Count > 0)
+                if(block.Actions.Count > 0 && block.Actions[0].Options.Count > 0)
                 {
-
-                    if (block.Actions[0].Options.Count > 0) //android
-                    {
-                        ButtonsGrid.Visibility = Visibility.Visible;
-                        TitleButtons.Text = block.Actions[0].Title;
-                        Buttons.Visibility = Visibility.Visible;
-                        MoreButton.Visibility = Visibility.Collapsed;
+                    //android
+                    ButtonsGrid.Visibility = Visibility.Visible;
+                    TitleButtons.Text = block.Actions[0].Title;
+                    Buttons.Visibility = Visibility.Visible;
                         
 
-                        foreach (var option in block.Actions[0].Options)
-                        {
-                            Buttons.Items.Add(new TextBlock() { Text = option.Text });
-                        }
-                        
-                        return;
-                    }
-                    else
+                    foreach (var option in block.Actions[0].Options)
                     {
-                        MoreButton.Visibility = Visibility.Visible;
-
-                        MoreButton.Content = block.Actions[0].Title;
-
-                        return;
-
+                        Buttons.Items.Add(new TextBlock() { Text = option.Text });
                     }
-
+                        
+                    return;
                 }
 
                 return;
