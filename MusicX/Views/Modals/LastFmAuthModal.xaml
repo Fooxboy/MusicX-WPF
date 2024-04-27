@@ -1,0 +1,35 @@
+﻿<Page x:Class="MusicX.Views.Modals.LastFmAuthModal"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:MusicX.Views.Modals"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:modals="clr-namespace:MusicX.ViewModels.Modals"
+      mc:Ignorable="d"
+      Title="Last.Fm" Height="300" Width="200"
+      d:DataContext="{d:DesignInstance modals:LastFmAuthModalViewModel}"
+      Loaded="LastFmAuthModal_OnLoaded">
+    <Grid VerticalAlignment="Center">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <ui:Card>
+             <ui:SymbolIcon Symbol="Globe24"
+                            FontSize="48"/>
+             <ui:Card.Footer>
+                 <TextBlock TextWrapping="Wrap" TextAlignment="Center"
+                            FontWeight="SemiBold">Подтвердите вход в аккаунт в браузере</TextBlock>
+             </ui:Card.Footer>
+         </ui:Card>
+        
+        <ui:Button Grid.Row="1" HorizontalAlignment="Center" Margin="0,15"
+                   Command="{Binding ConfirmCommand}">
+            <ui:Button.Icon>
+                <ui:SymbolIcon Symbol="Checkmark24" />
+            </ui:Button.Icon>
+            Готово
+        </ui:Button>
+    </Grid>
+</Page>

@@ -28,6 +28,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FFMediaToolkit", "FFMediaTo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsCompiler", "PsCompiler\PsCompiler.csproj", "{449B9F89-C7C2-4C7E-9F2F-28CBB731E7F5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IF.Lastfm.Core", "lastfm\src\IF.Lastfm.Core\IF.Lastfm.Core.csproj", "{57464921-52F3-4172-83E9-0B7D75F9DDDF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -74,6 +76,10 @@ Global
 		{449B9F89-C7C2-4C7E-9F2F-28CBB731E7F5}.Debug|x64.Build.0 = Debug|Any CPU
 		{449B9F89-C7C2-4C7E-9F2F-28CBB731E7F5}.Release|x64.ActiveCfg = Release|Any CPU
 		{449B9F89-C7C2-4C7E-9F2F-28CBB731E7F5}.Release|x64.Build.0 = Release|Any CPU
+		{57464921-52F3-4172-83E9-0B7D75F9DDDF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{57464921-52F3-4172-83E9-0B7D75F9DDDF}.Debug|x64.Build.0 = Debug|Any CPU
+		{57464921-52F3-4172-83E9-0B7D75F9DDDF}.Release|x64.ActiveCfg = Release|Any CPU
+		{57464921-52F3-4172-83E9-0B7D75F9DDDF}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

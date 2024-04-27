@@ -1,0 +1,3 @@
+[submodule "lastfm"]
+	path = lastfm
+	url = https://github.com/tolbxela/lastfm.git

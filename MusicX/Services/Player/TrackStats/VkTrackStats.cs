@@ -17,7 +17,7 @@ public class VkTrackStats : ITrackStatsListener
         _vkService = vkService;
     }
 
-    public async Task TrackChangedAsync(PlaylistTrack? previousTrack, PlaylistTrack newTrack, ChangeReason reason)
+    public async Task TrackChangedAsync(PlaylistTrack? previousTrack, PlaylistTrack newTrack, ChangeReason reason, TimeSpan? position = null)
     {
         if (newTrack.Data is not VkTrackData newTrackData)
             return;
@@ -55,7 +55,7 @@ public class VkTrackStats : ITrackStatsListener
                 PlaybackStartedAt = "0",
                 TrackCode = previousTrackData.TrackCode,
                 StreamingType = "online",
-                Duration = previousTrackData.Duration.TotalSeconds.ToString(),
+                Duration = (position ?? previousTrackData.Duration).TotalSeconds.ToString(),
                 Repeat = "all",
                 State = "app",
                 Source = newTrackData.ParentBlockId!,
