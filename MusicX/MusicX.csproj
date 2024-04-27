@@ -109,6 +109,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FFMediaToolkit\FFMediaToolkit.csproj" />
+    <ProjectReference Include="..\lastfm\src\IF.Lastfm.Core\IF.Lastfm.Core.csproj" />
     <ProjectReference Include="..\MusicX.Core\MusicX.Core.csproj" />
   </ItemGroup>
 

@@ -15,7 +15,7 @@ namespace MusicX.Services.Player.TrackStats
             this._listenTogetherService = listenTogetherService;
         }
 
-        public async Task TrackChangedAsync(PlaylistTrack? previousTrack, PlaylistTrack newTrack, ChangeReason reason)
+        public async Task TrackChangedAsync(PlaylistTrack? previousTrack, PlaylistTrack newTrack, ChangeReason reason, TimeSpan? position = null)
         {
             if (_listenTogetherService.PlayerMode != PlayerMode.Owner) return;
 

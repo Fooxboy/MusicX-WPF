@@ -14,6 +14,7 @@ using MusicX.Core.Services;
 using MusicX.Models;
 using MusicX.Services;
 using MusicX.ViewModels;
+using MusicX.ViewModels.Modals;
 using MusicX.Views.Login;
 using MusicX.Views.Modals;
 using NLog;
@@ -72,6 +73,7 @@ namespace MusicX.Views
                 MinimizeToTray.IsChecked = config.MinimizeToTray.GetValueOrDefault();
                 GetBetaUpdates.IsChecked = config.GetBetaUpdates.GetValueOrDefault();
                 SavePlayerState.IsChecked = config.SavePlayerState.GetValueOrDefault();
+                SendLastFm.IsChecked = config.SendLastFmScrobbles.GetValueOrDefault();
 
                 UserName.Text = config.UserName;
 
@@ -570,6 +572,17 @@ namespace MusicX.Views
             config.SavePlayerState = SavePlayerState.IsChecked;
             
             await configService.SetConfig(config);
+        }
+
+        private async void SendLastFm_OnChanged(object sender, RoutedEventArgs e)
+        {
+            config.SendLastFmScrobbles = SendLastFm.IsChecked;
+            
+            await configService.SetConfig(config);
+
+            if (config.LastFmSession is null)
+                StaticService.Container.GetRequiredService<NavigationService>()
+                    .OpenModal<LastFmAuthModal>(StaticService.Container.GetRequiredService<LastFmAuthModalViewModel>());
         }
     }
 }
