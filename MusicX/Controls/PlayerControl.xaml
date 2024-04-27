@@ -331,6 +331,23 @@
                         </wpfui:Button>
 
                         <wpfui:Button
+                             x:Name="DislikeButton"
+                             Width="40"
+                             Height="40"
+                             Margin="5,0,0,0"
+                             Padding="0"
+                             Click="DislikeButton_Click"
+                             HorizontalContentAlignment="Center"
+                             Appearance="Transparent">
+
+                            <ui:SymbolIcon x:Name="DislikeIcon" Symbol="ThumbDislike24" />
+
+                            <wpfui:Button.ToolTip>
+                                <ToolTip Content="Не нравится" />
+                            </wpfui:Button.ToolTip>
+                        </wpfui:Button>
+
+                        <wpfui:Button
                             x:Name="TextTrack"
                             Width="40"
                             Height="40"

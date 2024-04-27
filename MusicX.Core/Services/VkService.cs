@@ -1158,5 +1158,32 @@ namespace MusicX.Core.Services
                 throw;
             }
         }
+
+        public async Task Dislike(long audioId, long ownerId)
+        {
+            try
+            {
+                logger.Info($"Invoke 'audio.addDislike' with audioId  {audioId}");
+                var parameters = new VkParameters
+                {
+
+                    {"device_id", await _deviceIdStore.GetDeviceIdAsync()},
+
+                    {"audio_ids", $"{ownerId}_{audioId}"},
+                };
+
+                var json = await apiInvoke.InvokeAsync("audio.addDislike", parameters);
+                logger.Debug("RESULT OF 'audio.addDislike'" + json);
+
+                logger.Info("Successful invoke 'audio.addDislike' ");
+
+            }
+            catch (Exception ex)
+            {
+                logger.Error("VK API ERROR:");
+                logger.Error(ex, ex.Message);
+                throw;
+            }
+        }
     }
 }
