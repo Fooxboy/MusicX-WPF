@@ -111,10 +111,12 @@ public class PlayerService
     public async Task PlayTrackFromQueueAsync(int index)
     {
         var previousTrack = CurrentTrack!;
+        var previousPosition = player.Position;
+        
         await PlayTrackAsync(Tracks[index]);
 
         await Task.WhenAll(
-                _statsListeners.Select(b => b.TrackChangedAsync(previousTrack, CurrentTrack!, ChangeReason.TrackChange)));
+                _statsListeners.Select(b => b.TrackChangedAsync(previousTrack, CurrentTrack!, ChangeReason.TrackChange, previousPosition)));
     }
     
     private async Task PlayTrackAsync(PlaylistTrack track, TimeSpan? position = null)
@@ -242,7 +244,7 @@ public class PlayerService
                 firstTrackTask = PlayTrackAsync(firstTrack, startPosition);
 
                     await Task.WhenAll(
-                        _statsListeners.Select(b => b.TrackChangedAsync(CurrentTrack, firstTrack, ChangeReason.PlaylistChange)));
+                        _statsListeners.Select(b => b.TrackChangedAsync(CurrentTrack, firstTrack, ChangeReason.PlaylistChange, player.Position)));
             }
 
             Application.Current.Dispatcher.BeginInvoke(
@@ -262,10 +264,12 @@ public class PlayerService
             if (firstTrack is null)
             {
                 var previousTrack = CurrentTrack;
+                var previousPosition = player.Position;
+                
                 await PlayTrackAsync(Tracks[0], startPosition);
 
                 await Task.WhenAll(
-                        _statsListeners.Select(b => b.TrackChangedAsync(previousTrack, CurrentTrack!, ChangeReason.PlaylistChange)));
+                        _statsListeners.Select(b => b.TrackChangedAsync(previousTrack, CurrentTrack!, ChangeReason.PlaylistChange, previousPosition)));
             }
         }
         catch (Exception e)
@@ -375,11 +379,12 @@ public class PlayerService
             }
 
             var previousTrack = CurrentTrack!;
+            var previousPosition = player.Position;
 
             await PlayTrackAsync(nextTrack);
 
             await Task.WhenAll(
-                    _statsListeners.Select(b => b.TrackChangedAsync(previousTrack, nextTrack, ChangeReason.NextButton)));
+                    _statsListeners.Select(b => b.TrackChangedAsync(previousTrack, nextTrack, ChangeReason.NextButton, previousPosition)));
         }catch(Exception ex)
         {
             var properties = new Dictionary<string, string>
@@ -485,11 +490,12 @@ public class PlayerService
 
                 var previousTrack = Tracks[index];
                 var prevCurrentTrack = CurrentTrack!;
+                var previousPosition = player.Position;
                 
                 await PlayTrackAsync(previousTrack);
                 
                 await Task.WhenAll(
-                        _statsListeners.Select(b => b.TrackChangedAsync(prevCurrentTrack, previousTrack!, ChangeReason.PrevButton)));
+                        _statsListeners.Select(b => b.TrackChangedAsync(prevCurrentTrack, previousTrack!, ChangeReason.PrevButton, previousPosition)));
             }
         }
         catch (Exception e)
