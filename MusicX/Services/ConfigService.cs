@@ -78,6 +78,10 @@ namespace MusicX.Services
                     await using var stream = File.OpenRead(_configPath);
                     config = await JsonSerializer.DeserializeAsync<ConfigModel>(stream, _configSerializerOptions);
                 }
+                catch (JsonException e)
+                {
+                    _logger.Error(e, "Failed to read config");
+                }
                 finally
                 {
                     ConfigSemaphore.Release();
@@ -101,6 +105,10 @@ namespace MusicX.Services
             {
                 await using var stream = File.Create(_configPath);
                 await JsonSerializer.SerializeAsync(stream, config, _configSerializerOptions);
+            }
+            catch (JsonException e)
+            {
+                _logger.Error(e, "Failed to write config");
             }
             finally
             {
