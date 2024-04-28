@@ -24,6 +24,7 @@ using MusicX.ViewModels.Modals;
 using MusicX.Views;
 using MusicX.Views.Modals;
 using NLog;
+using ProtoBuf.Meta;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 using Wpf.Ui.Extensions;
@@ -206,6 +207,22 @@ namespace MusicX.Controls
                 DownloadButton.IsEnabled = true;
                 Queue.ScrollIntoView(PlayerService.CurrentTrack);
 
+                switch (PlayerService.CurrentTrack?.Data)
+                {
+                    case VkTrackData vkData when LikeIcon.Filled:
+                        DislikeButton.Visibility = Visibility.Collapsed;
+                        break;
+                    case VkTrackData vkData:
+                        DislikeButton.Visibility = Visibility.Visible;
+                        break;
+                    case BoomTrackData boomData:
+                        DislikeButton.Visibility = Visibility.Collapsed;
+                        break;
+                    default:
+                        DislikeButton.Visibility = Visibility.Collapsed;
+                        break;
+                }
+
                 await SaveVolume();
             }
             catch (Exception ex)
@@ -286,8 +303,8 @@ namespace MusicX.Controls
             {
                 _ when PlayerService.IsMuted => new SymbolIcon(SymbolRegular.SpeakerOff28),
                 0.0 => new SymbolIcon(SymbolRegular.SpeakerOff28),
-                > 0.0 and < 0.30 => new SymbolIcon(SymbolRegular.Speaker032),
-                > 0.30 and < 0.60 => new SymbolIcon(SymbolRegular.Speaker132),
+                > 0.0 and < 0.10 => new SymbolIcon(SymbolRegular.Speaker032),
+                > 0.10 and < 0.60 => new SymbolIcon(SymbolRegular.Speaker132),
                 > 0.80 => new SymbolIcon(SymbolRegular.Speaker232),
                 _ => SpeakerIcon.Icon
             };
@@ -394,6 +411,7 @@ namespace MusicX.Controls
                 switch (PlayerService.CurrentTrack?.Data)
                 {
                     case VkTrackData vkData when LikeIcon.Filled:
+                        await vkService.Dislike(vkData.Info.Id, vkData.Info.OwnerId);
                         await vkService.AudioDeleteAsync(vkData.Info.Id, vkData.Info.OwnerId);
                         break;
                     case VkTrackData vkData:
@@ -663,6 +681,36 @@ namespace MusicX.Controls
             lyricsViewModel.Track = PlayerService.CurrentTrack;
 
             navigationService.OpenModal<LyricsModal>(lyricsViewModel);
+        }
+
+        private async void DislikeButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var vkService = StaticService.Container.GetRequiredService<VkService>();
+
+                if (PlayerService.CurrentTrack?.Data is VkTrackData vkData)
+                {
+                    await vkService.Dislike(vkData.Info.Id, vkData.Info.OwnerId);
+                }
+
+                await PlayerService.NextTrack();
+            }
+            catch(Exception ex)
+            {
+                var properties = new Dictionary<string, string>
+                {
+                    {"Version", StaticService.Version }
+                };
+                Crashes.TrackError(ex, properties);
+
+                logger.Error("Error in dislike track");
+                logger.Error(ex, ex.Message);
+
+                var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
+
+                snackbarService.ShowException("Мы не смогли указать, что Вам этот трек не нравится", ex);
+            }
         }
     }
 }

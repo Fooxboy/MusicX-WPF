@@ -5,28 +5,67 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wpfui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
+    xmlns:system="clr-namespace:System;assembly=System.Runtime"
+    xmlns:models="clr-namespace:MusicX.Core.Models;assembly=MusicX.Core"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance models:Block}">
+    <UserControl.Resources>
+        <ControlTemplate x:Key="RegularTitleTemplate" TargetType="ContentControl">
+            <TextBlock
+                FontFamily="{StaticResource VKSansDemiBold}"
+                FontSize="30"
+                FontWeight="DemiBold"
+                Text="{TemplateBinding Content}" />
+        </ControlTemplate>
+        <ControlTemplate x:Key="ButtonTitleTemplate" TargetType="ContentControl">
+            <wpfui:HyperlinkButton
+                Style="{StaticResource HeaderHyperlinkButtonStyle}"
+                FontFamily="{StaticResource VKSansDemiBold}"
+                FontSize="30"
+                FontWeight="Bold"
+                Click="MoreButton_Click"
+                Content="{TemplateBinding Content}">
+                <wpfui:HyperlinkButton.Icon>
+                    <wpfui:SymbolIcon Symbol="ChevronRight24" />
+                </wpfui:HyperlinkButton.Icon>
+            </wpfui:HyperlinkButton>
+        </ControlTemplate>
+    </UserControl.Resources>
+    
     <Grid
         x:Name="TitleBlock"
-        Margin="0,0,0,13"
+        Margin="0,-10,0,0"
         HorizontalAlignment="Stretch">
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
         <StackPanel Grid.Column="0" VerticalAlignment="Top" Orientation="Horizontal">
-            <TextBlock
-                x:Name="Title"
-                VerticalAlignment="Center"
-                FontFamily="{StaticResource VKSansDemiBold}"
-                FontSize="30"
-                FontWeight="DemiBold"
-                
-                Text="Title block" />
+            <ContentControl x:Name="Title" VerticalContentAlignment="Center">
+                <ContentControl.Style>
+                    <Style TargetType="ContentControl">
+                        <Setter Property="Template" Value="{StaticResource RegularTitleTemplate}" />
+                        <Style.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding Actions.Count}" Value="1" />
+                                    <Condition Binding="{Binding Visibility, ElementName=ButtonsGrid}" Value="Collapsed" />
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Template" Value="{StaticResource ButtonTitleTemplate}" />
+                            </MultiDataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ContentControl.Style>
+            </ContentControl>
             <TextBlock
                 x:Name="BadgeHeader"
                 Grid.Column="0"
@@ -46,11 +85,12 @@
 
         </StackPanel>
 
-        <TextBlock Margin="0,35,0,0" x:Name="Subtitle" Visibility="Collapsed" VerticalAlignment="Bottom" Opacity="0.4" Text="Subtitle"/>
+        <TextBlock Grid.Row="1" Grid.Column="0" Margin="0,5,0,0" x:Name="Subtitle" Visibility="Collapsed" VerticalAlignment="Bottom" Opacity="0.4" Text="Subtitle"/>
 
         <Grid
             x:Name="ButtonsGrid"
-            Grid.Column="2"
+            Grid.Row="0" Grid.Column="2"
+            Grid.RowSpan="2"
             Width="170"
             Height="30"
             Margin="0,0,5,0"
@@ -73,19 +113,6 @@
 
 
         </Grid>
-
-
-        <wpfui:Button
-            x:Name="MoreButton"
-            Grid.Column="1"
-            Height="30"
-            Margin="0,0,0,0"
-            Padding="8 0"
-            HorizontalAlignment="Right"
-            Appearance="Secondary"
-            Click="MoreButton_Click"
-            FontFamily="{StaticResource VKSansDemiBold}"
-            Visibility="Collapsed" />
 
     </Grid>
 </UserControl>

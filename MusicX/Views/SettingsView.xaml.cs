@@ -14,6 +14,7 @@ using MusicX.Core.Services;
 using MusicX.Models;
 using MusicX.Services;
 using MusicX.ViewModels;
+using MusicX.ViewModels.Modals;
 using MusicX.Views.Login;
 using MusicX.Views.Modals;
 using NLog;
@@ -65,37 +66,14 @@ namespace MusicX.Views
 
                 this.config = await configService.GetConfig();
 
-                if (config.ShowRPC == null)
-                {
-                    config.ShowRPC = true;
-                }
-
-                if(config.BroadcastVK == null)
-                {
-                    config.BroadcastVK = false;
-                }
-
-                if(config.WinterTheme == null)
-                {
-                    config.WinterTheme = false;
-                }
-
-                if (config.MinimizeToTray == null)
-                {
-                    config.MinimizeToTray = false;
-                }
-                
-                if (config.GetBetaUpdates == null)
-                {
-                    config.GetBetaUpdates = false;
-                }
-
-                ShowRPC.IsChecked = config.ShowRPC.Value;
-                BroacastVK.IsChecked = config.BroadcastVK.Value;
+                ShowRPC.IsChecked = config.ShowRPC.GetValueOrDefault();
+                BroacastVK.IsChecked = config.BroadcastVK.GetValueOrDefault();
                 ShowAmimatedBackground.IsChecked = config.AnimatedBackground;
-                WinterTheme.IsChecked = config.WinterTheme.Value;
-                MinimizeToTray.IsChecked = config.MinimizeToTray.Value;
-                GetBetaUpdates.IsChecked = config.GetBetaUpdates.Value;
+                WinterTheme.IsChecked = config.WinterTheme.GetValueOrDefault();
+                MinimizeToTray.IsChecked = config.MinimizeToTray.GetValueOrDefault();
+                GetBetaUpdates.IsChecked = config.GetBetaUpdates.GetValueOrDefault();
+                SavePlayerState.IsChecked = config.SavePlayerState.GetValueOrDefault();
+                SendLastFm.IsChecked = config.SendLastFmScrobbles.GetValueOrDefault();
 
                 UserName.Text = config.UserName;
 
@@ -212,24 +190,15 @@ namespace MusicX.Views
         {
             var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
 
+#if !DEBUG
             try
             {
-                var navigation = StaticService.Container.GetRequiredService<NavigationService>();
-                var github = StaticService.Container.GetRequiredService<GithubService>();
-
-                var release = await github.GetLastRelease();
-
-
-
-                if (release.TagName == StaticService.Version)
+                var updateService = StaticService.Container.GetRequiredService<UpdateService>();
+                
+                if (!await updateService.CheckForUpdates())
                 {
                     snackbarService.Show("Уже обновлено!",
                         "У Вас установлена последняя версия MusicX! Обновлений пока что нет");
-
-                }
-                else
-                {
-                    navigation.OpenModal<AvailableNewUpdateModal>(release);
                 }
             }
             catch (Exception ex)
@@ -237,7 +206,9 @@ namespace MusicX.Views
                 snackbarService.Show("Ошибка", "Произошла ошибка при проверке обновлений");
 
             }
-
+#else
+            snackbarService.Show("В режиме отладки", "Сервис обновлений отключен");
+#endif
         }
 
         private void TelegramButton_Click(object sender, RoutedEventArgs e)
@@ -245,6 +216,15 @@ namespace MusicX.Views
             Process.Start(new ProcessStartInfo
             {
                 FileName = "https://t.me/MusicXPlayer",
+                UseShellExecute = true
+            });
+        }
+
+        private void TelegramChat_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "https://t.me/+lO37psdwX2s3NjZi",
                 UseShellExecute = true
             });
         }
@@ -585,6 +565,24 @@ namespace MusicX.Views
         private void CatalogsCard_Click(object sender, RoutedEventArgs e)
         {
             StaticService.Container.GetRequiredService<NavigationService>().OpenSection("profiles");
+        }
+
+        private async void SavePlayerState_OnCheckChanged(object sender, RoutedEventArgs e)
+        {
+            config.SavePlayerState = SavePlayerState.IsChecked;
+            
+            await configService.SetConfig(config);
+        }
+
+        private async void SendLastFm_OnChanged(object sender, RoutedEventArgs e)
+        {
+            config.SendLastFmScrobbles = SendLastFm.IsChecked;
+            
+            await configService.SetConfig(config);
+
+            if (config.LastFmSession is null)
+                StaticService.Container.GetRequiredService<NavigationService>()
+                    .OpenModal<LastFmAuthModal>(StaticService.Container.GetRequiredService<LastFmAuthModalViewModel>());
         }
     }
 }

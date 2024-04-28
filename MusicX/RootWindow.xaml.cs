@@ -11,6 +11,7 @@ using AsyncAwaitBestPractices;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Toolkit.Uwp.Notifications;
 using MusicX.Controls;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
@@ -28,6 +29,7 @@ using Velopack.Sources;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 using Wpf.Ui.Extensions;
+using Wpf.Ui.Tray.Controls;
 using NavigationService = MusicX.Services.NavigationService;
 
 namespace MusicX
@@ -54,6 +56,7 @@ namespace MusicX
             ConfigService configService, ISnackbarService snackbarService,
                           ListenTogetherService togetherService) : base(snackbarService, navigationService, logger)
         {
+            Application.Current.MainWindow = this;
             InitializeComponent();     
             this.navigationService = navigationService;
             this.vkService = vkService;
@@ -64,14 +67,20 @@ namespace MusicX
 
             playerSerivce.TrackChangedEvent += PlayerSerivce_TrackChangedEvent;
 
-            Closing += RootWindow_Closing;
-
             SingleAppService.Instance.RunWitchArgs += Instance_RunWitchArgs;
             
             togetherService.ConnectedToSession += TogetherServiceOnConnectedToSession;
 
             Width = configService.Config.Width;
             Height = configService.Config.Height;
+        }
+
+        protected override void OnStateChanged(EventArgs e)
+        {
+            base.OnStateChanged(e);
+            
+            if (WindowState == WindowState.Minimized && TrayIcon.IsRegistered && ConsiderHideToTray()) 
+                Hide();
         }
 
         protected override SnackbarPresenter? GetSnackbarPresenter() => RootSnackbar;
@@ -125,29 +134,21 @@ namespace MusicX
           
         }
 
-        private async void RootWindow_Closing(object? sender, CancelEventArgs e)
+        private bool ConsiderHideToTray()
         {
-            try
-            {
-                var listenTogetherService = StaticService.Container.GetRequiredService<ListenTogetherService>();
+            if (configService.Config.MinimizeToTray is not null) return configService.Config.MinimizeToTray.Value;
 
-                if (listenTogetherService.IsConnectedToServer && listenTogetherService.PlayerMode != PlayerMode.None)
-                {
-                    if (listenTogetherService.PlayerMode == PlayerMode.Owner)
-                    {
-                        await listenTogetherService.StopPlaySessionAsync();
-                    }
-                    else
-                    {
-                        await listenTogetherService.LeavePlaySessionAsync();
-                    }
-                }
-            }catch(Exception ex)
-            {
-                //nothing
-            }
-           
+            new ToastContentBuilder()
+                .AddText("Приложене было скрыто в трее, нажмите на иконку, чтобы снова открыть окно.")
+                .AddText("Поведение можно изменить в настройках. Это уведомление больше не будет показано.")
+                .Show();
+                
+            configService.Config.MinimizeToTray = true;
+            configService.SetConfig(configService.Config).SafeFireAndForget();
+
+            return true;
         }
+
         private void PlayerSerivce_TrackChangedEvent(object? sender, EventArgs e)
         {
             if (PlayerShowed) return;
@@ -316,6 +317,13 @@ namespace MusicX
                 if (config.NotifyMessages is null)
                     config.NotifyMessages = new() { ShowListenTogetherModal = true, LastShowedTelegramBlock = null };
 
+                if (config.LastPlayerState is not null)
+                {
+                    await playerControl.PlayerService.RestoreFromStateAsync(config.LastPlayerState);
+
+                    config.LastPlayerState = null;
+                }
+
                 await configService.SetConfig(config);
 
                 if(config.NotifyMessages.ShowListenTogetherModal)
@@ -323,18 +331,7 @@ namespace MusicX
                     navigationService.OpenModal<WelcomeToListenTogetherModal>();
                 }
 
-                /*if(config.MinimizeToTray != null) // TODO tray
-                {
-                    WpfTitleBar.MinimizeToTray = config.MinimizeToTray.Value;
-                }else
-                {
-                    WpfTitleBar.MinimizeToTray = false;
-                }*/
-
                 this.WindowState = WindowState.Normal;
-
-                
-                // AppNotifyIcon.Register();
             }
             catch (Exception ex)
             {
@@ -458,30 +455,10 @@ namespace MusicX
             try
             {
                 await Task.Delay(2000);
-                /*var github = StaticService.Container.GetRequiredService<GithubService>();
-
-                var release = await github.GetLastRelease();
-
-                if (release.TagName != StaticService.Version)
-                    navigationService.OpenModal<AvalibleNewUpdateModal>(release);*/
-
-                var config = await configService.GetConfig();
-
-                var getBetaUpdates = config.GetBetaUpdates.GetValueOrDefault(false);
-                var manager = new UpdateManager(new GithubSource("https://github.com/Fooxboy/MusicX-WPF",
-                    string.Empty, getBetaUpdates, new HttpClientFileDownloader()), new()
-                {
-                    ExplicitChannel = getBetaUpdates ? "win-beta" : "win"
-                });
-
-                var updateInfo = await manager.CheckForUpdatesAsync();
                 
-                if (updateInfo is null)
-                    return;
-
-                var viewModel = new AvailableNewUpdateModalViewModel(manager, updateInfo);
-
-                navigationService.OpenModal<AvailableNewUpdateModal>(viewModel);
+                var updateService = StaticService.Container.GetRequiredService<UpdateService>();
+                
+                await updateService.CheckForUpdates();
             }catch(Exception ex)
             {
                 var properties = new Dictionary<string, string>
@@ -575,11 +552,35 @@ namespace MusicX
 
         }*/
 
-        private void RootWindow_OnClosing(object? sender, CancelEventArgs e)
+        private async void RootWindow_OnClosing(object? sender, CancelEventArgs e)
         {
             configService.Config.Width = Width;
             configService.Config.Height = Height;
-            configService.SetConfig(configService.Config).SafeFireAndForget(continueOnCapturedContext: true);
+
+            if (configService.Config.SavePlayerState is true)
+                configService.Config.LastPlayerState = PlayerState.CreateOrNull(playerControl.PlayerService);
+
+            await configService.SetConfig(configService.Config);
+            
+            try
+            {
+                var listenTogetherService = StaticService.Container.GetRequiredService<ListenTogetherService>();
+
+                if (listenTogetherService.IsConnectedToServer && listenTogetherService.PlayerMode != PlayerMode.None)
+                {
+                    if (listenTogetherService.PlayerMode == PlayerMode.Owner)
+                    {
+                        await listenTogetherService.StopPlaySessionAsync();
+                    }
+                    else
+                    {
+                        await listenTogetherService.LeavePlaySessionAsync();
+                    }
+                }
+            }catch(Exception ex)
+            {
+                //nothing
+            }
         }
 
         private void RootFrame_Navigating(object sender, System.Windows.Navigation.NavigatingCancelEventArgs e)
@@ -587,6 +588,12 @@ namespace MusicX
             SearchBox.Visibility = e.Content is SectionView { DataContext: SectionViewModel { SectionId: "search" } or SectionViewModel { SectionType: SectionType.Search } }
                 ? Visibility.Visible
                 : Visibility.Collapsed;
+        }
+
+        private void TrayIcon_OnLeftClick(NotifyIcon sender, RoutedEventArgs e)
+        {
+            Show();
+            WindowState = WindowState.Normal;
         }
     }
 }

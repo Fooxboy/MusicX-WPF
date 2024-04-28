@@ -18,7 +18,7 @@ public class DiscordTrackStats : ITrackStatsListener
         _configService = configService;
     }
 
-    public Task TrackChangedAsync(PlaylistTrack? previousTrack, PlaylistTrack newTrack, ChangeReason reason)
+    public Task TrackChangedAsync(PlaylistTrack? previousTrack, PlaylistTrack newTrack, ChangeReason reason, TimeSpan? position = null)
     {
         if (_configService.Config.ShowRPC == true)
             SetTrack(newTrack);

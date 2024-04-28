@@ -5,6 +5,8 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
+using IF.Lastfm.Core.Api;
+using IF.Lastfm.Core.Scrobblers;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Services;
@@ -87,6 +89,7 @@ namespace MusicX.Views
                 collection.AddSingleton<ITrackStatsListener, VkTrackBroadcastStats>();
                 collection.AddSingleton<ITrackStatsListener, VkTrackStats>();
                 collection.AddSingleton<ITrackStatsListener, ListenTogetherStats>();
+                collection.AddSingleton<ITrackStatsListener, LastFmStats>();
 
                 collection.AddTransient<SectionViewModel>();
                 collection.AddTransient<PlaylistViewModel>();
@@ -102,6 +105,7 @@ namespace MusicX.Views
                 collection.AddTransient<CaptchaModalViewModel>();
                 collection.AddTransient<AccountsWindowViewModel>();
                 collection.AddTransient<LoginVerificationMethodsModalViewModel>();
+                collection.AddTransient<LastFmAuthModalViewModel>();
 
                 collection.AddSingleton<NavigationService>();
                 collection.AddSingleton<ConfigService>();
@@ -112,6 +116,18 @@ namespace MusicX.Views
                 collection.AddSingleton<WindowsAudioMixerService>();
                 collection.AddSingleton<ICustomSectionsService, CustomSectionsService>();
                 collection.AddSingleton<ISnackbarService, MusicXSnackbarService>();
+                collection.AddSingleton<UpdateService>();
+                collection.AddSingleton<ILastAuth>(s =>
+                {
+                    var auth = new LastAuth("ff3b1adf454799a760ad29a0b71bd6b3", "74ef981214417381716f72a46677a802");
+
+                    if (s.GetRequiredService<ConfigService>().Config.LastFmSession is { } session)
+                        auth.LoadSession(session);
+
+                    return auth;
+                });
+                collection.AddSingleton<IScrobbler, MemoryScrobbler>();
+                collection.AddSingleton<ITrackApi, TrackApi>();
 
                 var container = StaticService.Container = collection.BuildServiceProvider();
 
@@ -186,13 +202,6 @@ namespace MusicX.Views
                                     {
                                         await rootWindow.StartListenTogether(arg[1]);
                                     }
-
-                                    var playArgIndex = Array.BinarySearch(_args, "--play",
-                                        StringComparer.OrdinalIgnoreCase);
-                                    if (playArgIndex >= 0 && playArgIndex + 1 < _args.Length &&
-                                        JsonSerializer.Deserialize<PlayerState>(string.Join(string.Empty, _args[(playArgIndex + 1)..])) is { } state)
-                                        await container.GetRequiredService<PlayerService>()
-                                            .RestoreFromStateAsync(state);
                                 }
 
                                 this.Close();

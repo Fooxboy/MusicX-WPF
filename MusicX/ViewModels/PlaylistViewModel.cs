@@ -56,7 +56,7 @@ namespace MusicX.ViewModels
         {
             try
             {
-                if (Tracks.Count >= Playlist.Count)
+                if (Tracks.Count == 0 || Tracks.Count >= Playlist.Count)
                     return;
                 VisibleLoadingMore = Visibility.Visible;
                 var response = await vkService.AudioGetAsync(Playlist.Id, Playlist.OwnerId, Playlist.AccessKey, Tracks.Count, 40);

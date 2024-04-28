@@ -22,5 +22,14 @@ namespace MusicX.Controls
             get => (bool)GetValue(ShowFullProperty);
             set => SetValue(ShowFullProperty, value);
         }
+
+        public static readonly DependencyProperty IsCroppedProperty = DependencyProperty.Register(
+           nameof(IsCropped), typeof(bool), typeof(ListPlaylists));
+
+        public bool IsCropped
+        {
+            get => (bool)GetValue(IsCroppedProperty);
+            set => SetValue(IsCroppedProperty, value);
+        }
     }
 }
