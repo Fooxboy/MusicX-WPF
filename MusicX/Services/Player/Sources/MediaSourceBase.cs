@@ -38,10 +38,12 @@ public abstract class MediaSourceBase : ITrackMediaSource
                 ["http_persistent"] = "false",
                 ["reconnect"] = "1",
                 ["reconnect_streamed"] = "1",
-                ["reconnect_delay_max"] = "5",
-                ["stimeout"] = "10",
-                ["timeout"] = "10",
-                ["rw_timeout"] = "10"
+                ["reconnect_on_network_error"] = "1",
+                ["reconnect_delay_max"] = "30",
+                ["reconnect_on_http_error"] = "4xx,5xx",
+                ["stimeout"] = "30000000",
+                ["timeout"] = "30000000",
+                ["rw_timeout"] = "30000000"
             }
         }
     };
