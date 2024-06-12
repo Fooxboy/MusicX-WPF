@@ -31,6 +31,10 @@ public class VkMediaSource : MediaSourceBase
             
             RegisterSourceObjectReference(player, rtMediaSource);
         }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
         catch (Exception e)
         {
             _logger.Error(e, "Failed to use winrt decoder for vk media source");
