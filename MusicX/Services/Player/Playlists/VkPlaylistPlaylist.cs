@@ -12,6 +12,10 @@ namespace MusicX.Services.Player.Playlists;
 public class VkPlaylistPlaylist : PlaylistBase<PlaylistData>
 {
     private readonly VkService _vkService;
+    private int _offset;
+    private int _count;
+    
+    private const int LoadCount = 40;
 
     public VkPlaylistPlaylist(VkService vkService, PlaylistData data)
     {
@@ -21,11 +25,7 @@ public class VkPlaylistPlaylist : PlaylistBase<PlaylistData>
 
     public override async IAsyncEnumerable<PlaylistTrack> LoadAsync()
     {
-        _canLoad = false;
-        
         var (id, ownerId, accessKey) = Data;
-        var playlist = await _vkService.LoadFullPlaylistAsync(id, ownerId, accessKey);
-
         var trackPlaylist = new Playlist
         {
             Id = Data.PlaylistId,
@@ -33,13 +33,33 @@ public class VkPlaylistPlaylist : PlaylistBase<PlaylistData>
             AccessKey = Data.AccessKey
         };
         
-        foreach (var audio in playlist.Audios)
+        if (_firstLoad)
+        {
+            var playlist = await _vkService.GetPlaylistAsync(LoadCount, id, accessKey, ownerId);
+
+            _count = (int)playlist.Playlist.Count;
+            _offset = playlist.Audios.Count;
+
+            foreach (var audio in playlist.Audios)
+            {
+                yield return audio.ToTrack(trackPlaylist);
+            }
+        
+            _firstLoad = false;
+            yield break;
+        }
+        
+        var response = await _vkService.AudioGetAsync(id, ownerId, accessKey, _offset, LoadCount);
+
+        _offset += response.Items.Count;
+        
+        foreach (var audio in response.Items)
         {
             yield return audio.ToTrack(trackPlaylist);
         }
     }
 
-    private bool _canLoad = true;
-    public override bool CanLoad => _canLoad;
+    private bool _firstLoad = true;
+    public override bool CanLoad => _firstLoad || _offset < _count;
     public override PlaylistData Data { get; }
 }

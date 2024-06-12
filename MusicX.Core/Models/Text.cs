@@ -4,18 +4,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MusicX.Core.Models.Abstractions;
 
-namespace MusicX.Core.Models
+namespace MusicX.Core.Models;
+
+public class Text : IBlockEntity<string>
 {
-    public class Text
-    {
-        [JsonProperty("id")]
-        public string Id { get; set; }
+    [JsonProperty("id")]
+    public string Id { get; set; }
 
-        [JsonProperty("text")]
-        public string Value { get; set; }
+    [JsonProperty("text")]
+    public string Value { get; set; }
 
-        [JsonProperty("collapsed_lines")]
-        public int CollapsedLines { get; set; }
-    }
+    [JsonProperty("collapsed_lines")]
+    public int CollapsedLines { get; set; }
 }
