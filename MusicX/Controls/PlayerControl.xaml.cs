@@ -25,6 +25,8 @@ using MusicX.Views;
 using MusicX.Views.Modals;
 using NLog;
 using ProtoBuf.Meta;
+using VkNet.Model.Attachments;
+
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 using Wpf.Ui.Extensions;
@@ -711,6 +713,13 @@ namespace MusicX.Controls
 
                 snackbarService.ShowException("Мы не смогли указать, что Вам этот трек не нравится", ex);
             }
+        }
+
+        private void CalculatorButton_Click(object sender, RoutedEventArgs e)
+        {
+            var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
+
+            navigationService.OpenModal<CalculatorModal>();
         }
     }
 }

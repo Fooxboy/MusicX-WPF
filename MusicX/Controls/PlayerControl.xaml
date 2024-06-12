@@ -5,14 +5,15 @@
     xmlns:converters="clr-namespace:MusicX.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:helpers="clr-namespace:MusicX.Helpers"
     xmlns:local="clr-namespace:MusicX.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:player="clr-namespace:MusicX.Shared.Player;assembly=MusicX.Shared"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:wpfui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
-    xmlns:helpers="clr-namespace:MusicX.Helpers"
     x:Name="Control"
     d:DataContext="{d:DesignInstance player:PlaylistTrack}"
+    d:Width="1500"
     Loaded="UserControl_Loaded"
     mc:Ignorable="d">
     <UserControl.Resources>
@@ -331,14 +332,14 @@
                         </wpfui:Button>
 
                         <wpfui:Button
-                             x:Name="DislikeButton"
-                             Width="40"
-                             Height="40"
-                             Margin="5,0,0,0"
-                             Padding="0"
-                             Click="DislikeButton_Click"
-                             HorizontalContentAlignment="Center"
-                             Appearance="Transparent">
+                            x:Name="DislikeButton"
+                            Width="40"
+                            Height="40"
+                            Margin="5,0,0,0"
+                            Padding="0"
+                            HorizontalContentAlignment="Center"
+                            Appearance="Transparent"
+                            Click="DislikeButton_Click">
 
                             <ui:SymbolIcon x:Name="DislikeIcon" Symbol="ThumbDislike24" />
 
@@ -365,7 +366,7 @@
                         Grid.Column="1"
                         HorizontalAlignment="Center"
                         Orientation="Horizontal">
-                        
+
                         <ToggleButton
                             x:Name="ShuffleButton"
                             Width="40"
@@ -407,8 +408,8 @@
                             Padding="0"
                             HorizontalContentAlignment="Center"
                             Appearance="Transparent"
-                            FontSize="20"
-                            Click="PlayPauseButton_Click">
+                            Click="PlayPauseButton_Click"
+                            FontSize="20">
 
                             <wpfui:Button.Style>
                                 <Style BasedOn="{StaticResource {x:Type wpfui:Button}}" TargetType="{x:Type wpfui:Button}">
@@ -496,7 +497,21 @@
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
+                            <wpfui:Button
+                                x:Name="CalculatorButton"
+                                Width="40"
+                                Height="40"
+                                Margin="0,0,20,0"
+                                Padding="0"
+                                HorizontalContentAlignment="Center"
+                                Appearance="Transparent"
+                                Click="CalculatorButton_Click">
+                                <ui:SymbolIcon Symbol="Calculator16" />
 
+                                <wpfui:Button.ToolTip>
+                                    <ToolTip Content="Открыть калькулятор" />
+                                </wpfui:Button.ToolTip>
+                            </wpfui:Button>
                             <wpfui:Button
                                 x:Name="DownloadButton"
                                 Width="40"
@@ -616,7 +631,10 @@
                 x:Name="QueueGrid"
                 Grid.Row="1"
                 Height="0">
-                <ui:ListView x:Name="Queue" Style="{StaticResource ItemsListViewStyle}" AllowDrop="True">
+                <ui:ListView
+                    x:Name="Queue"
+                    AllowDrop="True"
+                    Style="{StaticResource ItemsListViewStyle}">
                     <ui:ListView.ItemTemplate>
                         <DataTemplate DataType="{x:Type player:PlaylistTrack}">
                             <Grid>
@@ -651,16 +669,16 @@
                             <hc:ScrollViewer
                                 Name="PART_ScrollViewer"
                                 Padding="{TemplateBinding Control.Padding}"
+                                hc:ScrollViewerAttach.AutoHide="True"
                                 CanContentScroll="{TemplateBinding ScrollViewer.CanContentScroll}"
                                 Focusable="False"
-                                IsInertiaEnabled="True"
-                                hc:ScrollViewerAttach.AutoHide="True">
+                                IsInertiaEnabled="True">
                                 <ItemsPresenter />
                             </hc:ScrollViewer>
                         </ControlTemplate>
                     </ui:ListView.Template>
                 </ui:ListView>
-                
+
                 <wpfui:ProgressRing
                     x:Name="QueueLoadingRing"
                     HorizontalAlignment="Center"
