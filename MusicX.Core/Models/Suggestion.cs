@@ -4,11 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MusicX.Core.Models.Abstractions;
 
 namespace MusicX.Core.Models
 {
-    public class Suggestion : IBlockEntity<string>
+    public class Suggestion
     {
         [JsonProperty("id")]
         public string Id { get; set; }

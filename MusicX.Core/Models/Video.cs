@@ -4,11 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MusicX.Core.Models.Abstractions;
 
 namespace MusicX.Core.Models
 {
-    public class Video : IBlockEntityWithOwner<int, int>
+    public class Video
     {
         [JsonProperty("is_explicit")]
         public int IsExplicit { get; set; }

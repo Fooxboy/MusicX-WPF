@@ -4,11 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MusicX.Core.Models.Abstractions;
 
 namespace MusicX.Core.Models
 {
-    public class Longread : IBlockEntityWithOwner<int, int>
+    public class Longread
     {
         [JsonProperty("access_key")]
         public string AccessKey { get; set; }

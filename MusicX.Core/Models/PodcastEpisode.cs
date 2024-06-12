@@ -4,11 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MusicX.Core.Models.Abstractions;
 
 namespace MusicX.Core.Models
 {
-    public class PodcastEpisode : IBlockEntityWithOwner<int, int>
+    public class PodcastEpisode
     {
         [JsonProperty("artist")]
         public string Artist { get; set; }
