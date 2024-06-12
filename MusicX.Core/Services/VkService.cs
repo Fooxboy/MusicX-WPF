@@ -142,7 +142,8 @@ namespace MusicX.Core.Services
 
                 logger.Info("Successful invoke 'catalog.getAudio' ");
 
-                return model.Proccess();
+                IIdentifiable.Process(model);
+                return model;
             }catch(Exception ex)
             {
                 logger.Error("VK API ERROR:");
@@ -182,7 +183,8 @@ namespace MusicX.Core.Services
                  logger.Info("Successful invoke 'catalog.getSection' ");
 
 
-                return model.Proccess();
+                IIdentifiable.Process(model);
+                return model;
             }catch (Exception ex)
             {
                 logger.Error("VK API ERROR:");
@@ -211,7 +213,8 @@ namespace MusicX.Core.Services
 
                 logger.Info("Successful invoke 'catalog.getBlockItems' ");
 
-                return model.Proccess();
+                IIdentifiable.Process(model);
+                return model;
             }catch(Exception ex)
             {
                 logger.Error("VK API ERROR:");
@@ -245,7 +248,8 @@ namespace MusicX.Core.Services
                 var model = await apiInvoke.CallAsync<ResponseData>("catalog.getAudioSearch", parameters);
                 logger.Info("Successful invoke 'catalog.getAudioSearch' ");
 
-                return model.Proccess();
+                IIdentifiable.Process(model);
+                return model;
             }catch(Exception ex)
             {
                 logger.Error("VK API ERROR:");
@@ -276,7 +280,8 @@ namespace MusicX.Core.Services
                 logger.Info("Successful invoke 'catalog.getAudioArtist' ");
 
 
-                return model.Proccess();
+                IIdentifiable.Process(model);
+                return model;
             }catch (Exception ex)
             {
                 logger.Error("VK API ERROR:");
@@ -307,7 +312,8 @@ namespace MusicX.Core.Services
                 logger.Info("Successful invoke 'catalog.getAudioCurator' ");
 
 
-                return model.Proccess();
+                IIdentifiable.Process(model);
+                return model;
             }catch(Exception ex)
             {
                 logger.Error("VK API ERROR:");
@@ -344,7 +350,8 @@ namespace MusicX.Core.Services
                 logger.Info("Successful invoke 'execute.getPlaylist' ");
 
 
-                return model.Proccess();
+                IIdentifiable.Process(model);
+                return model;
             }catch(Exception ex)
             {
                 logger.Error("VK API ERROR:");
@@ -603,8 +610,8 @@ namespace MusicX.Core.Services
 
                 logger.Info("Successful invoke 'catalog.replaceBlocks' ");
 
-
-                return model.Proccess();
+                IIdentifiable.Process(model);
+                return model;
             }catch(Exception ex)
             {
                 logger.Error("VK API ERROR:");
@@ -809,7 +816,8 @@ namespace MusicX.Core.Services
                 logger.Info("Successful invoke 'catalog.getAudioCurator' ");
 
 
-                return model.Proccess();
+                IIdentifiable.Process(model);
+                return model;
             }
             catch (Exception ex)
             {
@@ -835,7 +843,8 @@ namespace MusicX.Core.Services
 
             var model = await apiInvoke.CallAsync<ResponseData>("execute", parameters);
 
-            return model.Proccess();
+            IIdentifiable.Process(model);
+                return model;
         }
 
         public async Task<ResponseData> GetRecommendationsAudio(string audio)

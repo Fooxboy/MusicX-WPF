@@ -1,10 +1,13 @@
-﻿using Newtonsoft.Json;
+﻿using MusicX.Core.Helpers;
+using Newtonsoft.Json;
 
 
 namespace MusicX.Core.Models
 {
-    public class RecommendedPlaylist
+    public class RecommendedPlaylist : IIdentifiable
     {
+        string IIdentifiable.Identifier => $"{OwnerId}_{Id}";
+
         [JsonProperty("id")]
         public int Id { get; set; }
 

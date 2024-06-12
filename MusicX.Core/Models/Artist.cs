@@ -1,10 +1,13 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using MusicX.Core.Helpers;
 
 namespace MusicX.Core.Models
 {
-    public class Artist
+    public class Artist : IIdentifiable
     {
+        string IIdentifiable.Identifier => Id;
+
         [JsonProperty("name")]
         public string Name { get; set; }
 

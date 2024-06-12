@@ -2,11 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using MusicX.Core.Helpers;
 
 namespace MusicX.Core.Models
 {
-    public class Playlist
+    public class Playlist : IIdentifiable
     {
+        string IIdentifiable.Identifier => $"{OwnerId}_{Id}";
+
         [JsonProperty("id")]
         public long Id { get; set; }
 

@@ -4,11 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MusicX.Core.Helpers;
 
 namespace MusicX.Core.Models
 {
-    public class Placeholder
+    public class Placeholder : IIdentifiable
     {
+        string IIdentifiable.Identifier => Id;
+
         [JsonProperty("title")]
         public string Title { get; set; }
 

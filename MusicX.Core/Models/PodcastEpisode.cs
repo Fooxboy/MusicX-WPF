@@ -4,11 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MusicX.Core.Helpers;
 
 namespace MusicX.Core.Models
 {
-    public class PodcastEpisode
+    public class PodcastEpisode : IIdentifiable
     {
+        string IIdentifiable.Identifier => Id.ToString();
+
         [JsonProperty("artist")]
         public string Artist { get; set; }
 

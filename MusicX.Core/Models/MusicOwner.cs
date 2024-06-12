@@ -1,9 +1,12 @@
-﻿using Newtonsoft.Json;
+﻿using MusicX.Core.Helpers;
+using Newtonsoft.Json;
 
 namespace MusicX.Core.Models;
 
-public class MusicOwner
+public class MusicOwner : IIdentifiable
 {
+    string IIdentifiable.Identifier => Id;
+
     [JsonProperty("id")]
     public string Id { get; set; }
     
