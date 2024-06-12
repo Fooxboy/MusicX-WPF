@@ -18,13 +18,13 @@ namespace MusicX.Core.Models.General
     public class ResponseData
     {
         [JsonProperty("section")]
-        public Section Section { get; set; }
+        public Section? Section { get; set; }
 
         [JsonProperty("catalog")]
         public Catalog Catalog { get; set; }
 
         [JsonProperty("block")]
-        public Block Block { get; set; }
+        public Block? Block { get; set; }
 
         [JsonProperty("catalog_banners")]
         public List<CatalogBanner> CatalogBanners { get; set; }
@@ -60,7 +60,7 @@ namespace MusicX.Core.Models.General
         public List<Audio> Items { get; set; }
 
         [JsonProperty("replacements")]
-        public Replacements Replacements { get; set; }
+        public Replacements? Replacements { get; set; }
 
         [JsonProperty("profiles")]
         public List<User> Profiles { get; set; }

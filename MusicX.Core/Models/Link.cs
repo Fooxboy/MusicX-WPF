@@ -2,10 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using MusicX.Core.Models.Abstractions;
 
 namespace MusicX.Core.Models
 {
-    public class Link
+    public class Link : IBlockEntity<string>
     {
         [JsonProperty("id")]
         public string Id { get; set; }

@@ -19,7 +19,7 @@ namespace MusicX.Core.Models
     public class Replacements
     {
         [JsonProperty("replacements")]
-        public List<Replacement> ReplacementsModels { get; set; }
+        public List<Replacement> ReplacementsModels { get; set; } = new();
 
         [JsonProperty("new_next_from")]
         public string NewNextFrom { get; set; }

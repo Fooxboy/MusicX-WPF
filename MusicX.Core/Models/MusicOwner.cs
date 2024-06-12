@@ -1,8 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using MusicX.Core.Models.Abstractions;
+using Newtonsoft.Json;
 
 namespace MusicX.Core.Models;
 
-public class MusicOwner
+public class MusicOwner : IBlockEntity<string>
 {
     [JsonProperty("id")]
     public string Id { get; set; }
