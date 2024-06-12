@@ -2,10 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using MusicX.Core.Models.Abstractions;
 
 namespace MusicX.Core.Models
 {
-    public class Playlist
+    public class Playlist : IBlockEntityWithOwner<long, long>
     {
         [JsonProperty("id")]
         public long Id { get; set; }
