@@ -63,6 +63,10 @@ public interface IIdentifiable
             recommendedPlaylist.Audios.AddRange(IntersectById(data.Audios, recommendedPlaylist.AudiosIds));
             recommendedPlaylist.Playlist = IntersectById(data.Playlists, new []{ ((IIdentifiable)recommendedPlaylist).Identifier }).FirstOrDefault()!;
         }
+        foreach (var audio in block.Audios)
+        {
+            audio.ParentBlockId = block.Id;
+        }
     }
 
     private static void ProcessSection(Section section, ResponseData data)
