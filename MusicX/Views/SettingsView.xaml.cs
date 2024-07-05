@@ -174,16 +174,11 @@ namespace MusicX.Views
             config.UserId = 0;
             config.AccessTokenTtl = default;
             config.ExchangeToken = null;
-
-            if (string.IsNullOrEmpty(config.AnonToken))
-                await StaticService.Container.GetRequiredService<IVkApiAuthAsync>()
-                    .AuthorizeAsync(new AndroidApiAuthParams());
                                 
             await configService.SetConfig(config);
-                            
-            ActivatorUtilities.CreateInstance<AccountsWindow>(StaticService.Container).Show();
             
-            Window.GetWindow(this)?.Close();
+            Process.Start(Environment.ProcessPath!, Environment.GetCommandLineArgs());
+            Application.Current.Shutdown();
         }
 
         private async void CheckUpdates_Click(object sender, RoutedEventArgs e)
