@@ -77,7 +77,9 @@
                     Click="OpenPlaylistModal_Click"
                     Content="Открыть модалку создания плейлиста" />
 
-                <TextBlock
+                <wpfui:Button Content="Открыть промо модалку слушать вместе" Click="Button_Click_3"/>
+
+                    <TextBlock
                     Margin="0,30,0,0"
                     FontFamily="{StaticResource VKSansBold}"
                     FontSize="20"
@@ -248,7 +250,10 @@
             </StackPanel>
             </StackPanel>
 
+
         </Grid>
+
+
 
     </ScrollViewer>
 

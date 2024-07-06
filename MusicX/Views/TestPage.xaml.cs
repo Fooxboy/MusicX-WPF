@@ -257,5 +257,17 @@ namespace MusicX.Views
             Debug.WriteLine(json);
             Debug.WriteLine($"valid: {valid}");
         }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Button_Click_3(object sender, RoutedEventArgs e)
+        {
+            var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
+
+            navigationService.OpenModal<WelcomeToListenTogetherModal>();
+        }
     }
 }
