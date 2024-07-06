@@ -86,12 +86,6 @@
             Fill="Black"
             RadiusX="5"
             RadiusY="5">
-            <Rectangle.Effect>
-                <DropShadowEffect
-                    BlurRadius="8"
-                    Opacity="0.2"
-                    ShadowDepth="0" />
-            </Rectangle.Effect>
         </Rectangle>
         <Border x:Name="BackgroundBorder" ClipToBounds="True">
             <Rectangle
@@ -106,7 +100,7 @@
                         Stretch="UniformToFill" />
                 </Rectangle.Fill>
                 <Rectangle.Effect>
-                    <BlurEffect KernelType="Gaussian" Radius="32" />
+                    <BlurEffect KernelType="Gaussian" RenderingBias="Performance" Radius="32" />
                 </Rectangle.Effect>
             </Rectangle>
         </Border>

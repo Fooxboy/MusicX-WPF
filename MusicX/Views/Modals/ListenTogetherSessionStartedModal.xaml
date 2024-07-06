@@ -10,7 +10,7 @@
 
     <Grid Height="500" Width="400">
         <StackPanel>
-            <wpfui:SymbolIcon Symbol="People24" FontSize="150" HorizontalAlignment="Center"/>
+            <wpfui:SymbolIcon Symbol="People24" FontSize="150" Foreground="White" HorizontalAlignment="Center"/>
             <TextBlock HorizontalAlignment="Center" FontFamily="{StaticResource VKSansBold}"
                        FontSize="25" TextWrapping="Wrap"
                        TextAlignment="Center"
@@ -19,12 +19,20 @@
             <TextBlock Margin="0,20,0,0" Text="Отправте другу эту ссылку"/>
             <StackPanel Orientation="Horizontal">
                 <TextBox Width="355" Margin="0,10,0,0" Text="{Binding Url, Mode=OneWay}" IsReadOnly="True"/>
-                <wpfui:Button Command="{Binding CopyUrlCommand}" Height="36" Margin="5,10,0,0" VerticalAlignment="Center" Icon="Copy24"/>
+                <wpfui:Button Command="{Binding CopyUrlCommand}" Height="36" Margin="5,10,0,0" VerticalAlignment="Center">
+                    <Grid>
+                        <wpfui:SymbolIcon Symbol="Copy24" Foreground="White" HorizontalAlignment="Center"/>
+                    </Grid>
+                </wpfui:Button>
             </StackPanel>
             <TextBlock Margin="0,20,0,0" Text="Или сообщите ID сессии"/>
             <StackPanel Orientation="Horizontal">
                 <TextBox Width="355" Margin="0,10,0,0" Text="{Binding SessionId, Mode=OneWay}" IsReadOnly="True"/>
-                <wpfui:Button Command="{Binding CopySessionCommand}" Height="36" Margin="5,10,0,0" VerticalAlignment="Center" Icon="Copy24"/>
+                <wpfui:Button Command="{Binding CopySessionCommand}" Height="36" Margin="5,10,0,0" VerticalAlignment="Center">
+                    <Grid>
+                        <wpfui:SymbolIcon Symbol="Copy24" Foreground="White" HorizontalAlignment="Center"/>
+                    </Grid>
+                </wpfui:Button>
             </StackPanel>
         </StackPanel>
 
