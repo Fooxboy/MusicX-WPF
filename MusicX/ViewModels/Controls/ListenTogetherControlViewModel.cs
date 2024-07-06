@@ -195,7 +195,12 @@ public class ListenTogetherControlViewModel : BaseViewModel
     {
         IsConnected = false;
         IsSessionHost = false;
-        Sessions.Clear();
+
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            Sessions.Clear();
+        });
+
         return Task.CompletedTask;
     }
 
