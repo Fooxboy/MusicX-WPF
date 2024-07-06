@@ -6,32 +6,90 @@
       xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Width="600"
+      Width="660"
       Title="Представляем совместное прослушивание!">
 
-    <Grid>
+    <Grid Margin="10">
+
         <StackPanel>
-            <wpfui:SymbolIcon Symbol="People24" FontSize="130"/>
-            <TextBlock FontSize="19" FontFamily="{StaticResource VKSansMedium}" Text="Теперь Вы можете слушать музыку со своими друзьями вместе."/>
-            <TextBlock/>
-            <TextBlock FontWeight="Bold" Text="Для того чтобы создать сессию совместного прослушивания:"/>
-            <TextBlock Text="1. Включите трек"/>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="2. Нажмите в нижнем баре на кнопку с иконкой "/>
-                <wpfui:SymbolIcon Symbol="People24"/>
+
+            <TextBlock TextWrapping="Wrap" Text="Благодаря режиму совместного прослуживания Вы с другом можете слушать один и тот же трек вместе синхранизованно. Это совершенно бесплатно. Работает только с приложением MusicX"/>
+
+            <TextBlock Margin="0,20,0,0" FontSize="16" FontFamily="{StaticResource VKSansBold}" Text="Как запустить режим совместного прослушивания"/>
+
+            <StackPanel Margin="0,20,0,0" Orientation="Horizontal">
+                <wpfui:Card Width="190" >
+                    <StackPanel Height="90" Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <TextBlock FontFamily="{StaticResource VKSansBold}" FontSize="17" Opacity="0.8" HorizontalAlignment="Center" Text="ШАГ 1"/>
+                        <Rectangle Width="120"  Fill="White" Height="1" Opacity="0.2" Margin="0,5,0,0"/>
+                        <TextBlock Margin="0,20,0,0" HorizontalAlignment="Center" Text="Включите трек"/>
+                    </StackPanel>
+                </wpfui:Card>
+                
+                <wpfui:SymbolIcon VerticalAlignment="Center" FontSize="20" Margin="10 0 0 0" Foreground="White" Symbol="ArrowRight48" />
+
+                <wpfui:Card Width="190" Margin="5,0,0,0">
+                    <StackPanel  Height="90" Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <TextBlock FontFamily="{StaticResource VKSansBold}" FontSize="17"  Opacity="0.8" HorizontalAlignment="Center" Text="ШАГ 2"/>
+                        <Rectangle Fill="White" Width="120"  Height="1" Opacity="0.2" Margin="0,5,0,0"/>
+                        <StackPanel Margin="0,5,0,0" Orientation="Horizontal" Width="100">
+                            <TextBlock TextWrapping="Wrap">
+                                <Run>Нажимите в </Run>
+                                <LineBreak/>
+                                <Run>нижнем баре</Run>
+                                <LineBreak/>
+                                <Run>на кнопку</Run>
+                              
+                            </TextBlock>
+                            <wpfui:SymbolIcon Margin="-15,42,0,0" HorizontalAlignment="Center" FontSize="15" VerticalAlignment="Center" Foreground="White" Symbol="People24"/>
+                        </StackPanel>
+                    </StackPanel>
+                </wpfui:Card>
+
+
+                <wpfui:SymbolIcon VerticalAlignment="Center" FontSize="20" Margin="10 0 0 0" Foreground="White" Symbol="ArrowRight48" />
+
+                <wpfui:Card Width="190" Margin="5,0,0,0">
+                    <StackPanel  Height="90" Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <TextBlock FontFamily="{StaticResource VKSansBold}" FontSize="17"  Opacity="0.8" HorizontalAlignment="Center" Text="ШАГ 3"/>
+                        <Rectangle Fill="White" Width="120" Height="1" Opacity="0.2" Margin="0,5,0,0"/>
+                        <StackPanel Margin="0,12,0,0" Orientation="Vertical">
+                            <TextBlock Margin="0,0,0,0" Text="Нажмите на кнопку"/>
+                            <TextBlock HorizontalAlignment="Center" Margin="0,0,0,0" Text="Создать сессию"/>
+                        </StackPanel>
+                    </StackPanel>
+                </wpfui:Card>
+                
             </StackPanel>
-            <TextBlock Text="3. Нажмите на кнопку Создать сессию "/>
-            <TextBlock Text="4. Сообщите другу ссылку или ID сессии для подключения"/>
-            <TextBlock Text="5. Теперь Вы слушате трек вместе. Переключать трек может только владелец сессии."/>
+
+            <TextBlock HorizontalAlignment="Center" Margin="0,10,0,0" FontSize="15" FontFamily="{StaticResource VKSansMedium}" Text="Все, сессия запущена :)"/>
 
             <TextBlock/>
-            <TextBlock FontWeight="Bold" Text="Пояснения:"/>
+            <TextBlock FontSize="16" FontFamily="{StaticResource VKSansBold}" Text="Дополнительные пояснения:"/>
             <TextBlock Text="- Если слушатель включит трек из своей библиотеки, он автоматически покинет сессию."/>
             <TextBlock Text="- Если другу скинуть ссылку, перейдя по ней откроется Music X"/>
             <TextBlock Text="- Если перейдя по ссылке приложение не установлено, сайт предложит скачать MusicX"/>
             <TextBlock Text="- Если перейдя по ссылке приложение не установлено, сайт предложит скачать MusicX"/>
             <TextBlock Text="- Если владелец сессии закроет приложение, слушатели автоматически покинут сессию."/>
             <TextBlock Text="- Количество слушателей НЕ ОГРАНИЧЕНО :)"/>
+
+        </StackPanel>
+        
+        <StackPanel Visibility="Collapsed">
+            <wpfui:SymbolIcon Symbol="People24" Foreground="White" FontSize="130"/>
+            <TextBlock FontSize="19" HorizontalAlignment="Center" FontFamily="{StaticResource VKSansMedium}" Text="Теперь Вы можете слушать музыку со своими друзьями вместе."/>
+            <TextBlock/>
+            <TextBlock FontWeight="Bold" Text="Для того чтобы создать сессию совместного прослушивания:"/>
+            <TextBlock Text="1. Включите трек"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="2. Нажмите в нижнем баре на кнопку с иконкой "/>
+                <wpfui:SymbolIcon Foreground="White" Symbol="People24"/>
+            </StackPanel>
+            <TextBlock Text="3. Нажмите на кнопку Создать сессию "/>
+            <TextBlock Text="4. Сообщите другу ссылку или ID сессии для подключения"/>
+            <TextBlock Text="5. Теперь Вы слушате трек вместе. Переключать трек может только владелец сессии."/>
+
+           
 
         </StackPanel>
     </Grid>
