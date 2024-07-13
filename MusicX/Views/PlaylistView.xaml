@@ -74,7 +74,7 @@
                 <controls:Card
                     x:Name="CardPlaylist"
                     MinHeight="350"
-                    Margin="0,10,15,10"
+                    Margin="0,10,0,10"
                     RenderTransformOrigin="0.5,0.5">
                     <controls:Card.RenderTransform>
                         <TransformGroup>
@@ -213,18 +213,6 @@
                                         <controls:SymbolIcon Symbol="Add28"/>
                                     </controls:Button.Icon>
                                 </controls:Button>
-                                <controls:Button
-                                    x:Name="PlayPlaylist"
-                                    MinWidth="150"
-                                    Margin="10,0,0,0"
-                                    Appearance="Secondary"
-                                    Click="PlayPlaylist_Click"
-                                    Content="Воспроизвести"
-                                    Foreground="White">
-                                    <controls:Button.Icon>
-                                        <controls:SymbolIcon Symbol="Play20"/>
-                                    </controls:Button.Icon>
-                                </controls:Button>
 
                                 <controls:Button
                                     x:Name="EditPlaylist"
@@ -264,6 +252,24 @@
                         </Grid>
                     </StackPanel>
                 </controls:Card>
+                <controls1:LoadingBorder IsLoading="{Binding IsLoading}" Margin="0,0,0,10" HorizontalAlignment="Stretch">
+                    <Grid Visibility="{Binding IsLoaded, Converter={StaticResource BooleanToHiddenVisibilityConverter}}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <ui:CardAction x:Name="PlayPlaylist" Content="Воспроизвести" IsChevronVisible="False" Click="PlayPlaylist_Click" Margin="0,0,10,0">
+                            <ui:CardAction.Icon>
+                                <controls:SymbolIcon Symbol="Play20"/>
+                            </ui:CardAction.Icon>
+                        </ui:CardAction>
+                        <ui:CardAction Grid.Column="1" Content="Перемешать" IsChevronVisible="False" Click="PlayPlaylistShuffle_Click">
+                            <ui:CardAction.Icon>
+                                <controls:SymbolIcon Symbol="ArrowShuffle20"/>
+                            </ui:CardAction.Icon>
+                        </ui:CardAction>
+                    </Grid>
+                </controls1:LoadingBorder>
                 <Grid>
                     <blocks:AudiosListControl Margin="0,0,0,45" Audios="{Binding Tracks}"/>
                     <StackPanel Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"
