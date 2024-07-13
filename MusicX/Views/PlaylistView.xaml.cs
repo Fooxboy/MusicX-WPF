@@ -295,5 +295,25 @@ namespace MusicX.Views
                 UseShellExecute = true
             });
         }
+
+        private async void PlayPlaylistShuffle_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var player = StaticService.Container.GetRequiredService<PlayerService>();
+                
+                _nowPlay = true;
+
+                PlayPlaylist.Content = "Остановить воспроизведение";
+                PlayPlaylist.Icon = new SymbolIcon(SymbolRegular.Pause20);
+
+                await player.PlayAsync(new ShuffleVkPlaylistPlaylist(
+                    StaticService.Container.GetRequiredService<VkService>(), ViewModel.PlaylistData));
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, ex.Message);
+            }
+        }
     }
 }

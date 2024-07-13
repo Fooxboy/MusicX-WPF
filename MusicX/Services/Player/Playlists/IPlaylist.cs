@@ -27,7 +27,7 @@ public abstract class PlaylistBase<TData> : IPlaylist<TData> where TData : class
     
     public bool Equals(IPlaylist? other)
     {
-        return other is PlaylistBase<TData> { Data: { } otherData } && Data.Equals(otherData);
+        return other is PlaylistBase<TData> { Data: { } otherData } && GetType() == other.GetType() && Data.Equals(otherData);
     }
 
     public override bool Equals(object? obj) => Equals((IPlaylist?)obj);
@@ -68,6 +68,7 @@ public class PlaylistJsonConverter : JsonConverter<IPlaylist>
             "radio" => JsonSerializer.Deserialize<RadioPlaylist>(ref reader, options),
             "vkBlock" => JsonSerializer.Deserialize<VkBlockPlaylist>(ref reader, options),
             "vkPlaylist" => JsonSerializer.Deserialize<VkPlaylistPlaylist>(ref reader, options),
+            "shuffleVkPlaylist" => JsonSerializer.Deserialize<ShuffleVkPlaylistPlaylist>(ref reader, options),
             _ => throw new JsonException("Unsupported playlist type.")
         };
         
@@ -104,6 +105,9 @@ public class PlaylistJsonConverter : JsonConverter<IPlaylist>
                 break;
             case VkPlaylistPlaylist playlist:
                 WriteObject("vkPlaylist", playlist);
+                break;
+            case ShuffleVkPlaylistPlaylist playlist:
+                WriteObject("shuffleVkPlaylist", playlist);
                 break;
             default:
                 throw new JsonException("Unsupported playlist type.");
