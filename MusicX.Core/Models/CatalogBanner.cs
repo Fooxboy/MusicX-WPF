@@ -2,11 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using MusicX.Core.Helpers;
 
 namespace MusicX.Core.Models
 {
-    public class CatalogBanner
+    public class CatalogBanner : IIdentifiable
     {
+        string IIdentifiable.Identifier => Id.ToString();
+        
         [JsonProperty("id")]
         public int Id { get; set; }
 

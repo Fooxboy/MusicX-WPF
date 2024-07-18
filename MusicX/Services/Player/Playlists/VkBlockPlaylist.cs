@@ -12,6 +12,7 @@ namespace MusicX.Services.Player.Playlists;
 public class VkBlockPlaylist : PlaylistBase<string>
 {
     private readonly VkService _vkService;
+    private string? _nextFrom;
     
     [ActivatorUtilitiesConstructor]
     // ReSharper disable once RedundantOverload.Global
@@ -21,16 +22,25 @@ public class VkBlockPlaylist : PlaylistBase<string>
     {
         _vkService = vkService;
         Data = blockId;
-        _canLoad = loadOther;
+        _firstLoad = loadOther;
     }
 
-    public override IAsyncEnumerable<PlaylistTrack> LoadAsync()
+    public override async IAsyncEnumerable<PlaylistTrack> LoadAsync()
     {
-        _canLoad = false;
-        return _vkService.LoadFullAudiosAsync(Data).Select(TrackExtensions.ToTrack);
+        if (_firstLoad || _nextFrom is not null)
+        {
+            var response = await _vkService.GetSectionAsync(Data, _nextFrom);
+            _nextFrom = response.Section?.NextFrom;
+            foreach (var item in response.Audios)
+            {
+                yield return item.ToTrack();
+            }
+        }
+        
+        _firstLoad = false;
     }
 
-    private bool _canLoad;
-    public override bool CanLoad => _canLoad;
+    private bool _firstLoad;
+    public override bool CanLoad => _nextFrom is not null || _firstLoad;
     public override string Data { get; }
 }

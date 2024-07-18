@@ -4,11 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MusicX.Core.Helpers;
 
 namespace MusicX.Core.Models
 {
-    public class Curator
+    public class Curator : IIdentifiable
     {
+        string IIdentifiable.Identifier => Id.ToString();
+        
         [JsonProperty("id")]
         public long Id { get; set; }
 

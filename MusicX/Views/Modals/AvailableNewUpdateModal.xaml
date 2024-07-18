@@ -27,7 +27,7 @@
         <StackPanel Margin="0 30 0 0">
             <StackPanel Margin="20 10 0 0" HorizontalAlignment="Center" Orientation="Horizontal">
                 <TextBlock FontSize="18"  Opacity="0.4" Text="{Binding CurrentVersion, FallbackValue=1.0}"/>
-                <ui:SymbolIcon VerticalAlignment="Center" Margin="5 2 5 0" Symbol="ArrowRight48" />
+                <ui:SymbolIcon VerticalAlignment="Center" Margin="5 2 5 0" Foreground="White" Symbol="ArrowRight48" />
                 <TextBlock FontSize="18"  Text="{Binding UpdateInfo.TargetFullRelease.Version, FallbackValue=1.1}"/>
             </StackPanel>
 

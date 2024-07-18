@@ -4,11 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MusicX.Core.Helpers;
 
 namespace MusicX.Core.Models
 {
-    public class Longread
+    public class Longread : IIdentifiable
     {
+        string IIdentifiable.Identifier => Id.ToString();
+
         [JsonProperty("access_key")]
         public string AccessKey { get; set; }
 

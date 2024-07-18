@@ -71,45 +71,53 @@ namespace MusicX.Services
 
         private static ISimpleAudioVolume GetVolumeObject(int pid)
         {
-            // get the speakers (1st render + multimedia) device
-            IMMDeviceEnumerator deviceEnumerator = (IMMDeviceEnumerator)(new MMDeviceEnumerator());
-            IMMDevice speakers;
-            deviceEnumerator.GetDefaultAudioEndpoint(EDataFlow.eRender, ERole.eMultimedia, out speakers);
-
-            // activate the session manager. we need the enumerator
-            Guid IID_IAudioSessionManager2 = typeof(IAudioSessionManager2).GUID;
-            object o;
-            speakers.Activate(ref IID_IAudioSessionManager2, 0, IntPtr.Zero, out o);
-            IAudioSessionManager2 mgr = (IAudioSessionManager2)o;
-
-            // enumerate sessions for on this device
-            IAudioSessionEnumerator sessionEnumerator;
-            mgr.GetSessionEnumerator(out sessionEnumerator);
-            int count;
-            sessionEnumerator.GetCount(out count);
-
-            // search for an audio session with the required name
-            // NOTE: we could also use the process id instead of the app name (with IAudioSessionControl2)
-            ISimpleAudioVolume volumeControl = null;
-            for (int i = 0; i < count; i++)
+            try
             {
-                IAudioSessionControl2 ctl;
-                sessionEnumerator.GetSession(i, out ctl);
-                int cpid;
-                ctl.GetProcessId(out cpid);
+                // get the speakers (1st render + multimedia) device
+                IMMDeviceEnumerator deviceEnumerator = (IMMDeviceEnumerator)(new MMDeviceEnumerator());
+                IMMDevice speakers;
+                deviceEnumerator.GetDefaultAudioEndpoint(EDataFlow.eRender, ERole.eMultimedia, out speakers);
 
-                if (cpid == pid)
+                // activate the session manager. we need the enumerator
+                Guid IID_IAudioSessionManager2 = typeof(IAudioSessionManager2).GUID;
+                object o;
+                speakers.Activate(ref IID_IAudioSessionManager2, 0, IntPtr.Zero, out o);
+                IAudioSessionManager2 mgr = (IAudioSessionManager2)o;
+
+                // enumerate sessions for on this device
+                IAudioSessionEnumerator sessionEnumerator;
+                mgr.GetSessionEnumerator(out sessionEnumerator);
+                int count;
+                sessionEnumerator.GetCount(out count);
+
+                // search for an audio session with the required name
+                // NOTE: we could also use the process id instead of the app name (with IAudioSessionControl2)
+                ISimpleAudioVolume volumeControl = null;
+                for (int i = 0; i < count; i++)
                 {
-                    volumeControl = ctl as ISimpleAudioVolume;
-                    break;
+                    IAudioSessionControl2 ctl;
+                    sessionEnumerator.GetSession(i, out ctl);
+                    int cpid;
+                    ctl.GetProcessId(out cpid);
+
+                    if (cpid == pid)
+                    {
+                        volumeControl = ctl as ISimpleAudioVolume;
+                        break;
+                    }
+                    Marshal.ReleaseComObject(ctl);
                 }
-                Marshal.ReleaseComObject(ctl);
+                Marshal.ReleaseComObject(sessionEnumerator);
+                Marshal.ReleaseComObject(mgr);
+                Marshal.ReleaseComObject(speakers);
+                Marshal.ReleaseComObject(deviceEnumerator);
+
+                return volumeControl;
+
+            }catch(Exception ex)
+            {
+                return null;
             }
-            Marshal.ReleaseComObject(sessionEnumerator);
-            Marshal.ReleaseComObject(mgr);
-            Marshal.ReleaseComObject(speakers);
-            Marshal.ReleaseComObject(deviceEnumerator);
-            return volumeControl;
         }
     }
 

@@ -4,11 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MusicX.Core.Helpers;
 
 namespace MusicX.Core.Models
 {
-    public class Video
+    public class Video : IIdentifiable
     {
+        string IIdentifiable.Identifier => Id.ToString();
+
         [JsonProperty("is_explicit")]
         public int IsExplicit { get; set; }
 

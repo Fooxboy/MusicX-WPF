@@ -52,15 +52,10 @@ namespace MusicX.Controls
             this.Description.Text = Banners[0].SubText;
             this.ImageCover.ImageSource = new BitmapImage(new Uri(Banners[0].Images.Last().Url)) { DecodePixelHeight = 600, DecodePixelWidth = 1000, CacheOption = BitmapCacheOption.None };
 
-            int index = 0;
-            foreach(var banner in Banners)
+            Cards.Children.Clear();
+            for (var index = 0; index < Banners.Count; index++)
             {
-                if(index == 0) this.Cards.Children.Add(new MiniCardBigBannerControl() { Banner = banner, IsSelected = true });
-                else
-                {
-                    this.Cards.Children.Add(new MiniCardBigBannerControl() { Banner = banner, IsSelected = false });
-                }
-                index++;
+                Cards.Children.Add(new MiniCardBigBannerControl { Banner = Banners[index], IsSelected = index == 0 });
             }
 
 
@@ -148,6 +143,8 @@ namespace MusicX.Controls
 
         private async void AutoNext()
         {
+            if (runAutoNext) return;
+            
             await Task.Delay(6000);
             runAutoNext = true; 
             

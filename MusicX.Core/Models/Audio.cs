@@ -2,11 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using MusicX.Core.Helpers;
 
 namespace MusicX.Core.Models
 {
-    public class Audio : IEquatable<Audio>
+    public class Audio : IEquatable<Audio>, IIdentifiable
     {
+        string IIdentifiable.Identifier => $"{OwnerId}_{Id}";
+
         [JsonProperty("artist")]
         public string Artist { get; set; }
 

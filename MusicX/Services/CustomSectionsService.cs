@@ -448,7 +448,7 @@ public partial class CustomSectionsService : ICustomSectionsService
                         Name = "header_extended",
                         Title = "Вложения"
                     },
-                    Buttons = buttons
+                    Actions = buttons
                 },
                 MapLinksBlock(convs),
 

@@ -169,7 +169,22 @@ public class PlayerService
                 }
             }
 
-            if (!(await Task.WhenAll(_mediaSources.Select(b => b.OpenWithMediaPlayerAsync(player, track, _tokenSource.Token)))).Any())
+            var allSourcesTask = Task.WhenAll(_mediaSources.Select(b => b.OpenWithMediaPlayerAsync(player, track, _tokenSource.Token)));
+            try
+            {
+                await allSourcesTask;
+            }
+            catch
+            {
+                // await unwraps AggregateException into only the first exception,
+                // but we need to make sure that all exceptions are cancel ones
+                if (allSourcesTask.IsCanceled || allSourcesTask.Exception?.InnerExceptions.All(b => b is OperationCanceledException) is true)
+                    return; // canceled
+
+                throw;
+            }
+            
+            if (!allSourcesTask.Result.Any(b => b)) // no sources picked up this track
             {
                 await NextTrack();
                 return;
@@ -357,7 +372,10 @@ public class PlayerService
             if (CurrentIndex + 1 > Tracks.Count - 1)
             {
                 if (CurrentPlaylist?.CanLoad == true)
+                {
                     await LoadMore();
+                    nextTrack = Tracks.ElementAtOrDefault(CurrentIndex + 1);
+                }
             }
             else
             {
@@ -848,7 +866,7 @@ public class PlayerService
             if (startingIndex is > 0)
             {
                 (Items[startingIndex.Value], Items[0]) = (Items[0], Items[startingIndex.Value]);
-                shuffledIndexes[0] = 0;
+                shuffledIndexes[0] = startingIndex.Value;
             }
             
             _originalTracks = Items.ToList();

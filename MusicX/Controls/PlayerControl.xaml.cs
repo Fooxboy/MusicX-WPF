@@ -89,8 +89,12 @@ namespace MusicX.Controls
 
         private Task ListenTogetherService_LeaveSession()
         {
-            ButtonsStackPanel.Visibility = Visibility.Visible;
-            QueueButton.Visibility = Visibility.Visible;
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                ButtonsStackPanel.Visibility = Visibility.Visible;
+                QueueButton.Visibility = Visibility.Visible;
+            });
+           
             return Task.CompletedTask;
         }
 

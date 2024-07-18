@@ -3,11 +3,14 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using MusicX.Core.Helpers;
 
 namespace MusicX.Core.Models
 {
-    public class Block
+    public class Block : IIdentifiable
     {
+        string IIdentifiable.Identifier => Id;
+
         [JsonProperty("id")]
         public string Id { get; set; }
 
