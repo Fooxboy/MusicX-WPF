@@ -45,7 +45,7 @@ public class ShuffleVkPlaylistPlaylist : PlaylistBase<PlaylistData>
             _tracks = new(_count, async range =>
             {
                 var (offset, length) = range.GetOffsetAndLength(_count);
-                var response = await _vkService.AudioGetAsync(id, ownerId, accessKey, offset, length + 1);
+                var response = await _vkService.AudioGetAsync(id, ownerId, accessKey, offset, length);
                 return response.Items.Select(audio => audio.ToTrack(trackPlaylist));
             });
 
@@ -79,13 +79,10 @@ public class ShuffleVkPlaylistPlaylist : PlaylistBase<PlaylistData>
             Count = count;
             _loader = loader;
 
-            _indices = new int[count];
+            _indices = Enumerable.Range(0, count).ToArray();
             _items = new T?[count];
-
-            for (var i = 0; i < count - 1; i++)
-            {
-                _indices[i] = Random.Shared.Next(i, count);
-            }
+            
+            Random.Shared.Shuffle(_indices);
         }
 
         public async ValueTask<IEnumerable<T>> GetRangeAsync(Range range)
@@ -104,10 +101,8 @@ public class ShuffleVkPlaylistPlaylist : PlaylistBase<PlaylistData>
                     var rangeToLoad = GetLoadableRangeFromIndex(index);
 
                     var items = await _loader(rangeToLoad);
-
-                    var (loadOffset, loadLength) = rangeToLoad.GetOffsetAndLength(Count);
-
-                    Array.Copy(items as T[] ?? items.ToArray(), 0, _items, loadOffset, loadLength);
+                    
+                    (items as T[] ?? items.ToArray()).AsSpan().CopyTo(_items.AsSpan(rangeToLoad)!);
                 }
                 
                 result[i] = _items[index] ?? throw new InvalidOperationException();
@@ -119,7 +114,7 @@ public class ShuffleVkPlaylistPlaylist : PlaylistBase<PlaylistData>
         private Range GetLoadableRangeFromIndex(int index)
         {
             var startIndex = Math.Min(index,
-                Array.FindIndex(_items, Math.Clamp(index - 20, 0, Count - 1), static b => b != null));
+                Array.FindIndex(_items, Math.Clamp(index - 20, 0, Count), static b => b != null));
             int endIndex;
 
             if (startIndex - index > 15)
@@ -129,16 +124,15 @@ public class ShuffleVkPlaylistPlaylist : PlaylistBase<PlaylistData>
             }
             else
             {
-                endIndex = Math.Min(index + 20,
-                    Array.FindIndex(_items, Math.Clamp(index + 1, 0, Count - 1), static b => b != null));
-            }
-            
-            if (endIndex < 0 && startIndex < 0)
-            {
-                return Math.Clamp(index - 20, 0, Count - 1)..Math.Clamp(index + 20, 0, Count - 1);
+                endIndex = Math.Min(index + 20, Count);
             }
 
-            return startIndex..Math.Max(endIndex, Math.Clamp(index + 20, 0, Count - 1));
+            if (endIndex < 0)
+            {
+                return Math.Clamp(index - 19, 0, Count)..index;
+            }
+
+            return Math.Max(Math.Max(index - 20, 0), startIndex)..Math.Max(endIndex, Math.Clamp(index + 20, 0, Count));
         }
     }
 }
