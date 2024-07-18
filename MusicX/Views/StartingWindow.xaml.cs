@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Net.Http;
 using System.Text.Json;
@@ -10,6 +11,7 @@ using IF.Lastfm.Core.Scrobblers;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Services;
+using MusicX.Models;
 using MusicX.RegistryPatches;
 using MusicX.Services;
 using MusicX.Services.Player;
@@ -205,24 +207,13 @@ namespace MusicX.Views
                                 }
 
                                 this.Close();
+                            }catch(VkApiException ex) when (ex.Message.Contains("has expired"))
+                            {
+                                await Logout(config, container);
                             }
                             catch (VkApiMethodInvokeException ex) when (ex.ErrorCode is 5 or 1117)
                             {
-                                config.AccessToken = null;
-                                config.UserName = null!;
-                                config.UserId = 0;
-                                config.AccessTokenTtl = default;
-                                config.ExchangeToken = null;
-
-                                if (string.IsNullOrEmpty(config.AnonToken))
-                                    await container.GetRequiredService<IVkApiAuthAsync>()
-                                        .AuthorizeAsync(new AndroidApiAuthParams());
-                                
-                                await configService.SetConfig(config);
-                            
-                                ActivatorUtilities.CreateInstance<AccountsWindow>(container).Show();
-
-                                this.Close();
+                                await Logout(config, container);
                             }
 
                         }
@@ -248,6 +239,27 @@ namespace MusicX.Views
                     
                 });
             });
+        }
+
+        private async Task Logout(ConfigModel config, IServiceProvider container)
+        {
+            var configService = container.GetRequiredService<ConfigService>();
+
+            config.AccessToken = null;
+            config.UserName = null!;
+            config.UserId = 0;
+            config.AccessTokenTtl = default;
+            config.ExchangeToken = null;
+
+            if (string.IsNullOrEmpty(config.AnonToken))
+                await container.GetRequiredService<IVkApiAuthAsync>()
+                    .AuthorizeAsync(new AndroidApiAuthParams());
+
+            await configService.SetConfig(config);
+
+            ActivatorUtilities.CreateInstance<AccountsWindow>(container).Show();
+
+            this.Close();
         }
     }
 }
