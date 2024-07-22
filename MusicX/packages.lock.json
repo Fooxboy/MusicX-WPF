@@ -121,6 +121,16 @@
           "QRCoder": "1.6.0"
         }
       },
+      "Sentry.NLog": {
+        "type": "Direct",
+        "requested": "[4.9.0, )",
+        "resolved": "4.9.0",
+        "contentHash": "oi1g16iE8uF+LgNkIMTyOAgUdbihl3mFueR1YpoREOqXdFh8OS7aLXPa0qwxM3+ciGJ5oArW+Psi3kCnm+n5hQ==",
+        "dependencies": {
+          "NLog": "5.0.5",
+          "Sentry": "4.9.0"
+        }
+      },
       "System.Linq.Async": {
         "type": "Direct",
         "requested": "[6.0.1, )",
@@ -657,6 +667,11 @@
         "type": "Transitive",
         "resolved": "4.3.0",
         "contentHash": "VB5cn/7OzUfzdnC8tqAIMQciVLiq2epm2NrAm1E9OjNRyG4lVhfR61SMcLizejzQP8R8Uf/0l5qOIbUEi+RdEg=="
+      },
+      "Sentry": {
+        "type": "Transitive",
+        "resolved": "4.9.0",
+        "contentHash": "dvafAJjs1nyv/sXPjHjMiIq/XN1jjRCvTvn6BDdkeavjZXi0eX6JMpAKwGU5C8IlHY6Xhh13nk2u5e8AHQwwrw=="
       },
       "SQLitePCLRaw.bundle_green": {
         "type": "Transitive",

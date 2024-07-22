@@ -25,6 +25,7 @@ using MusicX.ViewModels.Login;
 using MusicX.ViewModels.Modals;
 using MusicX.Views.Login;
 using NLog;
+using Sentry;
 using VkNet.Abstractions;
 using VkNet.AudioBypassService.Abstractions;
 using VkNet.AudioBypassService.Extensions;
@@ -89,7 +90,7 @@ namespace MusicX.Views
                 collection.AddSingleton<GithubService>();
                 collection.AddSingleton<DiscordService>();
                 collection.AddSingleton<BoomService>();
-                collection.AddSingleton(LogManager.Setup().GetLogger("Common"));
+                collection.AddSingleton(LogManager.GetLogger("Common"));
                 collection.AddSingleton<GeniusService>();
 
                 collection.AddSingleton<IRegistryPatch, ListenTogetherPatch>();
@@ -208,6 +209,16 @@ namespace MusicX.Views
                             {
 
                                 await vkService.SetTokenAsync(config.AccessToken);
+                                
+                                SentrySdk.ConfigureScope(scope =>
+                                {
+                                    scope.User = new()
+                                    {
+                                        Id = config.UserId.ToString(),
+                                        Username = config.UserName
+                                    };
+                                });
+                                
                                 var rootWindow = ActivatorUtilities.CreateInstance<RootWindow>(container);
                                 rootWindow.Show();
 

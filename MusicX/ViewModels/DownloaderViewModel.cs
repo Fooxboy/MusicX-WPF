@@ -199,7 +199,6 @@ public class DownloaderViewModel : BaseViewModel
             {
                 CurrentDownloadingAudio = audio;
                 await downloaderService.DownloadAudioAsync(audio, progress, token);
-                await Application.Current.Dispatcher.InvokeAsync(() => DownloadQueue.Remove(audio));
                 DownloadProgress = 0;
             }
             catch (Exception e) when (e is TypeInitializationException or COMException)
@@ -224,6 +223,8 @@ public class DownloaderViewModel : BaseViewModel
                 logger.Error(e);
                 _snackbarService.ShowException("Ошибка загрузки", "Мы не смогли загрузить трек");
             }
+            
+            await Application.Current.Dispatcher.InvokeAsync(() => DownloadQueue.Remove(audio));
         }
 
         CurrentDownloadingAudio = null;
