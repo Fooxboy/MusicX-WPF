@@ -182,8 +182,8 @@
       },
       "FFmpeg.AutoGen": {
         "type": "Transitive",
-        "resolved": "5.1.2.3",
-        "contentHash": "3w3o28VmTEf+qRQSFCQnhwB+ouVmow5dQepbfL0lOEzRlgk66HMsg6O8SeUoxHeUFEqo1bKQaux1h3x5Aj6GaQ=="
+        "resolved": "7.0.0",
+        "contentHash": "RzSgOmHWzEpYzA3zl2Ac3iOdkk1ZCDgJBlRjHBIlaXHJg9aWEmPCzo0qDgEESZDNA7RaD2g4xn7yrKvT1q0Paw=="
       },
       "FFmpegInteropX.Desktop.FFmpeg": {
         "type": "Transitive",
@@ -1192,7 +1192,7 @@
       "ffmediatoolkit": {
         "type": "Project",
         "dependencies": {
-          "FFmpeg.AutoGen": "[5.1.2.3, )"
+          "FFmpeg.AutoGen": "[7.0.0, )"
         }
       },
       "if.lastfm.core": {
