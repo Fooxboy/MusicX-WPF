@@ -195,15 +195,6 @@ namespace MusicX.Views
 
                                 await vkService.SetTokenAsync(config.AccessToken);
                                 
-                                SentrySdk.ConfigureScope(scope =>
-                                {
-                                    scope.User = new()
-                                    {
-                                        Id = config.UserId.ToString(),
-                                        Username = config.UserName
-                                    };
-                                });
-                                
                                 var rootWindow = ActivatorUtilities.CreateInstance<RootWindow>(container);
                                 rootWindow.Show();
 
