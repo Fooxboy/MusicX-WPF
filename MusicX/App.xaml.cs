@@ -9,6 +9,7 @@ using MusicX.Services;
 using MusicX.Views;
 using NLog;
 using Sentry;
+using Sentry.NLog;
 
 namespace MusicX
 {
@@ -36,33 +37,7 @@ namespace MusicX
             
             base.OnStartup(e);
 
-            void OptionsConfig(SentryOptions options)
-            {
-#if DEBUG
-                options.Debug = true;
-                options.Environment = "debug";
-#else
-                options.Environment = Version.TryParse(StaticService.Version, out _) ? "release" : "beta";
-#endif
-                
-                options.Dsn = "https://44305d462f604317a8f81e7b170eb025@glitchtip.zznty.ru/1";
-                options.IsGlobalModeEnabled = true;
-                options.AutoSessionTracking = true;
-                options.StackTraceMode = StackTraceMode.Enhanced;
-            }
-
-            SentrySdk.Init(OptionsConfig);
-            LogManager.Configuration.AddSentry(OptionsConfig);
-
-            // TODO remove appcenter completely as msft is shutting it down soon
-            AppCenter.Start("02130c6d-0a3b-4aa2-b46c-8aeb66c3fd71",
-                   typeof(Analytics), typeof(Crashes));
-
-            var properties = new Dictionary<string, string>
-                {
-                    {"Version", StaticService.Version }
-                };
-            Analytics.TrackEvent("StartApp", properties);
+            SetupAnalytics();
             
             ItemContainerGeneratorIndexHook.Apply();
 
@@ -70,6 +45,45 @@ namespace MusicX
             window.Show();
 
             await SingleAppService.Instance.StartArgsListener();
+        }
+
+        private static void SetupAnalytics()
+        {
+            var sentryOptions = new SentryNLogOptions
+            {
+#if DEBUG
+                Debug = true,
+                Environment = "debug",
+#else
+                Environment = System.Version.TryParse(StaticService.Version, out _) ? "release" : "beta",
+#endif
+                Dsn = "https://44305d462f604317a8f81e7b170eb025@glitchtip.zznty.ru/1",
+                IsGlobalModeEnabled = true,
+                AutoSessionTracking = true,
+                StackTraceMode = StackTraceMode.Enhanced
+            };
+
+            SentrySdk.Init(sentryOptions);
+            LogManager.Setup().SetupExtensions(b => b.RegisterTarget<SentryTarget>("Sentry"));
+
+            const string sentryTargetName = "sentry";
+            
+            LogManager.Configuration.AddTarget(sentryTargetName, new SentryTarget(sentryOptions)
+            {
+                Name = sentryTargetName,
+                Layout = "${message}"
+            });
+            LogManager.Configuration.AddRuleForAllLevels(sentryTargetName);
+            
+            // TODO remove appcenter completely as msft is shutting it down soon
+            AppCenter.Start("02130c6d-0a3b-4aa2-b46c-8aeb66c3fd71",
+                typeof(Analytics), typeof(Crashes));
+
+            var properties = new Dictionary<string, string>
+            {
+                {"Version", StaticService.Version }
+            };
+            Analytics.TrackEvent("StartApp", properties);
         }
 
         static Mutex? InstanceCheckMutex;
