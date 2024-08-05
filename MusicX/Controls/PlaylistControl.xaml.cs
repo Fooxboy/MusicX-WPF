@@ -247,6 +247,9 @@ namespace MusicX.Controls
                     {"Version", StaticService.Version }
                 };
             Analytics.TrackEvent("OpenPlaylist", properties);
+            
+            var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
+            connectionService.ReportMetric("OpenPlayList", "PlaylistControl");
 
             var notificationService = StaticService.Container.GetRequiredService<NavigationService>();
 
@@ -289,6 +292,9 @@ namespace MusicX.Controls
                     {"Version", StaticService.Version }
                 };
                 Analytics.TrackEvent("PlayPlaylistWithButton", properties);
+                
+                var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
+                connectionService.ReportMetric("PlayPlaylistWithButton", "PlaylistControl");
 
                 var playerService = StaticService.Container.GetRequiredService<PlayerService>();
 

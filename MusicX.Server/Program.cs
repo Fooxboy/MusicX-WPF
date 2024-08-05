@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using InfluxDB.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -47,6 +48,10 @@ builder.Services.AddSingleton<RadioManager>();
 builder.Services.AddTransient<RadioService>();
 builder.Services.AddSingleton<SessionService>();
 builder.Services.AddTransient<ListenTogetherService>();
+
+builder.Services.AddScoped<IInfluxDBClient>(_ => new InfluxDBClient(builder.Configuration.GetConnectionString("influxdb")));
+builder.Services.AddScoped<IWriteApiAsync>(
+    provider => provider.GetRequiredService<IInfluxDBClient>().GetWriteApiAsync());
 
 var app = builder.Build();
 

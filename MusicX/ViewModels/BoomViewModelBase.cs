@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
+using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Exceptions.Boom;
 using MusicX.Core.Models.Boom;
 using MusicX.Core.Services;
@@ -55,6 +56,9 @@ public abstract class BoomViewModelBase : BaseViewModel
                 {"Version", StaticService.Version }
             };
             Analytics.TrackEvent("Play Artist Mix", properties);
+            
+            var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
+            connectionService.ReportMetric("PlayArtistMix");
 
             if (SelectedArtist == null) return;
             IsLoadingMix = true;
@@ -101,6 +105,9 @@ public abstract class BoomViewModelBase : BaseViewModel
                 {"Version", StaticService.Version }
             };
             Analytics.TrackEvent("Play Tag Mix", properties);
+            
+            var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
+            connectionService.ReportMetric("PlayTagMix");
 
             if (SelectedTag == null) return;
 

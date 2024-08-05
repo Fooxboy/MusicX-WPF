@@ -78,6 +78,9 @@ public partial class RecommsPlaylist : UserControl
             {"Version", StaticService.Version }
         };
         Analytics.TrackEvent("OpenPlaylist", properties);
+        
+        var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
+        connectionService.ReportMetric("OpenPlayList", "RecommsPlaylist");
             
         var notificationService = StaticService.Container.GetRequiredService<NavigationService>();
 

@@ -2,6 +2,7 @@ version: '3.9'
 
 volumes:
     traefik-certificates:
+    influxdb:
 
 services:
     app:
@@ -18,6 +19,29 @@ services:
             - "traefik.http.services.app.loadbalancer.passhostheader=true"
             - "traefik.http.routers.app.middlewares=compresstraefik"
             - "traefik.http.middlewares.compresstraefik.compress=true"
+              
+    influxdb:
+        restart: always
+        image: influxdb:alpine
+        volumes:
+            - "./influxdb-config.yml:/etc/influxdb2/config.yml"
+            - "influxdb:/var/lib/influxdb2"
+        networks:
+            - minecraft_default
+        healthcheck:
+            test: "curl -f http://localhost:8086/ping"
+            interval: 3s
+            timeout: 10s
+            retries: 5
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.influxdb.rule=Host(`metrics-musicx.zznty.ru`)"
+            - "traefik.http.routers.influxdb.service=influxdb"
+            - "traefik.http.routers.influxdb.entrypoints=websecure"
+            - "traefik.http.services.influxdb.loadbalancer.server.port=8086"
+            - "traefik.http.routers.influxdb.tls=true"
+            - "traefik.http.routers.influxdb.tls.certresolver=myresolver"
+            - "traefik.http.services.influxdb.loadbalancer.passhostheader=true"
 
     site:
         build:
