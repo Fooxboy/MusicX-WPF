@@ -12,6 +12,7 @@ using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
+using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Helpers;
@@ -165,6 +166,9 @@ public class DownloaderViewModel : BaseViewModel
                     {"Version", StaticService.Version }
                 };
         Analytics.TrackEvent("Download Track", properties);
+        
+        var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
+        connectionService.ReportMetric("DownloadTracks");
 
         if (IsDownloading)
             return;

@@ -64,6 +64,9 @@ namespace MusicX.Views
                     {"Version", StaticService.Version }
                 };
                 Analytics.TrackEvent("OpenSettings", properties);
+                
+                var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
+                connectionService.ReportMetric("OpenSettings");
 
                 this.config = await configService.GetConfig();
 

@@ -141,6 +141,7 @@ namespace MusicX.Views
                 });
                 collection.AddSingleton<IScrobbler, MemoryScrobbler>();
                 collection.AddSingleton<ITrackApi, TrackApi>();
+                collection.AddSingleton(s => new BackendConnectionService(s.GetRequiredService<Logger>(), StaticService.Version));
                 collection.AddSingleton<WindowThemeService>();
                 collection.AddSingleton<SectionEventService>();
 
@@ -209,6 +210,17 @@ namespace MusicX.Views
                             {
 
                                 await vkService.SetTokenAsync(config.AccessToken);
+
+                                try
+                                {
+                                    var connectionService = container.GetRequiredService<BackendConnectionService>();
+                                    await connectionService.GetTokenAsync(config.UserId);
+                                    connectionService.ReportMetric("StartApp");
+                                }
+                                catch (Exception exception)
+                                {
+                                    logger.Error(exception);
+                                }
                                 
                                 var rootWindow = ActivatorUtilities.CreateInstance<RootWindow>(container);
                                 rootWindow.Show();

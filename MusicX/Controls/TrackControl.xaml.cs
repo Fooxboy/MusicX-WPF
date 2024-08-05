@@ -338,6 +338,9 @@ namespace MusicX.Controls
                     {"Version", StaticService.Version }
                 };
                 Analytics.TrackEvent("PlayTrack", properties);
+                
+                var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
+                connectionService.ReportMetric("PlayTrack", "TrackControl");
 
                 if (e.Source is TextBlock)
                     return;

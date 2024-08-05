@@ -102,6 +102,9 @@ namespace MusicX.Controls
                 };
                 Analytics.TrackEvent("PlayPlaylistWithButton", properties);
 
+                var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
+                connectionService.ReportMetric("PlayPlaylistWithButton");
+
                 var playerService = StaticService.Container.GetRequiredService<PlayerService>();
 
                 if (!_nowPlay)

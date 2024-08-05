@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
+using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Exceptions.Boom;
 using MusicX.Core.Models.Boom;
 using MusicX.Core.Services;
@@ -67,6 +68,9 @@ namespace MusicX.ViewModels
                     {"Version", StaticService.Version }
                 };
                 Analytics.TrackEvent("Open Boom profile", properties);
+                
+                var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
+                connectionService.ReportMetric("OpenBoomProfile");
 
                 Logger.Info("Открытие страницы Boom profile");
                 var config = await ConfigService.GetConfig();
