@@ -685,6 +685,9 @@ namespace MusicX.Controls
             lyricsViewModel.Track = PlayerService.CurrentTrack;
 
             navigationService.OpenModal<LyricsModal>(lyricsViewModel);
+            
+            var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
+            connectionService.ReportMetric("OpenAudioText");
         }
 
         private async void DislikeButton_Click(object sender, RoutedEventArgs e)

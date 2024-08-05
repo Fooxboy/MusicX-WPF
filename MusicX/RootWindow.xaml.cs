@@ -121,6 +121,9 @@ namespace MusicX
                             {"Version", StaticService.Version }
                         };
                     Analytics.TrackEvent("Connect to session", properties);
+                    
+                    var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
+                    connectionService.ReportMetric("ConnectToSession");
 
                     var config = await configService.GetConfig();
                     await listenTogetherService.ConnectToServerAsync(config.UserId);

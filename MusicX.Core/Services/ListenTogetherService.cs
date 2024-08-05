@@ -14,6 +14,7 @@ namespace MusicX.Core.Services
         private readonly Logger _logger;
         private HubConnection _connection;
         private IEnumerable<IDisposable> _subscriptions;
+        private readonly BackendConnectionService _backendConnectionService;
 
         /// <summary>
         /// Изменилась позиция трека
@@ -66,14 +67,14 @@ namespace MusicX.Core.Services
 
         public string SessionId { get; set; }
 
-        public string ConnectUrl => $"{Host}/connect?id={SessionId}";
+        public string ConnectUrl => $"{_backendConnectionService.Host}/connect?id={SessionId}";
 
-        public string Host { get; private set; } = "https://musicx.zznty.ru:8443";
         public string? Token { get; set; }
 
-        public ListenTogetherService(Logger logger)
+        public ListenTogetherService(Logger logger, BackendConnectionService backendConnectionService)
         {
             _logger = logger;
+            _backendConnectionService = backendConnectionService;
 
             SessionOwnerStoped += SessionUserStoped;
         }
@@ -211,24 +212,17 @@ namespace MusicX.Core.Services
             LeaveSession?.Invoke();
         }
 
-        public async Task LoginAsync(long userId)
-        {
-            Token = await GetTokenAsync(userId);
-        }
-
         public async Task ConnectToServerAsync(long userId)
         {
             _logger.Info("Подключение к серверу Слушать вместе");
 
-            await GetListenTogetherHostAsync();
-
-            var token = await GetTokenAsync(userId);
+            var token = await _backendConnectionService.GetTokenAsync(userId);
 
             this.Token = token;
 
             _connection = new HubConnectionBuilder()
                           .WithAutomaticReconnect()
-                          .WithUrl($"{Host}/hubs/listen", options =>
+                          .WithUrl($"{_backendConnectionService.Host}/hubs/listen", options =>
                                        options.AccessTokenProvider = () => Task.FromResult(Token)!)
                           .AddProtobufProtocol()
                           .Build();
@@ -274,53 +268,6 @@ namespace MusicX.Core.Services
             return result;
         }
 
-
-        private async Task<string> GetTokenAsync(long userId)
-        {
-            _logger.Info("Получение временного токена Слушать вместе");
-
-            using var client = new HttpClient
-            {
-                BaseAddress = new(Host)
-            };
-            using var response = await client.PostAsJsonAsync("/token", userId);
-            response.EnsureSuccessStatusCode();
-
-            var token = await response.Content.ReadFromJsonAsync<string>() ?? throw new NullReferenceException("Got null response for token request");
-
-            return token;
-        }
-
-        private async Task<string> GetListenTogetherHostAsync()
-        {
-            if (!string.IsNullOrEmpty(Host))
-                return Host;
-
-            try
-            {
-                _logger.Info("Получение адресса сервера Послушать вместе");
-                using (var httpClient = new HttpClient())
-                {
-                    var response = await httpClient.GetAsync("https://fooxboy.blob.core.windows.net/musicx/ListenTogetherServers.json");
-
-                    var contents = await response.Content.ReadAsStringAsync();
-
-                    var servers = JsonConvert.DeserializeObject<ListenTogetherServersModel>(contents);
-
-                    return Host =
-#if DEBUG
-                    servers.Test;
-#else
-                    servers.Production;
-#endif
-                }
-            }
-            catch(Exception)
-            {
-                return "http://212.192.40.71:5000";
-            }
-            
-        }
 
         private async Task SessionUserStoped()
         {

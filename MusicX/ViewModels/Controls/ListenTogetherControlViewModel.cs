@@ -99,6 +99,9 @@ public class ListenTogetherControlViewModel : BaseViewModel
                 {"Version", StaticService.Version }
             };
             Analytics.TrackEvent("Started session", properties);
+            
+            var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
+            connectionService.ReportMetric("StartSession");
 
             IsLoading = true;
             var sessionId = await _service.StartSessionAsync(_configService.Config.UserId);
@@ -139,6 +142,9 @@ public class ListenTogetherControlViewModel : BaseViewModel
                 {"Version", StaticService.Version }
             };
             Analytics.TrackEvent("Connect to session", properties);
+            
+            var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
+            connectionService.ReportMetric("ConnectToSession");
 
             await _service.ConnectToServerAsync(_configService.Config.UserId);
             await _service.JoinToSesstionAsync(sessionId);

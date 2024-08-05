@@ -5,6 +5,7 @@ using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
+using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Exceptions.Boom;
 using MusicX.Core.Services;
 using MusicX.Helpers;
@@ -39,6 +40,9 @@ namespace MusicX.ViewModels
                     {"Version", StaticService.Version }
                 };
             Analytics.TrackEvent("Open VK Mix", properties);
+            
+            var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
+            connectionService.ReportMetric("OpenVkMix");
 
             Logger.Info("Открытие страницы VK Mix");
             var config = await ConfigService.GetConfig();
@@ -121,6 +125,9 @@ namespace MusicX.ViewModels
                     {"Version", StaticService.Version }
                 };
                 Analytics.TrackEvent("Play Personal Mix", properties);
+                
+                var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
+                connectionService.ReportMetric("PlayPersonalMix");
 
                 if (PlayingPersonalMix)
                 {

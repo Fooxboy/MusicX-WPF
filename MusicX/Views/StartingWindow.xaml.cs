@@ -24,6 +24,7 @@ using MusicX.ViewModels.Login;
 using MusicX.ViewModels.Modals;
 using MusicX.Views.Login;
 using NLog;
+using Sentry;
 using VkNet.Abstractions;
 using VkNet.AudioBypassService.Abstractions;
 using VkNet.AudioBypassService.Extensions;
@@ -79,7 +80,7 @@ namespace MusicX.Views
                 collection.AddSingleton<GithubService>();
                 collection.AddSingleton<DiscordService>();
                 collection.AddSingleton<BoomService>();
-                collection.AddSingleton(LogManager.Setup().GetLogger("Common"));
+                collection.AddSingleton(LogManager.GetLogger("Common"));
                 collection.AddSingleton<GeniusService>();
 
                 collection.AddSingleton<IRegistryPatch, ListenTogetherPatch>();
@@ -130,6 +131,7 @@ namespace MusicX.Views
                 });
                 collection.AddSingleton<IScrobbler, MemoryScrobbler>();
                 collection.AddSingleton<ITrackApi, TrackApi>();
+                collection.AddSingleton(s => new BackendConnectionService(s.GetRequiredService<Logger>(), StaticService.Version));
 
                 var container = StaticService.Container = collection.BuildServiceProvider();
 
@@ -193,6 +195,18 @@ namespace MusicX.Views
                             {
 
                                 await vkService.SetTokenAsync(config.AccessToken);
+
+                                try
+                                {
+                                    var connectionService = container.GetRequiredService<BackendConnectionService>();
+                                    await connectionService.GetTokenAsync(config.UserId);
+                                    connectionService.ReportMetric("StartApp");
+                                }
+                                catch (Exception exception)
+                                {
+                                    logger.Error(exception);
+                                }
+                                
                                 var rootWindow = ActivatorUtilities.CreateInstance<RootWindow>(container);
                                 rootWindow.Show();
 

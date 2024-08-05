@@ -137,6 +137,10 @@ namespace MusicX.Controls
                     {"Version", StaticService.Version }
                 };
             Analytics.TrackEvent("OpenReccomendedPlaylist", properties);
+            
+            var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
+            connectionService.ReportMetric("OpenPlayList", "RecommendedPlaylist");
+            
             var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
 
             navigationService.OpenExternalPage(new PlaylistView(Playlist.Playlist.Id,Playlist.Playlist.OwnerId , Playlist.Playlist.AccessKey));
