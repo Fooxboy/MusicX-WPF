@@ -17,62 +17,74 @@
     mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary>
-            <Storyboard x:Key="BackgroundAmimate">
-                <!--  <DoubleAnimationUsingKeyFrames Storyboard.TargetName="BackgroundRectangle"  -->
-                <!--  Storyboard.TargetProperty="(UIElement.Opacity)">  -->
-                <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="1" /> -->
-                <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.4000000" Value="0.8" /> -->
-                <!-- </DoubleAnimationUsingKeyFrames> -->
-            </Storyboard>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Styles/DarkColors.xaml" />
+                <ResourceDictionary>
+                    <Style TargetType="ui:SymbolIcon">
+                        <Setter Property="Foreground">
+                            <Setter.Value>
+                                <SolidColorBrush Color="{StaticResource TextFillColorPrimary}" />
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                    
+                    <Storyboard x:Key="BackgroundAmimate">
+                        <!--  <DoubleAnimationUsingKeyFrames Storyboard.TargetName="BackgroundRectangle"  -->
+                        <!--  Storyboard.TargetProperty="(UIElement.Opacity)">  -->
+                        <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="1" /> -->
+                        <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.4000000" Value="0.8" /> -->
+                        <!-- </DoubleAnimationUsingKeyFrames> -->
+                    </Storyboard>
 
-            <Storyboard x:Key="QueueHideAnimation">
-                <DoubleAnimation
-                    Storyboard.TargetName="QueueGrid"
-                    Storyboard.TargetProperty="Height"
-                    From="500"
-                    To="0"
-                    Duration="0:0:0.3">
-                    <DoubleAnimation.EasingFunction>
-                        <PowerEase EasingMode="EaseIn" />
-                    </DoubleAnimation.EasingFunction>
-                </DoubleAnimation>
-            </Storyboard>
-            <Storyboard x:Key="QueueShowAnimation">
-                <DoubleAnimation
-                    Storyboard.TargetName="QueueGrid"
-                    Storyboard.TargetProperty="Height"
-                    From="0"
-                    To="500"
-                    Duration="0:0:0.3">
-                    <DoubleAnimation.EasingFunction>
-                        <PowerEase EasingMode="EaseIn" />
-                    </DoubleAnimation.EasingFunction>
-                </DoubleAnimation>
-            </Storyboard>
+                    <Storyboard x:Key="QueueHideAnimation">
+                        <DoubleAnimation
+                            Storyboard.TargetName="QueueGrid"
+                            Storyboard.TargetProperty="Height"
+                            From="500"
+                            To="0"
+                            Duration="0:0:0.3">
+                            <DoubleAnimation.EasingFunction>
+                                <PowerEase EasingMode="EaseIn" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+                    </Storyboard>
+                    <Storyboard x:Key="QueueShowAnimation">
+                        <DoubleAnimation
+                            Storyboard.TargetName="QueueGrid"
+                            Storyboard.TargetProperty="Height"
+                            From="0"
+                            To="500"
+                            Duration="0:0:0.3">
+                            <DoubleAnimation.EasingFunction>
+                                <PowerEase EasingMode="EaseIn" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+                    </Storyboard>
 
-            <Style
-                x:Key="TransparentToggleButtonStyle"
-                BasedOn="{StaticResource {x:Type ToggleButton}}"
-                TargetType="{x:Type ToggleButton}">
-                <Setter Property="Background" Value="Transparent" />
-            </Style>
+                    <Style
+                        x:Key="TransparentToggleButtonStyle"
+                        BasedOn="{StaticResource {x:Type ToggleButton}}"
+                        TargetType="{x:Type ToggleButton}">
+                        <Setter Property="Background" Value="Transparent" />
+                    </Style>
 
-            <Style x:Key="TransparentBorderStyle" TargetType="{x:Type Border}">
-                <Setter Property="Background" Value="Transparent" />
-                <Setter Property="BorderBrush" Value="{DynamicResource ControlElevationBorderBrush}" />
-                <Setter Property="BorderThickness" Value="{StaticResource ButtonBorderThemeThickness}" />
-                <Setter Property="CornerRadius" Value="5" />
-                <Setter Property="SnapsToDevicePixels" Value="True" />
-                <Style.Triggers>
-                    <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Background" Value="{DynamicResource ControlElevationBorderBrush}" />
-                    </Trigger>
-                </Style.Triggers>
-            </Style>
+                    <Style x:Key="TransparentBorderStyle" TargetType="{x:Type Border}">
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="BorderBrush" Value="{DynamicResource ControlElevationBorderBrush}" />
+                        <Setter Property="BorderThickness" Value="{StaticResource ButtonBorderThemeThickness}" />
+                        <Setter Property="CornerRadius" Value="5" />
+                        <Setter Property="SnapsToDevicePixels" Value="True" />
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource ControlElevationBorderBrush}" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
 
-            <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+                    <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
-
     </UserControl.Resources>
     <Grid>
 
@@ -317,7 +329,8 @@
                             Appearance="Transparent"
                             Click="LikeTrack_Click">
 
-                            <ui:SymbolIcon x:Name="LikeIcon" Symbol="Heart20" />
+                            <ui:SymbolIcon x:Name="LikeIcon"
+                                           Symbol="Heart20" />
 
                             <wpfui:Button.ToolTip>
                                 <ToolTip Content="Добавить/убрать в библиотеку" />
@@ -410,7 +423,11 @@
                                         <Setter.Value>
                                             <ControlTemplate>
                                                 <Border Style="{StaticResource TransparentBorderStyle}">
-                                                    <ui:SymbolIcon Symbol="Play32" />
+                                                    <ui:SymbolIcon Symbol="Play32">
+                                                        <ui:SymbolIcon.Foreground>
+                                                            <SolidColorBrush Color="{StaticResource TextFillColorPrimary}" />
+                                                        </ui:SymbolIcon.Foreground>
+                                                    </ui:SymbolIcon>
                                                 </Border>
                                             </ControlTemplate>
                                         </Setter.Value>
@@ -421,7 +438,11 @@
                                                 <Setter.Value>
                                                     <ControlTemplate>
                                                         <Border Style="{StaticResource TransparentBorderStyle}">
-                                                            <ui:SymbolIcon Symbol="Pause32" />
+                                                            <ui:SymbolIcon Symbol="Pause32">
+                                                                <ui:SymbolIcon.Foreground>
+                                                                    <SolidColorBrush Color="{StaticResource TextFillColorPrimary}" />
+                                                                </ui:SymbolIcon.Foreground>
+                                                            </ui:SymbolIcon>
                                                         </Border>
                                                     </ControlTemplate>
                                                 </Setter.Value>

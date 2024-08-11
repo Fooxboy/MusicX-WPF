@@ -585,7 +585,7 @@ namespace MusicX
 
         private void RootFrame_Navigating(object sender, System.Windows.Navigation.NavigatingCancelEventArgs e)
         {
-            SearchBox.Visibility = e.Content is SectionView { DataContext: SectionViewModel { SectionId: "search" } or SectionViewModel { SectionType: SectionType.Search } }
+            SearchBox.Visibility = e.Content is SectionView { DataContext: SectionViewModel { SectionId: "search" } or SectionViewModel { SectionType: SectionType.Search or SectionType.SearchResult } }
                 ? Visibility.Visible
                 : Visibility.Collapsed;
         }

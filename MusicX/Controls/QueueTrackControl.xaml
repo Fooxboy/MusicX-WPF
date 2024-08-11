@@ -98,7 +98,7 @@
                                TextTrimming="CharacterEllipsis" />
                     <TextBlock Text="{Binding Subtitle}"
                                Margin="5,3,0,0"
-                               Opacity="0.3"
+                               FontWeight="Light"
                                Visibility="{Binding Subtitle, Converter={StaticResource StringToVisibilityConverter}}"
                                TextTrimming="CharacterEllipsis" />
                     <Border

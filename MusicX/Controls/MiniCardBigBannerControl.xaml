@@ -129,6 +129,7 @@
 
                 </Rectangle>
 
+                <!-- need force foreground on top of the image to be white -->
                 <TextBlock
                     x:Name="TextAlbum"
                     MaxWidth="160"
@@ -136,7 +137,7 @@
                     VerticalAlignment="Center"
                     FontFamily="{StaticResource VKSansMedium}"
                     FontSize="16"
-                    
+                    Foreground="White"
                     Text="Имя альбома"
                     TextTrimming="CharacterEllipsis" />
             </Grid>

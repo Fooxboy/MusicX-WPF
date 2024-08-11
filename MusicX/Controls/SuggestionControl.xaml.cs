@@ -32,7 +32,14 @@ namespace MusicX.Controls
 
         }
 
-        public Suggestion Suggestion { get; set; }
+        public static readonly DependencyProperty SuggestionProperty = DependencyProperty.Register(
+            nameof(Suggestion), typeof(Suggestion), typeof(SuggestionControl), new PropertyMetadata(default(Suggestion)));
+
+        public Suggestion Suggestion
+        {
+            get => (Suggestion)GetValue(SuggestionProperty);
+            set => SetValue(SuggestionProperty, value);
+        }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
@@ -68,7 +75,7 @@ namespace MusicX.Controls
             {
                 var result = await vkService.GetAudioSearchAsync(Suggestion.Title, Suggestion.Context);
 
-                navigationService.OpenSection(result.Catalog.DefaultSection);
+                navigationService.OpenSection(result.Catalog.DefaultSection, SectionType.SearchResult);
             }catch(Exception ex)
             {
 

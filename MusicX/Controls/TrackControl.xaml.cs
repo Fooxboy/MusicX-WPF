@@ -141,8 +141,12 @@ namespace MusicX.Controls
                     Artists.MouseEnter += Artists_MouseEnter;
                     Artists.MouseLeave += Artists_MouseLeave;
                     Artists.MouseLeftButtonDown += Artists_MouseLeftButtonDown;
-                    
-                    AddArtistContextMenu(Audio.Artist, Audio.Artist);
+
+                    GoToArtistMenu.Items.Add(new MainArtist
+                    {
+                        Id = Audio.Artist,
+                        Name = Audio.Artist
+                    });
                 }
                 else
                 {
@@ -228,17 +232,11 @@ namespace MusicX.Controls
                     
                 Artists.Inlines.Add(textBlock);
 
-                AddArtistContextMenu(artist.Name, artist.Id);
+                GoToArtistMenu.Items.Add(artist);
             }
         }
-        private void AddArtistContextMenu(string artistName, string id)
-        {
-            var text = new TextBlock { Text = artistName, Tag = id, Foreground = Brushes.White };
-            text.MouseLeftButtonDown += Text_MouseLeftButtonDown;
-            GoToArtistMenu.Items.Add(text);
-        }
 
-        private async void Text_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private async void ArtistContextMenu_Click(object sender, MouseButtonEventArgs e)
         {
             try
             {

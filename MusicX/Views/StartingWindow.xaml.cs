@@ -11,6 +11,7 @@ using IF.Lastfm.Core.Scrobblers;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Services;
+using MusicX.Helpers;
 using MusicX.Models;
 using MusicX.RegistryPatches;
 using MusicX.Services;
@@ -31,6 +32,7 @@ using VkNet.AudioBypassService.Models.Auth;
 using VkNet.Exception;
 using VkNet.Extensions.DependencyInjection;
 using Wpf.Ui;
+using Wpf.Ui.Appearance;
 using NavigationService = MusicX.Services.NavigationService;
 
 namespace MusicX.Views
@@ -48,8 +50,16 @@ namespace MusicX.Views
             _args = args;
         }
 
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            base.OnClosing(e);
+            SystemThemeWatcher.UnWatch(this);
+        }
+
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            SystemThemeWatcher.Watch(this);
+            this.SuppressTitleBarColorization();
 
             var properties = new Dictionary<string, string>
                 {
