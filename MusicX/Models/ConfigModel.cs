@@ -66,10 +66,3 @@ public class ConfigModel
 
     public MusicXTheme Theme { get; set; } = MusicXTheme.Dark;
 }
-
-public enum MusicXTheme 
-{
-    Default,
-    Light,
-    Dark
-}
