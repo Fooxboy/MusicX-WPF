@@ -140,6 +140,7 @@ namespace MusicX.Views
                 });
                 collection.AddSingleton<IScrobbler, MemoryScrobbler>();
                 collection.AddSingleton<ITrackApi, TrackApi>();
+                collection.AddSingleton<WindowThemeService>();
 
                 var container = StaticService.Container = collection.BuildServiceProvider();
 
@@ -187,6 +188,9 @@ namespace MusicX.Views
                 {
                     try
                     {
+                        var themeService = container.GetRequiredService<WindowThemeService>();
+                        themeService.Update(config.Theme);
+                        
                         if (string.IsNullOrEmpty(config.AccessToken))
                         {
                             if (string.IsNullOrEmpty(config.AnonToken))

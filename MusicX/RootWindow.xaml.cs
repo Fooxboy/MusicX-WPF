@@ -54,7 +54,7 @@ namespace MusicX
 
         public RootWindow(NavigationService navigationService, VkService vkService, Logger logger,
             ConfigService configService, ISnackbarService snackbarService,
-                          ListenTogetherService togetherService) : base(snackbarService, navigationService, logger)
+                          ListenTogetherService togetherService, WindowThemeService themeService) : base(snackbarService, navigationService, themeService)
         {
             Application.Current.MainWindow = this;
             InitializeComponent();     

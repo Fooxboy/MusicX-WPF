@@ -22,6 +22,7 @@ using Ookii.Dialogs.Wpf;
 using VkNet.Abstractions;
 using VkNet.AudioBypassService.Models.Auth;
 using Wpf.Ui;
+using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
 using Wpf.Ui.Extensions;
 using Button = Wpf.Ui.Controls.Button;
@@ -150,6 +151,7 @@ namespace MusicX.Views
 
                 }
 
+                ThemeComboBox.SelectedIndex = (int)config.Theme;
             }
             catch (Exception ex)
             {
@@ -578,6 +580,16 @@ namespace MusicX.Views
             if (config.LastFmSession is null)
                 StaticService.Container.GetRequiredService<NavigationService>()
                     .OpenModal<LastFmAuthModal>(StaticService.Container.GetRequiredService<LastFmAuthModalViewModel>());
+        }
+
+        private async void ThemeComboBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var previousTheme = config.Theme;
+            config.Theme = (MusicXTheme)ThemeComboBox.SelectedIndex;
+            
+            StaticService.Container.GetRequiredService<WindowThemeService>().Update(previousTheme);
+
+            await configService.SetConfig(config);
         }
     }
 }

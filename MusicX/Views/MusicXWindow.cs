@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Windows;
 using MusicX.Controls;
 using MusicX.Helpers;
-using NLog;
+using MusicX.Services;
 using Wpf.Ui;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
@@ -16,17 +16,19 @@ public class MusicXWindow : FluentWindow
 {
     private readonly ISnackbarService _snackbarService;
     private readonly NavigationService _navigationService;
+    private readonly WindowThemeService _themeService;
     private ModalFrame? _frame;
 
-    public MusicXWindow(ISnackbarService snackbarService, NavigationService navigationService, Logger logger)
+    public MusicXWindow(ISnackbarService snackbarService, NavigationService navigationService, WindowThemeService themeService)
     {
         _snackbarService = snackbarService;
         _navigationService = navigationService;
+        _themeService = themeService;
         WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
         Style = (Style)FindResource("MusicXWindowStyle");
 
-        SystemThemeWatcher.Watch(this);
+        themeService.Register(this);
         this.SuppressTitleBarColorization();
     }
 
@@ -51,7 +53,7 @@ public class MusicXWindow : FluentWindow
     protected override void OnClosing(CancelEventArgs e)
     {
         base.OnClosing(e);
-        SystemThemeWatcher.UnWatch(this);
+        _themeService.Unregister(this);
     }
 
     protected virtual SnackbarPresenter? GetSnackbarPresenter()
