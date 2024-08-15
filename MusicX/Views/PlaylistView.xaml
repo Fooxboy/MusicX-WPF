@@ -207,8 +207,11 @@
                                     MinWidth="200"
                                     Appearance="Secondary"
                                     Click="AddPlaylist_Click"
-                                    Content="Добавить к себе"
-                                    Icon="{x:Static controls:SymbolRegular.Add28}" />
+                                    Content="Добавить к себе">
+                                    <controls:Button.Icon>
+                                        <ui:SymbolIcon Symbol="Add28" />
+                                    </controls:Button.Icon>
+                                </controls:Button>
 
                                 <controls:Button
                                     x:Name="EditPlaylist"
@@ -216,8 +219,11 @@
                                     Margin="10,0,0,0"
                                     Appearance="Secondary"
                                     Click="EditPlaylist_Click"
-                                    Content="Редактировать"
-                                    Icon="{x:Static controls:SymbolRegular.Edit16}" />
+                                    Content="Редактировать">
+                                    <controls:Button.Icon>
+                                        <ui:SymbolIcon Symbol="Edit16" />
+                                    </controls:Button.Icon>
+                                </controls:Button>
 
                                 <controls:Button
                                     x:Name="DownloadPlaylist"
@@ -225,8 +231,11 @@
                                     Margin="10,0,0,0"
                                     Appearance="Secondary"
                                     Click="DownloadPlaylist_Click"
-                                    Content="Скачать"
-                                    Icon="{x:Static controls:SymbolRegular.ArrowDownload48}" />
+                                    Content="Скачать">
+                                    <controls:Button.Icon>
+                                        <ui:SymbolIcon Symbol="ArrowDownload48" />
+                                    </controls:Button.Icon>
+                                </controls:Button>
 
                             </StackPanel>
                             
