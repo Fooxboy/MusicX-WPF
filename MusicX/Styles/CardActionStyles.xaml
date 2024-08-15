@@ -52,10 +52,12 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsChevronVisible" Value="False">
-                            <Setter TargetName="ChevronColumn" Property="Width" Value="0" />
+                            <Setter TargetName="ChevronIcon" Property="Visibility" Value="Collapsed" />
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="{DynamicResource ControlFillColorSecondaryBrush}" />
+                            <Setter Property="Background" Value="{DynamicResource CardBackgroundPointerOver}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource ControlElevationBorderBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource CardForegroundPointerOver}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Background" Value="{DynamicResource ControlFillColorDisabledBrush}" />

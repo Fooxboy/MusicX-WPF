@@ -36,25 +36,20 @@
 
                     </Rectangle>
                     <StackPanel Margin="10,10,0,0">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock
-                                x:Name="Percent"
-                                FontFamily="{StaticResource VKSansDemiBold}"
-                                FontSize="17"
-                                
-                                Text="98%" />
-                            <TextBlock
-                                Margin="5,0,0,0"
-                                
-                                Text="•" />
-                            <TextBlock
-                                x:Name="Subtitle"
-                                Margin="5,0,0,0"
-                                FontFamily="{StaticResource VKSansRegular}"
-                                FontSize="15"
-                                
-                                Text="совпадение с вашим вкусом" />
-                        </StackPanel>
+                        <!-- need force foreground on top of the image to be white -->
+                        <TextBlock Foreground="White"> 
+                            <Run x:Name="Percent"
+                                 FontFamily="{StaticResource VKSansDemiBold}"
+                                 FontSize="17">
+                                98%
+                            </Run>
+                            <Run>•</Run>
+                            <Run x:Name="Subtitle"
+                                 FontFamily="{StaticResource VKSansRegular}"
+                                 FontSize="15">
+                                совпадение с вашим вкусом
+                            </Run>
+                        </TextBlock>
 
                         <TextBlock
                             x:Name="NamePlaylist"
@@ -63,18 +58,17 @@
                             HorizontalAlignment="Left"
                             FontFamily="{StaticResource VKSansDemiBold}"
                             FontSize="20"
-                            
+                            Foreground="White"
                             Text="Название плейлиста пользователя"
                             TextTrimming="CharacterEllipsis" />
                         <TextBlock
                             x:Name="OwnerName"
                             MaxWidth="205"
                             HorizontalAlignment="Left"
-                            
+                            Foreground="White"
                             Opacity="0.7"
                             Text="Владелец плейлиста или группа или ещё что то"
                             TextTrimming="CharacterEllipsis" />
-
                     </StackPanel>
                 </Grid>
 

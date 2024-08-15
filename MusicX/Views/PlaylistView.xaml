@@ -208,11 +208,7 @@
                                     Appearance="Secondary"
                                     Click="AddPlaylist_Click"
                                     Content="Добавить к себе"
-                                    Foreground="White">
-                                    <controls:Button.Icon>
-                                        <controls:SymbolIcon Symbol="Add28"/>
-                                    </controls:Button.Icon>
-                                </controls:Button>
+                                    Icon="{x:Static controls:SymbolRegular.Add28}" />
 
                                 <controls:Button
                                     x:Name="EditPlaylist"
@@ -221,11 +217,7 @@
                                     Appearance="Secondary"
                                     Click="EditPlaylist_Click"
                                     Content="Редактировать"
-                                    Foreground="White">
-                                    <controls:Button.Icon>
-                                        <controls:SymbolIcon Symbol="Edit16"/>
-                                    </controls:Button.Icon>
-                                </controls:Button>
+                                    Icon="{x:Static controls:SymbolRegular.Edit16}" />
 
                                 <controls:Button
                                     x:Name="DownloadPlaylist"
@@ -234,11 +226,7 @@
                                     Appearance="Secondary"
                                     Click="DownloadPlaylist_Click"
                                     Content="Скачать"
-                                    Foreground="White">
-                                    <controls:Button.Icon>
-                                        <controls:SymbolIcon Symbol="ArrowDownload48"/>
-                                    </controls:Button.Icon>
-                                </controls:Button>
+                                    Icon="{x:Static controls:SymbolRegular.ArrowDownload48}" />
 
                             </StackPanel>
                             

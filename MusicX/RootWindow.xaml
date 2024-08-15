@@ -222,8 +222,10 @@
                         HorizontalAlignment="Center" />
                     <wpfui:Card Margin="{StaticResource ListenTogetherHiddenThickness}"
                                 HorizontalAlignment="Right"
-                                Name="ListenTogetherCard"
-                                Background="#232323">
+                                Name="ListenTogetherCard">
+                        <wpfui:Card.Background>
+                            <SolidColorBrush Color="{DynamicResource SystemFillColorSolidNeutralBackground}" />
+                        </wpfui:Card.Background>
                         <controls:ListenTogetherControl />
                     </wpfui:Card>
                 </Grid>

@@ -30,7 +30,6 @@
     <Resource Include="Assets\icon.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Assets\icons\github-mark-white.png" />
     <Resource Include="Assets\newyear\newyearblock.png" />
     <Resource Include="Assets\newyear\snow1.png" />
     <Resource Include="Assets\newyear\snow2.png" />

@@ -56,7 +56,7 @@ namespace MusicX.ViewModels
             {
                 await (SectionType switch
                 {
-                    SectionType.None => LoadSection(SectionId),
+                    SectionType.None or SectionType.SearchResult => LoadSection(SectionId),
                     SectionType.Artist => LoadArtistSection(SectionId),
                     SectionType.Search => LoadSearchSection(SectionId),
                     _ => throw new ArgumentOutOfRangeException()

@@ -54,7 +54,7 @@ namespace MusicX
 
         public RootWindow(NavigationService navigationService, VkService vkService, Logger logger,
             ConfigService configService, ISnackbarService snackbarService,
-                          ListenTogetherService togetherService) : base(snackbarService, navigationService, logger)
+                          ListenTogetherService togetherService, WindowThemeService themeService) : base(snackbarService, navigationService, themeService)
         {
             Application.Current.MainWindow = this;
             InitializeComponent();     
@@ -585,7 +585,7 @@ namespace MusicX
 
         private void RootFrame_Navigating(object sender, System.Windows.Navigation.NavigatingCancelEventArgs e)
         {
-            SearchBox.Visibility = e.Content is SectionView { DataContext: SectionViewModel { SectionId: "search" } or SectionViewModel { SectionType: SectionType.Search } }
+            SearchBox.Visibility = e.Content is SectionView { DataContext: SectionViewModel { SectionId: "search" } or SectionViewModel { SectionType: SectionType.Search or SectionType.SearchResult } }
                 ? Visibility.Visible
                 : Visibility.Collapsed;
         }

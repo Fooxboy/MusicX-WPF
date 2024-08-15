@@ -8,6 +8,7 @@
     xmlns:iconElements="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:helpers="clr-namespace:MusicX.Helpers"
     xmlns:system="clr-namespace:System;assembly=System.Runtime"
+    xmlns:models="clr-namespace:MusicX.Core.Models;assembly=MusicX.Core"
     d:DesignHeight="100"
     d:DesignWidth="800"
     x:Name="Control"
@@ -41,6 +42,12 @@
                         </StackPanel>
                     </DataTemplate>
                 </MenuItem.HeaderTemplate>
+                <MenuItem.ItemTemplate>
+                    <DataTemplate DataType="{x:Type models:MainArtist}">
+                        <TextBlock Text="{Binding Name, Mode=OneTime}" Tag="{Binding Id, Mode=OneTime}"
+                                   MouseLeftButtonUp="ArtistContextMenu_Click" />
+                    </DataTemplate>
+                </MenuItem.ItemTemplate>
             </MenuItem>
 
             <StackPanel x:Name="AddToPlaylist" MouseDown="AddToPlaylist_MouseDown"  Orientation="Horizontal">
@@ -236,11 +243,7 @@
                         <ToolTip Content="Перейти к альбому" />
                     </Run.ToolTip>
                 </Run>
-                <Run Text="{Binding Audio.Subtitle, ElementName=Control, Mode=OneWay}">
-                    <Run.Foreground>
-                        <SolidColorBrush Color="White" Opacity="0.3" />
-                    </Run.Foreground>
-                </Run>
+                <Run Text="{Binding Audio.Subtitle, ElementName=Control, Mode=OneWay}" FontWeight="Light" />
             </TextBlock>
             
             <TextBlock
@@ -284,10 +287,9 @@
                 Width="16"
                 Height="16"
                 VerticalAlignment="Center"
-                BorderBrush="White"
+                BorderBrush="{DynamicResource ControlStrokeColorTertiaryBrush}"
                 BorderThickness="1"
                 CornerRadius="2"
-                Opacity="0.4"
                 Visibility="Collapsed">
                 <TextBlock
                     Margin="0,0,0,1"
@@ -295,6 +297,7 @@
                     VerticalAlignment="Center"
                     FontFamily="{StaticResource VKSansBold}"
                     FontSize="12"
+                    Opacity="0.4"
                     Text="E" />
             </Border>
 

@@ -4,10 +4,39 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:MusicX.Core.Models;assembly=MusicX.Core"
+    xmlns:controls="clr-namespace:MusicX.Controls"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    mc:Ignorable="d">
-    <Grid x:Name="SearchSuggestionsBlock">
-        <StackPanel x:Name="SearchSuggestionsPanel" Orientation="Horizontal" />
-    </Grid>
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance models:Block}">
+    <ItemsControl ItemsSource="{Binding Suggestions, Mode=OneTime}" HorizontalAlignment="Left">
+        <ItemsControl.Style>
+            <Style TargetType="ItemsControl">
+                <Setter Property="ItemsPanel">
+                    <Setter.Value>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" IsItemsHost="True" />
+                        </ItemsPanelTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding Layout.Name, Mode=OneTime}" Value="list">
+                        <Setter Property="ItemsPanel">
+                            <Setter.Value>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel Orientation="Horizontal" MaxWidth="350" IsItemsHost="True" />
+                                </ItemsPanelTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </ItemsControl.Style>
+        <ItemsControl.ItemTemplate>
+            <DataTemplate DataType="{x:Type models:Suggestion}">
+                <controls:SuggestionControl Height="40" Margin="0,0,10,0" Suggestion="{Binding}" />
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+    </ItemsControl>
 </UserControl>

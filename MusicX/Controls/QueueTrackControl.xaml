@@ -98,14 +98,14 @@
                                TextTrimming="CharacterEllipsis" />
                     <TextBlock Text="{Binding Subtitle}"
                                Margin="5,3,0,0"
-                               Opacity="0.3"
+                               FontWeight="Light"
                                Visibility="{Binding Subtitle, Converter={StaticResource StringToVisibilityConverter}}"
                                TextTrimming="CharacterEllipsis" />
                     <Border
                         Width="16"
                         Height="16"
                         Margin="5,0,0,0"
-                        BorderBrush="White"
+                        BorderBrush="{DynamicResource ControlStrokeColorTertiaryBrush}"
                         BorderThickness="1"
                         CornerRadius="2"
                         Opacity="0.4"

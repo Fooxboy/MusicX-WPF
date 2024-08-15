@@ -34,8 +34,9 @@
                     </Rectangle>
 
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock Text="VK mix" FontSize="70" TextAlignment="Center" FontFamily="{StaticResource VKSansDemiBold}"/>
-                        <TextBlock Text="Динамический плейлист, который подстраивается под Ваш вкус" FontSize="17" FontFamily="{StaticResource VKSansRegular}"/>
+                        <!-- the foreground on top of the shader should always be white -->
+                        <TextBlock Foreground="White" Text="VK mix" FontSize="70" TextAlignment="Center" FontFamily="{StaticResource VKSansDemiBold}"/>
+                        <TextBlock Foreground="White" Text="Динамический плейлист, который подстраивается под Ваш вкус" FontSize="17" FontFamily="{StaticResource VKSansRegular}"/>
                     </StackPanel>
 
                     <wpfui:Button HorizontalAlignment="Right" Command="{Binding PlayPersonalMixCommand}" VerticalAlignment="Bottom" Width="200" BorderBrush="White" BorderThickness="1" Appearance="Secondary"  Margin="0 0 30 30">
