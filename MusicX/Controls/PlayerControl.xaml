@@ -260,7 +260,8 @@
                                                         <RowDefinition Height="Auto" />
                                                         <RowDefinition Height="Auto" />
                                                     </Grid.RowDefinitions>
-                                                    <TextBlock HorizontalAlignment="Center" Text="Перейти к альбому" />
+                                                    <TextBlock HorizontalAlignment="Center" Text="Перейти к альбому"
+                                                               Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
                                                     <StackPanel
                                                         Grid.Row="1"
                                                         Margin="10,10,10,3"
@@ -278,7 +279,8 @@
                                                             Margin="10,0,0,0"
                                                             VerticalAlignment="Center"
                                                             FontFamily="{StaticResource VKSansDemiBold}"
-                                                            Text="{Binding AlbumId.Name}" />
+                                                            Text="{Binding AlbumId.Name}"
+                                                            Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
                                                     </StackPanel>
                                                 </Grid>
                                             </ToolTip>

@@ -16,6 +16,14 @@
     Topmost="True"
     WindowStyle="None"
     mc:Ignorable="d">
+    
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Styles/DarkColors.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
 
     <Grid>
 
@@ -66,7 +74,7 @@
             Click="CloseButton_Click"
             FontSize="30">
             <wpfui:Button.Icon>
-                <ui:SymbolIcon Symbol="ArrowMinimize28"/>
+                <ui:SymbolIcon Symbol="ArrowMinimize28" Foreground="White" />
             </wpfui:Button.Icon>
         </wpfui:Button>
 
@@ -185,6 +193,13 @@
             VerticalAlignment="Bottom"
             Click="CardAction_Click"
             IsChevronVisible="False">
+            <wpfui:CardAction.Resources>
+                <ResourceDictionary>
+                    <ResourceDictionary.MergedDictionaries>
+                        <ui:ThemesDictionary />
+                    </ResourceDictionary.MergedDictionaries>
+                </ResourceDictionary>
+            </wpfui:CardAction.Resources>
             <Grid>
                 <StackPanel Orientation="Horizontal">
 
@@ -210,7 +225,8 @@
                         </Rectangle>
                         <ui:SymbolIcon x:Name="NextTrackNote"
                                        FontSize="46"
-                                       Symbol="MusicNote124" />
+                                       Symbol="MusicNote124"
+                                       Foreground="White" />
                     </Grid>
 
                     <StackPanel Margin="10,0,0,0">
