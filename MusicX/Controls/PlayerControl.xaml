@@ -20,13 +20,15 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Styles/DarkColors.xaml" />
                 <ResourceDictionary>
-                    <Style TargetType="ui:SymbolIcon">
+                    <Style x:Key="PlayerIconStyle" TargetType="ui:SymbolIcon">
+                        <Setter Property="OverridesDefaultStyle" Value="True" />
                         <Setter Property="Foreground">
                             <Setter.Value>
                                 <SolidColorBrush Color="{StaticResource TextFillColorPrimary}" />
                             </Setter.Value>
                         </Setter>
                     </Style>
+                    <Style TargetType="ui:SymbolIcon" BasedOn="{StaticResource PlayerIconStyle}" />
                     
                     <Storyboard x:Key="BackgroundAmimate">
                         <!--  <DoubleAnimationUsingKeyFrames Storyboard.TargetName="BackgroundRectangle"  -->
@@ -642,14 +644,14 @@
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <ui:SymbolIcon MouseDown="ReorderButton_OnMouseDown" Symbol="ReOrderDotsVertical24" />
+                                <ui:SymbolIcon MouseDown="ReorderButton_OnMouseDown" Symbol="ReOrderDotsVertical24" Style="{StaticResource PlayerIconStyle}" />
                                 <local:QueueTrackControl Grid.Column="1" IsInPlayer="True" />
                                 <wpfui:Button
                                     Grid.Column="2"
                                     Appearance="Transparent"
                                     Click="DeleteFromQueue_OnClick">
                                     <wpfui:Button.Icon>
-                                        <ui:SymbolIcon Symbol="Dismiss24" />
+                                        <ui:SymbolIcon Symbol="Dismiss24" Style="{StaticResource PlayerIconStyle}" />
                                     </wpfui:Button.Icon>
                                     <wpfui:Button.ToolTip>
                                         <ToolTip Content="Удалить из очереди" />
