@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using MusicX.Core.Models;
+using MusicX.ViewModels;
 using MusicX.ViewModels.Controls;
 
 namespace MusicX.Controls.Blocks;
@@ -9,11 +9,11 @@ namespace MusicX.Controls.Blocks;
 public partial class FollowingsUpdateInfoListBlockControl : UserControl
 {
     public static readonly DependencyProperty BlockProperty = DependencyProperty.Register(
-        nameof(Block), typeof(Block), typeof(FollowingsUpdateInfoListBlockControl));
+        nameof(Block), typeof(BlockViewModel), typeof(FollowingsUpdateInfoListBlockControl), new PropertyMetadata(BlockChangedCallback));
 
-    public Block Block
+    public BlockViewModel Block
     {
-        get => (Block)GetValue(BlockProperty);
+        get => (BlockViewModel)GetValue(BlockProperty);
         set => SetValue(BlockProperty, value);
     }
 
@@ -29,17 +29,15 @@ public partial class FollowingsUpdateInfoListBlockControl : UserControl
     public FollowingsUpdateInfoListBlockControl()
     {
         InitializeComponent();
-        DataContextChanged += FollowingsUpdateInfoListBlockControl_DataContextChanged;
     }
-
-    private void FollowingsUpdateInfoListBlockControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+    
+    private static void BlockChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        if (e.NewValue is not Block block)
+        if (d is not FollowingsUpdateInfoListBlockControl control || e.NewValue is not BlockViewModel block)
             return;
-
-        Block = block;
-        ViewModel = new BlockButtonViewModel(
-                                Block.Actions.First(b => b.RefDataType == "audio_followings_update_info"),
-                                parentBlock: Block);
+        
+        control.ViewModel = new BlockButtonViewModel(
+            block.Buttons.First(b => b.RefDataType == "audio_followings_update_info"),
+            parentBlock: block);
     }
 }

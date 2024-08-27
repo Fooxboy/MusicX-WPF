@@ -32,7 +32,7 @@ public class BlockButtonViewModel : BaseViewModel
         }
     }
     public Artist? Artist { get; set; }
-    public Block? ParentBlock { get; set; }
+    public BlockViewModel? ParentBlock { get; set; }
 
     public BlockButtonViewModel()
     {
@@ -40,7 +40,7 @@ public class BlockButtonViewModel : BaseViewModel
         // Refresh();
     }
 
-    public BlockButtonViewModel(Button action, Artist? artist = null, Block? parentBlock = null) : this()
+    public BlockButtonViewModel(Button action, Artist? artist = null, BlockViewModel? parentBlock = null) : this()
     {
         Artist = artist;
         ParentBlock = parentBlock;

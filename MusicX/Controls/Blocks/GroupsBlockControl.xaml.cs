@@ -9,6 +9,7 @@ using System.Windows.Media.Imaging;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 using Microsoft.AppCenter.Crashes;
+using MusicX.ViewModels;
 
 namespace MusicX.Controls.Blocks
 {
@@ -25,7 +26,7 @@ namespace MusicX.Controls.Blocks
 
         private void GroupsBlockControl_Loaded(object sender, RoutedEventArgs e)
         {
-            if (DataContext is not Block block)
+            if (DataContext is not BlockViewModel block)
                 return;
             if(block.Groups[0].Photo100 != null) GroupImage.ImageSource = new BitmapImage(new Uri(block.Groups[0].Photo100));
 
@@ -35,7 +36,7 @@ namespace MusicX.Controls.Blocks
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (DataContext is not Block block)
+            if (DataContext is not BlockViewModel block)
                 return;
             try
             {

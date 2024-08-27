@@ -20,10 +20,19 @@ namespace MusicX.Controls.Blocks
          DependencyProperty.Register("Audios", typeof(IEnumerable<Audio>),
              typeof(AudiosListControl), new PropertyMetadata(Enumerable.Empty<Audio>()));
 
-        public IEnumerable<Audio> Audios
+        public ICollection<Audio> Audios
         {
             get => (List<Audio>)GetValue(AudiosProperty);
             set => SetValue(AudiosProperty, value);
+        }
+
+        public static readonly DependencyProperty ShowChartProperty = DependencyProperty.Register(
+            nameof(ShowChart), typeof(bool), typeof(AudiosListControl), new PropertyMetadata(default(bool)));
+
+        public bool ShowChart
+        {
+            get => (bool)GetValue(ShowChartProperty);
+            set => SetValue(ShowChartProperty, value);
         }
     }
 }

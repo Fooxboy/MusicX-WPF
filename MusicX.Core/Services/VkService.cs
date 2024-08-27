@@ -543,7 +543,7 @@ namespace MusicX.Core.Services
             }
         }
 
-        public async Task<ResponseData> AudioGetAsync(long? playlistId, long? ownerId, string? assessKey, long offset = 0, long count = 100)
+        public async Task<ResponseData> AudioGetAsync(long? playlistId, long? ownerId, string? assessKey, long offset = 0, long count = 100, int? shuffleSeed = null)
         {
             try
             {
@@ -573,6 +573,10 @@ namespace MusicX.Core.Services
                     parameters.Add("access_key", assessKey);
                 }
 
+                if (shuffleSeed != null)
+                {
+                    parameters.Add("shuffle_seed", shuffleSeed);
+                }
 
                 var model = await apiInvoke.CallAsync<ResponseData>("audio.get", parameters);
 

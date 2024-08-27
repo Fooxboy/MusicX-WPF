@@ -24,7 +24,7 @@
                         <Setter Property="OverridesDefaultStyle" Value="True" />
                         <Setter Property="Foreground">
                             <Setter.Value>
-                                <SolidColorBrush Color="{StaticResource TextFillColorPrimary}" />
+                                <SolidColorBrush Color="{DynamicResource TextFillColorPrimary}" />
                             </Setter.Value>
                         </Setter>
                     </Style>

@@ -213,7 +213,8 @@
                 </Border>
             </Grid>
             
-            <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" x:Name="ChartGrid" Visibility="Collapsed"
+            <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="1"
+                    Visibility="{Binding InChart, ElementName=Control, Converter={StaticResource BooleanToVisibilityConverter}}"
                     Margin="0,0,5,0"
                     Width="25"
                     Height="25"
@@ -224,10 +225,11 @@
                     <SolidColorBrush Color="Black" Opacity="0.2" />
                 </Border.Background>
                 <TextBlock
+                    x:Name="ChartTextBlock"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     FontWeight="ExtraBlack"
-                    Text="{Binding ChartPosition, ElementName=Control, Mode=OneWay}" />
+                    Text="0" />
             </Border>
             
             <TextBlock Grid.Row="0" Grid.Column="2"

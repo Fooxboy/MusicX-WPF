@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Helpers;
+using MusicX.Patches;
 using MusicX.Services;
 using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
@@ -90,16 +91,13 @@ namespace MusicX.Controls
             }
         }
 
-        public static readonly DependencyProperty ChartPositionProperty =
-            DependencyProperty.Register("ChartPosition", typeof(int), typeof(TrackControl), new PropertyMetadata(0));
+        public static readonly DependencyProperty InChartProperty = DependencyProperty.Register(
+            nameof(InChart), typeof(bool), typeof(TrackControl), new PropertyMetadata(default(bool)));
 
-        public int ChartPosition
+        public bool InChart
         {
-            get { return (int)GetValue(ChartPositionProperty); }
-            set
-            {
-                SetValue(ChartPositionProperty, value);
-            }
+            get { return (bool)GetValue(InChartProperty); }
+            set { SetValue(InChartProperty, value); }
         }
 
         public static readonly DependencyProperty AudioProperty =
@@ -113,7 +111,10 @@ namespace MusicX.Controls
                 SetValue(AudioProperty, value);
             }
         }
-
+        
+        private int IndexInItemsControl =>
+            ItemContainerGeneratorIndexHook.GetItemContainerIndex(((FrameworkElement?)TemplatedParent)?.TemplatedParent ?? TemplatedParent ?? this);
+        
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             try
@@ -122,7 +123,6 @@ namespace MusicX.Controls
                 player.PlayStateChangedEvent += Player_PlayStateChangedEvent;
 
                 IconPlay.Symbol = SymbolRegular.Play24;
-                if (ChartPosition != 0) ChartGrid.Visibility = Visibility.Visible;
 
                 if(!Audio.IsAvailable || string.IsNullOrEmpty(Audio.Url))
                 {
@@ -192,6 +192,8 @@ namespace MusicX.Controls
                     PlayButtons.Visibility = Visibility.Visible;
                     IconPlay.Symbol = SymbolRegular.Pause24;
                 }
+                
+                ChartTextBlock.Text = (IndexInItemsControl + 1).ToString();
             }
             catch (Exception ex)
             {
@@ -350,10 +352,12 @@ namespace MusicX.Controls
                     return;
                 }
 
+                var index = IndexInItemsControl;
+
                 //костыль для бума, да мне лень править.
                 if (Audio.Url.EndsWith(".mp3"))
                 {
-                    await player.PlayAsync(new SinglePlaylist(Audio.ToTrack()), Audio.ToTrack());
+                    await player.PlayAsync(new SinglePlaylist(Audio.ToTrack()), index);
                     return;
                 }
 
@@ -361,12 +365,14 @@ namespace MusicX.Controls
 
 
                 if (this.FindAncestor<PlaylistView>() is { DataContext: PlaylistViewModel viewModel })
-                    await player.PlayAsync(new VkPlaylistPlaylist(vkService, viewModel.PlaylistData), Audio.ToTrack());
+                    await player.PlayAsync(
+                        new VkPlaylistPlaylist(vkService, viewModel.PlaylistData with { Count = (int)viewModel.Playlist.Count }), index);
                 //костыль для реков, да мне лень править.
-                else if (Audio.ParentBlockId is "recomms" or "track_recomms_full" && this.FindAncestor<BlockControl>() is { DataContext: Block { Audios.Count: > 0 } block })
-                    await player.PlayAsync(new ListPlaylist(block.Audios.Select(TrackExtensions.ToTrack).ToImmutableList()), Audio.ToTrack());
+                else if (Audio.ParentBlockId is "recomms" or "track_recomms_full" &&
+                         this.FindAncestor<BlockControl>() is { DataContext: Block { Audios.Count: > 0 } block })
+                    await player.PlayAsync(new ListPlaylist(block.Audios.Select(TrackExtensions.ToTrack).ToImmutableList()), index);
                 else
-                    await player.PlayAsync(new VkBlockPlaylist(vkService, Audio.ParentBlockId, LoadOtherTracks), Audio.ToTrack());
+                    await player.PlayAsync(new VkBlockPlaylist(vkService, Audio.ParentBlockId, LoadOtherTracks), index);
             }catch(Exception ex)
             {
                 var properties = new Dictionary<string, string>

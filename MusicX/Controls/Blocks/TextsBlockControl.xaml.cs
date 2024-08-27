@@ -1,6 +1,7 @@
 ﻿using MusicX.Core.Models;
 using System.Windows;
 using System.Windows.Controls;
+using MusicX.ViewModels;
 
 namespace MusicX.Controls.Blocks
 {
@@ -17,7 +18,7 @@ namespace MusicX.Controls.Blocks
 
         private void TextsBlockControl_Loaded(object sender, RoutedEventArgs e)
         {
-            if (DataContext is Block block)
+            if (DataContext is BlockViewModel block)
                 TextsValue.Text = block.Texts[0].Value;
         }
     }

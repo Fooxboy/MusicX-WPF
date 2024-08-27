@@ -8,17 +8,16 @@
     xmlns:models="clr-namespace:MusicX.Core.Models;assembly=MusicX.Core" 
     xmlns:helpers="clr-namespace:MusicX.Helpers" 
     xmlns:blocks="clr-namespace:MusicX.Controls.Blocks" 
-    xmlns:controls="clr-namespace:MusicX.Controls" 
-    xmlns:viewModels="clr-namespace:MusicX.ViewModels.Controls" xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:controls="clr-namespace:MusicX.Controls"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:viewModels="clr-namespace:MusicX.ViewModels"
     ContentTemplateSelector="{DynamicResource BlockTemplateSelector}"
     mc:Ignorable="d">
 
     <UserControl.Resources>
         <helpers:BlockTemplateSelector x:Key="BlockTemplateSelector">
-            <DataTemplate DataType="models:Block">
+            <DataTemplate DataType="{x:Type viewModels:BlockViewModel}">
                 <wpfui:Card>
                     <UniformGrid Rows="2" HorizontalAlignment="Center">
                         <TextBlock Text="{Binding DataType}"  />
@@ -27,19 +26,21 @@
                 </wpfui:Card>
             </DataTemplate>
         </helpers:BlockTemplateSelector>
+        
+        <!-- ReSharper disable InconsistentNaming -->
 
-        <DataTemplate x:Key="none" DataType="models:Block">
-            <blocks:TitleBlockControl />
+        <DataTemplate x:Key="none" DataType="{x:Type viewModels:BlockViewModel}">
+            <blocks:TitleBlockControl ViewModel="{Binding}" />
         </DataTemplate>
-        <DataTemplate x:Key="none_separator" DataType="models:Block">
+        <DataTemplate x:Key="none_separator" DataType="{x:Type viewModels:BlockViewModel}">
             <Rectangle Margin="5,5,5,10" Height="1" Fill="{DynamicResource ControlStrokeColorDefaultBrush}" />
         </DataTemplate>
 
-        <DataTemplate x:Key="loader" DataType="models:Block">
+        <DataTemplate x:Key="loader" DataType="{x:Type viewModels:BlockViewModel}">
             <blocks:LoaderBlockControl />
         </DataTemplate>
 
-        <DataTemplate x:Key="music_audios_triple_stacked_slider" DataType="models:Block">
+        <DataTemplate x:Key="music_audios_triple_stacked_slider" DataType="{x:Type viewModels:BlockViewModel}">
             <!--<hc:ScrollViewer VerticalScrollBarVisibility="Disabled" CanMouseWheel="False">
     <ItemsControl ItemsSource="{Binding Audios}">
         <ItemsControl.ItemsPanel>
@@ -56,111 +57,112 @@
 </hc:ScrollViewer>-->
             <controls:ListTracks Tracks="{Binding Audios}" ShowChart="False" />
         </DataTemplate>
-        <DataTemplate x:Key="music_audios_music_chart_triple_stacked_slider" DataType="models:Block">
+        <DataTemplate x:Key="music_audios_music_chart_triple_stacked_slider" DataType="{x:Type viewModels:BlockViewModel}">
             <controls:ListTracks Tracks="{Binding Audios}" ShowChart="True" />
         </DataTemplate>
-        <DataTemplate x:Key="music_audios_list" DataType="models:Block">
-            <blocks:AudiosListControl Audios="{Binding Audios}" />
+        <DataTemplate x:Key="music_audios_list" DataType="{x:Type viewModels:BlockViewModel}">
+            <blocks:AudiosListControl Audios="{Binding Audios}" ShowChart="False" />
         </DataTemplate>
-        <DataTemplate x:Key="music_audios_music_chart_list" DataType="models:Block">
-            <blocks:AudiosListControl Audios="{Binding Audios}" />
+        <DataTemplate x:Key="music_audios_music_chart_list" DataType="{x:Type viewModels:BlockViewModel}">
+            <blocks:AudiosListControl Audios="{Binding Audios}" ShowChart="True" />
         </DataTemplate>
 
-        <DataTemplate x:Key="music_playlists_music_chart_large_slider" DataType="models:Block">
+        <DataTemplate x:Key="music_playlists_music_chart_large_slider" DataType="{x:Type viewModels:BlockViewModel}">
             <controls:ListPlaylists Content="{Binding Playlists}" ShowFull="False" />
         </DataTemplate>
 
-        <DataTemplate x:Key="music_playlists_crop_slider" DataType="models:Block">
+        <DataTemplate x:Key="music_playlists_crop_slider" DataType="{x:Type viewModels:BlockViewModel}">
             <controls:ListPlaylists Content="{Binding Playlists}" IsCropped="True" />
         </DataTemplate>
         
-        <DataTemplate x:Key="music_playlists" DataType="models:Block">
+        <DataTemplate x:Key="music_playlists" DataType="{x:Type viewModels:BlockViewModel}">
             <controls:ListPlaylists Content="{Binding Playlists}" ShowFull="False" />
         </DataTemplate>
-        <DataTemplate x:Key="music_playlists_list" DataType="models:Block">
+        <DataTemplate x:Key="music_playlists_list" DataType="{x:Type viewModels:BlockViewModel}">
             <controls:ListPlaylists Content="{Binding Playlists}" ShowFull="True" />
         </DataTemplate>
-        <DataTemplate x:Key="music_playlists_recomms_slider" DataType="models:Block">
+        <DataTemplate x:Key="music_playlists_recomms_slider" DataType="{x:Type viewModels:BlockViewModel}">
             <blocks:RecommsPlaylistBlock Playlists="{Binding Playlists}" />
         </DataTemplate>
 
-        <DataTemplate x:Key="catalog_banners" DataType="models:Block">
-            <controls:BigBannerControl Margin="0 0 -10 0" />
+        <DataTemplate x:Key="catalog_banners" DataType="{x:Type viewModels:BlockViewModel}">
+            <controls:BigBannerControl Margin="0 0 -10 0" Banners="{Binding CatalogBanners}" />
         </DataTemplate>
 
-        <DataTemplate x:Key="links_music_newsfeed_title" DataType="models:Block">
+        <DataTemplate x:Key="links_music_newsfeed_title" DataType="{x:Type viewModels:BlockViewModel}">
             <blocks:LinksNewsfeedBlockControl Links="{Binding Links}" />
         </DataTemplate>
-        <DataTemplate x:Key="links" DataType="models:Block">
+        <DataTemplate x:Key="links" DataType="{x:Type viewModels:BlockViewModel}">
             <blocks:LinksBlockControl Block="{Binding}" />
         </DataTemplate>
-        <DataTemplate x:Key="links_categories_list" DataType="models:Block">
+        <DataTemplate x:Key="links_categories_list" DataType="{x:Type viewModels:BlockViewModel}">
             <blocks:MusicCategoryBlockControl />
         </DataTemplate>
 
-        <DataTemplate x:Key="groups_items" DataType="models:Block">
+        <DataTemplate x:Key="groups_items" DataType="{x:Type viewModels:BlockViewModel}">
             <blocks:GroupsBlockControl />
         </DataTemplate>
 
-        <DataTemplate x:Key="placeholder" DataType="models:Block">
-            <blocks:PlaceholderBlockControl />
+        <DataTemplate x:Key="placeholder" DataType="{x:Type viewModels:BlockViewModel}">
+            <blocks:PlaceholderBlockControl Block="{Binding}" />
         </DataTemplate>
 
-        <DataTemplate x:Key="texts" DataType="models:Block">
+        <DataTemplate x:Key="texts" DataType="{x:Type viewModels:BlockViewModel}">
             <blocks:TextsBlockControl />
         </DataTemplate>
 
-        <DataTemplate x:Key="artist" DataType="models:Block">
-            <blocks:ArtistBannerBlockControl />
+        <DataTemplate x:Key="artist" DataType="{x:Type viewModels:BlockViewModel}">
+            <blocks:ArtistBannerBlockControl Block="{Binding}" />
         </DataTemplate>
 
-        <DataTemplate x:Key="search_suggestions" DataType="models:Block">
+        <DataTemplate x:Key="search_suggestions" DataType="{x:Type viewModels:BlockViewModel}">
             <blocks:SearchSuggestionsBlockControl />
         </DataTemplate>
 
-        <DataTemplate x:Key="stations" DataType="models:Block">
-            <blocks:UserRadioBlockControl />
+        <DataTemplate x:Key="stations" DataType="{x:Type viewModels:BlockViewModel}">
+            <blocks:UserRadioBlockControl Block="{Binding}" />
         </DataTemplate>
 
-        <DataTemplate x:Key="audio_followings_update_info" DataType="models:Block">
-            <blocks:FollowingsUpdateInfoListBlockControl />
+        <DataTemplate x:Key="audio_followings_update_info" DataType="{x:Type viewModels:BlockViewModel}">
+            <blocks:FollowingsUpdateInfoListBlockControl Block="{Binding}" />
         </DataTemplate>
 
-        <DataTemplate x:Key="telegram" DataType="models:Block">
+        <DataTemplate x:Key="telegram" DataType="{x:Type viewModels:BlockViewModel}">
             <blocks:TelegramBlockControl />
         </DataTemplate>
 
-        <DataTemplate x:Key="music_owners" DataType="models:Block">
+        <DataTemplate x:Key="music_owners" DataType="{x:Type viewModels:BlockViewModel}">
             <blocks:MusicOwnerCellBlockControl DataContext="{Binding MusicOwners[0]}" />
         </DataTemplate>
 
-        <DataTemplate x:Key="artist_videos" DataType="models:Block">
+        <DataTemplate x:Key="artist_videos" DataType="{x:Type viewModels:BlockViewModel}">
             <blocks:VideosSliderBlockControl Content="{Binding ArtistVideos}" ShowFull="False" />
         </DataTemplate>
-        <DataTemplate x:Key="artist_videos_list" DataType="models:Block">
+        <DataTemplate x:Key="artist_videos_list" DataType="{x:Type viewModels:BlockViewModel}">
             <blocks:VideosSliderBlockControl Content="{Binding ArtistVideos}" ShowFull="True" />
         </DataTemplate>
 
-        <DataTemplate x:Key="videos" DataType="models:Block">
+        <DataTemplate x:Key="videos" DataType="{x:Type viewModels:BlockViewModel}">
             <blocks:VideosSliderBlockControl Content="{Binding Videos}" ShowFull="False" />
         </DataTemplate>
-        <DataTemplate x:Key="videos_list" DataType="models:Block">
+        <DataTemplate x:Key="videos_list" DataType="{x:Type viewModels:BlockViewModel}">
             <blocks:VideosSliderBlockControl Content="{Binding Videos}" ShowFull="True" />
         </DataTemplate>
 
-        <DataTemplate x:Key="music_recommended_playlists" DataType="models:Block">
+        <DataTemplate x:Key="music_recommended_playlists" DataType="{x:Type viewModels:BlockViewModel}">
             <blocks:RecommendedPlaylistsBlockControl Content="{Binding RecommendedPlaylists}" ShowFull="False" />
         </DataTemplate>
-        <DataTemplate x:Key="music_recommended_playlists_list" DataType="models:Block">
+        
+        <DataTemplate x:Key="music_recommended_playlists_list" DataType="{x:Type viewModels:BlockViewModel}">
             <blocks:RecommendedPlaylistsBlockControl Content="{Binding RecommendedPlaylists}" ShowFull="True" />
         </DataTemplate>
 
-        <DataTemplate x:Key="longreads" DataType="models:Block">
+        <DataTemplate x:Key="longreads" DataType="{x:Type viewModels:BlockViewModel}">
             <blocks:LongreadsSliderBlockControl DataContext="{Binding Longreads}" />
         </DataTemplate>
 
-        <DataTemplate x:Key="action" DataType="models:Block">
-            <ItemsControl ItemsSource="{Binding Actions}" Name="ActionsList">
+        <DataTemplate x:Key="action" DataType="{x:Type viewModels:BlockViewModel}">
+            <ItemsControl ItemsSource="{Binding Buttons}" Name="ActionsList">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <controls:DynamicUniformGrid IsItemsHost="True" Rows="1" />
@@ -168,14 +170,16 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="models:Button">
-                        <controls:ActionButtonControl Action="{Binding Mode=OneTime}" Artist="{Binding Artist, RelativeSource={RelativeSource AncestorType=controls:BlockControl}}" ParentBlock="{Binding DataContext, ElementName=ActionsList}" />
+                        <controls:ActionButtonControl Action="{Binding}" Artist="{Binding Artist, RelativeSource={RelativeSource AncestorType=controls:BlockControl}}" ParentBlock="{Binding DataContext, ElementName=ActionsList}" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </DataTemplate>
         
-        <DataTemplate x:Key="curator_banner" DataType="models:Block">
-            <blocks:CuratorBannerBlockControl />
+        <DataTemplate x:Key="curator_banner" DataType="{x:Type viewModels:BlockViewModel}">
+            <blocks:CuratorBannerBlockControl Curators="{Binding Curators}" />
         </DataTemplate>
+        
+        <!-- ReSharper restore InconsistentNaming -->
     </UserControl.Resources>
 </UserControl>

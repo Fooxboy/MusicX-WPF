@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Windows.Media;
 using Microsoft.AppCenter.Crashes;
+using MusicX.ViewModels;
 using Wpf.Ui.Appearance;
 
 namespace MusicX.Controls.Blocks
@@ -53,7 +54,7 @@ namespace MusicX.Controls.Blocks
             AppTheme = currentApplicationTheme;
         }
         
-        public List<Link> Links => (DataContext as Block)?.Links ?? new();
+        public IList<Link> Links => (DataContext as BlockViewModel)?.Links ?? new();
 
         private async Task OpenPage(Link link)
         {

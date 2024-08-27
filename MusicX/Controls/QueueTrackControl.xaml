@@ -92,7 +92,7 @@
 
             <StackPanel Grid.Column="1" Margin="10,0,0,0">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="{Binding Title}"
+                    <TextBlock Text="{Binding Title, FallbackValue=Незагруженный трек}"
                                FontSize="16"
                                FontWeight="DemiBold"
                                TextTrimming="CharacterEllipsis" />
@@ -109,7 +109,7 @@
                         BorderThickness="1"
                         CornerRadius="2"
                         Opacity="0.4"
-                        Visibility="{Binding Data.IsExplicit, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        Visibility="{Binding Data.IsExplicit, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue={x:Static Visibility.Collapsed}}">
                         <TextBlock
                             Margin="0,0,0,1"
                             HorizontalAlignment="Center"

@@ -18,7 +18,15 @@ namespace MusicX.Controls.Blocks
     /// </summary>
     public partial class CuratorBannerBlockControl : UserControl
     {
-        public Block Block => (Block)DataContext;
+        public static readonly DependencyProperty CuratorsProperty = DependencyProperty.Register(
+            nameof(Curators), typeof(IList<Curator>), typeof(CuratorBannerBlockControl), new PropertyMetadata(Array.Empty<Curator>()));
+
+        public IList<Curator> Curators
+        {
+            get => (IList<Curator>)GetValue(CuratorsProperty);
+            set => SetValue(CuratorsProperty, value);
+        }
+        
         public CuratorBannerBlockControl()
         {
             InitializeComponent();
@@ -29,17 +37,17 @@ namespace MusicX.Controls.Blocks
             try
             {
                 var vkService = StaticService.Container.GetRequiredService<VkService>();
-                if (Block.Curators[0].IsFollowed)
+                if (Curators[0].IsFollowed)
                 {
                     ActionCuratorButton.IsEnabled = false;
                     ActionCuratorButton.Content = "Секунду..";
                     ActionCuratorButton.Icon = new SymbolIcon(SymbolRegular.Timer28);
 
-                    await vkService.UnfollowCurator(Block.Curators[0].Id);
+                    await vkService.UnfollowCurator(Curators[0].Id);
 
                     ActionCuratorButton.IsEnabled = true;
 
-                    Block.Curators[0].IsFollowed = false;
+                    Curators[0].IsFollowed = false;
                     ActionCuratorButton.Content = "Подписаться";
                     ActionCuratorButton.Icon = new SymbolIcon(SymbolRegular.Add24);
                 }
@@ -49,10 +57,10 @@ namespace MusicX.Controls.Blocks
                     ActionCuratorButton.Content = "Секунду..";
                     ActionCuratorButton.Icon = new SymbolIcon(SymbolRegular.Timer28);
 
-                    await vkService.FollowCurator(Block.Curators[0].Id);
+                    await vkService.FollowCurator(Curators[0].Id);
 
                     ActionCuratorButton.IsEnabled = true;
-                    Block.Curators[0].IsFollowed = true;
+                    Curators[0].IsFollowed = true;
                     ActionCuratorButton.Content = "Отписаться";
                     ActionCuratorButton.Icon = new SymbolIcon(SymbolRegular.DeleteDismiss20);
                 }
@@ -81,11 +89,11 @@ namespace MusicX.Controls.Blocks
             if (e.NewValue is not Core.Models.Block)
                 return;
             
-            CuratorBannerImage.ImageSource = new BitmapImage(new Uri(Block.Curators[0].Photo[2].Url));
-            CuratorText.Text = Block.Curators[0].Name;
+            CuratorBannerImage.ImageSource = new BitmapImage(new Uri(Curators[0].Photo[2].Url));
+            CuratorText.Text = Curators[0].Name;
             //CuratorDescription.Text = Block.Curators[0].Description;
 
-            if (Block.Curators[0].IsFollowed)
+            if (Curators[0].IsFollowed)
             {
                 ActionCuratorButton.Content = "Отписаться";
                 ActionCuratorButton.Icon = new SymbolIcon(SymbolRegular.DeleteDismiss20);

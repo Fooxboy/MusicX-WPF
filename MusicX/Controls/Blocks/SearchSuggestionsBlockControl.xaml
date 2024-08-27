@@ -6,10 +6,11 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:MusicX.Core.Models;assembly=MusicX.Core"
     xmlns:controls="clr-namespace:MusicX.Controls"
+    xmlns:viewModels="clr-namespace:MusicX.ViewModels"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d"
-    d:DataContext="{d:DesignInstance models:Block}">
+    d:DataContext="{d:DesignInstance viewModels:BlockViewModel}">
     <ItemsControl ItemsSource="{Binding Suggestions, Mode=OneTime}" HorizontalAlignment="Left">
         <ItemsControl.Style>
             <Style TargetType="ItemsControl">
