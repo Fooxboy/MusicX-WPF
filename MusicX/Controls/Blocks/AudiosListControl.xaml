@@ -20,7 +20,7 @@
                 <DataTemplate>
                     <StackPanel>
                         <controls:TrackControl Audio="{Binding}" Margin="0,0,0,5" ShowCard="False" />
-                        <Rectangle Height="1" Fill="White" Opacity="0.2" Margin="5,0,5,5"/>
+                        <Rectangle Height="1" Fill="{DynamicResource ControlStrokeColorDefaultBrush}" Margin="5,0,5,5"/>
                     </StackPanel>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

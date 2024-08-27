@@ -32,7 +32,7 @@
             <blocks:TitleBlockControl />
         </DataTemplate>
         <DataTemplate x:Key="none_separator" DataType="models:Block">
-            <Rectangle Margin="5,5,5,10" Height="1" Opacity="0.1" Fill="White" />
+            <Rectangle Margin="5,5,5,10" Height="1" Fill="{DynamicResource ControlStrokeColorDefaultBrush}" />
         </DataTemplate>
 
         <DataTemplate x:Key="loader" DataType="models:Block">
