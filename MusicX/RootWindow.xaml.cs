@@ -207,35 +207,36 @@ namespace MusicX
                 {
                     SymbolRegular icon;
 
-                    if (section.Title.ToLower() == "главная")
+                    if (section.Title.Equals("главная", StringComparison.CurrentCultureIgnoreCase))
                     {
                         icon = SymbolRegular.Home24;
                     }
-                    else if (section.Title.ToLower() == "моя музыка")
+                    else if (section.Title.Equals("моя музыка", StringComparison.CurrentCultureIgnoreCase))
                     {
                         icon = SymbolRegular.MusicNote120;
                     }
-                    else if (section.Title.ToLower() == "обзор")
+                    else if (section.Title.Equals("обзор", StringComparison.CurrentCultureIgnoreCase))
                     {
                         icon = SymbolRegular.CompassNorthwest28;
                     }
-                    else if (section.Title.ToLower() == "подкасты")
+                    else if (section.Title.Equals("подкасты", StringComparison.CurrentCultureIgnoreCase))
                     {
                         icon = SymbolRegular.HeadphonesSoundWave20;
                     }
-                    else if (section.Title.ToLower() == "подписки")
+                    else if (section.Title.Equals("подписки", StringComparison.CurrentCultureIgnoreCase))
                     {
                         icon = SymbolRegular.Feed24;
                     }
-                    else if (section.Title.ToLower() == "каталоги")
+                    else if (section.Title.Equals("каталоги", StringComparison.CurrentCultureIgnoreCase))
                     {
                         icon = SymbolRegular.People24;
                     }
-                    else if (section.Title.ToLower() == "поиск")
+                    else if (section.Title.Equals("поиск", StringComparison.CurrentCultureIgnoreCase))
                     {
                         icon = SymbolRegular.Search24;
                     }
-                    else if (section.Title.ToLower().StartsWith("книги"))
+                    else if (section.Title.StartsWith("книги", StringComparison.CurrentCultureIgnoreCase) || 
+                             section.Title.StartsWith("радио", StringComparison.CurrentCultureIgnoreCase))
                     {
                         continue;
                     }
