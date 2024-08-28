@@ -28,19 +28,11 @@ namespace MusicX.Services.Player;
 public class PlayerService
 {
     public int CurrentIndex;
-    private readonly TrackCollection _tracks = new();
+    private readonly TrackCollection _tracks = [];
 
-    public TrackCollectionBase Tracks => _tracks;
-    public PlaylistTrack? CurrentTrack { get; private set; }
-    public PlaylistTrack? NextPlayTrack
-    {
-        get => _nextPlayTrack;
-        set
-        {
-            _nextPlayTrack = value;
-            Application.Current.Dispatcher.BeginInvoke(() => NextTrackChanged?.Invoke(this, EventArgs.Empty));
-        }
-    }
+    public IReadOnlyList<PlaylistTrack> Tracks => _tracks;
+    public PlaylistTrack? CurrentTrack => Tracks.ElementAtOrDefault(CurrentIndex);
+    public PlaylistTrack? NextPlayTrack => Tracks.ElementAtOrDefault(NextPlayTrackIndex); 
     private DispatcherTimer _positionTimer;
     private readonly MediaPlayer player;
 
@@ -62,10 +54,19 @@ public class PlayerService
     private readonly ListenTogetherService _listenTogetherService;
     private readonly ConfigService _configService;
 
-    private PlaylistTrack? _nextPlayTrack;
+    private int NextPlayTrackIndex
+    {
+        get => _nextPlayTrackIndex;
+        set
+        {
+            _nextPlayTrackIndex = value;
+            Application.Current.Dispatcher.BeginInvoke(() => NextTrackChanged?.Invoke(this, EventArgs.Empty));
+        }
+    }
+
     private CancellationTokenSource? _tokenSource;
 
-    public IPlaylist? CurrentPlaylist { get; set; }
+    public IPlaylist? CurrentPlaylist { get; private set; }
 
     public PlayerService(Logger logger, ISnackbarService snackbarService,
                          IEnumerable<ITrackMediaSource> mediaSources, IEnumerable<ITrackStatsListener> statsListeners, ListenTogetherService listenTogetherService, ConfigService configService)
@@ -89,14 +90,14 @@ public class PlayerService
 
     public async Task RestoreFromStateAsync(PlayerState state)
     {
-        await PlayAsync(state.Playlist, state.Track, state.Position);
+        await PlayAsync(state.Playlist, state.CurrentIndex, state.Position);
     }
 
     public async void Play()
     {
         if (CurrentTrack is null) return;
         
-        await PlayTrackAsync(CurrentTrack);
+        await PlayTrackAsync(CurrentIndex);
         
         if (Application.Current.Dispatcher.CheckAccess())
             PlayStateChangedEvent?.Invoke(this, EventArgs.Empty);
@@ -104,8 +105,8 @@ public class PlayerService
             await Application.Current.Dispatcher.InvokeAsync(
                 () => PlayStateChangedEvent?.Invoke(this, EventArgs.Empty));
         
-            await Task.WhenAll(
-                _statsListeners.Select(b => b.TrackPlayStateChangedAsync(CurrentTrack!, player.Position, false)));
+        await Task.WhenAll(
+            _statsListeners.Select(b => b.TrackPlayStateChangedAsync(CurrentTrack!, player.Position, false)));
     }
 
     public async Task PlayTrackFromQueueAsync(int index)
@@ -113,17 +114,17 @@ public class PlayerService
         var previousTrack = CurrentTrack!;
         var previousPosition = player.Position;
         
-        await PlayTrackAsync(Tracks[index]);
+        await PlayTrackAsync(index);
 
         await Task.WhenAll(
                 _statsListeners.Select(b => b.TrackChangedAsync(previousTrack, CurrentTrack!, ChangeReason.TrackChange, previousPosition)));
     }
     
-    private async Task PlayTrackAsync(PlaylistTrack track, TimeSpan? position = null)
+    private async Task PlayTrackAsync(int trackIndex, TimeSpan? position = null)
     {
         try
         {
-            if (CurrentTrack == track)
+            if (trackIndex == CurrentIndex)
             {
                 if (position is not null) Seek(position.Value);
                 player.Play();
@@ -137,15 +138,17 @@ public class PlayerService
             
             player.Pause();
 
+            var track = await TrackAtOrDefaultAsync(trackIndex);
+
             if (track is null) return;
 
-            CurrentTrack = track;
-            CurrentIndex = Tracks.IndexOf(track);
-            NextPlayTrack = Tracks.ElementAtOrDefault(CurrentIndex + 1);
+            CurrentIndex = trackIndex;
+            NextPlayTrackIndex = trackIndex + 1;
+            await TrackAtOrDefaultAsync(NextPlayTrackIndex);
 
             var config = await _configService.GetConfig();
 
-            if (config.IgnoredArtists is null) config.IgnoredArtists = new List<string>();
+            config.IgnoredArtists ??= [];
 
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
@@ -155,18 +158,17 @@ public class PlayerService
                 TrackLoadingStateChanged?.Invoke(this, new(PlayerLoadingState.Started));
             });
 
-            if (CurrentTrack.Data.Url is null) await NextTrack();
+            if (string.IsNullOrEmpty(track.Data.Url)) await NextTrack();
 
-            foreach (var ignoreArtist in config.IgnoredArtists)
+            if (config.IgnoredArtists.FirstOrDefault(b =>
+                    track.MainArtists.Any(a => a.Name == b)
+                    || (track.FeaturedArtists != null && track.FeaturedArtists.Any(a => a.Name == b))) 
+                is { } ignoreArtist)
             {
-
-                if ((CurrentTrack.MainArtists != null && CurrentTrack.MainArtists.Any(a => a.Name == ignoreArtist)) 
-                    || (CurrentTrack.FeaturedArtists != null && (CurrentTrack.FeaturedArtists.Any(a => a.Name == ignoreArtist)) ))
-                {
-                    _snackbarService.Show("Трек пропущен",
-                        $"В этом треке был артист из вашего черного списка: {ignoreArtist}. Настроить пропуск треков можно в настройках");
-                    await NextTrack();
-                }
+                _snackbarService.Show("Трек пропущен",
+                    $"В этом треке был артист из вашего черного списка: {ignoreArtist}. Настроить пропуск треков можно в настройках");
+                await NextTrack();
+                return;
             }
 
             var allSourcesTask = Task.WhenAll(_mediaSources.Select(b => b.OpenWithMediaPlayerAsync(player, track, _tokenSource.Token)));
@@ -214,12 +216,44 @@ public class PlayerService
        
     }
 
-    public async Task PlayAsync(IPlaylist playlist, PlaylistTrack? firstTrack = null, TimeSpan? startPosition = null)
+    private async ValueTask<PlaylistTrack?> TrackAtOrDefaultAsync(int trackIndex)
+    {
+        var track = _tracks.ElementAtOrDefault(trackIndex);
+        if (track is not null) return track;
+
+        switch (CurrentPlaylist)
+        {
+            case null or { CanLoad: false }:
+                return null;
+            case IRandomAccessPlaylist randomAccessPlaylist:
+                var count = await randomAccessPlaylist.GetCountAsync();
+                
+                _tracks.AddRangeSequential(await randomAccessPlaylist.GetRangeAsync(Math.Max(_tracks.Count - 1, 0)..Math.Min(count - 1, trackIndex + 10)));
+                break;
+            default:
+            {
+                while (_tracks.Count - 1 < trackIndex && CurrentPlaylist.CanLoad)
+                {
+                    _tracks.AddRangeSequential(await CurrentPlaylist.LoadAsync().ToArrayAsync());
+                }
+
+                break;
+            }
+        }
+        
+        // we've loaded everything but index is still out of bounds
+        if (!CurrentPlaylist.CanLoad && trackIndex >= _tracks.Count)
+            return null;
+
+        return _tracks[trackIndex];
+    }
+
+    public async Task PlayAsync(IPlaylist playlist, int? firstIndex = null, TimeSpan? startPosition = null)
     {
         if(_listenTogetherService.PlayerMode == PlayerMode.Listener)
         {
             await _listenTogetherService.LeavePlaySessionAsync();
-            await Application.Current.Dispatcher.InvokeAsync(() => PlayAsync(playlist, firstTrack, startPosition).SafeFireAndForget());
+            await Application.Current.Dispatcher.InvokeAsync(() => PlayAsync(playlist, firstIndex, startPosition).SafeFireAndForget());
             return;
         }
 
@@ -230,61 +264,55 @@ public class PlayerService
         {
             if (CurrentPlaylist?.Equals(playlist) is true && Tracks.Count > 0)
             {
-                var index = Tracks.IndexOf(firstTrack ?? CurrentTrack ?? Tracks[0]);
-                await PlayTrackFromQueueAsync(index);
+                await PlayTrackFromQueueAsync(firstIndex ?? CurrentIndex);
                 return;
             }
             
             CurrentPlaylist = playlist;
+            
+            _tracks.Clear();
+            CurrentIndex = -1;
+            
             Application.Current.Dispatcher.BeginInvoke(
                 () => CurrentPlaylistChanged?.Invoke(this, EventArgs.Empty));
 
             Task? firstTrackTask = null;
-            if (firstTrack is not null)
+            if (firstIndex.HasValue)
             {
-                if (Application.Current.Dispatcher.CheckAccess())
+                var firstTrack = await TrackAtOrDefaultAsync(firstIndex.Value);
+                
+                if (firstTrack is null)
                 {
-                    Tracks.Clear();
-                    Tracks.Add(firstTrack);
-                }
-                else
-                {
-                    await Application.Current.Dispatcher.InvokeAsync(() =>
-                    {
-                        Tracks.Clear();
-                        Tracks.Add(firstTrack);
-                    });
+                    if (!CurrentPlaylist.CanLoad)
+                        throw new KeyNotFoundException("First track not found");
+                    
+                    _tracks.AddRange(await CurrentPlaylist.LoadAsync().ToArrayAsync(),
+                        NotifyCollectionChangedAction.Reset);
+                    firstTrack = _tracks[firstIndex.GetValueOrDefault()];
                 }
                 
-                firstTrackTask = PlayTrackAsync(firstTrack, startPosition);
+                firstTrackTask = PlayTrackAsync(firstIndex.Value, startPosition);
 
-                    await Task.WhenAll(
-                        _statsListeners.Select(b => b.TrackChangedAsync(CurrentTrack, firstTrack, ChangeReason.PlaylistChange, player.Position)));
+                await Task.WhenAll(_statsListeners.Select(b => b.TrackChangedAsync(CurrentTrack, firstTrack, ChangeReason.PlaylistChange, player.Position)));
             }
 
             Application.Current.Dispatcher.BeginInvoke(
                 () => QueueLoadingStateChanged?.Invoke(this, new(PlayerLoadingState.Started)));
 
-            var loadTask = playlist.LoadAsync().ToArrayAsync().AsTask();
-
             if (firstTrackTask is null)
-                await loadTask;
-            else
-                await Task.WhenAll(loadTask, firstTrackTask);
-            
-            Tracks.ReplaceRange(loadTask.Result);
-            CurrentIndex = Tracks.IndexOf(CurrentTrack!);
-            NextPlayTrack = Tracks.ElementAtOrDefault(CurrentIndex + 1);
-
-            if (firstTrack is null)
             {
-                var previousTrack = CurrentTrack;
-                var previousPosition = player.Position;
-                
-                await PlayTrackAsync(Tracks[0], startPosition);
+                _tracks.ReplaceRange(await playlist.LoadAsync().ToArrayAsync());
+            }
+            else
+                await firstTrackTask;
 
+            if (CurrentTrack is null)
+            {
+                var previousPosition = player.Position;
+                CurrentIndex = -1;
+                await PlayTrackAsync(0);
                 await Task.WhenAll(
-                        _statsListeners.Select(b => b.TrackChangedAsync(previousTrack, CurrentTrack!, ChangeReason.PlaylistChange, previousPosition)));
+                    _statsListeners.Select(b => b.TrackChangedAsync(null, CurrentTrack!, ChangeReason.PlaylistChange, previousPosition)));
             }
         }
         catch (Exception e)
@@ -363,43 +391,46 @@ public class PlayerService
                 var array = await CurrentPlaylist!.LoadAsync().ToArrayAsync();
                 
                 if (Application.Current.Dispatcher.CheckAccess())
-                    Tracks.AddRangeSequential(array);
+                    _tracks.AddRangeSequential(array);
                 else
-                    await Application.Current.Dispatcher.InvokeAsync(() => Tracks.AddRangeSequential(array));
+                    await Application.Current.Dispatcher.InvokeAsync(() => _tracks.AddRangeSequential(array));
             }
-            
-            PlaylistTrack? nextTrack = null;
-            if (CurrentIndex + 1 > Tracks.Count - 1)
-            {
-                if (CurrentPlaylist?.CanLoad == true)
-                {
-                    await LoadMore();
-                    nextTrack = Tracks.ElementAtOrDefault(CurrentIndex + 1);
-                }
-            }
-            else
-            {
-                nextTrack = Tracks[CurrentIndex + 1];
-            }
+
+            var nextIndex = CurrentIndex + 1;
+            var nextTrack = await TrackAtOrDefaultAsync(nextIndex);
 
             if (nextTrack is null)
             {
-                Pause();
-                return;
-            }
-            
-            CurrentIndex = Tracks.IndexOf(nextTrack);
-            
-            // its last track and we can load more
-            if (CurrentIndex == Tracks.Count - 1 && CurrentPlaylist?.CanLoad == true)
-            {
-                await LoadMore();
-            }
+                if (nextIndex > Tracks.Count - 1)
+                {
+                    if (CurrentPlaylist?.CanLoad == true)
+                    {
+                        await LoadMore();
+                        nextTrack = Tracks.ElementAtOrDefault(nextIndex);
+                    }
+                }
+                else
+                {
+                    nextTrack = Tracks[nextIndex];
+                }
 
+                if (nextTrack is null)
+                {
+                    Pause();
+                    return;
+                }
+            
+                // its last track and we can load more
+                if (nextIndex == Tracks.Count - 1 && CurrentPlaylist?.CanLoad == true)
+                {
+                    await LoadMore();
+                }
+            }
+            
             var previousTrack = CurrentTrack!;
             var previousPosition = player.Position;
 
-            await PlayTrackAsync(nextTrack);
+            await PlayTrackAsync(nextIndex);
 
             await Task.WhenAll(
                     _statsListeners.Select(b => b.TrackChangedAsync(previousTrack, nextTrack, ChangeReason.NextButton, previousPosition)));
@@ -506,11 +537,11 @@ public class PlayerService
                 var index = CurrentIndex - 1;
                 if (index < 0) index = Tracks.Count - 1;
 
-                var previousTrack = Tracks[index];
+                var previousTrack = await TrackAtOrDefaultAsync(index);
                 var prevCurrentTrack = CurrentTrack!;
                 var previousPosition = player.Position;
                 
-                await PlayTrackAsync(previousTrack);
+                await PlayTrackAsync(index);
                 
                 await Task.WhenAll(
                         _statsListeners.Select(b => b.TrackChangedAsync(prevCurrentTrack, previousTrack!, ChangeReason.PrevButton, previousPosition)));
@@ -671,7 +702,7 @@ public class PlayerService
 
                     boomService.SetToken(boomToken.AccessToken);
 
-                    await PlayTrackAsync(CurrentTrack);
+                    await PlayTrackAsync(CurrentIndex);
 
                 }
                 catch (Exception ex)
@@ -692,7 +723,7 @@ public class PlayerService
 
             if (CurrentTrack is not null)
                 //audio source url may expire
-                await PlayTrackAsync(CurrentTrack);
+                await PlayTrackAsync(CurrentIndex);
         }
         else if (args.Error == MediaPlayerError.NetworkError)
         {
@@ -703,6 +734,8 @@ public class PlayerService
     }
 
     private int positionTimerListenTogetherCouter = 0;
+    private int _nextPlayTrackIndex;
+
     private async void PositionTimerOnTick(object sender, object o)
     {
         Application.Current.Dispatcher.Invoke((() =>
@@ -722,9 +755,9 @@ public class PlayerService
             await _listenTogetherService.ChangePlayStateAsync(this.Position, !IsPlaying);
         }
     }
-    public async void RemoveFromQueue(PlaylistTrack audio)
+    public async void RemoveFromQueue(int index)
     {
-        if (audio == CurrentTrack)
+        if (index == CurrentIndex)
         {
             if (CurrentIndex + 1 < Tracks.Count)
                 await NextTrack();
@@ -732,37 +765,40 @@ public class PlayerService
                 Pause();
         }
 
-        if (!Tracks.Remove(audio))
-            return;
+        _tracks.RemoveAt(index);
             
-        CurrentIndex = Tracks.IndexOf(CurrentTrack!);
+        if (index <= CurrentIndex)
+            CurrentIndex--;
             
-        if (audio == NextPlayTrack)
-            NextPlayTrack = Tracks.ElementAtOrDefault(CurrentIndex + 1);
+        if (index == CurrentIndex + 2 && await TrackAtOrDefaultAsync(index) is not null)
+        {
+            NextPlayTrackIndex = index;
+        }
     }
 
     public async void InsertToQueue(PlaylistTrack audio, bool afterCurrent)
     {
         if (Tracks.Count == 0 && !IsPlaying)
         {
-            Tracks.Add(audio);
+            _tracks.Insert(0, audio);
+            
             // so we dont had to deal with deadlocks if insertion was triggered with dispatcher context
-            await PlayTrackAsync(audio).ConfigureAwait(false);
+            await PlayTrackAsync(0).ConfigureAwait(false);
             return;
         }
             
         if (afterCurrent)
         {
-            Tracks.Insert(CurrentIndex + 1, audio);
-            NextPlayTrack = audio;
+            _tracks.Insert(CurrentIndex + 1, audio);
+            NextPlayTrackIndex = CurrentIndex + 1;
         }
         else
         {
             // if current is last track in the queue
             if (CurrentIndex == Tracks.Count - 1)
-                NextPlayTrack = audio;
+                NextPlayTrackIndex++;
                 
-            Tracks.Add(audio);
+            _tracks.Add(audio);
         }
             
         await Application.Current.Dispatcher.InvokeAsync(() => NextTrackChanged?.Invoke(this, EventArgs.Empty));
@@ -799,23 +835,20 @@ public class PlayerService
     {
         _listenTogetherService.PlayStateChanged += ListenTogetherPlayStateChanged;
         _listenTogetherService.TrackChanged += ListenTogetherTrackChanged;
-        _listenTogetherService.ConnectedToSession += ListenTogetherConnectedToSession;
+        _listenTogetherService.ConnectedToSession += ListenTogetherTrackChanged;
         _listenTogetherService.SessionOwnerStoped += SessionStoped;
     }
 
     private async Task SessionStoped()
     {
         Pause();
-    }
-
-    private async Task ListenTogetherConnectedToSession(PlaylistTrack playlistTrack)
-    {
-        await this.PlayTrackAsync(playlistTrack);
+        _tracks.Clear();
     }
 
     private async Task ListenTogetherTrackChanged(PlaylistTrack playlistTrack)
     {
-        await this.PlayTrackAsync(playlistTrack);
+        _tracks.Replace(playlistTrack);
+        await PlayTrackAsync(0);
     }
 
     private async Task ListenTogetherPlayStateChanged(TimeSpan position, bool pause)
@@ -833,6 +866,24 @@ public class PlayerService
         {
             Seek(position, true);
         }
+    }
+
+    public void MoveTrackInQueue(Index oldIndex, Index newIndex)
+    {
+        var realOldIndex = oldIndex.GetOffset(_tracks.Count);
+        var realNewIndex = newIndex.GetOffset(_tracks.Count);
+        
+        _tracks.Move(realOldIndex, realNewIndex);
+
+        if (CurrentIndex != realOldIndex && NextPlayTrackIndex != realOldIndex) return;
+        
+        if (CurrentIndex == realOldIndex)
+        {
+            CurrentIndex = realNewIndex;
+            NextPlayTrackIndex = realNewIndex + 1;
+        }
+        else
+            NextPlayTrackIndex = realNewIndex;
     }
 
     private class TrackCollection : TrackCollectionBase

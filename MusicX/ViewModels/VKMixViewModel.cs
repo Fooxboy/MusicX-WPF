@@ -132,7 +132,7 @@ namespace MusicX.ViewModels
                 IsLoadingMix = true;
                 var personalMix =  await BoomService.GetPersonalMixAsync();
 
-                await PlayerService.PlayAsync(new RadioPlaylist(BoomService, new(personalMix, BoomRadioType.Personal)), personalMix.Tracks[0].ToTrack());
+                await PlayerService.PlayAsync(new RadioPlaylist(BoomService, new(personalMix, BoomRadioType.Personal)));
 
 
                 IsLoadingMix = false;

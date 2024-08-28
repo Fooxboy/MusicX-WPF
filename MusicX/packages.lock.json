@@ -84,6 +84,19 @@
           "Microsoft.Windows.WDK.Win32Metadata": "0.11.4-experimental"
         }
       },
+      "MonoMod.RuntimeDetour": {
+        "type": "Direct",
+        "requested": "[25.1.2, )",
+        "resolved": "25.1.2",
+        "contentHash": "eNf/V6FqS5ErkvdA+vyVM5d7SFeKCkltn5XhT2GrjJ2xec6BG3E7lk/52qVIqDSsMrU+M6dTM8W+fl4IxKQWHw==",
+        "dependencies": {
+          "Mono.Cecil": "0.11.5",
+          "MonoMod.Backports": "1.1.2",
+          "MonoMod.Core": "1.1.2",
+          "MonoMod.ILHelpers": "1.1.0",
+          "MonoMod.Utils": "25.0.6"
+        }
+      },
       "Ookii.Dialogs.Wpf": {
         "type": "Direct",
         "requested": "[5.0.1, )",
@@ -462,6 +475,45 @@
         "contentHash": "bf5MCmUyZf0gBlYQjx9UpRAZWBkRndyt9XicR+UNLvAUAFTZQbu6YaX/sNKZlR98Grn0gydfh/yT4I3vc0AIQA==",
         "dependencies": {
           "Microsoft.Windows.SDK.Win32Metadata": "60.0.34-preview"
+        }
+      },
+      "Mono.Cecil": {
+        "type": "Transitive",
+        "resolved": "0.11.5",
+        "contentHash": "fxfX+0JGTZ8YQeu1MYjbBiK2CYTSzDyEeIixt+yqKKTn7FW8rv7JMY70qevup4ZJfD7Kk/VG/jDzQQTpfch87g=="
+      },
+      "MonoMod.Backports": {
+        "type": "Transitive",
+        "resolved": "1.1.2",
+        "contentHash": "baYlNy8n8kmaNhNvqmZ/dIPOeO1r9//dG1i2WbunMWtWZ2EKtIgmXaS+ZzphzTsikkGnoD4Jwr5g0TVdpDjgpw==",
+        "dependencies": {
+          "MonoMod.ILHelpers": "1.1.0"
+        }
+      },
+      "MonoMod.Core": {
+        "type": "Transitive",
+        "resolved": "1.1.2",
+        "contentHash": "6Yvjx2W0QFnPNyBjCKnrhYimskBE2MUKEMJz0t+2fJO67Jt4Lmams6BdZPTVudQykmEWTh5c2fwEfAMxKQtC4Q==",
+        "dependencies": {
+          "Mono.Cecil": "0.11.5",
+          "MonoMod.Backports": "1.1.2",
+          "MonoMod.ILHelpers": "1.1.0",
+          "MonoMod.Utils": "25.0.6"
+        }
+      },
+      "MonoMod.ILHelpers": {
+        "type": "Transitive",
+        "resolved": "1.1.0",
+        "contentHash": "L2FWjhTrv7tcIxshfZ+M3OcaNr4cNw0IwiVZEgwqRnZ5QAN3+RrNJ8ZwCzwXUWyPDqooJxMcjjg8PsSYUiNBjQ=="
+      },
+      "MonoMod.Utils": {
+        "type": "Transitive",
+        "resolved": "25.0.6",
+        "contentHash": "FAGqXHT4ENtg3UTA5PKBgLYcRP8w+u4zMUN2M73yfb0aYLIpCTVOcTfO1iTM2Jse0ukBxjd+ovO5KnCYt+Z0ag==",
+        "dependencies": {
+          "Mono.Cecil": "0.11.5",
+          "MonoMod.Backports": "1.1.2",
+          "MonoMod.ILHelpers": "1.1.0"
         }
       },
       "Newtonsoft.Json": {

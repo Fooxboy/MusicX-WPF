@@ -13,7 +13,7 @@ using Wpf.Ui;
 namespace MusicX.ViewModels
 {
     [Serializable]
-    public record PlaylistData(long PlaylistId, long OwnerId, string AccessKey);
+    public record PlaylistData(long PlaylistId, long OwnerId, string AccessKey, int? Count = null);
     
     public class PlaylistViewModel:BaseViewModel
     {
@@ -97,7 +97,7 @@ namespace MusicX.ViewModels
             try
             {
                 logger.Info("Load playlist");
-                PlaylistData = new(playlist.Id, playlist.OwnerId, playlist.AccessKey);
+                PlaylistData = new(playlist.Id, playlist.OwnerId, playlist.AccessKey, (int)playlist.Count);
                 if (delete && Tracks.Count > 0)
                 {
                     if (Application.Current.Dispatcher.CheckAccess())
@@ -261,7 +261,7 @@ namespace MusicX.ViewModels
         }
         public Task LoadPlaylistFromData(PlaylistData data)
         {
-            var (playlistId, ownerId, accessKey) = data;
+            var (playlistId, ownerId, accessKey, _) = data;
             return LoadPlaylistFromData(playlistId, ownerId, accessKey);
         }
 

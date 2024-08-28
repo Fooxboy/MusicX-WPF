@@ -495,7 +495,7 @@ namespace MusicX
         private void Previous_OnClick(object? sender, EventArgs e)
         {
             var playerService = StaticService.Container.GetRequiredService<PlayerService>();
-            if (playerService.Tracks.Count > 0 && playerService.Tracks.IndexOf(playerService.CurrentTrack) > 0)
+            if (playerService.Tracks.Count > 0)
                 playerService.PreviousTrack().SafeFireAndForget();
         }
         private void PlayPause_OnClick(object? sender, EventArgs e)
@@ -512,7 +512,7 @@ namespace MusicX
         private void Next_OnClick(object? sender, EventArgs e)
         {
             var playerService = StaticService.Container.GetRequiredService<PlayerService>();
-            if (playerService.Tracks.Count > 0 && playerService.Tracks.IndexOf(playerService.CurrentTrack) < playerService.Tracks.Count)
+            if (playerService.Tracks.Count > 0)
                 playerService.NextTrack().SafeFireAndForget();
         }
 

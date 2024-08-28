@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
@@ -15,6 +17,7 @@ using MusicX.Behaviors;
 using MusicX.Core.Services;
 using MusicX.Helpers;
 using MusicX.Models;
+using MusicX.Patches;
 using MusicX.Services;
 using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
@@ -56,7 +59,17 @@ namespace MusicX.Controls
             set => SetValue(IsPlayingProperty, value);
         }
 
+        public static readonly DependencyProperty TracksSourceProperty = DependencyProperty.Register(
+            nameof(TracksSource), typeof(IEnumerable), typeof(PlayerControl), new PropertyMetadata(default(IEnumerable)));
+
+        public IEnumerable TracksSource
+        {
+            get => (IEnumerable)GetValue(TracksSourceProperty);
+            set => SetValue(TracksSourceProperty, value);
+        }
+
         public PlayerService PlayerService { get; }
+        
         private readonly ListenTogetherService listenTogetherService;
         private readonly Logger logger;
         private ConfigModel config;
@@ -78,13 +91,12 @@ namespace MusicX.Controls
             listenTogetherService.LeaveSession += ListenTogetherService_LeaveSession;
             listenTogetherService.SessionOwnerStoped += ListenTogetherService_LeaveSession;
             this.MouseWheel += PlayerControl_MouseWheel;
-            
-            Queue.ItemsSource = PlayerService.Tracks;
         }
 
         private void PlayerService_CurrentPlaylistChanged(object? sender, EventArgs e)
         {
             ShuffleButton.IsChecked = false;
+            Queue.ItemsSource = PlayerService.Tracks;
         }
 
         private Task ListenTogetherService_LeaveSession()
@@ -366,7 +378,8 @@ namespace MusicX.Controls
             conf.IsMuted = PlayerService.IsMuted;
 
             var mixerVolume = windowsAudioService.GetVolume();
-            conf.MixerVolume= (int)mixerVolume;
+            if (mixerVolume.HasValue)
+                conf.MixerVolume= (int)mixerVolume;
 
             await configService.SetConfig(conf);
         }
@@ -631,46 +644,24 @@ namespace MusicX.Controls
         }
         private void DeleteFromQueue_OnClick(object sender, RoutedEventArgs e)
         {
-            if (sender is FrameworkElement {DataContext: PlaylistTrack audio})
-                PlayerService.RemoveFromQueue(audio);
+            if (sender is FrameworkElement {TemplatedParent: FrameworkElement {TemplatedParent: ListBoxItem item}})
+                PlayerService.RemoveFromQueue(ItemContainerGeneratorIndexHook.GetItemContainerIndex(item));
         }
         private void ReorderButton_OnMouseDown(object sender, MouseButtonEventArgs e)
         {
             if (sender is FrameworkElement {TemplatedParent: FrameworkElement {TemplatedParent: ListBoxItem item}})
-                DragDrop.DoDragDrop(item, item.DataContext, DragDropEffects.Move);
+                DragDrop.DoDragDrop(item, ItemContainerGeneratorIndexHook.GetItemContainerIndex(item), DragDropEffects.Move);
         }
+        
         private void ListBoxItem_OnDrop(object sender, DragEventArgs e)
         {
-            var source = (PlaylistTrack)e.Data.GetData(typeof(PlaylistTrack))!;
-            var target = (PlaylistTrack)((ListBoxItem)sender).DataContext;
-
-            var list = PlayerService.Tracks;
+            if (sender is not FrameworkElement item)
+                return;
             
-            var removedIdx = list.IndexOf(source);
-            var targetIdx = list.IndexOf(target);
+            var oldIndex = (int)e.Data.GetData(typeof(int))!;
+            var newIndex = ItemContainerGeneratorIndexHook.GetItemContainerIndex(item);
 
-            if (removedIdx < targetIdx)
-            {
-                list.Insert(targetIdx + 1, source);
-                list.RemoveAt(removedIdx);
-            }
-            else
-            {
-                if (list.Count + 1 <= ++removedIdx)
-                    return;
-                list.Insert(targetIdx, source);
-                list.RemoveAt(removedIdx);
-            }
-
-            var currentIndex = list.IndexOf(PlayerService.CurrentTrack);
-            
-            // insert index is next track
-            if (currentIndex + 1 == targetIdx)
-                PlayerService.NextPlayTrack = source;
-            else if (currentIndex + 1 < list.Count)
-                PlayerService.NextPlayTrack = list[currentIndex + 1];
-
-            PlayerService.CurrentIndex = currentIndex;
+            PlayerService.MoveTrackInQueue(oldIndex, newIndex);
         }
         private void SpeakerIcon_OnClick(object sender, RoutedEventArgs e)
         {

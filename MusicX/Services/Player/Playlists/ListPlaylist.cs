@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 using MusicX.Shared.Player;
 
 namespace MusicX.Services.Player.Playlists;
 
 [JsonConverter(typeof(PlaylistJsonConverter<ListPlaylist, EquatableList<PlaylistTrack>>))]
-public class ListPlaylist : PlaylistBase<EquatableList<PlaylistTrack>>
+public class ListPlaylist : PlaylistBase<EquatableList<PlaylistTrack>>, IRandomAccessPlaylist, IShufflePlaylist
 {
     private bool _canLoad = true;
 
@@ -24,6 +26,23 @@ public class ListPlaylist : PlaylistBase<EquatableList<PlaylistTrack>>
     {
         _canLoad = false;
         return Data.ToAsyncEnumerable();
+    }
+
+    public IPlaylist ShuffleWithSeed(int seed)
+    {
+        var data = Data.ToList();
+        
+        var random = new Random(seed);
+        random.Shuffle(CollectionsMarshal.AsSpan(data));
+        
+        return new ListPlaylist(data);
+    }
+
+    public ValueTask<int> GetCountAsync() => new(Data.Count);
+
+    public ValueTask<IEnumerable<PlaylistTrack>> GetRangeAsync(Range range)
+    {
+        return new(Data[range]);
     }
 }
 

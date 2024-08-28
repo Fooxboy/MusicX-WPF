@@ -21,25 +21,33 @@ namespace MusicX.Controls.Blocks
     /// </summary>
     public partial class ArtistBannerBlockControl : UserControl
     {
+        public static readonly DependencyProperty BlockProperty = DependencyProperty.Register(
+            nameof(Block), typeof(BlockViewModel), typeof(ArtistBannerBlockControl), new PropertyMetadata(BlockChangedCallback));
+
+        public BlockViewModel Block
+        {
+            get => (BlockViewModel)GetValue(BlockProperty);
+            set => SetValue(BlockProperty, value);
+        }
+        
         public ArtistBannerBlockControl()
         {
-            this.Loaded += ArtistBannerBlockControl_Loaded;
-            this.Initialized += ArtistBannerBlockControl_Initialized;
             InitializeComponent();
 
             ArtistText.Visibility = Visibility.Collapsed;
             ArtistBanner.Visibility = Visibility.Collapsed;
         }
 
-        private void ArtistBannerBlockControl_Initialized(object? sender, EventArgs e)
+        private static void BlockChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
+            if (d is not ArtistBannerBlockControl control || e.NewValue is not BlockViewModel)
+                return;
             
-
+            control.Load();
         }
 
-        private void ArtistBannerBlockControl_Loaded(object sender, RoutedEventArgs e)
+        private void Load()
         {
-
             new Thread(()=>
             {
                 
@@ -57,24 +65,21 @@ namespace MusicX.Controls.Blocks
                
             }).Start();
 
-            if (DataContext is not Block block || block.Actions is null)
-                return;
-
-            ArtistBannerImage.ImageSource = new BitmapImage(new Uri(block.Artists[0].Photo[2].Url));
-            ArtistText.Text = block.Artists[0].Name;
+            ArtistBannerImage.ImageSource = new BitmapImage(new Uri(Block.Artists[0].Photo[2].Url));
+            ArtistText.Text = Block.Artists[0].Name;
 
             var sectionViewModel = (SectionViewModel)this.FindAncestor<SectionView>()!.DataContext;
 
-            for (var i = 0; i < block.Actions.Count; i++)
+            for (var i = 0; i < Block.Buttons.Count; i++)
             {
-                var action = block.Actions[i];
+                var action = Block.Buttons[i];
                 
                 var text = new TextBlock();
                 var card = new CardAction()
                 {
                     Margin = new Thickness(0, 10, 15, 10),
                     Content = text,
-                    DataContext = new BlockButtonViewModel(action, sectionViewModel.Artist, block),
+                    DataContext = new BlockButtonViewModel(action, sectionViewModel.Artist, Block),
                     IsChevronVisible = false,
                     Height = 45
                 };

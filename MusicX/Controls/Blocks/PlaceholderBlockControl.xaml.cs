@@ -11,6 +11,7 @@ using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Helpers;
 using MusicX.Services;
+using MusicX.ViewModels;
 using Wpf.Ui;
 using Button = MusicX.Core.Models.Button;
 using NavigationService = MusicX.Services.NavigationService;
@@ -22,22 +23,35 @@ namespace MusicX.Controls.Blocks
     /// </summary>
     public partial class PlaceholderBlockControl : UserControl
     {
+        public static readonly DependencyProperty BlockProperty = DependencyProperty.Register(
+            nameof(Block), typeof(BlockViewModel), typeof(PlaceholderBlockControl), new PropertyMetadata(BlockChangedCallback));
+
+        public BlockViewModel Block
+        {
+            get => (BlockViewModel)GetValue(BlockProperty);
+            set => SetValue(BlockProperty, value);
+        }
+        
         public PlaceholderBlockControl()
         {
-            this.Loaded += PlaceholderBlockControl_Loaded;
             InitializeComponent();
-            
         }
 
         private Button buttonAction;
-
-        private void PlaceholderBlockControl_Loaded(object sender, RoutedEventArgs e)
+        
+        private static void BlockChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (DataContext is not Block block)
+            if (d is not PlaceholderBlockControl control || e.NewValue is not BlockViewModel)
                 return;
-            if (block.Placeholders.Count == 0) return;
+            
+            control.Load();
+        }
 
-            var placeholder = block.Placeholders[0];
+        private void Load()
+        {
+            if (Block.Placeholders.Count == 0) return;
+
+            var placeholder = Block.Placeholders[0];
             if(placeholder.Icons.Count > 0)
             {
                 var image = placeholder.Icons.MaxBy(i => i.Width);

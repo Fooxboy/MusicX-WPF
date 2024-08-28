@@ -21,6 +21,15 @@ namespace MusicX.Controls
     /// </summary>
     public partial class BigBannerControl : UserControl
     {
+        public static readonly DependencyProperty BannersProperty = DependencyProperty.Register(
+            nameof(Banners), typeof(IList<CatalogBanner>), typeof(BigBannerControl), new PropertyMetadata(Array.Empty<CatalogBanner>()));
+
+        public IList<CatalogBanner> Banners
+        {
+            get => (IList<CatalogBanner>)GetValue(BannersProperty);
+            set => SetValue(BannersProperty, value);
+        }
+        
         public BigBannerControl()
         {
             InitializeComponent();
@@ -74,8 +83,6 @@ namespace MusicX.Controls
 
             amim.Begin();
         }
-
-        public List<CatalogBanner> Banners => ((Block)DataContext).Banners;
 
         private async void ActionButton_Click(object sender, RoutedEventArgs e)
         {

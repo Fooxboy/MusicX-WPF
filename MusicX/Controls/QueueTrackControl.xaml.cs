@@ -6,6 +6,7 @@ using System.Windows.Media.Animation;
 using AsyncAwaitBestPractices;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Services;
+using MusicX.Patches;
 using MusicX.Services;
 using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
@@ -34,7 +35,7 @@ public partial class QueueTrackControl : UserControl
     {
         if (d is not QueueTrackControl control) return;
 
-        var sb = (Storyboard)control.FindResource(control._player.CurrentTrack == (PlaylistTrack?)control.DataContext ? "PlayBorderFadeIn" : "PlayBorderFadeOut");
+        var sb = (Storyboard)control.FindResource(control.IsCurrentlyPlaying ? "PlayBorderFadeIn" : "PlayBorderFadeOut");
         sb.Begin();
     }
 
@@ -43,6 +44,9 @@ public partial class QueueTrackControl : UserControl
         get => (bool)GetValue(IsCurrentlyPlayingProperty);
         set => SetValue(IsCurrentlyPlayingProperty, value);
     }
+
+    private int IndexInItemsControl =>
+        ItemContainerGeneratorIndexHook.GetItemContainerIndex(((FrameworkElement)TemplatedParent).TemplatedParent);
 
     public QueueTrackControl()
     {
@@ -53,16 +57,12 @@ public partial class QueueTrackControl : UserControl
 
     private void PlayerOnPlayStateChangedEvent(object? sender, EventArgs e)
     {
-        if (DataContext is not PlaylistTrack track) return;
-
-        IsCurrentlyPlaying = _player.CurrentTrack == track;
+        IsCurrentlyPlaying = _player.CurrentIndex == IndexInItemsControl;
         IconPlay.Symbol = _player.IsPlaying && IsCurrentlyPlaying ? SymbolRegular.Pause24 : SymbolRegular.Play24;
     }
 
     private void Track_OnClick(object sender, MouseButtonEventArgs e)
     {
-        if (DataContext is not PlaylistTrack track) return;
-        
         if (IsCurrentlyPlaying)
         {
             if (_player.IsPlaying)
@@ -70,26 +70,26 @@ public partial class QueueTrackControl : UserControl
             else
                 _player.Play();
         }
-        else
+        
+        if (IsInPlayer)
         {
-            if (IsInPlayer)
-                _player.PlayTrackFromQueueAsync(_player.Tracks.IndexOf(track)).SafeFireAndForget();
-            else
-            {
-                var vkService = StaticService.Container.GetRequiredService<VkService>();
-                _player.PlayAsync(track.Data switch
-                {
-                    VkTrackData vkData => vkData switch
-                    {
-                        { ParentBlockId: { } blockId } => new VkBlockPlaylist(vkService, blockId),
-                        { Playlist: { } vkPlaylist } => new VkPlaylistPlaylist(vkService, new(vkPlaylist.Id, vkPlaylist.OwnerId, vkPlaylist.AccessKey)),
-                        _ => new SinglePlaylist(track)
-                    },
-                    BoomTrackData => new SinglePlaylist(track),
-                    _ => throw new ArgumentOutOfRangeException()
-                }).SafeFireAndForget();
-            }
+            _player.PlayTrackFromQueueAsync(IndexInItemsControl).SafeFireAndForget();
         }
+        
+        if (DataContext is not PlaylistTrack track) return;
+        
+        var vkService = StaticService.Container.GetRequiredService<VkService>();
+        _player.PlayAsync(track.Data switch
+        {
+            VkTrackData vkData => vkData switch
+            {
+                { ParentBlockId: { } blockId } => new VkBlockPlaylist(vkService, blockId),
+                { Playlist: { } vkPlaylist } => new VkPlaylistPlaylist(vkService, new(vkPlaylist.Id, vkPlaylist.OwnerId, vkPlaylist.AccessKey)),
+                _ => new SinglePlaylist(track)
+            },
+            BoomTrackData => new SinglePlaylist(track),
+            _ => throw new ArgumentOutOfRangeException()
+        }).SafeFireAndForget();
     }
 
     private void OnMouseEnter(object sender, MouseEventArgs e)

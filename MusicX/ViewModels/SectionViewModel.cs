@@ -38,7 +38,7 @@ namespace MusicX.ViewModels
         
         public Artist? Artist { get; set; }
 
-        public ObservableRangeCollection<Block> Blocks { get; set; } = new();
+        public ObservableRangeCollection<BlockViewModel> Blocks { get; } = [];
 
         public SectionViewModel(VkService vkService, Logger logger, ISnackbarService snackbarService,
             ConfigService configService)
@@ -84,9 +84,16 @@ namespace MusicX.ViewModels
 
                 await Application.Current.Dispatcher.InvokeAsync(() =>
                 {
+                    if (section.Section.Blocks is [var singleBlock] && Blocks[^1].DataType == singleBlock.DataType &&
+                        Blocks[^1].Layout.Name == singleBlock.Layout.Name)
+                    {
+                        Blocks[^1].MergeBlock(singleBlock);
+                        return;
+                    }
+                    
                     foreach (var block in section.Section.Blocks)
                     {
-                        Blocks.Add(block);
+                        Blocks.Add(new(block));
                     }
                 });
 
@@ -124,7 +131,8 @@ namespace MusicX.ViewModels
                 await Application.Current.Dispatcher.InvokeAsync(() =>
                 {
                     Blocks.RemoveRange(Blocks.Where(b => toReplaceBlockIds.Contains(b.Id)).ToArray());
-                    Blocks.AddRangeSequential(replaces.Replacements.ReplacementsModels.SelectMany(b => b.ToBlocks));
+                    Blocks.AddRangeSequential(replaces.Replacements.ReplacementsModels.SelectMany(b => b.ToBlocks)
+                        .Select(b => new BlockViewModel(b)));
                 });
             }
             catch (Exception ex)
@@ -171,7 +179,7 @@ namespace MusicX.ViewModels
                 {
                     try
                     {
-                        Blocks.ReplaceRange(blocks);
+                        Blocks.ReplaceRange(blocks.Select(b => new BlockViewModel(b)));
                     }
                     catch (Exception ex)
                     {
@@ -221,7 +229,7 @@ namespace MusicX.ViewModels
                 await Application.Current.Dispatcher.InvokeAsync(() =>
                 {
                     Blocks.Clear();
-                    Blocks.Add(new() {DataType = "none", Layout = new() {Name = "header", Title = "Ничего не найдено"}});
+                    Blocks.Add(new(new() {DataType = "none", Layout = new() {Name = "header", Title = "Ничего не найдено"}}));
                 });
             }
             catch (Exception ex)

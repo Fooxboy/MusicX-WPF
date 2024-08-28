@@ -10,7 +10,7 @@ namespace MusicX.Core.Models
 {
     public class Video : IIdentifiable
     {
-        string IIdentifiable.Identifier => Id.ToString();
+        string IIdentifiable.Identifier => $"{OwnerId}_{Id}";
 
         [JsonProperty("is_explicit")]
         public int IsExplicit { get; set; }

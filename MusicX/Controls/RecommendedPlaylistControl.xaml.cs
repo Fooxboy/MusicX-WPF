@@ -174,7 +174,7 @@ namespace MusicX.Controls
                     await playerService.PlayAsync(new VkPlaylistPlaylist(
                                                       vkService,
                                                       new(Playlist.Playlist.Id, Playlist.Playlist.OwnerId,
-                                                          Playlist.Playlist.AccessKey)), Playlist.Audios[0].ToTrack(Playlist.Playlist));
+                                                          Playlist.Playlist.AccessKey)));
 
                     Icons.Symbol = SymbolRegular.Pause24;
 
