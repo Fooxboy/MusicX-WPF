@@ -1,5 +1,4 @@
-﻿using Microsoft.AppCenter.Analytics;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Models;
 using MusicX.Services;
 using MusicX.Services.Player;
@@ -8,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
 
 namespace MusicX.Controls

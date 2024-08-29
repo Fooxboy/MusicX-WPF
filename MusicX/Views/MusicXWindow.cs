@@ -5,7 +5,6 @@ using MusicX.Controls;
 using MusicX.Helpers;
 using MusicX.Services;
 using Wpf.Ui;
-using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
 using DispatcherPriority = System.Windows.Threading.DispatcherPriority;
 using NavigationService = MusicX.Services.NavigationService;

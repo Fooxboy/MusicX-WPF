@@ -1,16 +1,11 @@
-﻿using MusicX.Core.Models;
-using MusicX.Services;
+﻿using MusicX.Services;
 using NLog;
 using System;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media.Imaging;
 using Microsoft.Extensions.DependencyInjection;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AppCenter.Crashes;
-using MusicX.ViewModels;
+using MusicX.Core.Models;
 
 namespace MusicX.Controls.Blocks
 {
@@ -47,7 +42,7 @@ namespace MusicX.Controls.Blocks
             {
                 var logger = StaticService.Container.GetRequiredService<Logger>();
 
-                logger.Error(ex, "Failed to open group {GroupName}", block.Groups.FirstOrDefault()?.ScreenName);
+                logger.Error(ex, "Failed to open group {GroupName}", Group?.ScreenName);
             }
         }
     }

@@ -8,7 +8,6 @@ using System.Windows.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Windows.Media;
-using Microsoft.AppCenter.Crashes;
 using MusicX.ViewModels;
 using NLog;
 using Wpf.Ui.Appearance;

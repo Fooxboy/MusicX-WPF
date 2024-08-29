@@ -12,7 +12,6 @@ using System.Windows.Controls;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AppCenter.Crashes;
 
 namespace MusicX.Controls
 {

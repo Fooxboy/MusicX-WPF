@@ -1,8 +1,6 @@
-﻿using Microsoft.AppCenter.Crashes;
-using MusicX.Core.Models.Boom;
+﻿using MusicX.Core.Models.Boom;
 using MusicX.Services;
 using System;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;

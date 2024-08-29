@@ -10,7 +10,6 @@ using Windows.Media;
 using Windows.Media.Playback;
 using Windows.Storage.Streams;
 using AsyncAwaitBestPractices;
-using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Models;
 using MusicX.Core.Services;

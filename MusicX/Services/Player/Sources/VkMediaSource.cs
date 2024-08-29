@@ -5,7 +5,6 @@ using Windows.Media.Playback;
 using FFMediaToolkit.Decoding;
 using MusicX.Shared.Player;
 using NLog;
-using WinRT;
 
 namespace MusicX.Services.Player.Sources;
 

@@ -3,7 +3,6 @@ using MusicX.Services;
 using MusicX.Views;
 using NLog;
 using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,9 +13,6 @@ using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Services;
 using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
-using System.Collections.Generic;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
 using Wpf.Ui.Controls;
 using System.Globalization;
 

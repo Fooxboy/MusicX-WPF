@@ -4,7 +4,6 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media.Animation;
 using System.Windows.Navigation;
 using AsyncAwaitBestPractices;
 using Microsoft.Extensions.DependencyInjection;

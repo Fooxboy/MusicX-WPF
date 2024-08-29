@@ -8,8 +8,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using Microsoft.Extensions.DependencyInjection;
-using System.Collections.Generic;
-using Microsoft.AppCenter.Crashes;
 
 namespace MusicX.Controls
 {

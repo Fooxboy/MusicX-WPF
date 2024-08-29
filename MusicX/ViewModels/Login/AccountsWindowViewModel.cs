@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
 using System.Text;
@@ -32,7 +31,6 @@ using VkNet.AudioBypassService.Abstractions;
 using VkNet.AudioBypassService.Abstractions.Categories;
 using VkNet.AudioBypassService.Models.Auth;
 using VkNet.AudioBypassService.Models.Ecosystem;
-using VkNet.Enums.SafetyEnums;
 using Wpf.Ui;
 using Wpf.Ui.Common;
 using IAuthCategory = VkNet.AudioBypassService.Abstractions.Categories.IAuthCategory;

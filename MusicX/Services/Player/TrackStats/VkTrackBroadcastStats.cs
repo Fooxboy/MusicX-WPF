@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AppCenter.Crashes;
 using MusicX.Core.Services;
 using MusicX.Helpers;
 using MusicX.Models.Enums;

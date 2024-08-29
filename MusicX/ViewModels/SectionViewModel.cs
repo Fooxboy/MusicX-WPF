@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using AsyncAwaitBestPractices;
-using Microsoft.AppCenter.Crashes;
 using MusicX.Controls;
 using MusicX.Core.Models;
 using MusicX.Core.Services;

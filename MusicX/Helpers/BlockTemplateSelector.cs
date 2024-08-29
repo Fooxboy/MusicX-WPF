@@ -1,5 +1,4 @@
 ﻿using MusicX.Controls;
-using MusicX.Core.Models;
 using System;
 using System.Windows;
 using System.Windows.Controls;

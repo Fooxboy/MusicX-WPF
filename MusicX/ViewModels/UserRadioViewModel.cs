@@ -1,5 +1,4 @@
 ﻿using AsyncAwaitBestPractices.MVVM;
-using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Services;
 using MusicX.Services;
@@ -9,11 +8,8 @@ using MusicX.ViewModels.Modals;
 using MusicX.Views.Modals;
 using NLog;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using MusicX.Helpers;
