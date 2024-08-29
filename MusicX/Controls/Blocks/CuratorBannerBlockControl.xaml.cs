@@ -19,7 +19,13 @@ namespace MusicX.Controls.Blocks
     public partial class CuratorBannerBlockControl : UserControl
     {
         public static readonly DependencyProperty CuratorsProperty = DependencyProperty.Register(
-            nameof(Curators), typeof(IList<Curator>), typeof(CuratorBannerBlockControl), new PropertyMetadata(Array.Empty<Curator>()));
+            nameof(Curators), typeof(IList<Curator>), typeof(CuratorBannerBlockControl), new PropertyMetadata(Array.Empty<Curator>(), PropertyChangedCallback));
+
+        private static void PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is CuratorBannerBlockControl control && e.NewValue is IList<Curator> {Count: > 0})
+                control.Load();
+        }
 
         public IList<Curator> Curators
         {
@@ -84,15 +90,8 @@ namespace MusicX.Controls.Blocks
 
         }
 
-        private void CuratorBannerBlockControl_OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private void Load()
         {
-            if (e.NewValue is not Core.Models.Block)
-                return;
-            
-            CuratorBannerImage.ImageSource = new BitmapImage(new Uri(Curators[0].Photo[2].Url));
-            CuratorText.Text = Curators[0].Name;
-            //CuratorDescription.Text = Block.Curators[0].Description;
-
             if (Curators[0].IsFollowed)
             {
                 ActionCuratorButton.Content = "Отписаться";
