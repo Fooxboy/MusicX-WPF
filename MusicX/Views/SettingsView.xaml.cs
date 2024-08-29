@@ -56,15 +56,6 @@ namespace MusicX.Views
         {
             try
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Analytics.TrackEvent("OpenSettings", properties);
-                
                 var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
                 connectionService.ReportMetric("OpenSettings");
 
@@ -158,17 +149,8 @@ namespace MusicX.Views
             }
             catch (Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
                 var logger = StaticService.Container.GetRequiredService<Logger>();
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to load settings");
             }
         }
 
@@ -260,14 +242,8 @@ namespace MusicX.Views
             }
             catch(Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
                 var logger = StaticService.Container.GetRequiredService<Logger>();
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to set rpc setting");
             }
            
         }
@@ -279,16 +255,11 @@ namespace MusicX.Views
                 config.ShowRPC = false;
 
                 await configService.SetConfig(config);
-            }catch(Exception ex)
+            }
+            catch(Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
                 var logger = StaticService.Container.GetRequiredService<Logger>();
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to set rpc setting");
             }
             
         }
@@ -300,16 +271,11 @@ namespace MusicX.Views
                 config.BroadcastVK = true;
 
                 await configService.SetConfig(config);
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
                 var logger = StaticService.Container.GetRequiredService<Logger>();
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to set status broadcast setting");
             }
             
         }
@@ -322,16 +288,11 @@ namespace MusicX.Views
 
                 await configService.SetConfig(config);
                 await vkService.SetBroadcastAsync(null);
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
                 var logger = StaticService.Container.GetRequiredService<Logger>();
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to set status broadcast setting");
             }
            
         }
@@ -389,16 +350,11 @@ namespace MusicX.Views
                         IgnoredArtistList.Items.Add(artist);
                     }
                 }
-            }catch(Exception ex)
+            }
+            catch(Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
                 var logger = StaticService.Container.GetRequiredService<Logger>();
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to delete blacklisted artist");
             }
           
         }
@@ -431,16 +387,11 @@ namespace MusicX.Views
 
                 NameIgnoredArtist.Text = string.Empty;
 
-            }catch(Exception ex)
+            }
+            catch(Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
                 var logger = StaticService.Container.GetRequiredService<Logger>();
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to blacklist artist");
             }
             
         }

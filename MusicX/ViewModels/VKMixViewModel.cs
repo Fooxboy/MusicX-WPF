@@ -32,15 +32,6 @@ namespace MusicX.ViewModels
 
         public async Task OpenedMixesAsync()
         {
-            var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-            Analytics.TrackEvent("Open VK Mix", properties);
-            
             var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
             connectionService.ReportMetric("OpenVkMix");
 
@@ -95,20 +86,11 @@ namespace MusicX.ViewModels
             }
             catch (Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
                 SnackbarService.ShowException("Ошибка загрузки микса", "Мы не смогли загрузить микс, попробуйте ещё раз");
 
                 IsLoaded = true;
 
-                Logger.Error(ex, ex.Message);
+                Logger.Error(ex, "Failed to load vk mix");
             }
         }
 
@@ -116,16 +98,6 @@ namespace MusicX.ViewModels
         {
             try
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Analytics.TrackEvent("Play Personal Mix", properties);
-                
                 var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
                 connectionService.ReportMetric("PlayPersonalMix");
 
@@ -155,21 +127,12 @@ namespace MusicX.ViewModels
                 await AuthBoomAsync(config);
 
                 await PlayPersonalMixAsync();
-            }catch(Exception ex)
+            }
+            catch(Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-
                 SnackbarService.ShowException("Ошибка загрузки микса", "Мы не смогли загрузить микс, попробуйте ещё раз");
 
-                Logger.Error(ex, ex.Message);
+                Logger.Error(ex, "Failed to play personal mix");
             }
         }
     }

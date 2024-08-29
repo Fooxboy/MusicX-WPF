@@ -101,19 +101,9 @@ namespace MusicX.Controls.Blocks
             }
             catch (Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
                 var logger = StaticService.Container.GetRequiredService<Logger>();
 
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to open extended section in title block");
             }
 
 
@@ -135,19 +125,9 @@ namespace MusicX.Controls.Blocks
             }
             catch (Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
                 var logger = StaticService.Container.GetRequiredService<Logger>();
 
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to replace blocks in title combobox");
             }
 
 

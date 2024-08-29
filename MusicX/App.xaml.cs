@@ -74,16 +74,6 @@ namespace MusicX
                 Layout = "${message}"
             });
             LogManager.Configuration.AddRuleForAllLevels(sentryTargetName);
-            
-            // TODO remove appcenter completely as msft is shutting it down soon
-            AppCenter.Start("02130c6d-0a3b-4aa2-b46c-8aeb66c3fd71",
-                typeof(Analytics), typeof(Crashes));
-
-            var properties = new Dictionary<string, string>
-            {
-                {"Version", StaticService.Version }
-            };
-            Analytics.TrackEvent("StartApp", properties);
         }
 
         static Mutex? InstanceCheckMutex;

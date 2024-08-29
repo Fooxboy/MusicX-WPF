@@ -7,6 +7,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Microsoft.Extensions.DependencyInjection;
+using NLog;
 
 namespace MusicX.Controls.Boom
 {
@@ -48,14 +50,9 @@ namespace MusicX.Controls.Boom
             }
             catch(Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
+                var logger = StaticService.Container.GetRequiredService<Logger>();
+                
+                logger.Error(ex, "Failed to load artist control {ArtistName}", Artist.Name);
             }
           
         }

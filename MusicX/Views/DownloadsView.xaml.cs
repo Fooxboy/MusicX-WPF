@@ -30,15 +30,6 @@ public partial class DownloadsView : Page, IMenuPage
 
     private void DownloadsView_Loaded(object sender, RoutedEventArgs e)
     {
-        var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-        Analytics.TrackEvent("OpenDownloads", properties);
-        
         var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
         connectionService.ReportMetric("OpenDownloads");
             

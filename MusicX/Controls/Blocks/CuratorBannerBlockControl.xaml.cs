@@ -70,21 +70,12 @@ namespace MusicX.Controls.Blocks
                     ActionCuratorButton.Content = "Отписаться";
                     ActionCuratorButton.Icon = new SymbolIcon(SymbolRegular.DeleteDismiss20);
                 }
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
                 var logger = StaticService.Container.GetRequiredService<Logger>();
 
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to subscribe in curator banner block");
 
             }
 

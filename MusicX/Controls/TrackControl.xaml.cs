@@ -197,17 +197,7 @@ namespace MusicX.Controls
             }
             catch (Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error("Failed load track control");
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed load track control");
                 Opacity = 0.3;
             }
             
@@ -252,18 +242,10 @@ namespace MusicX.Controls
                 {
                     navigationService.OpenSection((string)((TextBlock)sender).Tag, SectionType.Artist);
                 }
-            }catch(Exception ex)
+            }
+            catch(Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to open track artist");
                 StaticService.Container.GetRequiredService<ISnackbarService>()
                     .ShowException("Нам не удалось перейти на эту секцию", ex);
             }
@@ -283,19 +265,10 @@ namespace MusicX.Controls
                     PlayButtons.Visibility = Visibility.Visible;
                 }
                 
-            }catch(Exception ex)
+            }
+            catch(Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to show play buttons");
 
             }
 
@@ -309,19 +282,10 @@ namespace MusicX.Controls
                 {
                     PlayButtons.Visibility = Visibility.Collapsed;
                 }
-            }catch(Exception ex)
+            }
+            catch(Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to hide play buttons");
 
             }
         }
@@ -330,15 +294,6 @@ namespace MusicX.Controls
         {
             try
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Analytics.TrackEvent("PlayTrack", properties);
-                
                 var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
                 connectionService.ReportMetric("PlayTrack", "TrackControl");
 
@@ -376,18 +331,10 @@ namespace MusicX.Controls
                     await player.PlayAsync(new ListPlaylist(block.Audios.Select(TrackExtensions.ToTrack).ToImmutableList()), index);
                 else
                     await player.PlayAsync(new VkBlockPlaylist(vkService, Audio.ParentBlockId, LoadOtherTracks), index);
-            }catch(Exception ex)
+            }
+            catch(Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to play track");
             }
            
         }
@@ -400,19 +347,10 @@ namespace MusicX.Controls
                     return;
                 block.TextDecorations.Add(TextDecorations.Underline);
                 Cursor = Cursors.Hand;
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to set cursor");
 
             }
 
@@ -429,18 +367,11 @@ namespace MusicX.Controls
                     block.TextDecorations.Remove(dec);
                 }
                 Cursor = Cursors.Arrow;
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to set cursor");
+                
             }
 
         }
@@ -462,17 +393,7 @@ namespace MusicX.Controls
             }
             catch (Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to open first artist section");
                 StaticService.Container.GetRequiredService<ISnackbarService>()
                     .ShowException("Нам не удалось перейти на эту секцию", ex);
             }
@@ -498,17 +419,10 @@ namespace MusicX.Controls
                     await vkService.AudioAddAsync(Audio.Id, Audio.OwnerId);
                     eventService.Dispatch(this, SectionEvent.AudiosAdd);
                 } 
-            }catch(Exception ex)
+            }
+            catch(Exception ex)
             {
-                logger.Error(ex, ex.Message);
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
+                logger.Error(ex, "Failed to add track to library");
             }
            
         }
@@ -521,10 +435,10 @@ namespace MusicX.Controls
             {
                 downloader.DownloadQueue.Add(Audio.ToTrack());
                 downloader.StartDownloadingCommand.Execute(null);
-            }catch(FileNotFoundException)
+            }
+            catch(FileNotFoundException ex)
             {
-
-
+                logger.Error(ex, "Failed to download track");
 
                 var navigation = StaticService.Container.GetRequiredService<NavigationService>();
                 navigation.OpenMenuSection("downloads");
@@ -544,17 +458,7 @@ namespace MusicX.Controls
             }
             catch (Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to open track album");
             }
             
         }
@@ -593,17 +497,7 @@ namespace MusicX.Controls
             }
             catch (Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to load similar tracks");
                 var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
 
                 snackbarService.ShowException("Мы не смогли найти подходящие треки", ex);
@@ -620,17 +514,7 @@ namespace MusicX.Controls
             }
             catch (Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error(ex);
+                logger.Error(ex, "Failed to insert track to queue as next");
             }
         }
         private void AddToQueue_MouseDown(object sender, MouseButtonEventArgs e)
@@ -641,17 +525,7 @@ namespace MusicX.Controls
             }
             catch (Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error(ex);
+                logger.Error(ex, "Failed to insert track to queue");
             }
         }
 
@@ -680,17 +554,7 @@ namespace MusicX.Controls
             }
             catch (Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to add track to playlist");
 
                 snackbarService.ShowException("Ошибка при добавлении трека в плейлист", ex);
             }
@@ -716,13 +580,7 @@ namespace MusicX.Controls
             }
             catch (Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to blacklist artist");
 
                 snackbarService.ShowException("Ошибка",
                     "Произошла ошибка при добавлении добавлении исполнителя в черный список");

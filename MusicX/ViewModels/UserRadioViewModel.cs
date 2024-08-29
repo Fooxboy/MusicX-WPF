@@ -105,14 +105,8 @@ namespace MusicX.ViewModels
                 var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
                 var logger = StaticService.Container.GetRequiredService<Logger>();
 
-                logger.Error(ex);
+                logger.Error(ex, "Failed to load radiostattions list");
                 snackbarService.ShowException("Ошибка", "Мы не смогли загрузить список станций пользователей");
-
-                var properties = new Dictionary<string, string>
-                {
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
             }
         }
 

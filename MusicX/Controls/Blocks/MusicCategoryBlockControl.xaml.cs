@@ -10,6 +10,7 @@ using System;
 using System.Windows.Media;
 using Microsoft.AppCenter.Crashes;
 using MusicX.ViewModels;
+using NLog;
 using Wpf.Ui.Appearance;
 
 namespace MusicX.Controls.Blocks
@@ -73,14 +74,8 @@ namespace MusicX.Controls.Blocks
             }
             catch(Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
+                var logger = StaticService.Container.GetRequiredService<Logger>();
+                logger.Error(ex, "Failed to open link {LinkType} {Link}", link.Meta?.ContentType, link.Url);
             }
 
         }

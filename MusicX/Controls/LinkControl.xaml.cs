@@ -93,19 +93,10 @@ namespace MusicX.Controls
                         Card.Icon = new SymbolIcon(SymbolRegular.Link48);
                     }
                 }
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error("Fail load link control");
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed load link control");
             }
             
         }
@@ -173,20 +164,10 @@ namespace MusicX.Controls
                     navigationService.OpenSection(curator.Catalog.DefaultSection);
 
                 }
-            }catch(Exception ex)
+            }
+            catch(Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error("Fail click action in link control");
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed click action in link control");
             }
            
         }

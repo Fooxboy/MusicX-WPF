@@ -87,13 +87,7 @@ namespace MusicX.ViewModels.Modals
             }
             catch(Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                _logger.Error(ex);
+                _logger.Error(ex, "Failed to load track lyrics");
                 _snackbarService.ShowException("Ошибка", "Мы не смогли загрузить текст песни :(");
 
                 Texts = new List<string>() { "Ошибка загрузки" };
@@ -158,11 +152,7 @@ namespace MusicX.ViewModels.Modals
             }
             catch(Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
+                _logger.Error(ex, "Failed to jump to next lyrics line");
             }
         }
     }

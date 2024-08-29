@@ -60,16 +60,8 @@ public sealed class AvailableNewUpdateModalViewModel : BaseViewModel
         {
             var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
             var logger = StaticService.Container.GetRequiredService<Logger>();
-
-            var properties = new Dictionary<string, string>
-            {
-#if DEBUG
-                { "IsDebug", "True" },
-#endif
-                { "Version", StaticService.Version }
-            };
-            Crashes.TrackError(ex, properties);
-            logger.Error(ex, ex.Message);
+            
+            logger.Error(ex, "Failed to update");
 
             snackbarService.ShowException("Неудалось обновить приложение",
                 $"Произошла ошибка при обновлении приложения: {ex.Message}");

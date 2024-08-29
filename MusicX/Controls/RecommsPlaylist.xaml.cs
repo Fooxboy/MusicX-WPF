@@ -70,15 +70,6 @@ public partial class RecommsPlaylist : UserControl
         if (e.Source != sender)
             return;
         
-        var properties = new Dictionary<string, string>
-        {
-#if DEBUG
-            { "IsDebug", "True" },
-#endif
-            {"Version", StaticService.Version }
-        };
-        Analytics.TrackEvent("OpenPlaylist", properties);
-        
         var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
         connectionService.ReportMetric("OpenPlayList", "RecommsPlaylist");
             

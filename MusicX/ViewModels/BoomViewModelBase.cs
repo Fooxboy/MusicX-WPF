@@ -48,15 +48,6 @@ public abstract class BoomViewModelBase : BaseViewModel
     {
         try
         {
-            var properties = new Dictionary<string, string>
-            {
-#if DEBUG
-                { "IsDebug", "True" },
-#endif
-                {"Version", StaticService.Version }
-            };
-            Analytics.TrackEvent("Play Artist Mix", properties);
-            
             var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
             connectionService.ReportMetric("PlayArtistMix");
 
@@ -76,20 +67,11 @@ public abstract class BoomViewModelBase : BaseViewModel
             await AuthBoomAsync(config);
 
             await ArtistSelected();
-        }catch(Exception ex)
+        }
+        catch(Exception ex)
         {
-
-            var properties = new Dictionary<string, string>
-            {
-#if DEBUG
-                { "IsDebug", "True" },
-#endif
-                {"Version", StaticService.Version }
-            };
-            Crashes.TrackError(ex, properties);
-
             SnackbarService.ShowException("Ошибка загрузки микса", "Мы не смогли загрузить микс, попробуйте ещё раз");
-            Logger.Error(ex, ex.Message);
+            Logger.Error(ex, "Failed to play artist mix");
         }
     }
 
@@ -97,15 +79,6 @@ public abstract class BoomViewModelBase : BaseViewModel
     {
         try
         {
-            var properties = new Dictionary<string, string>
-            {
-#if DEBUG
-                { "IsDebug", "True" },
-#endif
-                {"Version", StaticService.Version }
-            };
-            Analytics.TrackEvent("Play Tag Mix", properties);
-            
             var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
             connectionService.ReportMetric("PlayTagMix");
 
@@ -131,19 +104,9 @@ public abstract class BoomViewModelBase : BaseViewModel
         }
         catch (Exception ex)
         {
-
-            var properties = new Dictionary<string, string>
-            {
-#if DEBUG
-                { "IsDebug", "True" },
-#endif
-                {"Version", StaticService.Version }
-            };
-            Crashes.TrackError(ex, properties);
-
             SnackbarService.ShowException("Ошибка загрузки микса", "Мы не смогли загрузить микс, попробуйте ещё раз");
 
-            Logger.Error(ex, ex.Message);
+            Logger.Error(ex, "Failed to play tag mix");
         }
            
     }
@@ -166,20 +129,11 @@ public abstract class BoomViewModelBase : BaseViewModel
         }
         catch (Exception ex)
         {
-            var properties = new Dictionary<string, string>
-            {
-#if DEBUG
-                { "IsDebug", "True" },
-#endif
-                {"Version", StaticService.Version }
-            };
-            Crashes.TrackError(ex, properties);
-
             SnackbarService.ShowException("Ошибка загрузки", "Мы не смогли авторизоваться в ВК Музыке, попробуйте ещё раз");
 
             IsLoaded = true;
 
-            Logger.Error(ex, ex.Message);
+            Logger.Error(ex, "Failed to auth in boom");
 
         }
     }

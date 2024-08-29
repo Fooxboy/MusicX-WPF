@@ -116,12 +116,6 @@ namespace MusicX
             {
                 try
                 {
-                    var properties = new Dictionary<string, string>
-                        {
-                            {"Version", StaticService.Version }
-                        };
-                    Analytics.TrackEvent("Connect to session", properties);
-                    
                     var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
                     connectionService.ReportMetric("ConnectToSession");
 
@@ -339,15 +333,7 @@ namespace MusicX
             }
             catch (Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to load root window");
                 _snackbarService.Show("Ошибка запуска",
                     "Попробуйте перезапустить приложение, если ошибка повторяется, напишите об этом разработчику");
             }
@@ -434,23 +420,12 @@ namespace MusicX
             {
                 navigationService.OpenSection(null, SectionType.Search);
 
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to open empty search section");
 
                 _snackbarService.Show("Ошибка открытия поиска", "Мы не смогли открыть подсказки поиска");
-
-
             }
         }
 
@@ -464,18 +439,10 @@ namespace MusicX
                 var updateService = StaticService.Container.GetRequiredService<UpdateService>();
                 
                 await updateService.CheckForUpdates();
-            }catch(Exception ex)
+            }
+            catch(Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to check updates on start");
 
                 _snackbarService.Show("Ошибка проверки обновлений", "Мы не смогли проверить доступные обновления");
             }

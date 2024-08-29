@@ -95,20 +95,10 @@ public partial class LinksNewsfeedBlockControl : UserControl
                 }
             }
 
-        }catch(Exception ex)
+        }
+        catch(Exception ex)
         {
-
-            var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-            Crashes.TrackError(ex, properties);
-
-            logger.Error("Fail click action in link control");
-            logger.Error(ex, ex.Message);
+            logger.Error(ex, "Failed click action in link control {LinkType} {Link}", link.Meta?.ContentType, link.Url);
         }
     }
 }

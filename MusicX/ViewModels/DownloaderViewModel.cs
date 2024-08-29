@@ -157,16 +157,6 @@ public class DownloaderViewModel : BaseViewModel
 
     private async void StartDownloading()
     {
-
-        var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-        Analytics.TrackEvent("Download Track", properties);
-        
         var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
         connectionService.ReportMetric("DownloadTracks");
 
@@ -215,16 +205,7 @@ public class DownloaderViewModel : BaseViewModel
             }
             catch (Exception e)
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(e, properties);
-
-                logger.Error(e);
+                logger.Error(e, "Failed to download track");
                 _snackbarService.ShowException("Ошибка загрузки", "Мы не смогли загрузить трек");
             }
             

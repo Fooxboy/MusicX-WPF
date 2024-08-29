@@ -94,12 +94,6 @@ public class ListenTogetherControlViewModel : BaseViewModel
     {
         try
         {
-            var properties = new Dictionary<string, string>
-            {
-                {"Version", StaticService.Version }
-            };
-            Analytics.TrackEvent("Started session", properties);
-            
             var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
             connectionService.ReportMetric("StartSession");
 
@@ -136,13 +130,6 @@ public class ListenTogetherControlViewModel : BaseViewModel
         IsLoading = true;
         try
         {
-
-            var properties = new Dictionary<string, string>
-            {
-                {"Version", StaticService.Version }
-            };
-            Analytics.TrackEvent("Connect to session", properties);
-            
             var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
             connectionService.ReportMetric("ConnectToSession");
 

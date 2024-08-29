@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using NLog;
 using Wpf.Ui.Common;
 
 namespace MusicX.ViewModels.Modals
@@ -47,12 +48,14 @@ namespace MusicX.ViewModels.Modals
         private readonly VkService vkService;
 
         private readonly ConfigService configService;
+        private readonly Logger _logger;
 
-        public PlaylistSelectorModalViewModel(NavigationService navigationService, VkService vkService, ConfigService configService)
+        public PlaylistSelectorModalViewModel(NavigationService navigationService, VkService vkService, ConfigService configService, Logger logger)
         {
             this.navigationService = navigationService;
             this.vkService = vkService;
             this.configService = configService;
+            _logger = logger;
 
             SelectCommand = new RelayCommand(Select);
         }
@@ -87,16 +90,10 @@ namespace MusicX.ViewModels.Modals
                 }
 
                 IsLoading = false;
-            }catch(Exception ex)
+            }
+            catch(Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
+                _logger.Error(ex, "Failed to load editable playlists");
             }
            
         }

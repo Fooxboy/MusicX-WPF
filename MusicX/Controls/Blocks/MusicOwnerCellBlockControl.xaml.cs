@@ -30,19 +30,9 @@ public partial class MusicOwnerCellBlockControl : UserControl
         }
         catch (Exception ex)
         {
-
-            var properties = new Dictionary<string, string>
-            {
-#if DEBUG
-                { "IsDebug", "True" },
-#endif
-                {"Version", StaticService.Version }
-            };
-            Crashes.TrackError(ex, properties);
-
             var logger = StaticService.Container.GetRequiredService<Logger>();
 
-            logger.Error(ex, ex.Message);
+            logger.Error(ex, "Failed to open music owner {Url}", ((MusicOwner?)DataContext)?.Url);
         }
     }
 }

@@ -62,15 +62,6 @@ namespace MusicX.Views
             SystemThemeWatcher.Watch(this);
             this.SuppressTitleBarColorization();
 
-            var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-            Analytics.TrackEvent("StartApp", properties);
-
             await Task.Run(async () =>
             {
                 var collection = new ServiceCollection();

@@ -243,19 +243,7 @@ namespace MusicX.Controls
             }
             catch (Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error("Error in track changed event");
-                logger.Error(ex, ex.Message);
-                
+                logger.Error(ex, "Error in track changed event");
             }
             
         }
@@ -279,16 +267,7 @@ namespace MusicX.Controls
             }
             catch (Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Error in position changed event");
             }
             
         }
@@ -402,17 +381,7 @@ namespace MusicX.Controls
             }
             catch (Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Error opening artist section");
             }
 
         }
@@ -462,18 +431,7 @@ namespace MusicX.Controls
             }
             catch(Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error("Error in like track");
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Error in like track");
 
                 var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
 
@@ -571,18 +529,11 @@ namespace MusicX.Controls
 
                 downloader.DownloadQueue.Add(PlayerService.CurrentTrack!);
                 downloader.StartDownloadingCommand.Execute(null);
-            }catch(FileNotFoundException ex)
+            }
+            catch(FileNotFoundException ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
+                logger.Error(ex, "Error in download track button");
+                
                 var navigation = StaticService.Container.GetRequiredService<NavigationService>();
 
                 navigation.OpenMenuSection("downloads");
@@ -699,14 +650,7 @@ namespace MusicX.Controls
             }
             catch(Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error("Error in dislike track");
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Error in dislike track");
 
                 var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
 

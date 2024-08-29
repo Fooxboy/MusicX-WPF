@@ -32,12 +32,6 @@ namespace MusicX.Controls
 
         public void SetLines(List<LyricsTimestamp> lines)
         {
-            var properties = new Dictionary<string, string>
-                {
-                    {"Version", StaticService.Version }
-                };
-            Analytics.TrackEvent("OpenAudioText", properties);
-
             this._autoScroll = true;
             this._allText = null;
             this._allLines = lines;
@@ -55,12 +49,6 @@ namespace MusicX.Controls
 
         public void SetLines(List<string> lines)
         {
-            var properties = new Dictionary<string, string>
-                {
-                    {"Version", StaticService.Version }
-                };
-            Analytics.TrackEvent("OpenAudioText", properties);
-
             this._allLines = null;
             SetAutoScrollMode(false);
             this._allText = lines;

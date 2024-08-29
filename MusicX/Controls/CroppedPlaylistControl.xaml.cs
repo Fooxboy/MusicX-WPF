@@ -13,6 +13,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Wpf.Ui.Controls;
 using System;
+using NLog;
 
 namespace MusicX.Controls
 {
@@ -93,15 +94,6 @@ namespace MusicX.Controls
             e.Handled = true;
             try
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Analytics.TrackEvent("PlayPlaylistWithButton", properties);
-
                 var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
                 connectionService.ReportMetric("PlayPlaylistWithButton");
 
@@ -130,15 +122,9 @@ namespace MusicX.Controls
             }
             catch (Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
+                var logger = StaticService.Container.GetRequiredService<Logger>();
+                
+                logger.Error(ex, "Failed to play cropped playlist control with button");
             }
         }
 
