@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Net.Http;
-using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using IF.Lastfm.Core.Api;
 using IF.Lastfm.Core.Scrobblers;
-using Microsoft.AppCenter.Analytics;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Services;
 using MusicX.Helpers;
@@ -61,15 +58,6 @@ namespace MusicX.Views
             SystemThemeWatcher.Watch(this);
             this.SuppressTitleBarColorization();
 
-            var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-            Analytics.TrackEvent("StartApp", properties);
-
             await Task.Run(async () =>
             {
                 var collection = new ServiceCollection();
@@ -89,7 +77,7 @@ namespace MusicX.Views
                 collection.AddSingleton<GithubService>();
                 collection.AddSingleton<DiscordService>();
                 collection.AddSingleton<BoomService>();
-                collection.AddSingleton(LogManager.Setup().GetLogger("Common"));
+                collection.AddSingleton(LogManager.GetLogger("Common"));
                 collection.AddSingleton<GeniusService>();
 
                 collection.AddSingleton<IRegistryPatch, ListenTogetherPatch>();
@@ -140,6 +128,7 @@ namespace MusicX.Views
                 });
                 collection.AddSingleton<IScrobbler, MemoryScrobbler>();
                 collection.AddSingleton<ITrackApi, TrackApi>();
+                collection.AddSingleton(s => new BackendConnectionService(s.GetRequiredService<Logger>(), StaticService.Version));
                 collection.AddSingleton<WindowThemeService>();
                 collection.AddSingleton<SectionEventService>();
 
@@ -208,6 +197,18 @@ namespace MusicX.Views
                             {
 
                                 await vkService.SetTokenAsync(config.AccessToken);
+
+                                try
+                                {
+                                    var connectionService = container.GetRequiredService<BackendConnectionService>();
+                                    await connectionService.GetTokenAsync(config.UserId);
+                                    connectionService.ReportMetric("StartApp");
+                                }
+                                catch (Exception exception)
+                                {
+                                    logger.Error(exception);
+                                }
+                                
                                 var rootWindow = ActivatorUtilities.CreateInstance<RootWindow>(container);
                                 rootWindow.Show();
 

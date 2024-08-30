@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
-using Microsoft.AppCenter.Analytics;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Services;
 using MusicX.Helpers;
@@ -94,11 +92,8 @@ public class ListenTogetherControlViewModel : BaseViewModel
     {
         try
         {
-            var properties = new Dictionary<string, string>
-            {
-                {"Version", StaticService.Version }
-            };
-            Analytics.TrackEvent("Started session", properties);
+            var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
+            connectionService.ReportMetric("StartSession");
 
             IsLoading = true;
             var sessionId = await _service.StartSessionAsync(_configService.Config.UserId);
@@ -133,12 +128,8 @@ public class ListenTogetherControlViewModel : BaseViewModel
         IsLoading = true;
         try
         {
-
-            var properties = new Dictionary<string, string>
-            {
-                {"Version", StaticService.Version }
-            };
-            Analytics.TrackEvent("Connect to session", properties);
+            var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
+            connectionService.ReportMetric("ConnectToSession");
 
             await _service.ConnectToServerAsync(_configService.Config.UserId);
             await _service.JoinToSesstionAsync(sessionId);

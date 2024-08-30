@@ -10,8 +10,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
+using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Helpers;
@@ -156,15 +155,8 @@ public class DownloaderViewModel : BaseViewModel
 
     private async void StartDownloading()
     {
-
-        var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-        Analytics.TrackEvent("Download Track", properties);
+        var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
+        connectionService.ReportMetric("DownloadTracks");
 
         if (IsDownloading)
             return;
@@ -199,7 +191,6 @@ public class DownloaderViewModel : BaseViewModel
             {
                 CurrentDownloadingAudio = audio;
                 await downloaderService.DownloadAudioAsync(audio, progress, token);
-                await Application.Current.Dispatcher.InvokeAsync(() => DownloadQueue.Remove(audio));
                 DownloadProgress = 0;
             }
             catch (Exception e) when (e is TypeInitializationException or COMException)
@@ -212,18 +203,11 @@ public class DownloaderViewModel : BaseViewModel
             }
             catch (Exception e)
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(e, properties);
-
-                logger.Error(e);
+                logger.Error(e, "Failed to download track");
                 _snackbarService.ShowException("Ошибка загрузки", "Мы не смогли загрузить трек");
             }
+            
+            await Application.Current.Dispatcher.InvokeAsync(() => DownloadQueue.Remove(audio));
         }
 
         CurrentDownloadingAudio = null;

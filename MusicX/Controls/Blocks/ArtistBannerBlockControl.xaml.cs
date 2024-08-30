@@ -6,7 +6,6 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
-using MusicX.Core.Models;
 using MusicX.Helpers;
 using MusicX.ViewModels;
 using MusicX.ViewModels.Controls;

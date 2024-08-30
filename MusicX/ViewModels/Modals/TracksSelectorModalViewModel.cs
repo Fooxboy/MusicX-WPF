@@ -4,11 +4,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Microsoft.AppCenter.Crashes;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Helpers;
-using MusicX.Services;
 using NLog;
 using Wpf.Ui;
 using Wpf.Ui.Common;
@@ -84,19 +82,10 @@ namespace MusicX.ViewModels.Modals
                 }
 
                 IsLoading = false;
-            }catch(Exception ex)
+            }
+            catch(Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to load user audios");
 
                 _snackbarService.ShowException("Ошибка", "Music X не смог загрузить список Ваших треков. Попробуйте ещё раз");
             }

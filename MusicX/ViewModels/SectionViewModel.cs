@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using AsyncAwaitBestPractices;
-using Microsoft.AppCenter.Crashes;
 using MusicX.Controls;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
@@ -128,16 +127,7 @@ namespace MusicX.ViewModels
             }
             catch (Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to load more for section");
 
                 _snackbarService.ShowException("Произошла ошибка", "MusicX не смог подргрузить контент");
             }
@@ -163,15 +153,7 @@ namespace MusicX.ViewModels
             }
             catch (Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to replace blocks");
                 _snackbarService.ShowException("Произошла ошибка", "MusicX не смог заменить блоки");
             }
         }
@@ -220,15 +202,7 @@ namespace MusicX.ViewModels
             catch (Exception ex)
             {
                 ContentState = ContentState.Loaded;
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to load section from blocks");
 
                 _snackbarService.ShowException("Произошла ошибка", "MusicX не смог загрузить контент");
             }
@@ -260,18 +234,7 @@ namespace MusicX.ViewModels
             }
             catch (Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error("Fatal error in Section View Model:");
-
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to load section by id");
 
                 _snackbarService.ShowException("Произошла ошибка", "MusicX не смог загрузить контент");
             }
@@ -286,16 +249,7 @@ namespace MusicX.ViewModels
             }
             catch (Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-                logger.Error($"Fatal error in Load artist section with artistId = {artistId}");
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to load artist section {ArtistId}", artistId);
 
                 _snackbarService.ShowException("Произошла ошибка", "MusicX не смог загрузить контент");
             }
@@ -333,17 +287,7 @@ namespace MusicX.ViewModels
             }
             catch (Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-                logger.Error($"Fatal error in load search section with query = {query}");
-
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to load search section {Query}", query);
 
                 _snackbarService.ShowException("Произошла ошибка", "MusicX не смог загрузить контент");
 

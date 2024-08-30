@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using Microsoft.AppCenter.Analytics;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Controls;
+using MusicX.Core.Services;
 using MusicX.Helpers;
 using MusicX.Services;
 using MusicX.ViewModels;
@@ -29,14 +28,8 @@ public partial class DownloadsView : Page, IMenuPage
 
     private void DownloadsView_Loaded(object sender, RoutedEventArgs e)
     {
-        var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-        Analytics.TrackEvent("OpenDownloads", properties);
+        var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
+        connectionService.ReportMetric("OpenDownloads");
             
         ContentGrid.Visibility = Visibility.Visible;
     }

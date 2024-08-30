@@ -20,8 +20,15 @@ namespace MusicX.Views.Modals
         public LyricsModal()
         {
             this.Loaded += LyricsModal_Loaded;
+            Unloaded += LyricsModal_Unloaded;
             
             InitializeComponent();
+        }
+
+        private void LyricsModal_Unloaded(object sender, RoutedEventArgs e)
+        {
+            _viewModel.NextLineEvent -= _viewModel_NextLineEvent;
+            _viewModel.NewTrack -= _viewModel_NewTrack;
         }
 
         private void _viewModel_NextLineEvent(int msPoint)

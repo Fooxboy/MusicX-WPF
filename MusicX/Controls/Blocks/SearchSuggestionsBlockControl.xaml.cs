@@ -1,6 +1,4 @@
-﻿using MusicX.Core.Models;
-using System.Windows;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 
 namespace MusicX.Controls.Blocks
 {

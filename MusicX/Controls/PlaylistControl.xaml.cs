@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
@@ -14,6 +11,7 @@ using MusicX.Helpers;
 using MusicX.Services;
 using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
+using MusicX.ViewModels;
 using MusicX.Views;
 using NLog;
 using Wpf.Ui;
@@ -193,20 +191,10 @@ namespace MusicX.Controls
 
                     }).Start();*/
                 }
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error("Failed load playlist control");
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed load playlist control {PlaylistId}", new PlaylistData(Playlist.Id, Playlist.OwnerId, Playlist.AccessKey));
                 this.Visibility = Visibility.Collapsed;
             }
         }
@@ -239,14 +227,8 @@ namespace MusicX.Controls
 
         private void CardAction_Click(object sender, RoutedEventArgs e)
         {
-            var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-            Analytics.TrackEvent("OpenPlaylist", properties);
+            var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
+            connectionService.ReportMetric("OpenPlayList", "PlaylistControl");
 
             var notificationService = StaticService.Container.GetRequiredService<NavigationService>();
 
@@ -281,14 +263,8 @@ namespace MusicX.Controls
             e.Handled = true;
             try
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Analytics.TrackEvent("PlayPlaylistWithButton", properties);
+                var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
+                connectionService.ReportMetric("PlayPlaylistWithButton", "PlaylistControl");
 
                 var playerService = StaticService.Container.GetRequiredService<PlayerService>();
 
@@ -313,17 +289,10 @@ namespace MusicX.Controls
 
                     nowPlay = false;
                 }
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
+                logger.Error(ex, "Failed to play playlist with button");
             }
         }
 
@@ -356,14 +325,9 @@ namespace MusicX.Controls
             }
             catch(Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
+                logger.Error(ex, "Failed to add playlist");
 
                 snackbarService.ShowException("Мы не смогли добавить плейлист к Вам в библиотеку", ex);
-
             }
 
         }
@@ -395,11 +359,7 @@ namespace MusicX.Controls
             }
             catch (Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
+                logger.Error(ex, "Failed to add playlist tracks to queue");
 
                 snackbarService.ShowException("Мы не смогли обновить очередь", ex);
             }

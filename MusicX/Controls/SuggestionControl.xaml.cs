@@ -8,8 +8,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using Microsoft.Extensions.DependencyInjection;
-using System.Collections.Generic;
-using Microsoft.AppCenter.Crashes;
 
 namespace MusicX.Controls
 {
@@ -47,20 +45,10 @@ namespace MusicX.Controls
             {
                 Title.Text = Suggestion.Title;
                 Subtitle.Text = Suggestion.Subtitle;
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error("Failed load suggestion control");
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed load suggestion control");
 
                 Title.Text = "Невозможно";
                 Subtitle.Text = "загрузить подсказку";
@@ -76,19 +64,10 @@ namespace MusicX.Controls
                 var result = await vkService.GetAudioSearchAsync(Suggestion.Title, Suggestion.Context);
 
                 navigationService.OpenSection(result.Catalog.DefaultSection, SectionType.SearchResult);
-            }catch(Exception ex)
+            }
+            catch(Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to load section from suggestion control");
             }
         }
 

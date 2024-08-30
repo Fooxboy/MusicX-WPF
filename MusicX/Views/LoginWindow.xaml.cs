@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Windows;
-using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Services;
 using MusicX.Helpers;
@@ -132,18 +130,7 @@ namespace MusicX.Views
             }
             catch (VkAuthException ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error("ERROR IN LOGIN VIEW");
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to login with specified credentials");
 
                 loading.Visibility = Visibility.Collapsed;
                 content.Visibility = Visibility.Visible;
@@ -152,18 +139,7 @@ namespace MusicX.Views
             }
             catch (Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error("FATAL ERROR IN LOGIN VIEW");
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to login");
 
                 loading.Visibility = Visibility.Collapsed;
                 content.Visibility = Visibility.Visible;

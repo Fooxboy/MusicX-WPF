@@ -12,7 +12,6 @@ using System.Windows.Controls;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AppCenter.Crashes;
 
 namespace MusicX.Controls
 {
@@ -115,19 +114,9 @@ namespace MusicX.Controls
             }
             catch (Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
                 var logger = StaticService.Container.GetRequiredService<Logger>();
 
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to open action in big banners control");
             }
 
         }

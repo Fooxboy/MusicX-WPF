@@ -6,7 +6,6 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using Microsoft.AppCenter.Analytics;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Services;
 using MusicX.Helpers;
@@ -58,14 +57,9 @@ namespace MusicX.Views
 
         private void FullScreenWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-            Analytics.TrackEvent("OpenFullScreen", properties);
+            var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
+            connectionService.ReportMetric("OpenFullScreen");
+            
             this.SetData();
 
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -14,7 +13,6 @@ using FFMediaToolkit;
 using FFMediaToolkit.Audio;
 using FFMediaToolkit.Decoding;
 using FFmpegInteropX;
-using MusicX.Helpers;
 using MusicX.Shared.Player;
 using WinRT;
 

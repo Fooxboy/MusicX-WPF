@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
-using Microsoft.AppCenter.Crashes;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Helpers;
@@ -76,16 +74,10 @@ namespace MusicX.ViewModels
                 else
                     await Application.Current.Dispatcher.InvokeAsync(Add);
                 VisibleLoadingMore = Visibility.Collapsed;
-            }catch(Exception ex)
+            }
+            catch(Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error("Fatal error in load playlist");
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to load more tracks in playlist");
 
                 _snackbarService.ShowException("Произошла ошибка", "MusicX не смог загрузить плейлист, попробуйте ещё раз");
 
@@ -209,18 +201,7 @@ namespace MusicX.ViewModels
             }
             catch (Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error("Fatal error in load playlist");
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to load playlist");
 
                 _snackbarService.ShowException("Произошла ошибка", "MusicX не смог загрузить контент");
 
@@ -241,20 +222,10 @@ namespace MusicX.ViewModels
                 //Changed("VisibleContent");
                 //Changed("VisibleLoading");
 
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error("Fatal error in load playlist from data");
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to load playlist from data");
 
                 _snackbarService.ShowException("Произошла ошибка", "MusicX не смог загрузить контент");
 
@@ -274,20 +245,10 @@ namespace MusicX.ViewModels
                 await vkService.AddPlaylistAsync(Playlist.Id, Playlist.OwnerId, Playlist.AccessKey);
                 _eventService.Dispatch(this, SectionEvent.PlaylistsFollow);
                 return true;
-            }catch(Exception ex)
+            }
+            catch(Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error("Error in add playlist");
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to add playlist");
                 _snackbarService.ShowException("Произошла ошибка", "MusicX не смог добавить плейлист");
 
                 return false;
@@ -307,18 +268,7 @@ namespace MusicX.ViewModels
             }
             catch (Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error("Error in remove playlist");
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to remove playlist");
                 _snackbarService.ShowException("Произошла ошибка", "MusicX не смог удалить плейлист");
 
                 return false;

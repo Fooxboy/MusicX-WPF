@@ -8,8 +8,6 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using AsyncAwaitBestPractices;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Toolkit.Uwp.Notifications;
 using MusicX.Controls;
@@ -20,12 +18,9 @@ using MusicX.Services;
 using MusicX.Services.Player;
 using MusicX.Shared.Player;
 using MusicX.ViewModels;
-using MusicX.ViewModels.Modals;
 using MusicX.Views;
 using MusicX.Views.Modals;
 using NLog;
-using Velopack;
-using Velopack.Sources;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 using Wpf.Ui.Extensions;
@@ -116,11 +111,8 @@ namespace MusicX
             {
                 try
                 {
-                    var properties = new Dictionary<string, string>
-                        {
-                            {"Version", StaticService.Version }
-                        };
-                    Analytics.TrackEvent("Connect to session", properties);
+                    var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
+                    connectionService.ReportMetric("ConnectToSession");
 
                     var config = await configService.GetConfig();
                     await listenTogetherService.ConnectToServerAsync(config.UserId);
@@ -336,15 +328,7 @@ namespace MusicX
             }
             catch (Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to load root window");
                 _snackbarService.Show("Ошибка запуска",
                     "Попробуйте перезапустить приложение, если ошибка повторяется, напишите об этом разработчику");
             }
@@ -431,23 +415,12 @@ namespace MusicX
             {
                 navigationService.OpenSection(null, SectionType.Search);
 
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to open empty search section");
 
                 _snackbarService.Show("Ошибка открытия поиска", "Мы не смогли открыть подсказки поиска");
-
-
             }
         }
 
@@ -461,18 +434,10 @@ namespace MusicX
                 var updateService = StaticService.Container.GetRequiredService<UpdateService>();
                 
                 await updateService.CheckForUpdates();
-            }catch(Exception ex)
+            }
+            catch(Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to check updates on start");
 
                 _snackbarService.Show("Ошибка проверки обновлений", "Мы не смогли проверить доступные обновления");
             }

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AppCenter.Crashes;
 using MusicX.Core.Services;
 using MusicX.Helpers;
 using MusicX.Models.Enums;
@@ -40,17 +38,10 @@ public class VkTrackBroadcastStats : ITrackStatsListener
                 });
             return Task.CompletedTask;
 
-        }catch(Exception ex)
+        }
+        catch(Exception ex)
         {
-
-            var properties = new Dictionary<string, string>
-                {
-                    {"Version", StaticService.Version }
-                };
-            Crashes.TrackError(ex, properties);
-
-            logger.Error("Fatal error in load playlist");
-            logger.Error(ex, ex.Message);
+            logger.Error(ex, "Failed to push track to status");
 
             _snackbarService.ShowException("Произошла ошибка", $"MusicX не смог установить муызку в статус ВКонтакте: {ex.Message}");
 
@@ -73,16 +64,10 @@ public class VkTrackBroadcastStats : ITrackStatsListener
                     AccessKey = data.Info.AccessKey
                 });
             return Task.CompletedTask;
-        }catch(Exception ex)
+        }
+        catch(Exception ex)
         {
-            var properties = new Dictionary<string, string>
-                {
-                    {"Version", StaticService.Version }
-                };
-            Crashes.TrackError(ex, properties);
-
-            logger.Error("Fatal error in load playlist");
-            logger.Error(ex, ex.Message);
+            logger.Error(ex, "Failed to push track state to status");
 
             _snackbarService.ShowException("Произошла ошибка", $"MusicX не смог установить музыку в статус ВКонтакте: {ex.Message}");
 

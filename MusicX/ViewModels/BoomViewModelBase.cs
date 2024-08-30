@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
+using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Exceptions.Boom;
 using MusicX.Core.Models.Boom;
 using MusicX.Core.Services;
@@ -47,14 +45,8 @@ public abstract class BoomViewModelBase : BaseViewModel
     {
         try
         {
-            var properties = new Dictionary<string, string>
-            {
-#if DEBUG
-                { "IsDebug", "True" },
-#endif
-                {"Version", StaticService.Version }
-            };
-            Analytics.TrackEvent("Play Artist Mix", properties);
+            var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
+            connectionService.ReportMetric("PlayArtistMix");
 
             if (SelectedArtist == null) return;
             IsLoadingMix = true;
@@ -72,20 +64,11 @@ public abstract class BoomViewModelBase : BaseViewModel
             await AuthBoomAsync(config);
 
             await ArtistSelected();
-        }catch(Exception ex)
+        }
+        catch(Exception ex)
         {
-
-            var properties = new Dictionary<string, string>
-            {
-#if DEBUG
-                { "IsDebug", "True" },
-#endif
-                {"Version", StaticService.Version }
-            };
-            Crashes.TrackError(ex, properties);
-
             SnackbarService.ShowException("Ошибка загрузки микса", "Мы не смогли загрузить микс, попробуйте ещё раз");
-            Logger.Error(ex, ex.Message);
+            Logger.Error(ex, "Failed to play artist mix");
         }
     }
 
@@ -93,14 +76,8 @@ public abstract class BoomViewModelBase : BaseViewModel
     {
         try
         {
-            var properties = new Dictionary<string, string>
-            {
-#if DEBUG
-                { "IsDebug", "True" },
-#endif
-                {"Version", StaticService.Version }
-            };
-            Analytics.TrackEvent("Play Tag Mix", properties);
+            var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
+            connectionService.ReportMetric("PlayTagMix");
 
             if (SelectedTag == null) return;
 
@@ -124,19 +101,9 @@ public abstract class BoomViewModelBase : BaseViewModel
         }
         catch (Exception ex)
         {
-
-            var properties = new Dictionary<string, string>
-            {
-#if DEBUG
-                { "IsDebug", "True" },
-#endif
-                {"Version", StaticService.Version }
-            };
-            Crashes.TrackError(ex, properties);
-
             SnackbarService.ShowException("Ошибка загрузки микса", "Мы не смогли загрузить микс, попробуйте ещё раз");
 
-            Logger.Error(ex, ex.Message);
+            Logger.Error(ex, "Failed to play tag mix");
         }
            
     }
@@ -159,20 +126,11 @@ public abstract class BoomViewModelBase : BaseViewModel
         }
         catch (Exception ex)
         {
-            var properties = new Dictionary<string, string>
-            {
-#if DEBUG
-                { "IsDebug", "True" },
-#endif
-                {"Version", StaticService.Version }
-            };
-            Crashes.TrackError(ex, properties);
-
             SnackbarService.ShowException("Ошибка загрузки", "Мы не смогли авторизоваться в ВК Музыке, попробуйте ещё раз");
 
             IsLoaded = true;
 
-            Logger.Error(ex, ex.Message);
+            Logger.Error(ex, "Failed to auth in boom");
 
         }
     }

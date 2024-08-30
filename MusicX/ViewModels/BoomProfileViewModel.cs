@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
+using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Exceptions.Boom;
 using MusicX.Core.Models.Boom;
 using MusicX.Core.Services;
@@ -59,14 +57,8 @@ namespace MusicX.ViewModels
                 Artists.Clear();
                 Tracks.Clear();
 
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Analytics.TrackEvent("Open Boom profile", properties);
+                var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
+                connectionService.ReportMetric("OpenBoomProfile");
 
                 Logger.Info("Открытие страницы Boom profile");
                 var config = await ConfigService.GetConfig();
@@ -94,22 +86,14 @@ namespace MusicX.ViewModels
 
                 IsLoaded = true;
 
-            }catch(Exception ex)
+            }
+            catch(Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
                 SnackbarService.ShowException("Ошибка загрузки", "Мы не смогли открыть Ваш профиль  в ВК музыке");
 
                 IsLoaded = true;
 
-                Logger.Error(ex, ex.Message);
+                Logger.Error(ex, "Failed to open boom profile");
             }
         }
 
@@ -157,20 +141,11 @@ namespace MusicX.ViewModels
             }
             catch (Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
                 SnackbarService.ShowException("Ошибка загрузки", "Мы не смогли открыть Ваш профиль в ВК музыке");
 
                 IsLoaded = true;
 
-                Logger.Error(ex, ex.Message);
+                Logger.Error(ex, "Failed to load boom profile");
             }
             
         }

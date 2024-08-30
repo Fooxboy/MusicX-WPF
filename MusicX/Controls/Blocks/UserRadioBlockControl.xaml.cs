@@ -1,10 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using MusicX.Core.Models;
 using MusicX.Services;
-using MusicX.Shared.ListenTogether.Radio;
 using MusicX.ViewModels;
 using MusicX.Views;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 

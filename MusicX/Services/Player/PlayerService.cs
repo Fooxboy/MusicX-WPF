@@ -10,7 +10,6 @@ using Windows.Media;
 using Windows.Media.Playback;
 using Windows.Storage.Streams;
 using AsyncAwaitBestPractices;
-using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
@@ -202,15 +201,7 @@ public class PlayerService
         }
         catch(Exception e)
         {
-            var properties = new Dictionary<string, string>
-            {
-#if DEBUG
-                { "IsDebug", "True" },
-#endif
-                {"Version", StaticService.Version }
-            };
-            Crashes.TrackError(e, properties);
-            logger.Error(e);
+            logger.Error(e, "Failed to play track from queue {TrackIndex} {QueueSize}", trackIndex, Tracks.Count);
             _snackbarService.ShowException("Ошибка", "Произошла ошибка при воспроизведении");
         }
        
@@ -317,15 +308,7 @@ public class PlayerService
         }
         catch (Exception e)
         {
-            var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-            Crashes.TrackError(e, properties);
-            logger.Error(e);
+            logger.Error(e, "Failed to play playlist {Playlist}", playlist);
             _snackbarService.ShowException("Ошибка", "Произошла ошибка при воспроизведении");
         }
         finally
@@ -360,19 +343,10 @@ public class PlayerService
             }
 
             player.SystemMediaTransportControls.DisplayUpdater.Update();
-        }catch(Exception ex)
+        }
+        catch(Exception ex)
         {
-
-            var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-            Crashes.TrackError(ex, properties);
-
-            logger.Error(ex, ex.Message);
+            logger.Error(ex, "Failed to upload current track data to windows");
         }
            
     }
@@ -434,18 +408,10 @@ public class PlayerService
 
             await Task.WhenAll(
                     _statsListeners.Select(b => b.TrackChangedAsync(previousTrack, nextTrack, ChangeReason.NextButton, previousPosition)));
-        }catch(Exception ex)
+        }
+        catch(Exception ex)
         {
-            var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-            Crashes.TrackError(ex, properties);
-            logger.Error("Error in playerService => NextTrack");
-            logger.Error(ex, ex.Message);
+            logger.Error(ex, "Failed to switch to next track");
 
             _snackbarService.ShowException("Ошибка", "Произошла ошибка при воспроизведении");
 
@@ -549,17 +515,7 @@ public class PlayerService
         }
         catch (Exception e)
         {
-            var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-            Crashes.TrackError(e, properties);
-
-            logger.Error("Error in playerService => PreviousTrack");
-            logger.Error(e, e.Message);
+            logger.Error(e, "Failed to switch to previous track");
 
             _snackbarService.ShowException("Ошибка", "Произошла ошибка при воспроизведении");
         }
@@ -582,17 +538,7 @@ public class PlayerService
         }
         catch (Exception e)
         {
-
-            var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-            Crashes.TrackError(e, properties);
-
-            logger.Error(e, e.Message);
+            logger.Error(e, "Error in media player state changed handler");
 
             _snackbarService.ShowException("Ошибка", "Произошла ошибка при воспроизведении");
 
@@ -616,19 +562,9 @@ public class PlayerService
         }
         catch (Exception e)
         {
-
-            var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-            Crashes.TrackError(e, properties);
-
             _snackbarService.ShowException("Ошибка", "Произошла ошибка при воспроизведении");
 
-            logger.Error(e, e.Message);
+            logger.Error(e, "Error in media player track ended handler");
         }
     }
 
@@ -646,18 +582,9 @@ public class PlayerService
         }
         catch(Exception ex)
         {
-            var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-            Crashes.TrackError(ex, properties);
-
             _snackbarService.ShowException("Ошибка", "Произошла ошибка при перемешивании");
 
-            logger.Error(ex, ex.Message);
+            logger.Error(ex, "Failed to set shuffle {ShuffleState}", shuffle);
         }
         
     }
@@ -707,15 +634,7 @@ public class PlayerService
                 }
                 catch (Exception ex)
                 {
-                    var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                    Crashes.TrackError(ex, properties);
-
+                    logger.Error(ex, "Failed to update boom token from media player");
                 }
 
                 return;
@@ -729,7 +648,7 @@ public class PlayerService
         {
             _snackbarService.ShowException("Ошибка", "Мы не смогли воспроизвести трек из-за проблем с сетью");
 
-            logger.Error("Network Error player");
+            logger.Error(args.ExtendedErrorCode, "Network Error player: {PlatformMessage}", args.ErrorMessage);
         }
     }
 

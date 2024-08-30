@@ -1,17 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
-using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Helpers;
 using MusicX.Services;
 using MusicX.ViewModels;
+using NLog;
 using Wpf.Ui;
 using Button = MusicX.Core.Models.Button;
 using NavigationService = MusicX.Services.NavigationService;
@@ -99,18 +97,13 @@ namespace MusicX.Controls.Blocks
 
                 var music = await vkService.GetAudioCatalogAsync(buttonAction.Action.Url);
                 navigationService.OpenSection(music.Catalog.DefaultSection);
-            }catch(Exception ex)
+            }
+            catch(Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
+                var logger = StaticService.Container.GetRequiredService<Logger>();
+                
+                logger.Error(ex, "Failed to open placeholder action {Type} {Url}", buttonAction.Action.Type, buttonAction.Action.Url);
+                
                 var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
 
                 snackbarService.ShowException("Music X не смог открыть контент", ex);

@@ -1,13 +1,8 @@
 ﻿using MusicX.Core.Models;
-using MusicX.Services;
-using NLog;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AppCenter.Crashes;
 
 namespace MusicX.Controls
 {
