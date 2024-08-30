@@ -141,6 +141,7 @@ namespace MusicX.Views
                 collection.AddSingleton<IScrobbler, MemoryScrobbler>();
                 collection.AddSingleton<ITrackApi, TrackApi>();
                 collection.AddSingleton<WindowThemeService>();
+                collection.AddSingleton<SectionEventService>();
 
                 var container = StaticService.Container = collection.BuildServiceProvider();
 

@@ -40,17 +40,19 @@ namespace MusicX.ViewModels
         private readonly VkService vkService;
         private readonly Logger logger;
         private readonly ISnackbarService _snackbarService;
+        private readonly SectionEventService _eventService;
 
         public ConfigService ConfigService { get; set; }
 
         public PlaylistViewModel(VkService vkService, Logger logger, ConfigService configService,
-            ISnackbarService snackbarService)
+            ISnackbarService snackbarService, SectionEventService eventService)
         {
             this.vkService = vkService;
             this.ConfigService = configService;
             this.logger = logger;
 
             _snackbarService = snackbarService;
+            _eventService = eventService;
         }
         public async ValueTask LoadMore()
         {
@@ -270,6 +272,7 @@ namespace MusicX.ViewModels
             try
             {
                 await vkService.AddPlaylistAsync(Playlist.Id, Playlist.OwnerId, Playlist.AccessKey);
+                _eventService.Dispatch(this, SectionEvent.PlaylistsFollow);
                 return true;
             }catch(Exception ex)
             {
@@ -296,6 +299,10 @@ namespace MusicX.ViewModels
             try
             {
                 await vkService.DeletePlaylistAsync(Playlist.Id, Playlist.OwnerId);
+                _eventService.Dispatch(this,
+                    Playlist.OwnerId == ConfigService.Config.UserId
+                        ? SectionEvent.PlaylistsRemove
+                        : SectionEvent.PlaylistsUnfollow);
                 return true;
             }
             catch (Exception ex)

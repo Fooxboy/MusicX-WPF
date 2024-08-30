@@ -53,6 +53,7 @@ namespace MusicX.ViewModels.Modals
         private readonly TracksSelectorModalViewModel selectorViewModel;
         private readonly ConfigService configService;
         private readonly ISnackbarService _snackbarService;
+        private readonly SectionEventService _eventService;
 
         private bool isEdit;
         public bool IsEdit
@@ -67,13 +68,14 @@ namespace MusicX.ViewModels.Modals
 
         public CreatePlaylistModalViewModel(NavigationService navigationService, VkService vkService,
             TracksSelectorModalViewModel selectorViewModel, ConfigService configService,
-            ISnackbarService snackbarService)
+            ISnackbarService snackbarService, SectionEventService eventService)
         {
             this.navigationService = navigationService;
             this.vkService = vkService;
             this.selectorViewModel = selectorViewModel;
             this.configService = configService;
             _snackbarService = snackbarService;
+            _eventService = eventService;
 
             this.AddTracksCommand = new RelayCommand(AddTracks);
             this.CreateCommand = new AsyncCommand(Create);
@@ -145,7 +147,7 @@ namespace MusicX.ViewModels.Modals
                 }else
                 {
                     playlistId = await vkService.CreatePlaylistAsync(config.UserId, this.Title, this.Description, Tracks);
-
+                    _eventService.Dispatch(this, SectionEvent.PlaylistsAdd);
                 }
 
                 if(!this.CoverPath.StartsWith("http"))

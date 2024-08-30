@@ -424,15 +424,18 @@ namespace MusicX.Controls
                 var vkService = StaticService.Container.GetRequiredService<VkService>();
                 var boomService = StaticService.Container.GetRequiredService<BoomService>();
                 var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
+                var eventService = StaticService.Container.GetRequiredService<SectionEventService>();
                 
                 switch (PlayerService.CurrentTrack?.Data)
                 {
                     case VkTrackData vkData when LikeIcon.Filled:
                         await vkService.Dislike(vkData.Info.Id, vkData.Info.OwnerId);
                         await vkService.AudioDeleteAsync(vkData.Info.Id, vkData.Info.OwnerId);
+                        eventService.Dispatch(this, SectionEvent.AudiosRemove);
                         break;
                     case VkTrackData vkData:
                         await vkService.AudioAddAsync(vkData.Info.Id, vkData.Info.OwnerId);
+                        eventService.Dispatch(this, SectionEvent.AudiosAdd);
                         break;
                     case BoomTrackData boomData when LikeIcon.Filled:
                         await boomService.UnLike(boomData.Id);

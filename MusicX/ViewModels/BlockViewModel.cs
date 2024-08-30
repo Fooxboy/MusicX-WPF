@@ -1,4 +1,5 @@
-﻿using System.Collections.Specialized;
+﻿using System.Collections.Immutable;
+using System.Collections.Specialized;
 using MusicX.Core.Models;
 using MusicX.Helpers;
 using MusicX.Shared.ListenTogether.Radio;
@@ -49,6 +50,8 @@ public class BlockViewModel : BaseViewModel
     
     public ObservableRangeCollection<Longread> Longreads { get; }
     
+    public ImmutableHashSet<string> ListenEvents { get; private set; }
+    
     public BlockViewModel(Block block)
     {
         Id = block.Id;
@@ -74,6 +77,7 @@ public class BlockViewModel : BaseViewModel
         Stations = new(block.Stations);
         Curators = new(block.Curators);
         Longreads = new(block.Longreads);
+        ListenEvents = [..block.ListenEvents];
     }
 
     public void MergeBlock(Block block)
@@ -98,5 +102,6 @@ public class BlockViewModel : BaseViewModel
         Stations.AddRange(block.Stations, action);
         Curators.AddRange(block.Curators, action);
         Longreads.AddRange(block.Longreads, action);
+        ListenEvents = ListenEvents.Union(block.ListenEvents);
     }
 }

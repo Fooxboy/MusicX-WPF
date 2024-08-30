@@ -101,13 +101,16 @@ public class BlockButtonViewModel : BaseViewModel
                 case "toggle_artist_subscription" when Artist is not null && ParentBlock is not null:
                 {
                     var vkService = StaticService.Container.GetRequiredService<VkService>();
+                    var eventService = StaticService.Container.GetRequiredService<SectionEventService>();
 
                     if (Artist.IsFollowed)
                         await vkService.UnfollowArtist(Action.ArtistId, ParentBlock.Id);
                     else
                         await vkService.FollowArtist(Action.ArtistId, ParentBlock.Id);
 
-                        Artist.IsFollowed = !Artist.IsFollowed;
+                    Artist.IsFollowed = !Artist.IsFollowed;
+                    
+                    eventService.Dispatch(this, Artist.IsFollowed ? SectionEvent.ArtistSubscribe : SectionEvent.ArtistUnsubscribe);
                     Refresh();
                     break;
                 }

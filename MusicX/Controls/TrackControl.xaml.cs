@@ -481,18 +481,19 @@ namespace MusicX.Controls
             {
                 var configService = StaticService.Container.GetRequiredService<ConfigService>();
                 var vkService = StaticService.Container.GetRequiredService<VkService>();
-
+                var eventService = StaticService.Container.GetRequiredService<SectionEventService>();
 
                 var config = await configService.GetConfig();
 
                 if (Audio.OwnerId == config.UserId)
                 {
                     await vkService.AudioDeleteAsync(Audio.Id, Audio.OwnerId);
+                    eventService.Dispatch(this, SectionEvent.AudiosRemove);
                 }
                 else
                 {
                     await vkService.AudioAddAsync(Audio.Id, Audio.OwnerId);
-
+                    eventService.Dispatch(this, SectionEvent.AudiosAdd);
                 } 
             }catch(Exception ex)
             {
