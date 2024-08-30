@@ -22,12 +22,13 @@ namespace MusicX.ViewModels
         Loaded
     }
     
-    public class SectionViewModel : BaseViewModel, INotifyOnActivated
+    public class SectionViewModel : BaseViewModel, INotifyOnActivated, IDisposable
     {
         private readonly VkService vkService;
         private readonly Logger logger;
         private readonly ISnackbarService _snackbarService;
         private readonly ConfigService configService;
+        private readonly SectionEventService _eventService;
 
         public ContentState ContentState { get; set; }
         public bool IsLoadingMore { get; set; }
@@ -41,12 +42,37 @@ namespace MusicX.ViewModels
         public ObservableRangeCollection<BlockViewModel> Blocks { get; } = [];
 
         public SectionViewModel(VkService vkService, Logger logger, ISnackbarService snackbarService,
-            ConfigService configService)
+            ConfigService configService, SectionEventService eventService)
         {
             this.vkService = vkService;
             this.logger = logger;
             _snackbarService = snackbarService;
             this.configService = configService;
+            _eventService = eventService;
+            
+            _eventService.Event += EventServiceOnEvent;
+        }
+
+        private async void EventServiceOnEvent(object? sender, string e)
+        {
+            var changed = false;
+            for (var i = 0; i < Blocks.Count; i++)
+            {
+                var block = Blocks[i];
+                
+                if (!block.ListenEvents.Contains(e))
+                    continue;
+                
+                changed = true;
+
+                // не работает хз
+                // var response = await vkService.GetBlockItems(block.Id);
+                //
+                // Blocks[i] = new BlockViewModel(response.Block);
+            }
+            
+            if (changed)
+                await LoadAsync();
         }
 
         public async Task LoadAsync()
@@ -327,6 +353,13 @@ namespace MusicX.ViewModels
         {
             if (Section is null)
                 LoadAsync().SafeFireAndForget();
+            else
+                _eventService.Event += EventServiceOnEvent;
+        }
+
+        public void Dispose()
+        {
+            _eventService.Event -= EventServiceOnEvent;
         }
     }
 }

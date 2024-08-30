@@ -39,7 +39,7 @@ public partial class SectionView : Page, IProvideCustomContentState, IMenuPage
     }
     
     [Serializable]
-    private class SectionState : CustomContentState, ISerializable
+    private class SectionState : CustomContentState, ISerializable, IDisposable
     {
         private const string TypeKey = "SectionType";
         private const string IdKey = "SectionId";
@@ -76,6 +76,11 @@ public partial class SectionView : Page, IProvideCustomContentState, IMenuPage
         {
             info.AddValue(TypeKey, (int)_viewModel.SectionType);
             info.AddValue(IdKey, _viewModel.Section.Id);
+        }
+
+        public void Dispose()
+        {
+            _viewModel.Dispose();
         }
     }
     public override string ToString()

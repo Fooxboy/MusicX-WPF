@@ -365,7 +365,8 @@ namespace MusicX
                 return;
             
             RootFrame.GoBack();
-            RootFrame.RemoveBackEntry();
+            if (RootFrame.RemoveBackEntry().CustomContentState is IDisposable disposable)
+                disposable.Dispose();
         }
         private void NavigationServiceOnExternalSectionOpened(object? sender, SectionViewModel e)
         {

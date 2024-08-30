@@ -342,12 +342,15 @@ namespace MusicX.Controls
         private async void AddToLibrary_MouseDown(object sender, MouseButtonEventArgs e)
         {
             var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
+            var eventService = StaticService.Container.GetRequiredService<SectionEventService>();
 
             try
             {
                 var vkService = StaticService.Container.GetRequiredService<VkService>();
 
                 await vkService.AddPlaylistAsync(Playlist.Id, Playlist.OwnerId, Playlist.AccessKey);
+                
+                eventService.Dispatch(this, SectionEvent.PlaylistsFollow);
 
                 snackbarService.Show("Плейлист добавлен", "Плейлист теперь находится в Вашей библиотеке", ControlAppearance.Success);
             }
