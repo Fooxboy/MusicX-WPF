@@ -29,18 +29,23 @@ public interface IIdentifiable
     }
 
     private static IEnumerable<T> IntersectById<T>(IEnumerable<T>? enumerable, IEnumerable<string> ids)
-        where T : IIdentifiable => enumerable?.IntersectBy(ids, static b => b.Identifier) ?? Enumerable.Empty<T>();
+        where T : IIdentifiable => enumerable?.IntersectBy(ids, static b => b.Identifier) ?? [];
     
     private static IEnumerable<T> IntersectById<T>(IEnumerable<T>? enumerable, IEnumerable<long> ids)
-        where T : IIdentifiable => enumerable?.IntersectBy(ids, static b => long.Parse(b.Identifier)) ?? Enumerable.Empty<T>();
+        where T : IIdentifiable => enumerable?.IntersectBy(ids, static b => long.Parse(b.Identifier)) ?? [];
     
     private static IEnumerable<T> IntersectById<T>(IEnumerable<T>? enumerable, IEnumerable<int> ids)
-        where T : IIdentifiable => enumerable?.IntersectBy(ids, static b => int.Parse(b.Identifier)) ?? Enumerable.Empty<T>();
+        where T : IIdentifiable => enumerable?.IntersectBy(ids, static b => int.Parse(b.Identifier)) ?? [];
+
+    private static IEnumerable<T> IntersectById<T, TId>(IEnumerable<T>? enumerable, IEnumerable<TId> ids)
+        where T : IIdentifiable where TId : IIdentifiable =>
+        enumerable?.IntersectBy(ids.Select(b => int.Parse(b.Identifier)), static b => int.Parse(b.Identifier)) ?? [];
 
     private static void ProcessBlock(Block block, ResponseData data)
     {
         block.Curators.AddRange(IntersectById(data.Curators, block.CuratorsIds));
         block.Groups.AddRange(IntersectById(data.Groups, block.GroupIds));
+        block.Groups.AddRange(IntersectById(data.Groups, block.GroupsItemsIds));
         block.Playlists.AddRange(IntersectById(data.Playlists, block.PlaylistsIds));
         block.Artists.AddRange(IntersectById(data.Artists, block.ArtistsIds));
         block.Audios.AddRange(IntersectById(data.Audios, block.AudiosIds));

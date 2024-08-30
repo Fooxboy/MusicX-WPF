@@ -100,7 +100,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="groups_items" DataType="{x:Type viewModels:BlockViewModel}">
-            <blocks:GroupsBlockControl />
+            <blocks:GroupsBlockControl Group="{Binding Groups[0]}" />
         </DataTemplate>
 
         <DataTemplate x:Key="placeholder" DataType="{x:Type viewModels:BlockViewModel}">

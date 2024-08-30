@@ -8,7 +8,7 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d"
-    DataContextChanged="CuratorBannerBlockControl_OnDataContextChanged">
+    Name="Control">
     <Grid x:Name="CuratorBanner" Margin="0,0,0,10">
         <Rectangle
             Height="280"
@@ -16,7 +16,7 @@
             RadiusX="15"
             RadiusY="15">
             <Rectangle.Fill>
-                <ImageBrush x:Name="CuratorBannerImage" Stretch="UniformToFill" />
+                <ImageBrush Stretch="UniformToFill" ImageSource="{Binding Curators[0].Photo[2].Url, ElementName=Control}" />
             </Rectangle.Fill>
 
             <Rectangle.OpacityMask>
@@ -60,12 +60,10 @@
                     Text="Сообщество-куратор" />
 
                 <TextBlock
-                    x:Name="CuratorText"
                     FontFamily="{StaticResource VKSansBold}"
                     FontSize="40"
                     FontWeight="Black"
-                    
-                    Text="Curator name" />
+                    Text="{Binding Curators[0].Name, ElementName=Control}" />
                 <wpfui:Button
                     x:Name="ActionCuratorButton"
                     Width="200"
