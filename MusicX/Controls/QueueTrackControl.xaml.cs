@@ -74,6 +74,7 @@ public partial class QueueTrackControl : UserControl
         if (IsInPlayer)
         {
             _player.PlayTrackFromQueueAsync(IndexInItemsControl).SafeFireAndForget();
+            return;
         }
         
         if (DataContext is not PlaylistTrack track) return;

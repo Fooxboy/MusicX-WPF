@@ -219,7 +219,7 @@ public class PlayerService
             case IRandomAccessPlaylist randomAccessPlaylist:
                 var count = await randomAccessPlaylist.GetCountAsync();
                 
-                _tracks.AddRangeSequential(await randomAccessPlaylist.GetRangeAsync(Math.Max(_tracks.Count - 1, 0)..Math.Min(count - 1, trackIndex + 10)));
+                _tracks.AddRangeSequential(await randomAccessPlaylist.GetRangeAsync(Math.Max(_tracks.Count, 0)..Math.Min(count - 1, trackIndex + 10)));
                 break;
             default:
             {
@@ -546,7 +546,7 @@ public class PlayerService
 
     }
 
-    private async void MediaPlayerOnMediaEnded(MediaPlayer sender, object args)
+    private void MediaPlayerOnMediaEnded(MediaPlayer sender, object args)
     {
         if (_listenTogetherService.PlayerMode == PlayerMode.Listener) return;
         try
@@ -558,7 +558,8 @@ public class PlayerService
                 this.player.Play();
                 return;
             }
-            await NextTrack();
+
+            Application.Current.Dispatcher.BeginInvoke(() => NextTrack().SafeFireAndForget());
         }
         catch (Exception e)
         {
@@ -629,7 +630,7 @@ public class PlayerService
 
                     boomService.SetToken(boomToken.AccessToken);
 
-                    await PlayTrackAsync(CurrentIndex);
+                    Application.Current.Dispatcher.BeginInvoke(() => PlayTrackAsync(CurrentIndex).SafeFireAndForget());
 
                 }
                 catch (Exception ex)
@@ -642,7 +643,7 @@ public class PlayerService
 
             if (CurrentTrack is not null)
                 //audio source url may expire
-                await PlayTrackAsync(CurrentIndex);
+                Application.Current.Dispatcher.BeginInvoke(() => PlayTrackAsync(CurrentIndex).SafeFireAndForget());
         }
         else if (args.Error == MediaPlayerError.NetworkError)
         {
