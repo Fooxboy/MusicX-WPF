@@ -145,7 +145,7 @@ namespace MusicX.ViewModels
             {
                 var logger = StaticService.Container.GetRequiredService<Logger>();
 
-                logger.Error(ex);
+                logger.Error(ex, "Failed to join radio session from view model");
                 snackbarService.ShowException("Ошибка", "Мы не смогли подключиться к радиостанции :(");
             }
            

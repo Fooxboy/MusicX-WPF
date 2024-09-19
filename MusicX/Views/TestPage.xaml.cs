@@ -15,6 +15,7 @@ using MusicX.Services.Player.Playlists;
 using MusicX.ViewModels;
 using MusicX.ViewModels.Modals;
 using MusicX.Views.Modals;
+using NLog;
 using VkNet.Abstractions.Core;
 using VkNet.Exception;
 using WinRT.Interop;
@@ -234,6 +235,14 @@ namespace MusicX.Views
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                throw new Exception("Test");
+            }
+            catch (Exception exception)
+            {
+                StaticService.Container.GetRequiredService<Logger>().Fatal(exception, "Test");
+            }
         }
 
         private void PlaylistSerialize_OnClick(object sender, RoutedEventArgs e)

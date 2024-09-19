@@ -139,7 +139,7 @@ public class ListenTogetherControlViewModel : BaseViewModel
         catch (Exception e)
         {
             _snackbarService.ShowException("Ошибка подключении к сессии", e);
-            _logger.Error(e, e.Message);
+            _logger.Error(e, "Failed to connect to session from view model");
         }
 
         IsLoading = false;

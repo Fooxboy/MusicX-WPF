@@ -9,19 +9,15 @@ namespace MusicX.Core.Services;
 public class BackendConnectionService(Logger logger, string appVersion)
 {
     private string? _token;
+    private long _userId;
     public readonly HttpClient Client = new();
 
-    public string Host { get; set; } =
-#if DEBUG
-        "http://localhost:2024";
-#else
-        "https://musicx.zznty.ru";
-#endif
+    public string Host { get; set; } = "https://musicx.zznty.ru";
 
     public async void ReportMetric(string eventName, string? source = null)
     {
-        if (string.IsNullOrEmpty(_token))
-            throw new NullReferenceException("Token is null");
+        // in case initial token request failed
+        _token ??= await GetTokenAsync(_userId);
         
         try
         {
@@ -37,6 +33,8 @@ public class BackendConnectionService(Logger logger, string appVersion)
 
     public async Task<string> GetTokenAsync(long userId)
     {
+        _userId = userId;
+        
         if (_token is not null) return _token;
         logger.Info("Получение временного токена Слушать вместе");
 

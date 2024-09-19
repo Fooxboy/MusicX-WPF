@@ -80,10 +80,11 @@ namespace MusicX.Controls
                 await listenTogetherService.ConnectToServerAsync(config.UserId);
                 await listenTogetherService.JoinToSesstionAsync(Station.SessionId);
 
-            }catch(Exception ex)
+            }
+            catch(Exception ex)
             {
                 var logger = StaticService.Container.GetRequiredService<Logger>();
-                logger.Error(ex);
+                logger.Error(ex, "Failed to join radio session");
 
                 snackbarService.ShowException("Мы не смогли подключиться к радиостанции", ex);
             }

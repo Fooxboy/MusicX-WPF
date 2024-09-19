@@ -117,9 +117,10 @@ namespace MusicX
                     var config = await configService.GetConfig();
                     await listenTogetherService.ConnectToServerAsync(config.UserId);
                     await listenTogetherService.JoinToSesstionAsync(sessionId);
-                }catch(Exception ex)
+                }
+                catch(Exception ex)
                 {
-                    logger.Error(ex, ex.Message);
+                    logger.Error(ex, "Failed to launch app with session from args");
                 }
                 
             });
