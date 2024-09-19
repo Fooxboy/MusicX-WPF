@@ -219,7 +219,10 @@ public class PlayerService
             case IRandomAccessPlaylist randomAccessPlaylist:
                 var count = await randomAccessPlaylist.GetCountAsync();
                 
-                _tracks.AddRangeSequential(await randomAccessPlaylist.GetRangeAsync(Math.Max(_tracks.Count, 0)..Math.Min(count - 1, trackIndex + 10)));
+                if (trackIndex >= count)
+                    return null;
+                
+                _tracks.AddRangeSequential(await randomAccessPlaylist.GetRangeAsync(Math.Max(_tracks.Count, 0)..Math.Min(count, trackIndex + 10)));
                 break;
             default:
             {
