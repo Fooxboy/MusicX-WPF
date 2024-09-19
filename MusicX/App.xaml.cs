@@ -70,6 +70,8 @@ namespace MusicX
                 Layout = "${message}"
             });
             LogManager.Configuration.AddRuleForAllLevels(sentryTargetName);
+            
+            LogManager.ReconfigExistingLoggers();
         }
 
         static Mutex? InstanceCheckMutex;
