@@ -46,7 +46,7 @@ public partial class QueueTrackControl : UserControl
     }
 
     private int IndexInItemsControl =>
-        ItemContainerGeneratorIndexHook.GetItemContainerIndex(((FrameworkElement)TemplatedParent).TemplatedParent);
+        ItemContainerGeneratorIndexHook.GetItemContainerIndex(((FrameworkElement)TemplatedParent).TemplatedParent ?? TemplatedParent);
 
     public QueueTrackControl()
     {
