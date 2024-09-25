@@ -120,7 +120,7 @@ public class VkApiInvoke : IVkApiInvoke
 
             var vkError = error.ToObject<VkError>(_serializer);
 
-            if (vkError?.ErrorCode is not (5 or 1117 or 1114) || // token has expired
+            if (vkError?.ErrorCode is not (4 or 5 or 1117 or 1114) || // token has expired
                 await _tokenRefreshHandler.RefreshTokenAsync(_tokenStore.Token) is not { } newToken)
                 throw new VkApiException(vkError);
 
