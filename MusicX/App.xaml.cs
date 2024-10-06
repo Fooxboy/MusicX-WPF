@@ -53,7 +53,7 @@ namespace MusicX
 #else
                 Environment = System.Version.TryParse(StaticService.Version, out _) ? "release" : "beta",
 #endif
-                Dsn = "https://44305d462f604317a8f81e7b170eb025@glitchtip.zznty.ru/1",
+                Dsn = "https://4fa08f233778416a98210e27f558d049@glitchtip.zznty.ru/1",
                 IsGlobalModeEnabled = true,
                 AutoSessionTracking = true,
                 StackTraceMode = StackTraceMode.Enhanced
