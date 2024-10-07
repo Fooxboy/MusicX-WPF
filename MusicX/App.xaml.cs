@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Windows;
 using MusicX.Patches;
 using MusicX.Services;
@@ -35,12 +36,42 @@ namespace MusicX
 
             SetupAnalytics();
             
+            if (ShowUnsupportedOsMessage())
+                return;
+            
             ItemContainerGeneratorIndexHook.Apply();
 
             var window = new StartingWindow(e.Args);
             window.Show();
 
             await SingleAppService.Instance.StartArgsListener();
+        }
+
+        private static bool ShowUnsupportedOsMessage()
+        {
+            if (OperatingSystem.IsWindowsVersionAtLeast(StaticService.MinimumOsVersion.Major,
+                    StaticService.MinimumOsVersion.Minor, 
+                    StaticService.MinimumOsVersion.Build,
+                    StaticService.MinimumOsVersion.Revision))
+                return false;
+
+            if (OperatingSystem.IsWindowsVersionAtLeast(10))
+            {
+                var window = new UnsupportedOsVersionWindow();
+                
+                window.Show();
+                return true;
+            }
+            
+            MessageBox.Show(
+                $"""
+                 Установите последнюю версию Windows 10 или выше
+                 Минимальная версия: {StaticService.MinimumOsVersion}
+                 У вас установлена версия {StaticService.CurrentOsVersion}
+                 """,
+                "Неподдерживаемая версия Windows", MessageBoxButton.OK, MessageBoxImage.Error);
+            
+            return true;
         }
 
         private static void SetupAnalytics()

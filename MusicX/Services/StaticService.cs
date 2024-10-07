@@ -11,6 +11,9 @@ public static class StaticService
     public static string BuildDate { get; } =
         typeof(StaticService).Assembly.GetCustomAttribute<BuildDateTimeAttribute>()?.Date.ToLocalTime()
             .ToString("d MMMM yyyy", CultureInfo.GetCultureInfo("ru-RU")) ?? "23 сентября 2023";
+    
+    public static Version MinimumOsVersion { get; } = new(10, 0, 19041, 0);
+    public static Version CurrentOsVersion { get; } = Environment.OSVersion.Version;
 }
 
 [AttributeUsage(AttributeTargets.Assembly)]

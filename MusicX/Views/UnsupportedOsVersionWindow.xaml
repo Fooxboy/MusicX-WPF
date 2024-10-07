@@ -1,0 +1,36 @@
+﻿<Window x:Class="MusicX.Views.UnsupportedOsVersionWindow"
+              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+              xmlns:local="clr-namespace:MusicX.Views"
+              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+              xmlns:controls="clr-namespace:MusicX.Controls"
+              xmlns:services="clr-namespace:MusicX.Services"
+              mc:Ignorable="d"
+              Title="Неподдерживаемая версия Windows" Height="450" Width="800">
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+        <ui:TextBlock FontTypography="Title" TextAlignment="Center">Упс! Кажется ваша система слишком устарела</ui:TextBlock>
+        <ui:TextBlock FontTypography="Subtitle" TextAlignment="Center">Пожалуйста обновите Windows.</ui:TextBlock>
+        <ui:Card Margin="0 20">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <ui:TextBlock Margin="0 0 0 5" FontTypography="BodyStrong" TextAlignment="Center">Минимальная версия системы</ui:TextBlock>
+                <controls:WindowsVersionBlock Grid.Row="1" Version="{x:Static services:StaticService.MinimumOsVersion}" />
+            </Grid>
+            <ui:Card.Footer>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <ui:TextBlock Margin="0 0 0 5" FontTypography="Body" TextAlignment="Center">У вас сейчас установлена версия</ui:TextBlock>
+                    <controls:WindowsVersionBlock Grid.Row="1" Version="{x:Static services:StaticService.CurrentOsVersion}" />
+                </Grid>
+            </ui:Card.Footer>
+        </ui:Card>
+    </StackPanel>
+</Window>
