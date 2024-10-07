@@ -52,12 +52,22 @@ public static class ItemContainerGeneratorIndexHook
         var itemRemovedMethod = typeof(ItemContainerGenerator).GetMethod("OnItemRemoved",
             BindingFlags.Instance | BindingFlags.NonPublic)!;
         
+        var itemAddedMethod = typeof(ItemContainerGenerator).GetMethod("OnItemAdded",
+            BindingFlags.Instance | BindingFlags.NonPublic)!;
+        
         Hooks.Add(new ILHook(generateNextMethod, GenerateNextManipulator));
         Hooks.Add(new ILHook(unlinkContainerFromItemMethod, UnlinkContainerFromItemManipulator));
         Hooks.Add(new ILHook(itemReplacedMethod, ItemReplacedManipulator));
         Hooks.Add(new Hook(itemMovedMethod, ItemMovedHook));
         Hooks.Add(new ILHook(itemMovedMethod, ItemMovedManipulator));
         Hooks.Add(new Hook(itemRemovedMethod, ItemRemovedHook));
+        Hooks.Add(new Hook(itemAddedMethod, ItemAddedHook));
+    }
+    
+    private static void ItemAddedHook(Action<ItemContainerGenerator, object, int> original, ItemContainerGenerator self, object item, int itemIndex)
+    {
+        original(self, item, itemIndex);
+        UpdateContainerIndices(self, itemIndex);
     }
 
     private static void ItemRemovedHook(Action<ItemContainerGenerator, object, int> original,
