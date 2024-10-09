@@ -1,10 +1,12 @@
-﻿using MusicX.Core.Helpers;
+﻿using System.Collections.Immutable;
+using MusicX.Core.Helpers;
 using MusicX.Core.Models;
 using MusicX.Core.Models.General;
 using Newtonsoft.Json;
 using NLog;
 using System.Diagnostics;
 using System.Net.Http.Headers;
+using System.Text.Json;
 using VkNet.Abstractions;
 using VkNet.Abstractions.Core;
 using VkNet.AudioBypassService.Abstractions;
@@ -1197,6 +1199,36 @@ namespace MusicX.Core.Services
                 logger.Error(ex, ex.Message);
                 throw;
             }
+        }
+        
+        private readonly JsonSerializerOptions _jsonSerializerOptions = new(JsonSerializerDefaults.Web);
+
+        public async Task<List<Audio>> GetStreamMixAudios(string mixId = "common", int append = 0, int count = 5, ImmutableDictionary<string, ImmutableArray<string>>? options = null)
+        {
+            try
+            {
+                var parameters = new VkParameters
+                {
+
+                    {"device_id", await _deviceIdStore.GetDeviceIdAsync()},
+
+                    {"mix_id", mixId},
+                    {"append", append},
+                    {"count", count},
+                    {"options", options == null ? null : System.Text.Json.JsonSerializer.Serialize(options, _jsonSerializerOptions)}
+                };
+
+                var model = await apiInvoke.CallAsync<List<Audio>>("audio.getStreamMixAudios", parameters);
+
+                return model;
+            }
+            catch (Exception ex)
+            {
+                logger.Error("VK API ERROR:");
+                logger.Error(ex, ex.Message);
+                throw;
+            }
+
         }
     }
 }

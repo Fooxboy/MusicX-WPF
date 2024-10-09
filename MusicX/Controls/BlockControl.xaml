@@ -12,7 +12,8 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     xmlns:viewModels="clr-namespace:MusicX.ViewModels"
-    ContentTemplateSelector="{DynamicResource BlockTemplateSelector}"
+             xmlns:shaders="clr-namespace:MusicX.Shaders"
+             ContentTemplateSelector="{DynamicResource BlockTemplateSelector}"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -182,7 +183,12 @@
         <DataTemplate x:Key="curator_banner" DataType="{x:Type viewModels:BlockViewModel}">
             <blocks:CuratorBannerBlockControl Curators="{Binding Curators}" />
         </DataTemplate>
-        
+
+        <DataTemplate x:Key="audio_stream_mixes_audio_stream_mix_interactive"
+                      DataType="{x:Type viewModels:BlockViewModel}">
+            <blocks:AudioMixesBlock />
+        </DataTemplate>
+
         <!-- ReSharper restore InconsistentNaming -->
     </UserControl.Resources>
 </UserControl>

@@ -102,7 +102,7 @@ public interface IIdentifiable
     private static void RemoveAds(Section section)
     {
         section.Blocks.RemoveAll(block =>
-            block is { DataType: "radiostations" } or { DataType: "audio_stream_mixes" } or
+            block is { DataType: "radiostations" } or
             { DataType: "audio_content_cards" } or { DataType: "empty" } or
             { Layout.Title: "Радиостанции" or "Эфиры" or "Популярные подкасты" } ||
             (
