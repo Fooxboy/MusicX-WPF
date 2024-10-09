@@ -256,11 +256,11 @@ namespace MusicX
                     { Tag = "test", Icon = SymbolRegular.AppFolder24, Content = "TEST", PageType = typeof(TestPage) };
                 navigationBar.Items.Add(item);
 #endif
-                navigationBar.Items.Add(new()
-                {
-                    Tag = "vkmix", PageDataContext = StaticService.Container.GetRequiredService<VKMixViewModel>(),
-                    Icon = SymbolRegular.Stream24, Content = "Микс", PageType = typeof(VKMixView)
-                });
+                // navigationBar.Items.Add(new()
+                // {
+                //     Tag = "vkmix", PageDataContext = StaticService.Container.GetRequiredService<VKMixViewModel>(),
+                //     Icon = SymbolRegular.Stream24, Content = "Микс", PageType = typeof(VKMixView)
+                // });
                 navigationBar.Items.Add(new()
                 {
                     Tag = "downloads",
