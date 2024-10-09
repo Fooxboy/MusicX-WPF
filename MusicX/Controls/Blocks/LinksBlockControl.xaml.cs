@@ -18,7 +18,7 @@ namespace MusicX.Controls.Blocks
             if (d is not LinksBlockControl control || e.NewValue is not BlockViewModel block)
                 return;
             
-            if (block.Layout?.Name == "list")
+            if (block.Layout?.Name is "list" or "entity_double_grid")
             {
                 foreach (var link in block.Links)
                 {

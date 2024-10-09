@@ -362,7 +362,7 @@ namespace MusicX
         }
         private void NavigationServiceOnMenuSectionOpened(object? sender, string s)
         {
-            navigationBar.Items.First(b => b.Tag is string tag && tag == s)
+            navigationBar.Items.First(b => (b.Tag is string tag && tag == s) || (b.Content is string str && str == s))
                 .RaiseEvent(new(ButtonBase.ClickEvent));
         }
 

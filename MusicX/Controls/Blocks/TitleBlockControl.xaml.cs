@@ -94,7 +94,8 @@ namespace MusicX.Controls.Blocks
 
                 var button = ViewModel.Buttons[0];
 
-                navigationService.OpenSection(button.SectionId);
+                if (!string.IsNullOrEmpty(button.SectionId))
+                    navigationService.OpenSection(button.SectionId);
             }
             catch (Exception ex)
             {

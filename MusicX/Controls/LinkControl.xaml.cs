@@ -9,6 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Services;
+using MusicX.ViewModels;
+using MusicX.Views;
 using NLog;
 using Wpf.Ui.Controls;
 
@@ -161,6 +163,27 @@ namespace MusicX.Controls
 
                     navigationService.OpenSection(curator.Catalog.DefaultSection);
 
+                }
+
+                if (Link.Meta.ContentType == "audio_playlists")
+                {
+                    const string playlistUrl = "https://vk.com/music/playlist/";
+                    if (Link.Url.StartsWith(playlistUrl))
+                    {
+                        var (playlistId, ownerId, accessKey, _) = PlaylistData.Parse(Link.Url[playlistUrl.Length..]);
+                        navigationService.OpenExternalPage(new PlaylistView(playlistId, ownerId, accessKey));
+                        return;
+                    }
+
+                    if (Link.Url == "https://vk.com/audio?catalog=my_audios")
+                    {
+                        navigationService.OpenMenuSection("Музыка");
+                        return;
+                    }
+                    
+                    var catalog = await vkService.GetAudioCatalogAsync(Link.Url);
+                    
+                    navigationService.OpenSection(catalog.Catalog.DefaultSection);
                 }
             }
             catch(Exception ex)
