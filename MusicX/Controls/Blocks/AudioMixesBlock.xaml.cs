@@ -4,6 +4,8 @@ using MusicX.Models.Enums;
 using MusicX.Services;
 using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
+using MusicX.ViewModels.Modals;
+using MusicX.Views.Modals;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -85,5 +87,15 @@ public sealed partial class AudioMixesBlock : UserControl
         MixButton.Appearance = Wpf.Ui.Controls.ControlAppearance.Secondary;
 
         LibraryButton.Appearance = Wpf.Ui.Controls.ControlAppearance.Transparent;
+    }
+
+    private async void MixSettings_Click(object sender, RoutedEventArgs e)
+    {
+        var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
+        var vm = StaticService.Container.GetRequiredService<MixSettingsModalViewModel>();
+
+        await vm.LoadSettings("common");
+
+        navigationService.OpenModal<MixSettingsModal>(vm);
     }
 }

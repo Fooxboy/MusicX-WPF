@@ -16,6 +16,7 @@ using VkNet.Extensions.DependencyInjection;
 using VkNet.Model;
 using VkNet.Utils;
 using Lyrics = MusicX.Core.Models.Lyrics;
+using MusicX.Core.Models.Mix;
 
 namespace MusicX.Core.Services
 {
@@ -1219,6 +1220,31 @@ namespace MusicX.Core.Services
                 };
 
                 var model = await apiInvoke.CallAsync<List<Audio>>("audio.getStreamMixAudios", parameters);
+
+                return model;
+            }
+            catch (Exception ex)
+            {
+                logger.Error("VK API ERROR:");
+                logger.Error(ex, ex.Message);
+                throw;
+            }
+
+        }
+
+        public async Task<MixSettingsRoot> GetStreamMixSettings(string mixId)
+        {
+            try
+            {
+                var parameters = new VkParameters
+                {
+
+                    {"device_id", await _deviceIdStore.GetDeviceIdAsync()},
+
+                    {"mix_id", mixId},
+                };
+
+                var model = await apiInvoke.CallAsync<MixSettingsRoot>("audio.getStreamMixSettings", parameters);
 
                 return model;
             }
