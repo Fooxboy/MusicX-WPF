@@ -98,5 +98,6 @@ public partial class MusicCategoryBlockControl : UserControl
 public enum MusicCategoryLayout
 {
     List,
-    Grid
+    Grid,
+    DoubleGrid
 }

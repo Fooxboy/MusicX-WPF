@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Services;
+using MusicX.Models.Enums;
 using MusicX.Services;
 using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
@@ -11,6 +12,15 @@ namespace MusicX.Controls.Blocks;
 
 public sealed partial class AudioMixesBlock : UserControl
 {
+
+    public MixMode Mode
+    {
+        get => (MixMode)GetValue(ModeProperty);
+        set => SetValue(ModeProperty, value);
+    }
+
+    public static readonly DependencyProperty ModeProperty =
+        DependencyProperty.Register("Mode", typeof(MixMode), typeof(AudioMixesBlock));
 
     public bool IsPlaying
     {
@@ -25,6 +35,8 @@ public sealed partial class AudioMixesBlock : UserControl
     public AudioMixesBlock()
     {
         InitializeComponent();
+
+        Mode = MixMode.Mix;
 
         _player = StaticService.Container.GetRequiredService<PlayerService>();
 
@@ -55,5 +67,23 @@ public sealed partial class AudioMixesBlock : UserControl
         var data = new MixOptions("common");
 
         await _player.PlayAsync(new MixPlaylist(data, StaticService.Container.GetRequiredService<VkService>()));
+    }
+
+    private void LibraryButton_Click(object sender, RoutedEventArgs e)
+    {
+        Mode = MixMode.Library;
+
+        MixButton.Appearance = Wpf.Ui.Controls.ControlAppearance.Transparent;
+
+        LibraryButton.Appearance = Wpf.Ui.Controls.ControlAppearance.Secondary;
+    }
+
+    private void MixButton_Click(object sender, RoutedEventArgs e)
+    {
+        Mode = MixMode.Mix;
+
+        MixButton.Appearance = Wpf.Ui.Controls.ControlAppearance.Secondary;
+
+        LibraryButton.Appearance = Wpf.Ui.Controls.ControlAppearance.Transparent;
     }
 }

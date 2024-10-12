@@ -30,7 +30,8 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
-        
+
+
         <DataTemplate x:Key="ListItemTemplate" DataType="{x:Type models:Link}">
             <ui:CardAction
                 Height="80"
@@ -91,7 +92,47 @@
                 </Grid>
             </ui:CardAction>
         </DataTemplate>
-        
+
+        <DataTemplate x:Key="DoubleGridItemTemplate" DataType="{x:Type models:Link}">
+            <ui:CardAction
+                Height="80"
+                Margin="0 0 10 10"
+                Padding="12 0 0 0"
+                Click="CardAction_Click"
+                IsChevronVisible="False">   
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Border CornerRadius="8" HorizontalAlignment="Left" Width="56" Height="56">
+                        <Border.Background>
+                            <ImageBrush ImageSource="{Binding Image[0].Url, Mode=OneTime}" />
+                        </Border.Background>
+                    </Border>
+
+                    <StackPanel VerticalAlignment="Center" Grid.Column="1">
+                        <TextBlock FontFamily="{StaticResource VKSansRegular}"
+                            Margin="15,0,0,0"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Left"
+                            Text="{Binding Title}"
+                            TextTrimming="CharacterEllipsis" />
+
+                        <TextBlock FontFamily="{StaticResource VKSansRegular}"
+                                     Opacity="0.4"
+                                     Margin="15,0,0,0"
+                                     VerticalAlignment="Center"
+                                     HorizontalAlignment="Left"
+                                     Text="{Binding Subtitle}"
+                                     TextTrimming="CharacterEllipsis" />    
+                    </StackPanel>
+                    
+                </Grid>
+            </ui:CardAction>
+        </DataTemplate>
+
         <Style TargetType="ui:ListView" BasedOn="{StaticResource ItemsListViewStyle}">
             <Setter Property="ItemTemplate" Value="{StaticResource ListItemTemplate}" />
             <Setter Property="ItemsPanel">
@@ -109,6 +150,17 @@
                         <Setter.Value>
                             <ItemsPanelTemplate>
                                 <UniformGrid IsItemsHost="True" Columns="4" />
+                            </ItemsPanelTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+
+                <DataTrigger Binding="{Binding Layout, ElementName=Control}" Value="DoubleGrid">
+                    <Setter Property="ItemTemplate" Value="{StaticResource DoubleGridItemTemplate}" />
+                    <Setter Property="ItemsPanel">
+                        <Setter.Value>
+                            <ItemsPanelTemplate>
+                                <UniformGrid MinWidth="50" IsItemsHost="True" Columns="2" />
                             </ItemsPanelTemplate>
                         </Setter.Value>
                     </Setter>

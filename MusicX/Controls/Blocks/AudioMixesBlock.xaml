@@ -101,14 +101,69 @@
 
             <!-- the foreground on top of the shader should always be white -->
             <TextBlock Foreground="White"
-                       Text="VK mix"
                        FontSize="70"
                        TextAlignment="Center"
-                       FontFamily="{StaticResource VKSansDemiBold}" />
+                       FontFamily="{StaticResource VKSansDemiBold}" >
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Mode, ElementName=Control, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="Mix">
+                                <Setter Property="Text" Value="Слушать VK микс"/>
+                            </DataTrigger>
+
+                            <DataTrigger Binding="{Binding Mode, ElementName=Control, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="Library">
+                                <Setter Property="Text" Value="Слушать мои треки"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
             <TextBlock Foreground="White"
-                       Text="Динамический плейлист, который подстраивается под Ваш вкус"
+                       Opacity="0.7"
+                       HorizontalAlignment="Center"
                        FontSize="17"
-                       FontFamily="{StaticResource VKSansRegular}" />
+                       FontFamily="{StaticResource VKSansRegular}">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Mode, ElementName=Control, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="Mix">
+                                <Setter Property="Text" Value="Музыкальные рекомендации для Вас"/>
+                            </DataTrigger>
+
+                            <DataTrigger Binding="{Binding Mode, ElementName=Control, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="Library">
+                                <Setter Property="Text" Value="Любимые треки из Вашей колелкции"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+
+
+            <wpfui:Button Margin="0,10,0,0" Width="150" HorizontalAlignment="Center">
+                <wpfui:Button.Content>
+                    <StackPanel Orientation="Horizontal">
+                        <wpfui:SymbolIcon VerticalAlignment="Center" FontSize="18" Symbol="Settings20"/>
+                        <TextBlock  VerticalAlignment="Center" Margin="5,0,0,2" Text="Настроить"/>
+                    </StackPanel>
+                </wpfui:Button.Content>
+            </wpfui:Button>
+
+            <Grid Margin="0,30,0,0" HorizontalAlignment="Center">
+                <Border Width="240" Height="32" Opacity="0.2" HorizontalAlignment="Center" BorderThickness="1" BorderBrush="White" CornerRadius="7">
+                 
+                </Border>
+                <StackPanel Orientation="Horizontal">
+
+                    <wpfui:Button x:Name="MixButton" Click="MixButton_Click" BorderThickness="0" Width="120" Appearance="Secondary"  Content="VK микс">
+                    </wpfui:Button>
+                    <wpfui:Button x:Name="LibraryButton" Click="LibraryButton_Click" BorderThickness="0" Width="120" Appearance="Transparent" Content="Моя музыка">
+                   
+                    </wpfui:Button>
+
+                </StackPanel>
+            </Grid>
+
+
         </StackPanel>
     </Grid>
 </UserControl>

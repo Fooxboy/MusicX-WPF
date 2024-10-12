@@ -103,6 +103,10 @@
             <blocks:MusicCategoryBlockControl Layout="Grid" />
         </DataTemplate>
 
+        <DataTemplate x:Key="links_entity_double_grid" DataType="{x:Type viewModels:BlockViewModel}">
+            <blocks:MusicCategoryBlockControl Layout="DoubleGrid" />
+        </DataTemplate>
+
         <DataTemplate x:Key="groups_items" DataType="{x:Type viewModels:BlockViewModel}">
             <blocks:GroupsBlockControl Group="{Binding Groups[0]}" />
         </DataTemplate>

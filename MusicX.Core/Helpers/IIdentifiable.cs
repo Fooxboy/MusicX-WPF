@@ -1,5 +1,6 @@
 ﻿using MusicX.Core.Models;
 using MusicX.Core.Models.General;
+using System.Linq;
 
 namespace MusicX.Core.Helpers;
 
@@ -109,6 +110,7 @@ public interface IIdentifiable
                 block is { Banners.Count: > 0 } &&
                 block.Banners.RemoveAll(banner => banner.ClickAction?.Action.Url.Contains("subscription") is true ||
                                                   banner.ClickAction?.Action.Url.Contains("combo") is true ||
+                                                  banner.ClickAction?.Action.Url.Contains("narrative") is true ||
                                                   banner.ClickAction?.Action.Url
                                                       .Contains("https://vk.com/app") is true ||
                                                   banner.ClickAction?.Action.Url.Contains("https://vk.com/vk_music") is
