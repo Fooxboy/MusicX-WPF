@@ -91,6 +91,31 @@ namespace MusicX.Core.Models
 
         [JsonProperty("featured_artists")]
         public List<MainArtist> FeaturedArtists { get; set; }
+        
+        public Photo? Thumb { get; set; }
+        
+        [JsonIgnore]
+        public Uri? Cover
+        {
+            get
+            {
+                if (Album?.Cover is { } uri)
+                    return uri;
+                
+                var url = Thumb switch
+                {
+                    { Photo68: { } photo68 } => photo68,
+                    { Photo135: { } photo135 } => photo135,
+                    { Photo270: { } photo270 } => photo270,
+                    { Photo300: { } photo300 } => photo300,
+                    { Photo600: { } photo600 } => photo600,
+                    { Photo1200: { } photo1200 } => photo1200,
+                    _ => null
+                };
+                
+                return url is null ? null : new(url);
+            }
+        }
 
         public string ParentBlockId { get; set; }
 

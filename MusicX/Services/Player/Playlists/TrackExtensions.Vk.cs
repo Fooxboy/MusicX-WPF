@@ -38,8 +38,11 @@ public static partial class TrackExtensions
                     audio.Album?.MainColor);
         }
 
-        return new(audio.Title, audio.Subtitle, audio.Album?.ToAlbumId(), mainArtists,
-                   audio.FeaturedArtists?.Select(ToTrackArtist).ToArray() ?? Array.Empty<TrackArtist>(), trackData);
+        return new(audio.Title, audio.Subtitle,
+            audio.Album is null
+                ? new UnknownAlbumId(audio.Cover?.ToString(), audio.Thumb?.Photo1200 ?? audio.Thumb?.Photo600)
+                : audio.Album.ToAlbumId(), mainArtists,
+            audio.FeaturedArtists?.Select(ToTrackArtist).ToArray() ?? Array.Empty<TrackArtist>(), trackData);
     }
 
     public static TrackArtist ToTrackArtist(this MainArtist artist)

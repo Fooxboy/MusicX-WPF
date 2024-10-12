@@ -195,7 +195,7 @@
             </Grid.RowDefinitions>
             
             <Grid Grid.RowSpan="2" Margin="0,0.5,6,0" VerticalAlignment="Center">
-                <ContentPresenter Content="{Binding Audio.Album.Cover, ElementName=Control, Mode=OneWay, TargetNullValue={x:Null}, FallbackValue={x:Null}}"
+                <ContentPresenter Content="{Binding Audio.Cover, ElementName=Control, Mode=OneWay, TargetNullValue={x:Null}, FallbackValue={x:Null}}"
                                   ContentTemplateSelector="{StaticResource TrackIconTemplateSelector}" />
                 <Border x:Name="PlayButtons" 
                         Visibility="Collapsed"
