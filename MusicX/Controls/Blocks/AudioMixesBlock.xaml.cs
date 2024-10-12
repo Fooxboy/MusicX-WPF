@@ -13,7 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using Wpf.Ui.Common;
+using AsyncAwaitBestPractices.MVVM;
 
 namespace MusicX.Controls.Blocks;
 
@@ -39,6 +39,13 @@ public sealed partial class AudioMixesBlock : UserControl
         DependencyProperty.Register("IsPlaying", typeof(bool), typeof(AudioMixesBlock));
     private readonly PlayerService _player;
     private ImmutableDictionary<string, ImmutableArray<string>>? _options;
+
+    private string MixId => Mode switch
+    {
+        MixMode.Mix => "common",
+        MixMode.Library => "my_music",
+        _ => throw new ArgumentOutOfRangeException()
+    };
 
     public AudioMixesBlock()
     {
@@ -77,7 +84,7 @@ public sealed partial class AudioMixesBlock : UserControl
 
     private Task PlayPlaylist()
     {
-        var data = new MixOptions("common", Options: _options);
+        var data = new MixOptions(MixId, Options: _options);
 
         return _player.PlayAsync(new MixPlaylist(data, StaticService.Container.GetRequiredService<VkService>()));
     }
@@ -87,7 +94,7 @@ public sealed partial class AudioMixesBlock : UserControl
         Mode = MixMode.Library;
 
         MixButton.Appearance = Wpf.Ui.Controls.ControlAppearance.Transparent;
-
+        MixSettings.Visibility = Visibility.Hidden;
         LibraryButton.Appearance = Wpf.Ui.Controls.ControlAppearance.Secondary;
     }
 
@@ -96,7 +103,7 @@ public sealed partial class AudioMixesBlock : UserControl
         Mode = MixMode.Mix;
 
         MixButton.Appearance = Wpf.Ui.Controls.ControlAppearance.Secondary;
-
+        MixSettings.Visibility = Visibility.Visible;
         LibraryButton.Appearance = Wpf.Ui.Controls.ControlAppearance.Transparent;
     }
 
@@ -105,23 +112,27 @@ public sealed partial class AudioMixesBlock : UserControl
         var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
         var vm = StaticService.Container.GetRequiredService<MixSettingsModalViewModel>();
 
-        vm.ApplyCommand = new RelayCommand(() =>
+        vm.ApplyCommand = new AsyncCommand(async () =>
         {
             SetOptions(vm.Categories);
             navigationService.CloseModal();
+            
+            await PlayPlaylist();
         });
-        vm.ResetCommand = new RelayCommand(() =>
+        vm.ResetCommand = new AsyncCommand(async () =>
         {
             _options = null;
             navigationService.CloseModal();
+            
+            await PlayPlaylist();
         });
 
-        await vm.LoadSettings("common");
+        await vm.LoadSettings(MixId);
 
         navigationService.OpenModal<MixSettingsModal>(vm);
     }
 
-    private async void SetOptions(IEnumerable<MixSettingsCategoryViewModel> categories)
+    private void SetOptions(IEnumerable<MixSettingsCategoryViewModel> categories)
     {
         var builder = ImmutableDictionary<string, ImmutableArray<string>>.Empty.ToBuilder();
         
@@ -136,7 +147,5 @@ public sealed partial class AudioMixesBlock : UserControl
         }
 
         _options = builder.Count == 0 ? null : builder.ToImmutable();
-
-        await PlayPlaylist();
     }
 }
