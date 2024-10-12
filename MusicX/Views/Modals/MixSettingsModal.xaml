@@ -5,9 +5,11 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:MusicX.Views.Modals"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-      mc:Ignorable="d" 
+    xmlns:modals="clr-namespace:MusicX.ViewModels.Modals"
+    mc:Ignorable="d" 
       MinWidth="400"
       d:DesignHeight="450" d:DesignWidth="800"
+      d:DataContext="{d:DesignInstance modals:MixSettingsModalViewModel}"
       Title="{Binding Title}">
 
     <Grid>
@@ -33,11 +35,11 @@
                                             <DataTrigger Binding="{Binding Type}" Value="pictured_button_horizontal_group">
                                                 <Setter Property="ItemTemplate">
                                                     <Setter.Value>
-                                                        <DataTemplate>
+                                                        <DataTemplate DataType="{x:Type modals:MixSettingsOptionViewModel}">
                                                             <StackPanel Margin="0,5,5,5">
-                                                                <ToggleButton Width="100" Height="100">
+                                                                <ToggleButton Width="100" Height="100" IsChecked="{Binding Selected}">
                                                                     <StackPanel HorizontalAlignment="Center">
-                                                                        <Image Height="50" Width="50" Source="{Binding ImageBytes}"/>
+                                                                        <Image Height="50" Width="50" Source="{Binding Icon}"/>
                                                                         <TextBlock Margin="0,5,0,0" HorizontalAlignment="Center" TextAlignment="Center" VerticalAlignment="Center" Width="120" Text="{Binding Title}"/>
                                                                     </StackPanel>
                                                                 </ToggleButton>
@@ -50,9 +52,9 @@
                                             <DataTrigger Binding="{Binding Type}" Value="button_horizontal_group">
                                                 <Setter Property="ItemTemplate">
                                                     <Setter.Value>
-                                                        <DataTemplate>
+                                                        <DataTemplate DataType="{x:Type modals:MixSettingsOptionViewModel}">
                                                             <Grid Margin="0,5,5,5">
-                                                                <ToggleButton Width="120" Content="{Binding Title}"/>
+                                                                <ToggleButton Width="120" IsChecked="{Binding Selected}" Content="{Binding Title}"/>
                                                             </Grid>
                                                         </DataTemplate>
                                                     </Setter.Value>
@@ -73,8 +75,10 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <ui:Button HorizontalAlignment="Stretch" Margin="5,0,0,0" Appearance="Secondary" Grid.Column="1" Content="Применить"/>
-                <ui:Button HorizontalAlignment="Stretch" Appearance="Transparent"  Grid.Column="0" Content="Сбросить"/>
+                <ui:Button HorizontalAlignment="Stretch" Margin="5,0,0,0" Appearance="Secondary" Grid.Column="1"
+                           Content="Применить" Command="{Binding ApplyCommand}" />
+                <ui:Button HorizontalAlignment="Stretch" Appearance="Transparent"  Grid.Column="0" Content="Сбросить"
+                           Command="{Binding ResetCommand}" />
             </Grid>
         </StackPanel>
 
