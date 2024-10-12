@@ -30,10 +30,12 @@ public static partial class TrackExtensions
         }else
         {
             trackData =
-                   new VkTrackData(audio.Url, isLiked, audio.IsExplicit, audio.HasLyrics, TimeSpan.FromSeconds(audio.Duration), new(
-                                       audio.Id,
-                                       audio.OwnerId, audio.AccessKey), audio.TrackCode, audio.ParentBlockId,
-                                   playlist is null ? null : new(playlist.Id, playlist.OwnerId, playlist.AccessKey));
+                new VkTrackData(audio.Url, isLiked, audio.IsExplicit, audio.HasLyrics,
+                    TimeSpan.FromSeconds(audio.Duration), new(
+                        audio.Id,
+                        audio.OwnerId, audio.AccessKey), audio.TrackCode, audio.ParentBlockId,
+                    playlist is null ? null : new(playlist.Id, playlist.OwnerId, playlist.AccessKey),
+                    audio.Album?.MainColor);
         }
 
         return new(audio.Title, audio.Subtitle, audio.Album?.ToAlbumId(), mainArtists,

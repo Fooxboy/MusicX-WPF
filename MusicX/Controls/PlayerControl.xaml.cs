@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using Microsoft.Extensions.DependencyInjection;
@@ -68,6 +69,7 @@ namespace MusicX.Controls
         
         private readonly ListenTogetherService listenTogetherService;
         private readonly Logger logger;
+        private readonly ColorConverter _colorConverter = new();
         private ConfigModel config;
 
         public PlayerControl()
@@ -233,6 +235,15 @@ namespace MusicX.Controls
                     default:
                         DislikeButton.Visibility = Visibility.Collapsed;
                         break;
+                }
+
+                if (PlayerService.CurrentTrack?.Data is VkTrackData vkTrackData)
+                {
+                    AlbumTooltipShadowEffect.Color = !string.IsNullOrEmpty(vkTrackData.AlbumMainColor) &&
+                                                     _colorConverter.ConvertFrom(vkTrackData.AlbumMainColor) is
+                                                         Color color
+                        ? color
+                        : Colors.Transparent;
                 }
 
                 await SaveVolume();

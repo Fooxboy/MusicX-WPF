@@ -37,6 +37,7 @@ namespace MusicX.ViewModels
         public bool IsLoading { get; set; } = true;
         public bool IsLoaded { get; set; }
         public string Cover { get; set; }
+        public string? MainColor { get; set; }
         public ObservableRangeCollection<Audio> Tracks { get; } = new();
 
         public Playlist Playlist { get; private set; }
@@ -200,7 +201,7 @@ namespace MusicX.ViewModels
                     this.Plays = playlist.Plays.ToString();
                 }
 
-                
+                MainColor = playlist.MainColor;
 
                 IsLoaded = true;
                 IsLoading = false;

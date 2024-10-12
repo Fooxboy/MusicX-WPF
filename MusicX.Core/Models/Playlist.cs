@@ -103,5 +103,7 @@ namespace MusicX.Core.Models
 
             }
         }
+        
+        public string? MainColor { get; set; }
     }
 }

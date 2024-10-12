@@ -123,9 +123,9 @@
                                     <Rectangle.Effect>
                                         <DropShadowEffect
                                             BlurRadius="40"
-                                            Opacity="0.3"
-                                            ShadowDepth="5"
-                                            Color="Black" />
+                                            Opacity="0.6"
+                                            ShadowDepth="0"
+                                            Color="{Binding MainColor, FallbackValue=#000000, Mode=OneWay}" />
                                     </Rectangle.Effect>
                                 </Rectangle>
                             </Grid>

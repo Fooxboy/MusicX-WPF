@@ -276,6 +276,9 @@
                                                             <Border.Background>
                                                                 <ImageBrush ImageSource="{Binding AlbumId.CoverUrl, FallbackValue={x:Null}}" />
                                                             </Border.Background>
+                                                            <Border.Effect>
+                                                                <DropShadowEffect ShadowDepth="0" Opacity="0.4" BlurRadius="15" RenderingBias="Performance" x:Name="AlbumTooltipShadowEffect" />
+                                                            </Border.Effect>
                                                         </Border>
                                                         <TextBlock
                                                             Margin="10,0,0,0"

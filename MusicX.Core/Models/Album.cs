@@ -40,5 +40,7 @@ namespace MusicX.Core.Models
                 return url is null ? null : new(url);
             }
         }
+        
+        public string? MainColor { get; set; }
     }
 }
