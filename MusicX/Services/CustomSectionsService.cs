@@ -66,6 +66,7 @@ public partial class CustomSectionsService : ICustomSectionsService
             },
             "track_recomms_full" => await GetTrackRecommsSectionAsync(nextFrom),
             "track_popular_full" => await GetPopularTracksSectionAsync(nextFrom),
+            "my_audios" => await StaticService.Container.GetRequiredService<VkService>().GetAudioMyAudios(),
             _ when CustomLinkRegex().IsMatch(id) => await GetAttachmentsSectionAsync(id, nextFrom),
             _ => null
         };

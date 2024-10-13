@@ -4,6 +4,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Extensions.DependencyInjection;
+using MusicX.Core.Services;
 using MusicX.ViewModels;
 
 namespace MusicX.Controls.Blocks
@@ -95,7 +96,25 @@ namespace MusicX.Controls.Blocks
                 var button = ViewModel.Buttons[0];
 
                 if (!string.IsNullOrEmpty(button.SectionId))
+                {
                     navigationService.OpenSection(button.SectionId);
+                    return;
+                }
+
+                if (button.Action is { Type: "open_url", Target: "internal", Url: { } url })
+                {
+                    if (url == "https://vk.com/audio?catalog=my_audios")
+                    {
+                        navigationService.OpenSection("my_audios");
+                        return;
+                    }
+                    
+                    var vkService = StaticService.Container.GetRequiredService<VkService>();
+
+                    var catalog = await vkService.GetAudioCatalogAsync(url);
+                    
+                    navigationService.OpenSection(catalog.Catalog.DefaultSection);
+                }
             }
             catch (Exception ex)
             {

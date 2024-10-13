@@ -1256,5 +1256,34 @@ namespace MusicX.Core.Services
             }
 
         }
+        
+        public async Task<ResponseData> GetAudioMyAudios()
+        {
+            try
+            {
+                var parameters = new VkParameters
+                {
+                    
+                    {"device_id", await _deviceIdStore.GetDeviceIdAsync()},
+                    
+                    {"need_blocks", true},
+                };
+
+
+                var model = await apiInvoke.CallAsync<ResponseData>("catalog.getAudioMyAudios", parameters);
+
+                if (model.Section is null && model.Catalog?.Sections is [var firstSection, ..])
+                    model.Section = firstSection;
+
+                IIdentifiable.Process(model);
+                return model;
+            }catch (Exception ex)
+            {
+                logger.Error("VK API ERROR:");
+                logger.Error(ex, ex.Message);
+                throw;
+            }
+          
+        }
     }
 }

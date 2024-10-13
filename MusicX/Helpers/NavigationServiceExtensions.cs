@@ -88,7 +88,7 @@ public static partial class NavigationServiceExtensions
 
                 if (link.Url == "https://vk.com/audio?catalog=my_audios")
                 {
-                    navigationService.OpenMenuSection("Музыка");
+                    navigationService.OpenSection("my_audios");
                     return;
                 }
 
