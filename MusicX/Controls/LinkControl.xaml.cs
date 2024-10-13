@@ -8,6 +8,7 @@ using System.Windows.Media.Imaging;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
+using MusicX.Helpers;
 using MusicX.Services;
 using MusicX.ViewModels;
 using MusicX.Views;
@@ -105,86 +106,7 @@ namespace MusicX.Controls
         {
             try
             {
-                if (Link.Meta.ContentType == null)
-                {
-                    var match = Regex.Match(Link.Url, "https://vk.com/podcasts\\?category=[0-9]+$");
-
-                    if (match.Success)
-                    {
-                        //var podcasts = await vkService.GetPodcastsAsync(Link.Url);
-                        //await navigationService.OpenSection(podcasts.Catalog.DefaultSection, true);
-
-                        return;
-
-                    }
-                    var music = await vkService.GetAudioCatalogAsync(Link.Url);
-                    navigationService.OpenSection(music.Catalog.DefaultSection);
-
-                    return;
-                }
-
-                if (Link.Meta.ContentType == "artist")
-                {
-                    var url = new Uri(Link.Url);
-
-                    navigationService.OpenSection(url.Segments.LastOrDefault(), SectionType.Artist);
-                }
-
-                if (Link.Meta.ContentType is "group" or "user" or "chat")
-                {
-                    if (CustomSectionsService.CustomLinkRegex().IsMatch(Link.Id))
-                    {
-                        navigationService.OpenSection(Link.Id);
-                        return;
-                    }
-                    
-                    var match = UserProfileRegex().Match(Link.Url);
-                    if(match.Success)
-                    {
-                        var music = await vkService.GetAudioCatalogAsync(Link.Url);
-
-                        navigationService.OpenSection(music.Catalog.DefaultSection);
-
-                        return;
-                    }
-
-                  
-                    Process.Start(new ProcessStartInfo
-                    {
-                        FileName = Link.Url,
-                        UseShellExecute = true
-                    });
-                }
-
-                if (Link.Meta.ContentType == "curator")
-                {
-
-                    var curator = await vkService.GetAudioCuratorAsync(Link.Meta.TrackCode, Link.Url);
-
-                    navigationService.OpenSection(curator.Catalog.DefaultSection);
-
-                }
-
-                if (Link.Meta.ContentType == "audio_playlists")
-                {
-                    const string playlistUrl = "https://vk.com/music/playlist/";
-                    if (Link.Url.StartsWith(playlistUrl))
-                    {
-                        var (playlistId, ownerId, accessKey, _) = PlaylistData.Parse(Link.Url[playlistUrl.Length..]);
-                        navigationService.OpenExternalPage(new PlaylistView(playlistId, ownerId, accessKey));
-                        return;
-                    }
-
-                    if (Link.Url == "https://vk.com/audio?catalog=my_audios")
-                    {
-                        navigationService.OpenMenuSection("Музыка");
-                        return;
-                    }
-                    
-                    var catalog = await vkService.GetAudioCatalogAsync(Link.Url);
-                    
-                    navigationService.OpenSection(catalog.Catalog.DefaultSection);
-                }
+                await navigationService.OpenLinkAsync(Link);
             }
             catch(Exception ex)
             {
@@ -192,8 +114,5 @@ namespace MusicX.Controls
             }
            
         }
-
-        [GeneratedRegex("https://vk.com/audios\\-?[0-9]+$")]
-        private static partial Regex UserProfileRegex();
     }
 }

@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Windows.Media;
+using MusicX.Helpers;
 using MusicX.ViewModels;
 using NLog;
 using Wpf.Ui.Appearance;
@@ -69,16 +70,7 @@ public partial class MusicCategoryBlockControl : UserControl
     {
         try
         {
-            if (link.Meta?.ContentType is "custom")
-            {
-                navigationService.OpenSection(link.Meta.TrackCode);
-                return;
-            }
-                
-            var music = await vkService.GetAudioCatalogAsync(link.Url);
-            navigationService.OpenSection(music.Catalog.DefaultSection);
-
-            return;
+            await navigationService.OpenLinkAsync(link);
         }
         catch(Exception ex)
         {
