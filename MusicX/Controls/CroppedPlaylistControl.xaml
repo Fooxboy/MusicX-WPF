@@ -15,7 +15,7 @@
 
             <Grid ClipToBounds="True">
 
-                <Image Stretch="UniformToFill" Source="{Binding Cover, UpdateSourceTrigger=PropertyChanged}">
+                <Image Stretch="UniformToFill" Opacity="0.9" Source="{Binding Cover, UpdateSourceTrigger=PropertyChanged}">
                     <Image.Clip>
                         <RectangleGeometry Rect="0,0,300,60" RadiusX="10" RadiusY="10"/>
                     </Image.Clip>

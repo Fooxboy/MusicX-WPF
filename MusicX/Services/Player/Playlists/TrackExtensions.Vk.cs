@@ -35,7 +35,7 @@ public static partial class TrackExtensions
                         audio.Id,
                         audio.OwnerId, audio.AccessKey), audio.TrackCode, audio.ParentBlockId,
                     playlist is null ? null : new(playlist.Id, playlist.OwnerId, playlist.AccessKey),
-                    audio.Album?.MainColor);
+                    audio.MainColor);
         }
 
         return new(audio.Title, audio.Subtitle,

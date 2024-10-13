@@ -88,6 +88,8 @@ namespace MusicX.Core.Models
 
         public bool IsAvailable { get; set; } = true;
 
+        [JsonProperty("main_color")]
+        public string MainColor { get; set; }
 
         [JsonProperty("featured_artists")]
         public List<MainArtist> FeaturedArtists { get; set; }

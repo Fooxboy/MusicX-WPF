@@ -210,11 +210,11 @@ namespace MusicX.Controls
                     amim.Begin();
                     var bitmapImage = new BitmapImage(new Uri(PlayerService.CurrentTrack.AlbumId.CoverUrl));
                     TrackCover.ImageSource = bitmapImage;
-                    BackgroundCard.ImageSource = bitmapImage;
+                   // BackgroundCard.ImageSource = bitmapImage;
                 }else
                 {
                     TrackCover.ImageSource = null;
-                    BackgroundCard.ImageSource = null;
+                    //BackgroundCard.ImageSource = null;
                 }
 
                 LikeIcon.Filled = PlayerService.CurrentTrack.Data.IsLiked;
@@ -239,11 +239,17 @@ namespace MusicX.Controls
 
                 if (PlayerService.CurrentTrack?.Data is VkTrackData vkTrackData)
                 {
-                    AlbumTooltipShadowEffect.Color = !string.IsNullOrEmpty(vkTrackData.AlbumMainColor) &&
-                                                     _colorConverter.ConvertFrom(vkTrackData.AlbumMainColor) is
+                    AlbumTooltipShadowEffect.Color = !string.IsNullOrEmpty(vkTrackData.MainColor) &&
+                                                     _colorConverter.ConvertFrom(vkTrackData.MainColor) is
                                                          Color color
                         ? color
                         : Colors.Transparent;
+
+                    if(vkTrackData.MainColor != null)
+                    {
+                        BlurringShape.Fill = (SolidColorBrush)new BrushConverter().ConvertFrom(vkTrackData.MainColor);
+                    }
+
                 }
 
                 await SaveVolume();

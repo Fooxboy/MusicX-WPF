@@ -98,16 +98,17 @@
         <Rectangle
             x:Name="ShadowShape"
             Fill="Black"
-            RadiusX="5"
-            RadiusY="5">
+            RadiusX="8"
+            RadiusY="8">
         </Rectangle>
+        
         <Border x:Name="BackgroundBorder" ClipToBounds="True">
             <Rectangle
+                Opacity="0.6"
                 x:Name="BlurringShape"
-                Margin="7"
-                RadiusX="5"
-                RadiusY="5">
-                <Rectangle.Fill>
+                RadiusX="8"
+                RadiusY="8">
+                <!--<Rectangle.Fill>
                     <ImageBrush
                         x:Name="BackgroundCard"
                         Opacity="0.4"
@@ -115,7 +116,7 @@
                 </Rectangle.Fill>
                 <Rectangle.Effect>
                     <BlurEffect KernelType="Gaussian" RenderingBias="Performance" Radius="32" />
-                </Rectangle.Effect>
+                </Rectangle.Effect>-->
             </Rectangle>
         </Border>
 
@@ -127,8 +128,8 @@
 
             <Rectangle
                 Fill="Black"
-                RadiusX="5"
-                RadiusY="5">
+                RadiusX="8"
+                RadiusY="8">
                 <Rectangle.Effect>
                     <DropShadowEffect
                         BlurRadius="8"
@@ -139,8 +140,8 @@
             <Border ClipToBounds="True">
                 <Rectangle
                     Margin="7"
-                    RadiusX="5"
-                    RadiusY="5">
+                    RadiusX="8"
+                    RadiusY="8">
                     <Rectangle.Fill>
                         <ImageBrush
                             ImageSource="{Binding ElementName=BackgroundCard, Path=ImageSource}"
