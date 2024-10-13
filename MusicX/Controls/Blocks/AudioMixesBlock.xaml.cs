@@ -27,7 +27,13 @@ public sealed partial class AudioMixesBlock : UserControl
     }
 
     public static readonly DependencyProperty ModeProperty =
-        DependencyProperty.Register("Mode", typeof(MixMode), typeof(AudioMixesBlock));
+        DependencyProperty.Register(nameof(Mode), typeof(MixMode), typeof(AudioMixesBlock), new PropertyMetadata(ModePropertyChangedCallback));
+
+    private static void ModePropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is AudioMixesBlock block)
+            block.CurrentPlaylistChanged(null, EventArgs.Empty);
+    }
 
     public bool IsPlaying
     {
@@ -36,7 +42,8 @@ public sealed partial class AudioMixesBlock : UserControl
     }
 
     public static readonly DependencyProperty IsPlayingProperty =
-        DependencyProperty.Register("IsPlaying", typeof(bool), typeof(AudioMixesBlock));
+        DependencyProperty.Register(nameof(IsPlaying), typeof(bool), typeof(AudioMixesBlock));
+    
     private readonly PlayerService _player;
     private ImmutableDictionary<string, ImmutableArray<string>>? _options;
 
@@ -55,14 +62,14 @@ public sealed partial class AudioMixesBlock : UserControl
 
         _player = StaticService.Container.GetRequiredService<PlayerService>();
 
-        _player.CurrentPlaylistChanged += Player_CurrentPlaylistChanged;
-        _player.PlayStateChangedEvent += Player_CurrentPlaylistChanged;
-        Player_CurrentPlaylistChanged(_player, EventArgs.Empty);
+        _player.CurrentPlaylistChanged += CurrentPlaylistChanged;
+        _player.PlayStateChangedEvent += CurrentPlaylistChanged;
+        CurrentPlaylistChanged(_player, EventArgs.Empty);
     }
 
-    private void Player_CurrentPlaylistChanged(object? sender, EventArgs e)
+    private void CurrentPlaylistChanged(object? sender, EventArgs e)
     {
-        IsPlaying = _player.CurrentPlaylist is MixPlaylist && _player.IsPlaying;
+        IsPlaying = _player is { CurrentPlaylist: MixPlaylist mixPlaylist, IsPlaying: true } && mixPlaylist.Data.Id == MixId;
     }
 
     private async void Button_Click(object sender, RoutedEventArgs e)
@@ -73,7 +80,7 @@ public sealed partial class AudioMixesBlock : UserControl
             return;
         }
 
-        if (_player.CurrentPlaylist is MixPlaylist)
+        if (_player.CurrentPlaylist is MixPlaylist mixPlaylist && mixPlaylist.Data.Id == MixId)
         {
             _player.Play();
             return;
