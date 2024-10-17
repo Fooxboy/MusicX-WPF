@@ -29,6 +29,14 @@
                     Margin="10,0,0,0"
                      />
             </StackPanel>
+            
+            <StackPanel MouseDown="Share_MouseDown" Orientation="Horizontal">
+                <iconElements:SymbolIcon Symbol="Share20"  />
+                <TextBlock
+                    Margin="10,0,0,0"
+                    
+                    Text="Поделиться" />
+            </StackPanel>
 
             <MenuItem
                 x:Name="GoToArtistMenu"

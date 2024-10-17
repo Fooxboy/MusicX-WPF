@@ -190,7 +190,7 @@ public class DownloaderViewModel : BaseViewModel
             try
             {
                 CurrentDownloadingAudio = audio;
-                await downloaderService.DownloadAudioAsync(audio, progress, token);
+                await downloaderService.DownloadAudioAsync(audio, progress, cancellationToken: token);
                 DownloadProgress = 0;
             }
             catch (Exception e) when (e is TypeInitializationException or COMException)

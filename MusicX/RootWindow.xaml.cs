@@ -326,6 +326,10 @@ namespace MusicX
                 }
 
                 this.WindowState = WindowState.Normal;
+                
+                var shareService = StaticService.Container.GetRequiredService<ShareService>();
+                
+                shareService.AssignWindow(new(this));
             }
             catch (Exception ex)
             {

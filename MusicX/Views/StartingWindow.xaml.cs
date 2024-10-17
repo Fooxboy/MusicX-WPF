@@ -132,6 +132,7 @@ namespace MusicX.Views
                 collection.AddSingleton(s => new BackendConnectionService(s.GetRequiredService<Logger>(), StaticService.Version));
                 collection.AddSingleton<WindowThemeService>();
                 collection.AddSingleton<SectionEventService>();
+                collection.AddSingleton<ShareService>();
 
                 var container = StaticService.Container = collection.BuildServiceProvider();
 

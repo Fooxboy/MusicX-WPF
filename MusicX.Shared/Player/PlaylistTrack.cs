@@ -41,6 +41,7 @@ public sealed record BoomTrackData(string Url, bool IsLiked, bool IsExplicit, Ti
 public record IdInfo(long Id, long OwnerId, string AccessKey)
 {
     public string ToOwnerIdString() => $"{OwnerId}_{Id}";
+    public override string ToString() => $"{OwnerId}_{Id}_{AccessKey}";
 }
 
 [ProtoContract(ImplicitFields = ImplicitFields.AllPublic, SkipConstructor = true)]

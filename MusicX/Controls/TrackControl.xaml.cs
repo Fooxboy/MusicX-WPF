@@ -601,5 +601,12 @@ namespace MusicX.Controls
             ExplicitBadgeColumn.Width = GridLength.Auto;
             TimeColumn.Width = GridLength.Auto;
         }
+
+        private void Share_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var shareService = StaticService.Container.GetRequiredService<ShareService>();
+            
+            shareService.ShareTrack(Audio.ToTrack());
+        }
     }
 }

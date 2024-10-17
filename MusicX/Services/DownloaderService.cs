@@ -50,44 +50,12 @@ public class DownloaderService
         return Directory.CreateDirectory(directory).FullName;
     }
 
-    public async Task DownloadAudioAsync(PlaylistTrack audio, IProgress<(TimeSpan Position, TimeSpan Duration)>? progress = null, CancellationToken cancellationToken = default)
+    public async Task DownloadAudioAsync(PlaylistTrack audio, IProgress<(TimeSpan Position, TimeSpan Duration)>? progress = null, FileInfo? destinationFile = null, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrEmpty(audio.Data.Url))
             return;
         
-        var fileName = $"{audio.GetArtistsString()} - {audio.Title}";
-        fileName = ReplaceSymbols(fileName) + ".mp3";
-            
-        string fileDownloadPath;
-        var musicFolder = GetDownloadDirectoryAsync();
-
-        if (audio.Data is DownloaderData data)
-        {
-            var name = ReplaceSymbols(data.PlaylistName);
-
-            var playlistDirPath = Path.Combine(musicFolder, name);
-
-            if (!Directory.Exists(playlistDirPath))
-            {
-                Directory.CreateDirectory(playlistDirPath);
-            }
-
-            fileDownloadPath = Path.Combine(playlistDirPath, fileName);
-        }
-        else
-        {
-            fileDownloadPath = Path.Combine(musicFolder, fileName);
-        }
-
-        var i = 0;
-        while (File.Exists(fileDownloadPath))
-        {
-            fileDownloadPath = fileDownloadPath.Replace(".mp3", string.Empty);
-            var value = $"({i})";
-            if (fileDownloadPath.EndsWith(value))
-                fileDownloadPath = fileDownloadPath[..^value.Length];
-            fileDownloadPath += $"({++i}).mp3";
-        }
+        var fileDownloadPath = destinationFile?.FullName ?? ResolveFileDownloadPath(audio);
 
         if (audio.Data is BoomTrackData)
         {
@@ -142,6 +110,45 @@ public class DownloaderService
         }
 
         await AddMetadataAsync(audio, fileDownloadPath, cancellationToken);
+    }
+
+    private string ResolveFileDownloadPath(PlaylistTrack audio)
+    {
+        var fileName = $"{audio.GetArtistsString()} - {audio.Title}";
+        fileName = ReplaceSymbols(fileName) + ".mp3";
+            
+        string fileDownloadPath;
+        var musicFolder = GetDownloadDirectoryAsync();
+
+        if (audio.Data is DownloaderData data)
+        {
+            var name = ReplaceSymbols(data.PlaylistName);
+
+            var playlistDirPath = Path.Combine(musicFolder, name);
+
+            if (!Directory.Exists(playlistDirPath))
+            {
+                Directory.CreateDirectory(playlistDirPath);
+            }
+
+            fileDownloadPath = Path.Combine(playlistDirPath, fileName);
+        }
+        else
+        {
+            fileDownloadPath = Path.Combine(musicFolder, fileName);
+        }
+
+        var i = 0;
+        while (File.Exists(fileDownloadPath))
+        {
+            fileDownloadPath = fileDownloadPath.Replace(".mp3", string.Empty);
+            var value = $"({i})";
+            if (fileDownloadPath.EndsWith(value))
+                fileDownloadPath = fileDownloadPath[..^value.Length];
+            fileDownloadPath += $"({++i}).mp3";
+        }
+
+        return fileDownloadPath;
     }
 
     private string ReplaceSymbols(string fileName)
