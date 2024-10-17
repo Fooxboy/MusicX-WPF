@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Interop;
 using Windows.ApplicationModel.DataTransfer;
@@ -12,6 +11,7 @@ using MusicX.Shared.Player;
 using NLog;
 using Wpf.Ui;
 using Wpf.Ui.Extensions;
+using DataTransferManagerInterop = MusicX.Helpers.DataTransferManagerInterop;
 
 namespace MusicX.Services;
 
