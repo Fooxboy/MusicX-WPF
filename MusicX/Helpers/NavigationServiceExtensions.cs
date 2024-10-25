@@ -20,7 +20,7 @@ public static partial class NavigationServiceExtensions
         
         switch (link.Meta.ContentType)
         {
-            case "" or null:
+            case "" or null or "audio_recent" or "audio_followings":
             {
                 var match = PodcastsCategoryUrl().Match(link.Url);
 
