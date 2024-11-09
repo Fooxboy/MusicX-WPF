@@ -1,9 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Models;
-using MusicX.Services;
-using NavigationService = MusicX.Services.NavigationService;
+using MusicX.ViewModels;
 
 namespace MusicX.Controls
 {
@@ -12,19 +10,22 @@ namespace MusicX.Controls
     /// </summary>
     public partial class BlockControl : UserControl
     {
-        private readonly NavigationService navigationService;
         public BlockControl()
         {
             InitializeComponent();
-
-            navigationService = StaticService.Container.GetRequiredService<NavigationService>();
-            this.Unloaded += BlockControl_Unloaded;
         }
 
-        private void BlockControl_Unloaded(object sender, RoutedEventArgs e)
+#if DEBUG
+        protected override void OnContentChanged(object oldContent, object newContent)
         {
-            /*BlocksPanel.Children.Clear();*/
+            base.OnContentChanged(oldContent, newContent);
+
+            if (newContent is BlockViewModel viewModel)
+                ToolTip = $"{viewModel.DataType} {viewModel.Layout?.Name ?? ""}";
+            else
+                ToolTip = null;
         }
+#endif
 
         public static readonly DependencyProperty ArtistProperty = DependencyProperty.Register(
             nameof(Artist), typeof(Artist), typeof(BlockControl));
