@@ -248,9 +248,10 @@
         <Grid
             x:Name="FullGrid"
             HorizontalAlignment="Stretch"
-            MouseLeftButtonDown="FullGrid_MouseLeftButtonDown"
             Visibility="Collapsed">
-            <StackPanel Orientation="Horizontal">
+            <controls:CardAction IsChevronVisible="False" MinWidth="300"
+                                 Click="CardAction_Click">
+                <StackPanel Orientation="Horizontal">
                 <Grid>
                     <Rectangle
                         Grid.Row="0"
@@ -322,7 +323,7 @@
 
                 </StackPanel>
             </StackPanel>
-
+            </controls:CardAction>
         </Grid>
 
 

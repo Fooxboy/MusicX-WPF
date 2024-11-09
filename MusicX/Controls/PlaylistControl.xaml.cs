@@ -235,13 +235,6 @@ namespace MusicX.Controls
             notificationService.OpenExternalPage(new PlaylistView(Playlist));
         }
 
-        private void FullGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            var notificationService = StaticService.Container.GetRequiredService<NavigationService>();
-
-            notificationService.OpenExternalPage(new PlaylistView(Playlist));
-        }
-
         private void PlayPlaylistGrid_MouseEnter(object sender, MouseEventArgs e)
         {
             //this.Cursor = Cursors.Hand;
