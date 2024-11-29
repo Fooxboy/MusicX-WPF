@@ -1,5 +1,5 @@
 # https://hub.docker.com/_/microsoft-dotnet
-FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
+FROM mcr.microsoft.com/dotnet/sdk:9.0-alpine AS build
 WORKDIR /source
 
 COPY SignalR.Protobuf/SignalR.Protobuf.csproj SignalR.Protobuf/ 
@@ -17,7 +17,7 @@ WORKDIR /source/MusicX.Server
 RUN dotnet publish -c release -o /app -r linux-musl-x64 --self-contained false --no-restore
 
 # final stage/image
-FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine-amd64
+FROM mcr.microsoft.com/dotnet/aspnet:9.0-alpine-amd64
 WORKDIR /app
 COPY --from=build /app ./
 
