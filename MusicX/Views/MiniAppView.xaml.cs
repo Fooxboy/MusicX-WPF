@@ -2,6 +2,7 @@
 using System.Net;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Navigation;
@@ -263,8 +264,8 @@ window.chrome.webview.hostObjects.bridge.addEventListener('VKWebAppEvent', (even
             : $"Код ошибки сервера: {(HttpStatusCode)e.HttpStatusCode}";
     }
 
-    private void WebView_OnWebMessageReceived(object? sender, CoreWebView2WebMessageReceivedEventArgs e)
+    private void MiniAppView_OnUnloaded(object sender, RoutedEventArgs e)
     {
-        
+        WebView.Dispose();
     }
 }

@@ -10,7 +10,8 @@
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       xmlns:converters="clr-namespace:MusicX.Converters"
       mc:Ignorable="d"
-      d:DataContext="{d:DesignInstance viewModels:MiniAppViewModel}">
+      d:DataContext="{d:DesignInstance viewModels:MiniAppViewModel}"
+      Unloaded="MiniAppView_OnUnloaded">
     <Page.Resources>
         <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
     </Page.Resources>
@@ -20,8 +21,7 @@
                       DefaultBackgroundColor="Transparent"
                       AllowExternalDrop="False"
                       NavigationStarting="WebView_OnNavigationStarting"
-                      NavigationCompleted="WebView_OnNavigationCompleted"
-                      WebMessageReceived="WebView_OnWebMessageReceived">
+                      NavigationCompleted="WebView_OnNavigationCompleted">
             <wv2:WebView2.Style>
                 <Style TargetType="wv2:WebView2">
                     <Setter Property="Visibility" Value="Hidden" />
