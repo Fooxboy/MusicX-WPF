@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.IO;
 using System.Reflection;
 
 namespace MusicX.Services;
@@ -14,6 +15,10 @@ public static class StaticService
     
     public static Version MinimumOsVersion { get; } = new(10, 0, 19041, 0);
     public static Version CurrentOsVersion { get; } = Environment.OSVersion.Version;
+
+    public static DirectoryInfo UserDataFolder { get; } =
+        new(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "MusicX"));
 }
 
 [AttributeUsage(AttributeTargets.Assembly)]

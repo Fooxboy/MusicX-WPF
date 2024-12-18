@@ -31,6 +31,17 @@ public static partial class NavigationServiceExtensions
 
                     return;
                 }
+                
+                match = MiniAppRegex().Match(link.Url);
+                
+                if (match.Success)
+                {
+                    var appId = match.Groups["app"].Value;
+                    var miniAppResponse = await vkService.GetMiniApp(appId, link.Url);
+                    
+                    navigationService.OpenExternalPage(new MiniAppView(new MiniAppViewModel(appId, miniAppResponse.Object.WebviewUrl)));
+                    return;
+                }
 
                 var music = await vkService.GetAudioCatalogAsync(link.Url);
                 navigationService.OpenSection(music.Catalog.DefaultSection);
@@ -113,4 +124,7 @@ public static partial class NavigationServiceExtensions
 
     [GeneratedRegex(@"https://vk\.com/music/(?:album|playlist)/(?<id>[\-\w]+)$")]
     private static partial Regex PlaylistOrAlbumUrl();
+    
+    [GeneratedRegex(@"https://vk\.com/(?<app>app\-?[0-9]+)(?>[\?\#].+)?$")]
+    private static partial Regex MiniAppRegex();
 }

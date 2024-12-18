@@ -55,6 +55,12 @@
         "resolved": "1.1.0",
         "contentHash": "RqSGSk7kXXEBa4Bu/I7XFmF7Op6DdSmn46gqlywwmvLG/2JDnCsxrAryQfnIilkyt42R4RkOzXdgIzAs2p6XdA=="
       },
+      "Microsoft.Web.WebView2": {
+        "type": "Direct",
+        "requested": "[1.0.2903.40, )",
+        "resolved": "1.0.2903.40",
+        "contentHash": "THrzYAnJgE3+cNH+9Epr44XjoZoRELdVpXlWGPs6K9C9G6TqyDfVCeVAR/Er8ljLitIUX5gaSkPsy9wRhD1sgQ=="
+      },
       "Microsoft.Windows.CsWin32": {
         "type": "Direct",
         "requested": "[0.3.106, )",
@@ -490,8 +496,8 @@
       },
       "Newtonsoft.Json": {
         "type": "Transitive",
-        "resolved": "13.0.1",
-        "contentHash": "ppPFpBcvxdsfUonNcvITKqLl3bqxWbDCZIzDWHzjpdAHRFfZe0Dw9HmA0+za13IdyrgJwpkDTDA9fHaxOrt20A=="
+        "resolved": "13.0.3",
+        "contentHash": "HrC5BXdl00IP9zeV+0Z848QWPAoCr9P3bDEZguI+gkLcBKAOxix/tLEAAHC+UvDNPv4a2d18lOReHMOagPa+zQ=="
       },
       "NLog": {
         "type": "Transitive",
@@ -600,7 +606,7 @@
         "type": "Project",
         "dependencies": {
           "Microsoft.Win32.Registry": "[4.5.0, )",
-          "Newtonsoft.Json": "[12.0.2, )"
+          "Newtonsoft.Json": "[13.0.3, )"
         }
       },
       "ffmediatoolkit": {
@@ -612,7 +618,7 @@
       "if.lastfm.core": {
         "type": "Project",
         "dependencies": {
-          "Newtonsoft.Json": "[9.0.1, )"
+          "Newtonsoft.Json": "[13.0.3, )"
         }
       },
       "musicx.core": {
@@ -666,6 +672,12 @@
         "requested": "[1.1.0, )",
         "resolved": "1.1.0",
         "contentHash": "RqSGSk7kXXEBa4Bu/I7XFmF7Op6DdSmn46gqlywwmvLG/2JDnCsxrAryQfnIilkyt42R4RkOzXdgIzAs2p6XdA=="
+      },
+      "Microsoft.Web.WebView2": {
+        "type": "Direct",
+        "requested": "[1.0.2903.40, )",
+        "resolved": "1.0.2903.40",
+        "contentHash": "THrzYAnJgE3+cNH+9Epr44XjoZoRELdVpXlWGPs6K9C9G6TqyDfVCeVAR/Er8ljLitIUX5gaSkPsy9wRhD1sgQ=="
       },
       "System.Text.Encoding.CodePages": {
         "type": "Direct",

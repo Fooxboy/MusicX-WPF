@@ -133,6 +133,7 @@ namespace MusicX.Views
                 collection.AddSingleton<WindowThemeService>();
                 collection.AddSingleton<SectionEventService>();
                 collection.AddSingleton<ShareService>();
+                collection.AddTransient<VkBridgeService>();
 
                 var container = StaticService.Container = collection.BuildServiceProvider();
 

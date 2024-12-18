@@ -26,15 +26,14 @@ namespace MusicX.Services
         public ConfigService(Logger logger, ISnackbarService snackbarService)
         {
             _logger = logger;
-            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MusicX");
-            _configPath = Path.Combine(path, Name);
+            _configPath = Path.Combine(StaticService.UserDataFolder.FullName, Name);
 
-            if (Directory.Exists(path)) return;
+            if (StaticService.UserDataFolder.Exists) return;
             
-            Directory.CreateDirectory(path);
+            StaticService.UserDataFolder.Create();
             try
             {
-                MigrateOldConfig(path);
+                MigrateOldConfig(StaticService.UserDataFolder.FullName);
             }
             catch (Exception e)
             {

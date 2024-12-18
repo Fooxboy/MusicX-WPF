@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using NLog;
 using System.Diagnostics;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
 using VkNet.Abstractions;
 using VkNet.Abstractions.Core;
@@ -17,6 +18,7 @@ using VkNet.Model;
 using VkNet.Utils;
 using Lyrics = MusicX.Core.Models.Lyrics;
 using MusicX.Core.Models.Mix;
+using VkNet.Abstractions.Utils;
 
 namespace MusicX.Core.Services
 {
@@ -35,9 +37,10 @@ namespace MusicX.Core.Services
         private readonly ICustomSectionsService _customSectionsService;
         private readonly IDeviceIdStore _deviceIdStore;
         private readonly ITokenRefreshHandler _tokenRefreshHandler;
+        private readonly IRestClient _restClient;
 
         public VkService(Logger logger, IVkApiCategories vkApi, IVkApiInvoke apiInvoke, IVkApiVersionManager versionManager,
-                         IVkTokenStore tokenStore, IVkApiAuthAsync auth, IVkApi api, ICustomSectionsService customSectionsService, IDeviceIdStore deviceIdStore, ITokenRefreshHandler tokenRefreshHandler)
+                         IVkTokenStore tokenStore, IVkApiAuthAsync auth, IVkApi api, ICustomSectionsService customSectionsService, IDeviceIdStore deviceIdStore, ITokenRefreshHandler tokenRefreshHandler, IRestClient restClient)
         {
             this.vkApi = vkApi;
             this.apiInvoke = apiInvoke;
@@ -47,6 +50,7 @@ namespace MusicX.Core.Services
             _customSectionsService = customSectionsService;
             _deviceIdStore = deviceIdStore;
             _tokenRefreshHandler = tokenRefreshHandler;
+            _restClient = restClient;
 
             var ver = vkApiVersion.Split('.');
             versionManager.SetVersion(int.Parse(ver[0]), int.Parse(ver[1]));
@@ -1284,6 +1288,109 @@ namespace MusicX.Core.Services
                 throw;
             }
           
+        }
+
+        public async Task<ResolveScreenNameResponse> GetMiniApp(string appId, string url)
+        {
+            var parameters = new VkParameters
+            {
+                {"device_id", await _deviceIdStore.GetDeviceIdAsync()},
+                {"screen_name", appId},
+                {"url", url},
+                {"func_v", 23},
+                {"app_fields", [
+                        "has_vk_connect",
+                        "is_vkui_internal",
+                        "webview_url",
+                        "screen_orientation",
+                        "mobile_controls_type",
+                        "splash_screen",
+                        "background_loader_color",
+                        "placeholder_info",
+                        "hide_tabbar",
+                        "track_code",
+                        "author_owner_id",
+                        "preload_ad_types",
+                        "ad_config",
+                        "can_cache",
+                        "icon_75",
+                        "icon_139",
+                        "icon_150",
+                        "icon_576",
+                        "need_show_unverified_screen",
+                        "is_in_catalog"
+                    ]
+                },
+            };
+
+            try
+            {
+                var model = await apiInvoke.CallAsync<ResolveScreenNameResponse>("execute.resolveScreenName",
+                    parameters);
+
+                return model;
+            }
+            catch (Exception e)
+            {
+                logger.Error(e);
+                throw;
+            }
+        }
+        
+        public async Task<AppLaunchParamsResponse> GetMiniAppLaunchParams(long appId)
+        {
+            var parameters = new VkParameters
+            {
+                {"device_id", await _deviceIdStore.GetDeviceIdAsync()},
+                {"mini_app_id", appId},
+                {"referer", "recs"}
+            };
+
+            try
+            {
+                var model = await apiInvoke.CallAsync<AppLaunchParamsResponse>("apps.getAppLaunchParams",
+                    parameters);
+
+                return model;
+            }
+            catch (Exception e)
+            {
+                logger.Error(e);
+                throw;
+            }
+        }
+
+        public async Task<CredentialResponse> GetMiniAppCredentialToken(string sourceUrl, string scope)
+        {
+            var parameters = new VkParameters
+            {
+                {"device_id", await _deviceIdStore.GetDeviceIdAsync()},
+                {"display", "android"},
+                {"scope", scope},
+                {"response_type", "token"},
+                {"redirect_uri", "https://oauth.vk.com/blank.html"},
+                {"client_id", 52384530},
+                {"source_url", sourceUrl},
+                {"https", true},
+                {"v", vkApiVersion},
+                {"access_token", _api.Token}
+            };
+
+            try
+            {
+                var response = await _restClient.PostAsync(new("https://api.vk.com/oauth/authorize"), parameters, Encoding.UTF8);
+                
+                if (!response.ResponseUri.Fragment.StartsWith("#access_token="))
+                    throw new VkApiException("Access token not found");
+
+                var query = Url.ParseQueryString("?" + response.ResponseUri.Fragment[1..]);
+                return new CredentialResponse(query["access_token"]);
+            }
+            catch (Exception e)
+            {
+                logger.Error(e);
+                throw;
+            }
         }
     }
 }

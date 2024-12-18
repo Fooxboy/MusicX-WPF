@@ -99,7 +99,7 @@ jobs:
         name: Download previous release
 
       - name: Build package
-        run: vpk pack -c ${{ github.ref == 'refs/heads/develop' && 'win-beta' || 'win' }} -f vcredist140-x64 -p pub -u MusicX.WPF -v ${{ needs.compute-version.outputs.version }} --packTitle "MusicX Player" -e MusicX.exe -i MusicX/StoreLogo.scale-400.ico --skipVeloAppCheck --packAuthors "Fooxboy, zznty" --releaseNotes notes.md -s MusicX/StoreLogo.scale-400.png
+        run: vpk pack -c ${{ github.ref == 'refs/heads/develop' && 'win-beta' || 'win' }} -f vcredist140-x64,webview2 -p pub -u MusicX.WPF -v ${{ needs.compute-version.outputs.version }} --packTitle "MusicX Player" -e MusicX.exe -i MusicX/StoreLogo.scale-400.ico --skipVeloAppCheck --packAuthors "Fooxboy, zznty" --releaseNotes notes.md -s MusicX/StoreLogo.scale-400.png
 
       - name: Push pre-release package
         if: ${{ github.ref == 'refs/heads/develop' }}
