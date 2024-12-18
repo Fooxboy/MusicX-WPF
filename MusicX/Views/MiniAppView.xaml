@@ -17,13 +17,13 @@
     </Page.Resources>
     
     <Grid Margin="0,0,3,0 ">
-        <wv2:WebView2 x:Name="WebView"
+        <wv2:WebView2CompositionControl x:Name="WebView"
                       DefaultBackgroundColor="Transparent"
                       AllowExternalDrop="False"
                       NavigationStarting="WebView_OnNavigationStarting"
                       NavigationCompleted="WebView_OnNavigationCompleted">
-            <wv2:WebView2.Style>
-                <Style TargetType="wv2:WebView2">
+            <wv2:WebView2CompositionControl.Style>
+                <Style TargetType="wv2:WebView2CompositionControl">
                     <Setter Property="Visibility" Value="Hidden" />
                     <Style.Triggers>
                         <MultiDataTrigger>
@@ -36,13 +36,13 @@
                         </MultiDataTrigger>
                     </Style.Triggers>
                 </Style>
-            </wv2:WebView2.Style>
-            <wv2:WebView2.CreationProperties>
+            </wv2:WebView2CompositionControl.Style>
+            <wv2:WebView2CompositionControl.CreationProperties>
                 <wv2:CoreWebView2CreationProperties Language="ru-RU"
                                                     AreBrowserExtensionsEnabled="False"
                                                     UserDataFolder="{Binding FullName, Mode=OneTime, Source={x:Static services:StaticService.UserDataFolder}}"/>
-            </wv2:WebView2.CreationProperties>
-        </wv2:WebView2>
+            </wv2:WebView2CompositionControl.CreationProperties>
+        </wv2:WebView2CompositionControl>
         
         <ui:ProgressRing VerticalAlignment="Center"
                  HorizontalAlignment="Center"
