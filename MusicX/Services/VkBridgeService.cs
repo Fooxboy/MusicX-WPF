@@ -252,7 +252,7 @@ public class VkBridgeService(IVkApiInvoke vkApi, Logger log, VkService vkService
                 {
                     apiException.ErrorCode,
                     ErrorMsg = apiException.Message,
-                    RequestParams = apiException.RequestParams.Keys
+                    RequestParams = apiException.RequestParams?.Keys
                 }
             });
             
