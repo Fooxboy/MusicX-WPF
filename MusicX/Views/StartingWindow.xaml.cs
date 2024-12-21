@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Net.Http;
-using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using IF.Lastfm.Core.Api;
 using IF.Lastfm.Core.Scrobblers;
-using Microsoft.AppCenter.Analytics;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Services;
+using MusicX.Helpers;
 using MusicX.Models;
 using MusicX.RegistryPatches;
 using MusicX.Services;
@@ -31,6 +29,7 @@ using VkNet.AudioBypassService.Models.Auth;
 using VkNet.Exception;
 using VkNet.Extensions.DependencyInjection;
 using Wpf.Ui;
+using Wpf.Ui.Appearance;
 using NavigationService = MusicX.Services.NavigationService;
 
 namespace MusicX.Views
@@ -48,17 +47,16 @@ namespace MusicX.Views
             _args = args;
         }
 
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            base.OnClosing(e);
+            SystemThemeWatcher.UnWatch(this);
+        }
+
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-
-            var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-            Analytics.TrackEvent("StartApp", properties);
+            SystemThemeWatcher.Watch(this);
+            this.SuppressTitleBarColorization();
 
             await Task.Run(async () =>
             {
@@ -79,7 +77,7 @@ namespace MusicX.Views
                 collection.AddSingleton<GithubService>();
                 collection.AddSingleton<DiscordService>();
                 collection.AddSingleton<BoomService>();
-                collection.AddSingleton(LogManager.Setup().GetLogger("Common"));
+                collection.AddSingleton(LogManager.GetLogger("Common"));
                 collection.AddSingleton<GeniusService>();
 
                 collection.AddSingleton<IRegistryPatch, ListenTogetherPatch>();
@@ -108,6 +106,7 @@ namespace MusicX.Views
                 collection.AddTransient<AccountsWindowViewModel>();
                 collection.AddTransient<LoginVerificationMethodsModalViewModel>();
                 collection.AddTransient<LastFmAuthModalViewModel>();
+                collection.AddTransient<MixSettingsModalViewModel>();
 
                 collection.AddSingleton<NavigationService>();
                 collection.AddSingleton<ConfigService>();
@@ -130,6 +129,11 @@ namespace MusicX.Views
                 });
                 collection.AddSingleton<IScrobbler, MemoryScrobbler>();
                 collection.AddSingleton<ITrackApi, TrackApi>();
+                collection.AddSingleton(s => new BackendConnectionService(s.GetRequiredService<Logger>(), StaticService.Version));
+                collection.AddSingleton<WindowThemeService>();
+                collection.AddSingleton<SectionEventService>();
+                collection.AddSingleton<ShareService>();
+                collection.AddTransient<VkBridgeService>();
 
                 var container = StaticService.Container = collection.BuildServiceProvider();
 
@@ -177,6 +181,9 @@ namespace MusicX.Views
                 {
                     try
                     {
+                        var themeService = container.GetRequiredService<WindowThemeService>();
+                        themeService.Update(config.Theme);
+                        
                         if (string.IsNullOrEmpty(config.AccessToken))
                         {
                             if (string.IsNullOrEmpty(config.AnonToken))
@@ -193,6 +200,18 @@ namespace MusicX.Views
                             {
 
                                 await vkService.SetTokenAsync(config.AccessToken);
+
+                                try
+                                {
+                                    var connectionService = container.GetRequiredService<BackendConnectionService>();
+                                    await connectionService.GetTokenAsync(config.UserId);
+                                    connectionService.ReportMetric("StartApp");
+                                }
+                                catch (Exception exception)
+                                {
+                                    logger.Error(exception);
+                                }
+                                
                                 var rootWindow = ActivatorUtilities.CreateInstance<RootWindow>(container);
                                 rootWindow.Show();
 

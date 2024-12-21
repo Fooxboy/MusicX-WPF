@@ -1,16 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
+using MusicX.Helpers;
 using MusicX.Services;
+using MusicX.ViewModels;
+using MusicX.Views;
 using NLog;
 using Wpf.Ui.Controls;
 
@@ -93,19 +94,10 @@ namespace MusicX.Controls
                         Card.Icon = new SymbolIcon(SymbolRegular.Link48);
                     }
                 }
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error("Fail load link control");
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed load link control");
             }
             
         }
@@ -114,84 +106,13 @@ namespace MusicX.Controls
         {
             try
             {
-                if (Link.Meta.ContentType == null)
-                {
-                    var match = Regex.Match(Link.Url, "https://vk.com/podcasts\\?category=[0-9]+$");
-
-                    if (match.Success)
-                    {
-                        //var podcasts = await vkService.GetPodcastsAsync(Link.Url);
-                        //await navigationService.OpenSection(podcasts.Catalog.DefaultSection, true);
-
-                        return;
-
-                    }
-                    var music = await vkService.GetAudioCatalogAsync(Link.Url);
-                    navigationService.OpenSection(music.Catalog.DefaultSection);
-
-                    return;
-                }
-
-                if (Link.Meta.ContentType == "artist")
-                {
-                    var url = new Uri(Link.Url);
-
-                    navigationService.OpenSection(url.Segments.LastOrDefault(), SectionType.Artist);
-                }
-
-                if (Link.Meta.ContentType is "group" or "user" or "chat")
-                {
-                    if (CustomSectionsService.CustomLinkRegex().IsMatch(Link.Id))
-                    {
-                        navigationService.OpenSection(Link.Id);
-                        return;
-                    }
-                    
-                    var match = UserProfileRegex().Match(Link.Url);
-                    if(match.Success)
-                    {
-                        var music = await vkService.GetAudioCatalogAsync(Link.Url);
-
-                        navigationService.OpenSection(music.Catalog.DefaultSection);
-
-                        return;
-                    }
-
-                  
-                    Process.Start(new ProcessStartInfo
-                    {
-                        FileName = Link.Url,
-                        UseShellExecute = true
-                    });
-                }
-
-                if (Link.Meta.ContentType == "curator")
-                {
-
-                    var curator = await vkService.GetAudioCuratorAsync(Link.Meta.TrackCode, Link.Url);
-
-                    navigationService.OpenSection(curator.Catalog.DefaultSection);
-
-                }
-            }catch(Exception ex)
+                await navigationService.OpenLinkAsync(Link);
+            }
+            catch(Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error("Fail click action in link control");
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed click action in link control");
             }
            
         }
-
-        [GeneratedRegex("https://vk.com/audios\\-?[0-9]+$")]
-        private static partial Regex UserProfileRegex();
     }
 }

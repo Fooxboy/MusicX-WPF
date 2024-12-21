@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Interop;
 using Windows.UI.Popups;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Toolkit.Uwp.Notifications;
 using MusicX.Controls;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
@@ -15,6 +16,7 @@ using MusicX.Services.Player.Playlists;
 using MusicX.ViewModels;
 using MusicX.ViewModels.Modals;
 using MusicX.Views.Modals;
+using NLog;
 using VkNet.Abstractions.Core;
 using VkNet.Exception;
 using WinRT.Interop;
@@ -234,6 +236,14 @@ namespace MusicX.Views
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                throw new Exception("Test");
+            }
+            catch (Exception exception)
+            {
+                StaticService.Container.GetRequiredService<Logger>().Fatal(exception, "Test");
+            }
         }
 
         private void PlaylistSerialize_OnClick(object sender, RoutedEventArgs e)
@@ -268,6 +278,22 @@ namespace MusicX.Views
             var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
 
             navigationService.OpenModal<WelcomeToListenTogetherModal>();
+        }
+
+        private void ShowToast_OnClick(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                new ToastContentBuilder()
+                    .AddText("Текст текст текст")
+                    .AddText("Ещё текста немного навалило")
+                    .Show();
+            }
+            catch (Exception exception)
+            {
+                Debugger.Break();
+                StaticService.Container.GetRequiredService<Logger>().Error(exception, "Toast");
+            }
         }
     }
 }

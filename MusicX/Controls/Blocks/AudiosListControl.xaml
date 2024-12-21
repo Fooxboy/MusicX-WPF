@@ -6,24 +6,22 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="clr-namespace:MusicX.Controls"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
     <Grid x:Name="AllTracksBlock">
-        <ItemsControl ItemsSource="{Binding Audios, ElementName=Control}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation="Vertical" IsItemsHost="True" />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
+        <ui:ListView ItemsSource="{Binding Audios, ElementName=Control}"
+                     Style="{StaticResource ItemsListViewStyle}">
+            <ui:ListView.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>
-                        <controls:TrackControl Audio="{Binding}" Margin="0,0,0,5" ShowCard="False" />
-                        <Rectangle Height="1" Fill="White" Opacity="0.2" Margin="5,0,5,5"/>
+                        <controls:TrackControl Audio="{Binding}" Margin="0,0,0,5" ShowCard="False" 
+                                               InChart="{Binding ShowChart, ElementName=Control}" />
+                        <Rectangle Height="1" Fill="{DynamicResource ControlStrokeColorDefaultBrush}" Margin="5,0,5,5"/>
                     </StackPanel>
                 </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+            </ui:ListView.ItemTemplate>
+        </ui:ListView>
     </Grid>
 </UserControl>

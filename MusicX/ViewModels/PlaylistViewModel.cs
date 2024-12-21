@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
-using Microsoft.AppCenter.Crashes;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Helpers;
@@ -13,7 +11,16 @@ using Wpf.Ui;
 namespace MusicX.ViewModels
 {
     [Serializable]
-    public record PlaylistData(long PlaylistId, long OwnerId, string AccessKey);
+    public record PlaylistData(long PlaylistId, long OwnerId, string AccessKey, int? Count = null)
+    {
+        public static PlaylistData Parse(string str)
+        {
+            var parts = str.Split('_');
+            ArgumentOutOfRangeException.ThrowIfNotEqual(parts.Length, 3, nameof(str));
+            
+            return new PlaylistData(long.Parse(parts[1]), long.Parse(parts[0]), parts[2]);
+        }
+    }
     
     public class PlaylistViewModel:BaseViewModel
     {
@@ -30,6 +37,7 @@ namespace MusicX.ViewModels
         public bool IsLoading { get; set; } = true;
         public bool IsLoaded { get; set; }
         public string Cover { get; set; }
+        public string? MainColor { get; set; }
         public ObservableRangeCollection<Audio> Tracks { get; } = new();
 
         public Playlist Playlist { get; private set; }
@@ -40,17 +48,19 @@ namespace MusicX.ViewModels
         private readonly VkService vkService;
         private readonly Logger logger;
         private readonly ISnackbarService _snackbarService;
+        private readonly SectionEventService _eventService;
 
         public ConfigService ConfigService { get; set; }
 
         public PlaylistViewModel(VkService vkService, Logger logger, ConfigService configService,
-            ISnackbarService snackbarService)
+            ISnackbarService snackbarService, SectionEventService eventService)
         {
             this.vkService = vkService;
             this.ConfigService = configService;
             this.logger = logger;
 
             _snackbarService = snackbarService;
+            _eventService = eventService;
         }
         public async ValueTask LoadMore()
         {
@@ -74,16 +84,10 @@ namespace MusicX.ViewModels
                 else
                     await Application.Current.Dispatcher.InvokeAsync(Add);
                 VisibleLoadingMore = Visibility.Collapsed;
-            }catch(Exception ex)
+            }
+            catch(Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error("Fatal error in load playlist");
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to load more tracks in playlist");
 
                 _snackbarService.ShowException("Произошла ошибка", "MusicX не смог загрузить плейлист, попробуйте ещё раз");
 
@@ -97,7 +101,7 @@ namespace MusicX.ViewModels
             try
             {
                 logger.Info("Load playlist");
-                PlaylistData = new(playlist.Id, playlist.OwnerId, playlist.AccessKey);
+                PlaylistData = new(playlist.Id, playlist.OwnerId, playlist.AccessKey, (int)playlist.Count);
                 if (delete && Tracks.Count > 0)
                 {
                     if (Application.Current.Dispatcher.CheckAccess())
@@ -197,7 +201,7 @@ namespace MusicX.ViewModels
                     this.Plays = playlist.Plays.ToString();
                 }
 
-                
+                MainColor = playlist.MainColor;
 
                 IsLoaded = true;
                 IsLoading = false;
@@ -207,18 +211,7 @@ namespace MusicX.ViewModels
             }
             catch (Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error("Fatal error in load playlist");
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to load playlist");
 
                 _snackbarService.ShowException("Произошла ошибка", "MusicX не смог загрузить контент");
 
@@ -239,20 +232,10 @@ namespace MusicX.ViewModels
                 //Changed("VisibleContent");
                 //Changed("VisibleLoading");
 
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error("Fatal error in load playlist from data");
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to load playlist from data");
 
                 _snackbarService.ShowException("Произошла ошибка", "MusicX не смог загрузить контент");
 
@@ -261,7 +244,7 @@ namespace MusicX.ViewModels
         }
         public Task LoadPlaylistFromData(PlaylistData data)
         {
-            var (playlistId, ownerId, accessKey) = data;
+            var (playlistId, ownerId, accessKey, _) = data;
             return LoadPlaylistFromData(playlistId, ownerId, accessKey);
         }
 
@@ -270,21 +253,12 @@ namespace MusicX.ViewModels
             try
             {
                 await vkService.AddPlaylistAsync(Playlist.Id, Playlist.OwnerId, Playlist.AccessKey);
+                _eventService.Dispatch(this, SectionEvent.PlaylistsFollow);
                 return true;
-            }catch(Exception ex)
+            }
+            catch(Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error("Error in add playlist");
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to add playlist");
                 _snackbarService.ShowException("Произошла ошибка", "MusicX не смог добавить плейлист");
 
                 return false;
@@ -296,22 +270,15 @@ namespace MusicX.ViewModels
             try
             {
                 await vkService.DeletePlaylistAsync(Playlist.Id, Playlist.OwnerId);
+                _eventService.Dispatch(this,
+                    Playlist.OwnerId == ConfigService.Config.UserId
+                        ? SectionEvent.PlaylistsRemove
+                        : SectionEvent.PlaylistsUnfollow);
                 return true;
             }
             catch (Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error("Error in remove playlist");
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to remove playlist");
                 _snackbarService.ShowException("Произошла ошибка", "MusicX не смог удалить плейлист");
 
                 return false;

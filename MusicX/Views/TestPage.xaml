@@ -127,6 +127,14 @@
                     Appearance="Secondary"
                     Click="showNotification_Click"
                     Content="Показать уведомление" />
+                <wpfui:Button
+                    x:Name="ShowToast"
+                    Width="300"
+                    Margin="0,50,0,0"
+                    HorizontalAlignment="Left"
+                    Appearance="Secondary"
+                    Click="ShowToast_OnClick"
+                    Content="Показать тост" />
 
                 <TextBlock
                     Margin="0,30,0,0"

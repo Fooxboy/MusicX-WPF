@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Services;
-using MusicX.Helpers;
 using MusicX.Shared.Player;
 
 namespace MusicX.Services.Player.Playlists;

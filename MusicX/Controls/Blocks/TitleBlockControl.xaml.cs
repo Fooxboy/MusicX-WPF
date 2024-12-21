@@ -1,12 +1,11 @@
-﻿using MusicX.Core.Models;
-using MusicX.Services;
+﻿using MusicX.Services;
 using NLog;
 using System;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Extensions.DependencyInjection;
-using System.Collections.Generic;
-using Microsoft.AppCenter.Crashes;
+using MusicX.Core.Services;
+using MusicX.ViewModels;
 
 namespace MusicX.Controls.Blocks
 {
@@ -15,17 +14,28 @@ namespace MusicX.Controls.Blocks
     /// </summary>
     public partial class TitleBlockControl : UserControl
     {
+        public static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register(
+            nameof(ViewModel), typeof(BlockViewModel), typeof(TitleBlockControl), new PropertyMetadata(PropertyChangedCallback));
+
+        public BlockViewModel ViewModel
+        {
+            get => (BlockViewModel)GetValue(ViewModelProperty);
+            set => SetValue(ViewModelProperty, value);
+        }
+        
         public TitleBlockControl()
         {
             InitializeComponent();
-            DataContextChanged += TitleBlockControl_Loaded;
+        }
+        
+        private static void PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is TitleBlockControl control && e.NewValue is not null)
+                control.Fill();
         }
 
-        private void TitleBlockControl_Loaded(object sender, DependencyPropertyChangedEventArgs e)
+        private void Fill()
         {
-            if (DataContext is not Block block)
-                return;
-
             if(RootWindow.WinterTheme)
             {
                 var r = new Random();
@@ -38,36 +48,36 @@ namespace MusicX.Controls.Blocks
            
             Buttons.SelectionChanged += ButtonsComboBox_SelectionChanged;
 
-            if (block.Layout.Name == "header_compact")
+            if (ViewModel.Layout.Name == "header_compact")
             {
                 Title.Opacity = 0.5;
                 Title.FontSize = 15;
             }
 
-            Title.Content = block.Layout.Title;
+            Title.Content = ViewModel.Layout.Title;
 
-            if(block.Layout.TopTitle is not null || block.Layout.Subtitle is not null)
+            if(ViewModel.Layout.TopTitle is not null || ViewModel.Layout.Subtitle is not null)
             {
-                Subtitle.Text = block.Layout.TopTitle?.Text ?? block.Layout.Subtitle;
+                Subtitle.Text = ViewModel.Layout.TopTitle?.Text ?? ViewModel.Layout.Subtitle;
                 Subtitle.Visibility = Visibility.Visible;
-                if (block.Actions.Count == 1)
+                if (ViewModel.Buttons.Count == 1)
                     Subtitle.Margin = new(11, 0, 11, 0);
             }
 
-            if (block.Badge != null)
+            if (ViewModel.Badge != null)
             {
-                BadgeHeader.Text = block.Badge.Text;
+                BadgeHeader.Text = ViewModel.Badge.Text;
                 BadgeHeader.Visibility = Visibility.Visible;
             }
 
-            if (block.Buttons is { Count: > 0 }) //ios
+            if (ViewModel.Buttons is { Count: > 0 }) //ios
             {
-                if (block.Buttons[0].Options.Count > 0)
+                if (ViewModel.Buttons[0].Options.Count > 0)
                 {
                     ButtonsGrid.Visibility = Visibility.Visible;
-                    TitleButtons.Text = block.Buttons[0].Title;
+                    TitleButtons.Text = ViewModel.Buttons[0].Title;
                     Buttons.Visibility = Visibility.Visible;
-                    foreach (var option in block.Buttons[0].Options)
+                    foreach (var option in ViewModel.Buttons[0].Options)
                     {
                         Buttons.Items.Add(new TextBlock() { Text = option.Text });
                     }
@@ -75,64 +85,42 @@ namespace MusicX.Controls.Blocks
                     return;
                 }
             }
-            else
-            {
-                
-                if(block.Actions.Count > 0 && block.Actions[0].Options.Count > 0)
-                {
-                    //android
-                    ButtonsGrid.Visibility = Visibility.Visible;
-                    TitleButtons.Text = block.Actions[0].Title;
-                    Buttons.Visibility = Visibility.Visible;
-                        
-
-                    foreach (var option in block.Actions[0].Options)
-                    {
-                        Buttons.Items.Add(new TextBlock() { Text = option.Text });
-                    }
-                        
-                    return;
-                }
-
-                return;
-            }
         }
 
         private async void MoreButton_Click(object sender, RoutedEventArgs e)
         {
-            if (DataContext is not Block block)
-                return;
             try
             {
                 var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
 
-                if (block.Actions.Count > 0)
-                {
-                    var bnt = block.Actions[0];
+                var button = ViewModel.Buttons[0];
 
-                    navigationService.OpenSection(bnt.SectionId);
+                if (!string.IsNullOrEmpty(button.SectionId))
+                {
+                    navigationService.OpenSection(button.SectionId);
                     return;
                 }
 
-                var button = block.Buttons[0];
+                if (button.Action is { Type: "open_url", Target: "internal", Url: { } url })
+                {
+                    if (url == "https://vk.com/audio?catalog=my_audios")
+                    {
+                        navigationService.OpenSection("my_audios");
+                        return;
+                    }
+                    
+                    var vkService = StaticService.Container.GetRequiredService<VkService>();
 
-                navigationService.OpenSection(button.SectionId);
+                    var catalog = await vkService.GetAudioCatalogAsync(url);
+                    
+                    navigationService.OpenSection(catalog.Catalog.DefaultSection);
+                }
             }
             catch (Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
                 var logger = StaticService.Container.GetRequiredService<Logger>();
 
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to open extended section in title block");
             }
 
 
@@ -140,24 +128,13 @@ namespace MusicX.Controls.Blocks
 
         private async void ButtonsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (DataContext is not Block block)
-                return;
             try
             {
                 var comboBox = sender as ComboBox;
 
                 var current = comboBox.SelectedIndex;
 
-                OptionButton option;
-                if(block.Buttons != null)
-                {
-                    option = block.Buttons[0].Options[current];
-
-                }else
-                {
-                    option = block.Actions[0].Options[current];
-
-                }
+                var option = ViewModel.Buttons[0].Options[current];
 
                 var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
 
@@ -165,19 +142,9 @@ namespace MusicX.Controls.Blocks
             }
             catch (Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
                 var logger = StaticService.Container.GetRequiredService<Logger>();
 
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to replace blocks in title combobox");
             }
 
 

@@ -84,13 +84,14 @@
                     Margin="20,0,0,70"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center">
+                    <!-- need force foreground on top of the image to be white -->
                     <TextBlock
                         x:Name="Title"
                         MaxWidth="600"
                         Margin="0,0,0,0"
                         FontFamily="{StaticResource VKSansDemiBold}"
                         FontSize="50"
-                        
+                        Foreground="White"
                         Text="Имя альбома"
                         TextWrapping="Wrap" />
                     <TextBlock
@@ -98,7 +99,7 @@
                         MaxWidth="600"
                         FontFamily="{StaticResource VKSansMedium}"
                         FontSize="30"
-                        
+                        Foreground="White"
                         Text="Имя исполнителя"
                         TextWrapping="Wrap" />
                     <TextBlock
@@ -106,7 +107,7 @@
                         MaxWidth="600"
                         FontFamily="{StaticResource VKSansRegular}"
                         FontSize="20"
-                        
+                        Foreground="White"
                         Opacity="0.7"
                         Text="Какое то описание от ВКонтакте, хз че они там выдадут"
                         TextWrapping="Wrap" />

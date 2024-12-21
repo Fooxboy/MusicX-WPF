@@ -2,21 +2,24 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net7.0-windows10.0.22621.0</TargetFramework>
+    <TargetFramework>net9.0-windows10.0.22621.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
     <SupportedOSPlatform>10.0.19041.0</SupportedOSPlatform>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>StoreLogo.scale-400.ico</ApplicationIcon>
     <Version>0.40</Version>
-    <PlatformTarget>x64</PlatformTarget>
-    <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <TieredPGO>true</TieredPGO>
-    <Platforms>x64</Platforms>
     <ValidateExecutableReferencesMatchSelfContained>false</ValidateExecutableReferencesMatchSelfContained>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\newyear\snow_logo.png" />
+    <None Remove="Assets\newyear\start_show.png" />
+  </ItemGroup>
   
   <ItemGroup>
     <AssemblyAttribute Include="MusicX.Services.BuildDateTime">
@@ -32,7 +35,6 @@
     <Resource Include="Assets\icon.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Assets\icons\github-mark-white.png" />
     <Resource Include="Assets\newyear\newyearblock.png" />
     <Resource Include="Assets\newyear\snow1.png" />
     <Resource Include="Assets\newyear\snow2.png" />
@@ -44,6 +46,8 @@
     <Resource Include="Assets\newyear\snow8.png" />
     <Resource Include="Assets\newyear\snow9.png" />
     <Resource Include="Assets\newyear\snowfall.png" />
+    <Resource Include="Assets\newyear\snow_logo.png" />
+    <Resource Include="Assets\newyear\start_show.png" />
     <Resource Include="Fonts\VKSansDisplay-Bold.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
@@ -70,6 +74,8 @@
 
 	  <Resource Include="Assets\icons\ic_fluent_video_play_pause_24_regular.png" />
 
+	  <EmbeddedResource Include="StoreLogo.scale-30.png" />
+
 	  <Resource Include="StoreLogo.scale-400.png" />
 
 	  <None Include="Shaders\ColorOverlayShader.hlsl" />
@@ -83,28 +89,29 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="8.0.0" />
+    <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="9.0.0" />
     <PackageReference Include="FFmpegInteropX" Version="2.0.0-pre7" />
     <PackageReference Include="MdXaml" Version="1.27.0" />
     <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.3" />
-    <PackageReference Include="Microsoft.VCRTForwarders.140" Version="1.0.8-pre" />
+    <PackageReference Include="Microsoft.VCRTForwarders.140" Version="1.1.0" />
     <PackageReference Include="HandyControl" Version="3.5.1" />
-    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.5" />
-    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.5" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2950-prerelease" />
     <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.106">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="MonoMod.RuntimeDetour" Version="25.2.1" />
     <PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.1" />
     <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" PrivateAssets="All" />
     <PackageReference Include="QRCoder.Xaml" Version="1.6.0" />
+    <PackageReference Include="Sentry.NLog" Version="4.13.0" />
     <PackageReference Include="System.Linq.Async" Version="6.0.1" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
-    <PackageReference Include="System.Text.Json" Version="8.0.4" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.0" />
+    <PackageReference Include="System.Text.Json" Version="9.0.0" />
     <PackageReference Include="taglib-sharp-netstandard2.0" Version="2.1.0" />
-    <PackageReference Include="Velopack" Version="0.0.556" />
-    <PackageReference Include="WPF-UI" Version="3.0.4" />
-    <PackageReference Include="WPF-UI.Tray" Version="3.0.4" />
-    <PackageReference Include="WpfScreenHelper" Version="2.1.0" />
+    <PackageReference Include="Velopack" Version="0.0.942" />
+    <PackageReference Include="WPF-UI" Version="3.0.5" />
+    <PackageReference Include="WPF-UI.Tray" Version="3.0.5" />
+    <PackageReference Include="WpfScreenHelper" Version="2.1.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -150,12 +157,8 @@
     <ProjectReference Include="..\pscompiler\pscompiler.csproj" Private="false" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="Shaders\MixNoiseShader.hlsl" />
-  </ItemGroup>
-
   <Target Name="PreBuild" BeforeTargets="ResolveReferences">
-    <Exec Command="dotnet --roll-forward LatestMajor ../PsCompiler/bin/$(Configuration)/net7.0/win10-x64/PsCompiler.dll Shaders Shaders/bin" />
+    <Exec Command="dotnet --roll-forward LatestMajor ../PsCompiler/bin/$(Configuration)/net9.0/win-x64/PsCompiler.dll Shaders Shaders/bin" />
     <ItemGroup>
       <Resource Include="Shaders\bin\*.ps" />
     </ItemGroup>

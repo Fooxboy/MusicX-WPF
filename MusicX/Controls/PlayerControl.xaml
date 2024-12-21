@@ -17,62 +17,76 @@
     mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary>
-            <Storyboard x:Key="BackgroundAmimate">
-                <!--  <DoubleAnimationUsingKeyFrames Storyboard.TargetName="BackgroundRectangle"  -->
-                <!--  Storyboard.TargetProperty="(UIElement.Opacity)">  -->
-                <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="1" /> -->
-                <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.4000000" Value="0.8" /> -->
-                <!-- </DoubleAnimationUsingKeyFrames> -->
-            </Storyboard>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Styles/DarkColors.xaml" />
+                <ResourceDictionary>
+                    <Style x:Key="PlayerIconStyle" TargetType="ui:SymbolIcon">
+                        <Setter Property="OverridesDefaultStyle" Value="True" />
+                        <Setter Property="Foreground">
+                            <Setter.Value>
+                                <SolidColorBrush Color="{DynamicResource TextFillColorPrimary}" />
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                    <Style TargetType="ui:SymbolIcon" BasedOn="{StaticResource PlayerIconStyle}" />
+                    
+                    <Storyboard x:Key="BackgroundAmimate">
+                        <!--  <DoubleAnimationUsingKeyFrames Storyboard.TargetName="BackgroundRectangle"  -->
+                        <!--  Storyboard.TargetProperty="(UIElement.Opacity)">  -->
+                        <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="1" /> -->
+                        <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.4000000" Value="0.8" /> -->
+                        <!-- </DoubleAnimationUsingKeyFrames> -->
+                    </Storyboard>
 
-            <Storyboard x:Key="QueueHideAnimation">
-                <DoubleAnimation
-                    Storyboard.TargetName="QueueGrid"
-                    Storyboard.TargetProperty="Height"
-                    From="500"
-                    To="0"
-                    Duration="0:0:0.3">
-                    <DoubleAnimation.EasingFunction>
-                        <PowerEase EasingMode="EaseIn" />
-                    </DoubleAnimation.EasingFunction>
-                </DoubleAnimation>
-            </Storyboard>
-            <Storyboard x:Key="QueueShowAnimation">
-                <DoubleAnimation
-                    Storyboard.TargetName="QueueGrid"
-                    Storyboard.TargetProperty="Height"
-                    From="0"
-                    To="500"
-                    Duration="0:0:0.3">
-                    <DoubleAnimation.EasingFunction>
-                        <PowerEase EasingMode="EaseIn" />
-                    </DoubleAnimation.EasingFunction>
-                </DoubleAnimation>
-            </Storyboard>
+                    <Storyboard x:Key="QueueHideAnimation">
+                        <DoubleAnimation
+                            Storyboard.TargetName="QueueGrid"
+                            Storyboard.TargetProperty="Height"
+                            From="500"
+                            To="0"
+                            Duration="0:0:0.3">
+                            <DoubleAnimation.EasingFunction>
+                                <PowerEase EasingMode="EaseIn" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+                    </Storyboard>
+                    <Storyboard x:Key="QueueShowAnimation">
+                        <DoubleAnimation
+                            Storyboard.TargetName="QueueGrid"
+                            Storyboard.TargetProperty="Height"
+                            From="0"
+                            To="500"
+                            Duration="0:0:0.3">
+                            <DoubleAnimation.EasingFunction>
+                                <PowerEase EasingMode="EaseIn" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+                    </Storyboard>
 
-            <Style
-                x:Key="TransparentToggleButtonStyle"
-                BasedOn="{StaticResource {x:Type ToggleButton}}"
-                TargetType="{x:Type ToggleButton}">
-                <Setter Property="Background" Value="Transparent" />
-            </Style>
+                    <Style
+                        x:Key="TransparentToggleButtonStyle"
+                        BasedOn="{StaticResource {x:Type ToggleButton}}"
+                        TargetType="{x:Type ToggleButton}">
+                        <Setter Property="Background" Value="Transparent" />
+                    </Style>
 
-            <Style x:Key="TransparentBorderStyle" TargetType="{x:Type Border}">
-                <Setter Property="Background" Value="Transparent" />
-                <Setter Property="BorderBrush" Value="{DynamicResource ControlElevationBorderBrush}" />
-                <Setter Property="BorderThickness" Value="{StaticResource ButtonBorderThemeThickness}" />
-                <Setter Property="CornerRadius" Value="5" />
-                <Setter Property="SnapsToDevicePixels" Value="True" />
-                <Style.Triggers>
-                    <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Background" Value="{DynamicResource ControlElevationBorderBrush}" />
-                    </Trigger>
-                </Style.Triggers>
-            </Style>
+                    <Style x:Key="TransparentBorderStyle" TargetType="{x:Type Border}">
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="BorderBrush" Value="{DynamicResource ControlElevationBorderBrush}" />
+                        <Setter Property="BorderThickness" Value="{StaticResource ButtonBorderThemeThickness}" />
+                        <Setter Property="CornerRadius" Value="5" />
+                        <Setter Property="SnapsToDevicePixels" Value="True" />
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource ControlElevationBorderBrush}" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
 
-            <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+                    <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
-
     </UserControl.Resources>
     <Grid>
 
@@ -84,16 +98,17 @@
         <Rectangle
             x:Name="ShadowShape"
             Fill="Black"
-            RadiusX="5"
-            RadiusY="5">
+            RadiusX="8"
+            RadiusY="8">
         </Rectangle>
+        
         <Border x:Name="BackgroundBorder" ClipToBounds="True">
             <Rectangle
+                Opacity="0.6"
                 x:Name="BlurringShape"
-                Margin="7"
-                RadiusX="5"
-                RadiusY="5">
-                <Rectangle.Fill>
+                RadiusX="8"
+                RadiusY="8">
+                <!--<Rectangle.Fill>
                     <ImageBrush
                         x:Name="BackgroundCard"
                         Opacity="0.4"
@@ -101,7 +116,7 @@
                 </Rectangle.Fill>
                 <Rectangle.Effect>
                     <BlurEffect KernelType="Gaussian" RenderingBias="Performance" Radius="32" />
-                </Rectangle.Effect>
+                </Rectangle.Effect>-->
             </Rectangle>
         </Border>
 
@@ -113,8 +128,8 @@
 
             <Rectangle
                 Fill="Black"
-                RadiusX="5"
-                RadiusY="5">
+                RadiusX="8"
+                RadiusY="8">
                 <Rectangle.Effect>
                     <DropShadowEffect
                         BlurRadius="8"
@@ -125,8 +140,8 @@
             <Border ClipToBounds="True">
                 <Rectangle
                     Margin="7"
-                    RadiusX="5"
-                    RadiusY="5">
+                    RadiusX="8"
+                    RadiusY="8">
                     <Rectangle.Fill>
                         <ImageBrush
                             ImageSource="{Binding ElementName=BackgroundCard, Path=ImageSource}"
@@ -248,7 +263,8 @@
                                                         <RowDefinition Height="Auto" />
                                                         <RowDefinition Height="Auto" />
                                                     </Grid.RowDefinitions>
-                                                    <TextBlock HorizontalAlignment="Center" Text="Перейти к альбому" />
+                                                    <TextBlock HorizontalAlignment="Center" Text="Перейти к альбому"
+                                                               Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
                                                     <StackPanel
                                                         Grid.Row="1"
                                                         Margin="10,10,10,3"
@@ -261,12 +277,16 @@
                                                             <Border.Background>
                                                                 <ImageBrush ImageSource="{Binding AlbumId.CoverUrl, FallbackValue={x:Null}}" />
                                                             </Border.Background>
+                                                            <Border.Effect>
+                                                                <DropShadowEffect ShadowDepth="0" Opacity="0.4" BlurRadius="15" RenderingBias="Performance" x:Name="AlbumTooltipShadowEffect" />
+                                                            </Border.Effect>
                                                         </Border>
                                                         <TextBlock
                                                             Margin="10,0,0,0"
                                                             VerticalAlignment="Center"
                                                             FontFamily="{StaticResource VKSansDemiBold}"
-                                                            Text="{Binding AlbumId.Name}" />
+                                                            Text="{Binding AlbumId.Name}"
+                                                            Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
                                                     </StackPanel>
                                                 </Grid>
                                             </ToolTip>
@@ -317,7 +337,8 @@
                             Appearance="Transparent"
                             Click="LikeTrack_Click">
 
-                            <ui:SymbolIcon x:Name="LikeIcon" Symbol="Heart20" />
+                            <ui:SymbolIcon x:Name="LikeIcon"
+                                           Symbol="Heart20" />
 
                             <wpfui:Button.ToolTip>
                                 <ToolTip Content="Добавить/убрать в библиотеку" />
@@ -410,7 +431,11 @@
                                         <Setter.Value>
                                             <ControlTemplate>
                                                 <Border Style="{StaticResource TransparentBorderStyle}">
-                                                    <ui:SymbolIcon Symbol="Play32" />
+                                                    <ui:SymbolIcon Symbol="Play32">
+                                                        <ui:SymbolIcon.Foreground>
+                                                            <SolidColorBrush Color="{StaticResource TextFillColorPrimary}" />
+                                                        </ui:SymbolIcon.Foreground>
+                                                    </ui:SymbolIcon>
                                                 </Border>
                                             </ControlTemplate>
                                         </Setter.Value>
@@ -421,7 +446,11 @@
                                                 <Setter.Value>
                                                     <ControlTemplate>
                                                         <Border Style="{StaticResource TransparentBorderStyle}">
-                                                            <ui:SymbolIcon Symbol="Pause32" />
+                                                            <ui:SymbolIcon Symbol="Pause32">
+                                                                <ui:SymbolIcon.Foreground>
+                                                                    <SolidColorBrush Color="{StaticResource TextFillColorPrimary}" />
+                                                                </ui:SymbolIcon.Foreground>
+                                                            </ui:SymbolIcon>
                                                         </Border>
                                                     </ControlTemplate>
                                                 </Setter.Value>
@@ -619,14 +648,14 @@
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <ui:SymbolIcon MouseDown="ReorderButton_OnMouseDown" Symbol="ReOrderDotsVertical24" />
+                                <ui:SymbolIcon MouseDown="ReorderButton_OnMouseDown" Symbol="ReOrderDotsVertical24" Style="{StaticResource PlayerIconStyle}" />
                                 <local:QueueTrackControl Grid.Column="1" IsInPlayer="True" />
                                 <wpfui:Button
                                     Grid.Column="2"
                                     Appearance="Transparent"
                                     Click="DeleteFromQueue_OnClick">
                                     <wpfui:Button.Icon>
-                                        <ui:SymbolIcon Symbol="Dismiss24" />
+                                        <ui:SymbolIcon Symbol="Dismiss24" Style="{StaticResource PlayerIconStyle}" />
                                     </wpfui:Button.Icon>
                                     <wpfui:Button.ToolTip>
                                         <ToolTip Content="Удалить из очереди" />

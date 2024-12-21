@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
-using Microsoft.AppCenter.Crashes;
 using Microsoft.Win32;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
@@ -13,6 +11,7 @@ using MusicX.Helpers;
 using MusicX.Models;
 using MusicX.Services;
 using MusicX.Views.Modals;
+using NLog;
 using Wpf.Ui;
 using Wpf.Ui.Common;
 using Wpf.Ui.Extensions;
@@ -53,6 +52,8 @@ namespace MusicX.ViewModels.Modals
         private readonly TracksSelectorModalViewModel selectorViewModel;
         private readonly ConfigService configService;
         private readonly ISnackbarService _snackbarService;
+        private readonly Logger _logger;
+        private readonly SectionEventService _eventService;
 
         private bool isEdit;
         public bool IsEdit
@@ -67,13 +68,15 @@ namespace MusicX.ViewModels.Modals
 
         public CreatePlaylistModalViewModel(NavigationService navigationService, VkService vkService,
             TracksSelectorModalViewModel selectorViewModel, ConfigService configService,
-            ISnackbarService snackbarService)
+            ISnackbarService snackbarService, Logger logger, SectionEventService eventService)
         {
             this.navigationService = navigationService;
             this.vkService = vkService;
             this.selectorViewModel = selectorViewModel;
             this.configService = configService;
             _snackbarService = snackbarService;
+            _logger = logger;
+            _eventService = eventService;
 
             this.AddTracksCommand = new RelayCommand(AddTracks);
             this.CreateCommand = new AsyncCommand(Create);
@@ -145,7 +148,7 @@ namespace MusicX.ViewModels.Modals
                 }else
                 {
                     playlistId = await vkService.CreatePlaylistAsync(config.UserId, this.Title, this.Description, Tracks);
-
+                    _eventService.Dispatch(this, SectionEvent.PlaylistsAdd);
                 }
 
                 if(!this.CoverPath.StartsWith("http"))
@@ -172,23 +175,13 @@ namespace MusicX.ViewModels.Modals
             }
             catch(Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
+                _logger.Error(ex, "Failed to create playlist");
 
                 CreateIsEnable = true;
 
                 _snackbarService.Show("Ошибка", "MusicX не смог создать плейлист :(");
 
                 EndEvent?.Invoke(false);
-
-
             }
 
         }
@@ -214,15 +207,7 @@ namespace MusicX.ViewModels.Modals
             }
             catch(Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
+                _logger.Error(ex, "Failed to edit playlist");
 
                 CreateIsEnable = true;
 

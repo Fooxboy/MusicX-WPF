@@ -8,8 +8,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using Microsoft.Extensions.DependencyInjection;
-using System.Collections.Generic;
-using Microsoft.AppCenter.Crashes;
 
 namespace MusicX.Controls
 {
@@ -32,7 +30,14 @@ namespace MusicX.Controls
 
         }
 
-        public Suggestion Suggestion { get; set; }
+        public static readonly DependencyProperty SuggestionProperty = DependencyProperty.Register(
+            nameof(Suggestion), typeof(Suggestion), typeof(SuggestionControl), new PropertyMetadata(default(Suggestion)));
+
+        public Suggestion Suggestion
+        {
+            get => (Suggestion)GetValue(SuggestionProperty);
+            set => SetValue(SuggestionProperty, value);
+        }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
@@ -40,20 +45,10 @@ namespace MusicX.Controls
             {
                 Title.Text = Suggestion.Title;
                 Subtitle.Text = Suggestion.Subtitle;
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error("Failed load suggestion control");
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed load suggestion control");
 
                 Title.Text = "Невозможно";
                 Subtitle.Text = "загрузить подсказку";
@@ -68,20 +63,11 @@ namespace MusicX.Controls
             {
                 var result = await vkService.GetAudioSearchAsync(Suggestion.Title, Suggestion.Context);
 
-                navigationService.OpenSection(result.Catalog.DefaultSection);
-            }catch(Exception ex)
+                navigationService.OpenSection(result.Catalog.DefaultSection, SectionType.SearchResult);
+            }
+            catch(Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to load section from suggestion control");
             }
         }
 

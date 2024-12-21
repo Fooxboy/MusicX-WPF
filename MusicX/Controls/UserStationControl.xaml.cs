@@ -4,19 +4,10 @@ using MusicX.Services;
 using MusicX.Shared.ListenTogether.Radio;
 using NLog;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using MusicX.Helpers;
 using Wpf.Ui;
 
@@ -89,10 +80,11 @@ namespace MusicX.Controls
                 await listenTogetherService.ConnectToServerAsync(config.UserId);
                 await listenTogetherService.JoinToSesstionAsync(Station.SessionId);
 
-            }catch(Exception ex)
+            }
+            catch(Exception ex)
             {
                 var logger = StaticService.Container.GetRequiredService<Logger>();
-                logger.Error(ex);
+                logger.Error(ex, "Failed to join radio session");
 
                 snackbarService.ShowException("Мы не смогли подключиться к радиостанции", ex);
             }

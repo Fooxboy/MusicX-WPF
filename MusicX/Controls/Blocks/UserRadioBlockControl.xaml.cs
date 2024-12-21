@@ -1,10 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using MusicX.Core.Models;
 using MusicX.Services;
-using MusicX.Shared.ListenTogether.Radio;
 using MusicX.ViewModels;
 using MusicX.Views;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -15,23 +12,31 @@ namespace MusicX.Controls.Blocks
     /// </summary>
     public partial class UserRadioBlockControl : UserControl
     {
+        public static readonly DependencyProperty BlockProperty = DependencyProperty.Register(
+            nameof(Block), typeof(BlockViewModel), typeof(UserRadioBlockControl), new PropertyMetadata(BlockChangedCallback));
+
+        private static void BlockChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is not UserRadioBlockControl control || e.NewValue is not BlockViewModel)
+                return;
+            
+            control.Load();
+        }
+
+        public BlockViewModel Block
+        {
+            get => (BlockViewModel)GetValue(BlockProperty);
+            set => SetValue(BlockProperty, value);
+        }
+        
         public UserRadioBlockControl()
         {
-            this.DataContext = this;
-            this.Loaded += UserRadioBlockControl_Loaded;
             InitializeComponent();
         }
 
-        private void UserRadioBlockControl_Loaded(object sender, RoutedEventArgs e)
+        private void Load()
         {
-            if (DataContext is not Block block)
-                return;
-            if (block.Stations is null)
-            {
-                block.Stations = new List<Station>();
-            }
-
-            foreach (var station in block.Stations)
+            foreach (var station in Block.Stations)
             {
                 ListStations.Items.Add( new UserStationControl() { Station = station});
             }

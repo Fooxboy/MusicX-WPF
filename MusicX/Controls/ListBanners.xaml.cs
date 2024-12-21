@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AppCenter.Crashes;
 
 namespace MusicX.Controls
 {
@@ -51,20 +50,10 @@ namespace MusicX.Controls
                     StackPanelBanners.Items.Add(new BannerControl() { Banner = banner, Height = 250, Width = 500, Margin = new Thickness(0, 0, 10, 30) });
                     //StackPanelBanners.Children.Add(new BannerControl() { Banner = banner, Height = 200, Width = 500, Margin = new Thickness(0, 0, 10, 0) });
                 }
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error("Failed load list banners control");
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed load list banners control");
             }
             
         }

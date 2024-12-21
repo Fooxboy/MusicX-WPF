@@ -6,8 +6,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Controls;
 using MusicX.Core.Services;
@@ -15,12 +13,9 @@ using MusicX.Models;
 using MusicX.Services;
 using MusicX.ViewModels;
 using MusicX.ViewModels.Modals;
-using MusicX.Views.Login;
 using MusicX.Views.Modals;
 using NLog;
 using Ookii.Dialogs.Wpf;
-using VkNet.Abstractions;
-using VkNet.AudioBypassService.Models.Auth;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 using Wpf.Ui.Extensions;
@@ -55,14 +50,8 @@ namespace MusicX.Views
         {
             try
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Analytics.TrackEvent("OpenSettings", properties);
+                var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
+                connectionService.ReportMetric("OpenSettings");
 
                 this.config = await configService.GetConfig();
 
@@ -150,20 +139,12 @@ namespace MusicX.Views
 
                 }
 
+                ThemeComboBox.SelectedIndex = (int)config.Theme;
             }
             catch (Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
                 var logger = StaticService.Container.GetRequiredService<Logger>();
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to load settings");
             }
         }
 
@@ -255,14 +236,8 @@ namespace MusicX.Views
             }
             catch(Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
                 var logger = StaticService.Container.GetRequiredService<Logger>();
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to set rpc setting");
             }
            
         }
@@ -274,16 +249,11 @@ namespace MusicX.Views
                 config.ShowRPC = false;
 
                 await configService.SetConfig(config);
-            }catch(Exception ex)
+            }
+            catch(Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
                 var logger = StaticService.Container.GetRequiredService<Logger>();
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to set rpc setting");
             }
             
         }
@@ -295,16 +265,11 @@ namespace MusicX.Views
                 config.BroadcastVK = true;
 
                 await configService.SetConfig(config);
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
                 var logger = StaticService.Container.GetRequiredService<Logger>();
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to set status broadcast setting");
             }
             
         }
@@ -317,16 +282,11 @@ namespace MusicX.Views
 
                 await configService.SetConfig(config);
                 await vkService.SetBroadcastAsync(null);
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
                 var logger = StaticService.Container.GetRequiredService<Logger>();
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to set status broadcast setting");
             }
            
         }
@@ -384,16 +344,11 @@ namespace MusicX.Views
                         IgnoredArtistList.Items.Add(artist);
                     }
                 }
-            }catch(Exception ex)
+            }
+            catch(Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
                 var logger = StaticService.Container.GetRequiredService<Logger>();
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to delete blacklisted artist");
             }
           
         }
@@ -426,16 +381,11 @@ namespace MusicX.Views
 
                 NameIgnoredArtist.Text = string.Empty;
 
-            }catch(Exception ex)
+            }
+            catch(Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
                 var logger = StaticService.Container.GetRequiredService<Logger>();
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to blacklist artist");
             }
             
         }
@@ -578,6 +528,16 @@ namespace MusicX.Views
             if (config.LastFmSession is null)
                 StaticService.Container.GetRequiredService<NavigationService>()
                     .OpenModal<LastFmAuthModal>(StaticService.Container.GetRequiredService<LastFmAuthModalViewModel>());
+        }
+
+        private async void ThemeComboBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var previousTheme = config.Theme;
+            config.Theme = (MusicXTheme)ThemeComboBox.SelectedIndex;
+            
+            StaticService.Container.GetRequiredService<WindowThemeService>().Update(previousTheme);
+
+            await configService.SetConfig(config);
         }
     }
 }

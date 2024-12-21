@@ -12,7 +12,6 @@ using System.Windows.Controls;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AppCenter.Crashes;
 
 namespace MusicX.Controls
 {
@@ -21,6 +20,15 @@ namespace MusicX.Controls
     /// </summary>
     public partial class BigBannerControl : UserControl
     {
+        public static readonly DependencyProperty BannersProperty = DependencyProperty.Register(
+            nameof(Banners), typeof(IList<CatalogBanner>), typeof(BigBannerControl), new PropertyMetadata(Array.Empty<CatalogBanner>()));
+
+        public IList<CatalogBanner> Banners
+        {
+            get => (IList<CatalogBanner>)GetValue(BannersProperty);
+            set => SetValue(BannersProperty, value);
+        }
+        
         public BigBannerControl()
         {
             InitializeComponent();
@@ -75,8 +83,6 @@ namespace MusicX.Controls
             amim.Begin();
         }
 
-        public List<CatalogBanner> Banners => ((Block)DataContext).Banners;
-
         private async void ActionButton_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -108,19 +114,9 @@ namespace MusicX.Controls
             }
             catch (Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
                 var logger = StaticService.Container.GetRequiredService<Logger>();
 
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to open action in big banners control");
             }
 
         }

@@ -38,7 +38,8 @@
                                 <Setter Property="Content">
                                     <Setter.Value>
                                         <TextBlock>
-                                            Нереализованный метод входа
+                                            <Run>Нереализованный метод входа</Run>
+                                            <Run FontWeight="Bold" Text="{Binding Name}" />
                                         </TextBlock>
                                     </Setter.Value>
                                 </Setter>
@@ -87,6 +88,21 @@
                                             </Setter.Value>
                                         </Setter>
                                     </DataTrigger>
+                                    <DataTrigger Binding="{Binding Name}" Value="{x:Static auth:LoginWay.Email}">
+                                        <Setter Property="Icon">
+                                            <Setter.Value>
+                                                <ui:SymbolIcon Symbol="Mail24" />
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Setter Property="Content">
+                                            <Setter.Value>
+                                                <TextBlock>
+                                                    <Run>Вам придет email письмо на </Run>
+                                                    <Run Text="{Binding Info}" />
+                                                </TextBlock>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>
                                     <DataTrigger Binding="{Binding Name}" Value="{x:Static auth:LoginWay.Push}">
                                         <Setter Property="Icon">
                                             <Setter.Value>
@@ -126,6 +142,20 @@
                                             <Setter.Value>
                                                 <TextBlock>
                                                     <Run>Потребуется пароль от вашего аккаунта ВКонтакте</Run>
+                                                </TextBlock>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Name}" Value="{x:Static auth:LoginWay.Codegen}">
+                                        <Setter Property="Icon">
+                                            <Setter.Value>
+                                                <ui:SymbolIcon Symbol="LockClosed24" />
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Setter Property="Content">
+                                            <Setter.Value>
+                                                <TextBlock>
+                                                    <Run>Потребуется код из приложения аутентификатора</Run>
                                                 </TextBlock>
                                             </Setter.Value>
                                         </Setter>

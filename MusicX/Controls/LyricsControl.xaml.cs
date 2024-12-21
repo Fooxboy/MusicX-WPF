@@ -1,5 +1,4 @@
-﻿using Microsoft.AppCenter.Analytics;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Models;
 using MusicX.Services;
 using MusicX.Services.Player;
@@ -8,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
 
 namespace MusicX.Controls
@@ -32,12 +30,6 @@ namespace MusicX.Controls
 
         public void SetLines(List<LyricsTimestamp> lines)
         {
-            var properties = new Dictionary<string, string>
-                {
-                    {"Version", StaticService.Version }
-                };
-            Analytics.TrackEvent("OpenAudioText", properties);
-
             this._autoScroll = true;
             this._allText = null;
             this._allLines = lines;
@@ -55,12 +47,6 @@ namespace MusicX.Controls
 
         public void SetLines(List<string> lines)
         {
-            var properties = new Dictionary<string, string>
-                {
-                    {"Version", StaticService.Version }
-                };
-            Analytics.TrackEvent("OpenAudioText", properties);
-
             this._allLines = null;
             SetAutoScrollMode(false);
             this._allText = lines;

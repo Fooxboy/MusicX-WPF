@@ -64,10 +64,7 @@
 
 
     <UserControl.ContextMenu>
-        <ContextMenu
-            Background="#414141"
-            BorderBrush="#646464"
-            >
+        <ContextMenu>
 
             <StackPanel x:Name="AddToLibrary" MouseDown="AddToLibrary_MouseDown" Orientation="Horizontal">
                 <ui:SymbolIcon Symbol="Add28" />
@@ -124,10 +121,12 @@
                         Opacity="0.1"
                         RadiusX="5"
                         RadiusY="5" />
+                    <!-- need force foreground on top of the black rect to be white -->
                     <ui:SymbolIcon
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         FontSize="50"
+                        Foreground="White"
                         Symbol="NavigationPlay20" />
 
                     <Rectangle
@@ -204,8 +203,11 @@
                                     Color="Black" />
                             </Rectangle.Effect>
                         </Rectangle>
+                        
+                        <!-- need force foreground on top of the black rect to be white -->
                         <ui:SymbolIcon
                             x:Name="iconPlay"
+                            Foreground="White"
                             FontSize="23"
                             Symbol="Play24" />
 
@@ -246,9 +248,10 @@
         <Grid
             x:Name="FullGrid"
             HorizontalAlignment="Stretch"
-            MouseLeftButtonDown="FullGrid_MouseLeftButtonDown"
             Visibility="Collapsed">
-            <StackPanel Orientation="Horizontal">
+            <controls:CardAction IsChevronVisible="False" MinWidth="300"
+                                 Click="CardAction_Click">
+                <StackPanel Orientation="Horizontal">
                 <Grid>
                     <Rectangle
                         Grid.Row="0"
@@ -320,7 +323,7 @@
 
                 </StackPanel>
             </StackPanel>
-
+            </controls:CardAction>
         </Grid>
 
 

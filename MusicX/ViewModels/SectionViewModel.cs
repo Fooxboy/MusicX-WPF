@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using AsyncAwaitBestPractices;
-using Microsoft.AppCenter.Crashes;
 using MusicX.Controls;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
@@ -22,12 +21,13 @@ namespace MusicX.ViewModels
         Loaded
     }
     
-    public class SectionViewModel : BaseViewModel, INotifyOnActivated
+    public class SectionViewModel : BaseViewModel, INotifyOnActivated, IDisposable
     {
         private readonly VkService vkService;
         private readonly Logger logger;
         private readonly ISnackbarService _snackbarService;
         private readonly ConfigService configService;
+        private readonly SectionEventService _eventService;
 
         public ContentState ContentState { get; set; }
         public bool IsLoadingMore { get; set; }
@@ -38,15 +38,40 @@ namespace MusicX.ViewModels
         
         public Artist? Artist { get; set; }
 
-        public ObservableRangeCollection<Block> Blocks { get; set; } = new();
+        public ObservableRangeCollection<BlockViewModel> Blocks { get; } = [];
 
         public SectionViewModel(VkService vkService, Logger logger, ISnackbarService snackbarService,
-            ConfigService configService)
+            ConfigService configService, SectionEventService eventService)
         {
             this.vkService = vkService;
             this.logger = logger;
             _snackbarService = snackbarService;
             this.configService = configService;
+            _eventService = eventService;
+            
+            _eventService.Event += EventServiceOnEvent;
+        }
+
+        private async void EventServiceOnEvent(object? sender, string e)
+        {
+            var changed = false;
+            for (var i = 0; i < Blocks.Count; i++)
+            {
+                var block = Blocks[i];
+                
+                if (!block.ListenEvents.Contains(e))
+                    continue;
+                
+                changed = true;
+
+                // не работает хз
+                // var response = await vkService.GetBlockItems(block.Id);
+                //
+                // Blocks[i] = new BlockViewModel(response.Block);
+            }
+            
+            if (changed)
+                await LoadAsync();
         }
 
         public async Task LoadAsync()
@@ -56,7 +81,7 @@ namespace MusicX.ViewModels
             {
                 await (SectionType switch
                 {
-                    SectionType.None => LoadSection(SectionId),
+                    SectionType.None or SectionType.SearchResult => LoadSection(SectionId),
                     SectionType.Artist => LoadArtistSection(SectionId),
                     SectionType.Search => LoadSearchSection(SectionId),
                     _ => throw new ArgumentOutOfRangeException()
@@ -84,9 +109,16 @@ namespace MusicX.ViewModels
 
                 await Application.Current.Dispatcher.InvokeAsync(() =>
                 {
+                    if (section.Section.Blocks is [var singleBlock] && Blocks[^1].DataType == singleBlock.DataType &&
+                        Blocks[^1].Layout.Name == singleBlock.Layout.Name)
+                    {
+                        Blocks[^1].MergeBlock(singleBlock);
+                        return;
+                    }
+                    
                     foreach (var block in section.Section.Blocks)
                     {
-                        Blocks.Add(block);
+                        Blocks.Add(new(block));
                     }
                 });
 
@@ -95,16 +127,7 @@ namespace MusicX.ViewModels
             }
             catch (Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to load more for section");
 
                 _snackbarService.ShowException("Произошла ошибка", "MusicX не смог подргрузить контент");
             }
@@ -124,20 +147,13 @@ namespace MusicX.ViewModels
                 await Application.Current.Dispatcher.InvokeAsync(() =>
                 {
                     Blocks.RemoveRange(Blocks.Where(b => toReplaceBlockIds.Contains(b.Id)).ToArray());
-                    Blocks.AddRangeSequential(replaces.Replacements.ReplacementsModels.SelectMany(b => b.ToBlocks));
+                    Blocks.AddRangeSequential(replaces.Replacements.ReplacementsModels.SelectMany(b => b.ToBlocks)
+                        .Select(b => new BlockViewModel(b)));
                 });
             }
             catch (Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to replace blocks");
                 _snackbarService.ShowException("Произошла ошибка", "MusicX не смог заменить блоки");
             }
         }
@@ -171,7 +187,7 @@ namespace MusicX.ViewModels
                 {
                     try
                     {
-                        Blocks.ReplaceRange(blocks);
+                        Blocks.ReplaceRange(blocks.Select(b => new BlockViewModel(b)));
                     }
                     catch (Exception ex)
                     {
@@ -186,15 +202,7 @@ namespace MusicX.ViewModels
             catch (Exception ex)
             {
                 ContentState = ContentState.Loaded;
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to load section from blocks");
 
                 _snackbarService.ShowException("Произошла ошибка", "MusicX не смог загрузить контент");
             }
@@ -221,23 +229,12 @@ namespace MusicX.ViewModels
                 await Application.Current.Dispatcher.InvokeAsync(() =>
                 {
                     Blocks.Clear();
-                    Blocks.Add(new() {DataType = "none", Layout = new() {Name = "header", Title = "Ничего не найдено"}});
+                    Blocks.Add(new(new() {DataType = "none", Layout = new() {Name = "header", Title = "Ничего не найдено"}}));
                 });
             }
             catch (Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error("Fatal error in Section View Model:");
-
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to load section by id");
 
                 _snackbarService.ShowException("Произошла ошибка", "MusicX не смог загрузить контент");
             }
@@ -252,16 +249,7 @@ namespace MusicX.ViewModels
             }
             catch (Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-                logger.Error($"Fatal error in Load artist section with artistId = {artistId}");
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to load artist section {ArtistId}", artistId);
 
                 _snackbarService.ShowException("Произошла ошибка", "MusicX не смог загрузить контент");
             }
@@ -299,17 +287,7 @@ namespace MusicX.ViewModels
             }
             catch (Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-                logger.Error($"Fatal error in load search section with query = {query}");
-
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to load search section {Query}", query);
 
                 _snackbarService.ShowException("Произошла ошибка", "MusicX не смог загрузить контент");
 
@@ -319,6 +297,13 @@ namespace MusicX.ViewModels
         {
             if (Section is null)
                 LoadAsync().SafeFireAndForget();
+            else
+                _eventService.Event += EventServiceOnEvent;
+        }
+
+        public void Dispose()
+        {
+            _eventService.Event -= EventServiceOnEvent;
         }
     }
 }

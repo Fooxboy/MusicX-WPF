@@ -15,13 +15,20 @@
 
             <Grid ClipToBounds="True">
 
-                <Image Stretch="UniformToFill" Source="{Binding Cover, UpdateSourceTrigger=PropertyChanged}">
+                <Image Stretch="UniformToFill" Opacity="0.9" Source="{Binding Cover, UpdateSourceTrigger=PropertyChanged}">
                     <Image.Clip>
                         <RectangleGeometry Rect="0,0,300,60" RadiusX="10" RadiusY="10"/>
                     </Image.Clip>
                 </Image>
 
-                <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" FontSize="19" VerticalAlignment="Center" FontFamily="{StaticResource VKSansMedium}" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"/>
+                <!-- need force foreground on top of the image to be white -->
+                <TextBlock HorizontalAlignment="Left" 
+                           Margin="10,0,0,0" 
+                           Foreground="White"
+                           FontSize="19" 
+                           VerticalAlignment="Center" 
+                           FontFamily="{StaticResource VKSansMedium}" 
+                           Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"/>
 
                 <Border MouseLeftButtonDown="PlayPlaylist" Background="White" MouseEnter="Border_MouseEnter" MouseLeave="Border_MouseLeave" Opacity="0.6" HorizontalAlignment="Right" CornerRadius="9999" Margin="0,0,10,0" Height="35"  Width="35">
                     <ui:SymbolIcon x:Name="PlayIcon" HorizontalAlignment="Center" VerticalAlignment="Center" Symbol="Play24"/>

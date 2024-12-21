@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Microsoft.AppCenter.Analytics;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
@@ -70,14 +68,8 @@ public partial class RecommsPlaylist : UserControl
         if (e.Source != sender)
             return;
         
-        var properties = new Dictionary<string, string>
-        {
-#if DEBUG
-            { "IsDebug", "True" },
-#endif
-            {"Version", StaticService.Version }
-        };
-        Analytics.TrackEvent("OpenPlaylist", properties);
+        var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
+        connectionService.ReportMetric("OpenPlayList", "RecommsPlaylist");
             
         var notificationService = StaticService.Container.GetRequiredService<NavigationService>();
 

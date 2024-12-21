@@ -8,7 +8,6 @@
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:models="clr-namespace:MusicX.Core.Models;assembly=MusicX.Core"
     xmlns:collections="clr-namespace:System.Collections;assembly=System.Runtime"
-    Margin="0,0,0,10"
     d:DesignHeight="450"
     d:DesignWidth="800"
     x:Name="Control"
@@ -18,6 +17,9 @@
         <ResourceDictionary>
             <DataTemplate DataType="{x:Type models:Playlist}" x:Key="FullPlaylistTemplate">
                 <local:PlaylistControl Margin="0,5" Width="200" Playlist="{Binding}" ShowFull="False" />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type models:Playlist}" x:Key="FullSinglePlaylistTemplate">
+                <local:PlaylistControl Playlist="{Binding}" ShowFull="True" />
             </DataTemplate>
             <DataTemplate DataType="{x:Type models:Playlist}" x:Key="PlaylistTemplate">
                 <local:PlaylistControl Margin="5,0" Width="200" Playlist="{Binding}" ShowFull="False" />
@@ -41,7 +43,7 @@
     </UserControl.Resources>
     
     <UserControl.ContentTemplate>
-        <DataTemplate DataType="{x:Type collections:IEnumerable}">
+        <DataTemplate DataType="{x:Type collections:IList}">
             <ui:ListView ItemsSource="{Binding}">
                 <ui:ListView.Style>
                     <Style TargetType="{x:Type ui:ListView}" BasedOn="{StaticResource ItemsListViewStyle}">
@@ -50,6 +52,14 @@
                                 <Setter Property="ItemsPanel" Value="{StaticResource FullPlaylistPanelTemplate}"/>
                                 <Setter Property="ItemTemplate" Value="{StaticResource FullPlaylistTemplate}"/>
                             </DataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding ShowFull, ElementName=Control}" Value="True" />
+                                    <Condition Binding="{Binding Count}" Value="1" />
+                                </MultiDataTrigger.Conditions>
+                                
+                                <Setter Property="ItemTemplate" Value="{StaticResource FullSinglePlaylistTemplate}"/>
+                            </MultiDataTrigger>
                             <DataTrigger Binding="{Binding ShowFull, ElementName=Control}" Value="False">
                                 <Setter Property="ItemsPanel" Value="{StaticResource PlaylistPanelTemplate}"/>
                                 <Setter Property="ItemTemplate" Value="{StaticResource PlaylistTemplate}"/>

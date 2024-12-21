@@ -1,20 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using MusicX.Core.Models;
+using MusicX.ViewModels;
 using MusicX.ViewModels.Controls;
-using Block = MusicX.Core.Models.Block;
 using Button = MusicX.Core.Models.Button;
 
 namespace MusicX.Controls;
@@ -42,11 +30,11 @@ public partial class ActionButtonControl : UserControl
         get => (Artist?)GetValue(ArtistProperty);
         set => SetValue(ArtistProperty, value);
     }
-    public static readonly DependencyProperty ParentBlockProperty = DependencyProperty.Register(nameof(ParentBlock), typeof(Block), typeof(ActionButtonControl), new(null, OnChanged));
+    public static readonly DependencyProperty ParentBlockProperty = DependencyProperty.Register(nameof(ParentBlock), typeof(BlockViewModel), typeof(ActionButtonControl), new(null, OnChanged));
 
-    public Block? ParentBlock
+    public BlockViewModel? ParentBlock
     {
-        get => (Block?)GetValue(ParentBlockProperty);
+        get => (BlockViewModel?)GetValue(ParentBlockProperty);
         set => SetValue(ParentBlockProperty, value);
     }
 

@@ -1,6 +1,7 @@
 ﻿using MusicX.Core.Models;
 using System.Windows;
 using System.Windows.Controls;
+using MusicX.ViewModels;
 
 namespace MusicX.Controls.Blocks
 {
@@ -10,14 +11,14 @@ namespace MusicX.Controls.Blocks
     public partial class LinksBlockControl : UserControl
     {
         public static readonly DependencyProperty BlockProperty = DependencyProperty.Register(
-            nameof(Block), typeof(Block), typeof(LinksBlockControl), new(default(Block), BlockChanged));
+            nameof(Block), typeof(BlockViewModel), typeof(LinksBlockControl), new(default(Block), BlockChanged));
 
         private static void BlockChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is not LinksBlockControl control || e.NewValue is not Block block)
+            if (d is not LinksBlockControl control || e.NewValue is not BlockViewModel block)
                 return;
             
-            if (block.Layout.Name == "list")
+            if (block.Layout?.Name is "list" or "entity_double_grid")
             {
                 foreach (var link in block.Links)
                 {
@@ -33,9 +34,9 @@ namespace MusicX.Controls.Blocks
             }
         }
 
-        public Block Block
+        public BlockViewModel Block
         {
-            get => (Block)GetValue(BlockProperty);
+            get => (BlockViewModel)GetValue(BlockProperty);
             set => SetValue(BlockProperty, value);
         }
         

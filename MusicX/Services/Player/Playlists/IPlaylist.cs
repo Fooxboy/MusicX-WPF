@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using MusicX.Shared.Player;
+using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Microsoft.Extensions.DependencyInjection;
-using MusicX.Shared.Player;
+using System.Threading.Tasks;
 
 namespace MusicX.Services.Player.Playlists;
 
@@ -19,19 +20,30 @@ public interface IPlaylist : IEquatable<IPlaylist>
     IAsyncEnumerable<PlaylistTrack> LoadAsync();
 }
 
+public interface IRandomAccessPlaylist : IPlaylist
+{
+    ValueTask<int> GetCountAsync();
+    ValueTask<IEnumerable<PlaylistTrack>> GetRangeAsync(Range range);
+}
+
+public interface IShufflePlaylist : IPlaylist
+{
+    IPlaylist ShuffleWithSeed(int seed);
+}
+
 public abstract class PlaylistBase<TData> : IPlaylist<TData> where TData : class, IEquatable<TData>
 {
     public abstract IAsyncEnumerable<PlaylistTrack> LoadAsync();
     public abstract bool CanLoad { get; }
     public abstract TData Data { get; }
-    
-    public bool Equals(IPlaylist? other)
+
+    public virtual bool Equals(IPlaylist? other)
     {
         return other is PlaylistBase<TData> { Data: { } otherData } && GetType() == other.GetType() && Data.Equals(otherData);
     }
 
     public override bool Equals(object? obj) => Equals((IPlaylist?)obj);
-    
+
     public override int GetHashCode() => Data.GetHashCode();
 }
 
@@ -68,13 +80,13 @@ public class PlaylistJsonConverter : JsonConverter<IPlaylist>
             "radio" => JsonSerializer.Deserialize<RadioPlaylist>(ref reader, options),
             "vkBlock" => JsonSerializer.Deserialize<VkBlockPlaylist>(ref reader, options),
             "vkPlaylist" => JsonSerializer.Deserialize<VkPlaylistPlaylist>(ref reader, options),
-            "shuffleVkPlaylist" => JsonSerializer.Deserialize<ShuffleVkPlaylistPlaylist>(ref reader, options),
+            "mix" => JsonSerializer.Deserialize<MixPlaylist>(ref reader, options),
             _ => throw new JsonException("Unsupported playlist type.")
         };
-        
+
         if (playlist is null || !reader.Read())
             throw new JsonException("Unexpected end when reading playlist.");
-        
+
         return playlist;
     }
 
@@ -88,7 +100,7 @@ public class PlaylistJsonConverter : JsonConverter<IPlaylist>
             writer.WritePropertyName("Data");
             JsonSerializer.Serialize(writer, data, options);
         }
-        
+
         switch (value)
         {
             case SinglePlaylist playlist:
@@ -106,13 +118,13 @@ public class PlaylistJsonConverter : JsonConverter<IPlaylist>
             case VkPlaylistPlaylist playlist:
                 WriteObject("vkPlaylist", playlist);
                 break;
-            case ShuffleVkPlaylistPlaylist playlist:
-                WriteObject("shuffleVkPlaylist", playlist);
+            case MixPlaylist playlist:
+                WriteObject("mix", playlist);
                 break;
             default:
                 throw new JsonException("Unsupported playlist type.");
         }
-        
+
         writer.WriteEndObject();
     }
 }

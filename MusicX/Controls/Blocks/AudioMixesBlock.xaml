@@ -1,0 +1,169 @@
+﻿<UserControl
+    x:Class="MusicX.Controls.Blocks.AudioMixesBlock"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MusicX.Controls.Blocks"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:shaders="clr-namespace:MusicX.Shaders"
+      xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:converters="clr-namespace:MusicX.Converters"
+    Name="Control"
+      mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <converters:InversionBooleanToVisibilityConverter x:Key="InversionBooleanToVisibilityConverter" />
+    </UserControl.Resources>
+
+    <Grid MinHeight="500">
+        <Rectangle Name="MixRect"
+                   Fill="White"
+                   RadiusY="8"
+                   RadiusX="8">
+            <Rectangle.OpacityMask>
+                <LinearGradientBrush StartPoint="0,0"
+                                     EndPoint="0,1">
+                    <LinearGradientBrush.GradientStops>
+                        <GradientStop Offset="0"
+                                      Color="Black" />
+                        <GradientStop Offset="1"
+                                      Color="Transparent" />
+                    </LinearGradientBrush.GradientStops>
+                </LinearGradientBrush>
+            </Rectangle.OpacityMask>
+
+            <Rectangle.Effect>
+                <shaders:MixNoiseEffect XSize="{Binding ActualWidth, ElementName=MixRect}"
+                                        YSize="{Binding ActualHeight, ElementName=MixRect}" />
+            </Rectangle.Effect>
+        </Rectangle>
+
+        <StackPanel HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+            <Button HorizontalAlignment="Center"
+                          VerticalAlignment="Bottom"
+                          BorderThickness="0"
+                          Margin="0 0 0 30"
+                    Click="Button_Click">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="OverridesDefaultStyle"
+                                Value="True" />
+                        <Setter Property="SnapsToDevicePixels" Value="True" />
+                        <Setter Property="Background">
+                            <Setter.Value>
+                                <SolidColorBrush Color="White"
+                                                 Opacity="0.7" />
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Padding="12"
+                                            Background="{TemplateBinding Background}"
+                                            CornerRadius="99"
+                                            Name="ContentBorder">
+                                        <ContentPresenter />
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver"
+                                     Value="True">
+                                <Setter Property="Background">
+                                    <Setter.Value>
+                                        <SolidColorBrush Color="White" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+
+                <wpfui:SymbolIcon Foreground="Black"
+                                  FontSize="32">
+                    <wpfui:SymbolIcon.Style>
+                        <Style TargetType="wpfui:SymbolIcon">
+                            <Setter Property="Symbol"
+                                    Value="Play32" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsPlaying, ElementName=Control}" Value="True">
+                                    <Setter Property="Symbol"
+                                            Value="Pause32" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </wpfui:SymbolIcon.Style>
+                </wpfui:SymbolIcon>
+
+            </Button>
+
+            <!-- the foreground on top of the shader should always be white -->
+            <TextBlock Foreground="White"
+                       FontSize="70"
+                       TextAlignment="Center"
+                       FontFamily="{StaticResource VKSansDemiBold}" >
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Mode, ElementName=Control, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="Mix">
+                                <Setter Property="Text" Value="Слушать VK микс"/>
+                            </DataTrigger>
+
+                            <DataTrigger Binding="{Binding Mode, ElementName=Control, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="Library">
+                                <Setter Property="Text" Value="Слушать мои треки"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+            <TextBlock Foreground="White"
+                       Opacity="0.7"
+                       HorizontalAlignment="Center"
+                       FontSize="17"
+                       FontFamily="{StaticResource VKSansRegular}">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Mode, ElementName=Control, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="Mix">
+                                <Setter Property="Text" Value="Музыкальные рекомендации для Вас"/>
+                            </DataTrigger>
+
+                            <DataTrigger Binding="{Binding Mode, ElementName=Control, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="Library">
+                                <Setter Property="Text" Value="Любимые треки из Вашей колелкции"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+
+
+            <wpfui:Button x:Name="MixSettings" Click="MixSettings_Click" Margin="0,10,0,0" Width="150" HorizontalAlignment="Center">
+                <wpfui:Button.Content>
+                    <StackPanel Orientation="Horizontal">
+                        <wpfui:SymbolIcon VerticalAlignment="Center" FontSize="18" Symbol="Settings20"/>
+                        <TextBlock  VerticalAlignment="Center" Margin="5,0,0,2" Text="Настроить"/>
+                    </StackPanel>
+                </wpfui:Button.Content>
+            </wpfui:Button>
+
+            <Grid Margin="0,30,0,0" HorizontalAlignment="Center">
+                <Border Width="240" Height="32" Opacity="0.2" HorizontalAlignment="Center" BorderThickness="1" BorderBrush="White" CornerRadius="7">
+                 
+                </Border>
+                <StackPanel Orientation="Horizontal">
+
+                    <wpfui:Button x:Name="MixButton" Click="MixButton_Click" BorderThickness="0" Width="120" Appearance="Secondary"  Content="VK микс">
+                    </wpfui:Button>
+                    <wpfui:Button x:Name="LibraryButton" Click="LibraryButton_Click" BorderThickness="0" Width="120" Appearance="Transparent" Content="Моя музыка">
+                   
+                    </wpfui:Button>
+
+                </StackPanel>
+            </Grid>
+
+
+        </StackPanel>
+    </Grid>
+</UserControl>

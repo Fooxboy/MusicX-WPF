@@ -7,10 +7,11 @@
     xmlns:wpfui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
     xmlns:system="clr-namespace:System;assembly=System.Runtime"
     xmlns:models="clr-namespace:MusicX.Core.Models;assembly=MusicX.Core"
+    xmlns:viewModels="clr-namespace:MusicX.ViewModels"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d"
-    d:DataContext="{d:DesignInstance models:Block}">
+    d:DataContext="{d:DesignInstance viewModels:BlockViewModel}">
     <UserControl.Resources>
         <ControlTemplate x:Key="RegularTitleTemplate" TargetType="ContentControl">
             <TextBlock
@@ -57,7 +58,7 @@
                         <Style.Triggers>
                             <MultiDataTrigger>
                                 <MultiDataTrigger.Conditions>
-                                    <Condition Binding="{Binding Actions.Count}" Value="1" />
+                                    <Condition Binding="{Binding Buttons.Count}" Value="1" />
                                     <Condition Binding="{Binding Visibility, ElementName=ButtonsGrid}" Value="Collapsed" />
                                 </MultiDataTrigger.Conditions>
                                 <Setter Property="Template" Value="{StaticResource ButtonTitleTemplate}" />

@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,14 +7,15 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
-using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Behaviors;
 using MusicX.Core.Services;
 using MusicX.Helpers;
 using MusicX.Models;
+using MusicX.Patches;
 using MusicX.Services;
 using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
@@ -24,7 +25,6 @@ using MusicX.ViewModels.Modals;
 using MusicX.Views;
 using MusicX.Views.Modals;
 using NLog;
-using ProtoBuf.Meta;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 using Wpf.Ui.Extensions;
@@ -56,9 +56,20 @@ namespace MusicX.Controls
             set => SetValue(IsPlayingProperty, value);
         }
 
+        public static readonly DependencyProperty TracksSourceProperty = DependencyProperty.Register(
+            nameof(TracksSource), typeof(IEnumerable), typeof(PlayerControl), new PropertyMetadata(default(IEnumerable)));
+
+        public IEnumerable TracksSource
+        {
+            get => (IEnumerable)GetValue(TracksSourceProperty);
+            set => SetValue(TracksSourceProperty, value);
+        }
+
         public PlayerService PlayerService { get; }
+        
         private readonly ListenTogetherService listenTogetherService;
         private readonly Logger logger;
+        private readonly ColorConverter _colorConverter = new();
         private ConfigModel config;
 
         public PlayerControl()
@@ -78,13 +89,12 @@ namespace MusicX.Controls
             listenTogetherService.LeaveSession += ListenTogetherService_LeaveSession;
             listenTogetherService.SessionOwnerStoped += ListenTogetherService_LeaveSession;
             this.MouseWheel += PlayerControl_MouseWheel;
-            
-            Queue.ItemsSource = PlayerService.Tracks;
         }
 
         private void PlayerService_CurrentPlaylistChanged(object? sender, EventArgs e)
         {
             ShuffleButton.IsChecked = false;
+            Queue.ItemsSource = PlayerService.Tracks;
         }
 
         private Task ListenTogetherService_LeaveSession()
@@ -200,11 +210,11 @@ namespace MusicX.Controls
                     amim.Begin();
                     var bitmapImage = new BitmapImage(new Uri(PlayerService.CurrentTrack.AlbumId.CoverUrl));
                     TrackCover.ImageSource = bitmapImage;
-                    BackgroundCard.ImageSource = bitmapImage;
+                   // BackgroundCard.ImageSource = bitmapImage;
                 }else
                 {
                     TrackCover.ImageSource = null;
-                    BackgroundCard.ImageSource = null;
+                    //BackgroundCard.ImageSource = null;
                 }
 
                 LikeIcon.Filled = PlayerService.CurrentTrack.Data.IsLiked;
@@ -227,23 +237,26 @@ namespace MusicX.Controls
                         break;
                 }
 
+                if (PlayerService.CurrentTrack?.Data is VkTrackData vkTrackData)
+                {
+                    AlbumTooltipShadowEffect.Color = !string.IsNullOrEmpty(vkTrackData.MainColor) &&
+                                                     _colorConverter.ConvertFrom(vkTrackData.MainColor) is
+                                                         Color color
+                        ? color
+                        : Colors.Transparent;
+
+                    if(vkTrackData.MainColor != null)
+                    {
+                        BlurringShape.Fill = (SolidColorBrush)new BrushConverter().ConvertFrom(vkTrackData.MainColor);
+                    }
+
+                }
+
                 await SaveVolume();
             }
             catch (Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error("Error in track changed event");
-                logger.Error(ex, ex.Message);
-                
+                logger.Error(ex, "Error in track changed event");
             }
             
         }
@@ -267,16 +280,7 @@ namespace MusicX.Controls
             }
             catch (Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Error in position changed event");
             }
             
         }
@@ -366,7 +370,8 @@ namespace MusicX.Controls
             conf.IsMuted = PlayerService.IsMuted;
 
             var mixerVolume = windowsAudioService.GetVolume();
-            conf.MixerVolume= (int)mixerVolume;
+            if (mixerVolume.HasValue)
+                conf.MixerVolume= (int)mixerVolume;
 
             await configService.SetConfig(conf);
         }
@@ -389,17 +394,7 @@ namespace MusicX.Controls
             }
             catch (Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Error opening artist section");
             }
 
         }
@@ -411,15 +406,18 @@ namespace MusicX.Controls
                 var vkService = StaticService.Container.GetRequiredService<VkService>();
                 var boomService = StaticService.Container.GetRequiredService<BoomService>();
                 var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
+                var eventService = StaticService.Container.GetRequiredService<SectionEventService>();
                 
                 switch (PlayerService.CurrentTrack?.Data)
                 {
                     case VkTrackData vkData when LikeIcon.Filled:
                         await vkService.Dislike(vkData.Info.Id, vkData.Info.OwnerId);
                         await vkService.AudioDeleteAsync(vkData.Info.Id, vkData.Info.OwnerId);
+                        eventService.Dispatch(this, SectionEvent.AudiosRemove);
                         break;
                     case VkTrackData vkData:
                         await vkService.AudioAddAsync(vkData.Info.Id, vkData.Info.OwnerId);
+                        eventService.Dispatch(this, SectionEvent.AudiosAdd);
                         break;
                     case BoomTrackData boomData when LikeIcon.Filled:
                         await boomService.UnLike(boomData.Id);
@@ -446,18 +444,7 @@ namespace MusicX.Controls
             }
             catch(Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error("Error in like track");
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Error in like track");
 
                 var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
 
@@ -555,18 +542,11 @@ namespace MusicX.Controls
 
                 downloader.DownloadQueue.Add(PlayerService.CurrentTrack!);
                 downloader.StartDownloadingCommand.Execute(null);
-            }catch(FileNotFoundException ex)
+            }
+            catch(FileNotFoundException ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
+                logger.Error(ex, "Error in download track button");
+                
                 var navigation = StaticService.Container.GetRequiredService<NavigationService>();
 
                 navigation.OpenMenuSection("downloads");
@@ -631,46 +611,24 @@ namespace MusicX.Controls
         }
         private void DeleteFromQueue_OnClick(object sender, RoutedEventArgs e)
         {
-            if (sender is FrameworkElement {DataContext: PlaylistTrack audio})
-                PlayerService.RemoveFromQueue(audio);
+            if (sender is FrameworkElement {TemplatedParent: FrameworkElement {TemplatedParent: ListBoxItem item}})
+                PlayerService.RemoveFromQueue(ItemContainerGeneratorIndexHook.GetItemContainerIndex(item));
         }
         private void ReorderButton_OnMouseDown(object sender, MouseButtonEventArgs e)
         {
             if (sender is FrameworkElement {TemplatedParent: FrameworkElement {TemplatedParent: ListBoxItem item}})
-                DragDrop.DoDragDrop(item, item.DataContext, DragDropEffects.Move);
+                DragDrop.DoDragDrop(item, ItemContainerGeneratorIndexHook.GetItemContainerIndex(item), DragDropEffects.Move);
         }
+        
         private void ListBoxItem_OnDrop(object sender, DragEventArgs e)
         {
-            var source = (PlaylistTrack)e.Data.GetData(typeof(PlaylistTrack))!;
-            var target = (PlaylistTrack)((ListBoxItem)sender).DataContext;
-
-            var list = PlayerService.Tracks;
+            if (sender is not FrameworkElement item)
+                return;
             
-            var removedIdx = list.IndexOf(source);
-            var targetIdx = list.IndexOf(target);
+            var oldIndex = (int)e.Data.GetData(typeof(int))!;
+            var newIndex = ItemContainerGeneratorIndexHook.GetItemContainerIndex(item);
 
-            if (removedIdx < targetIdx)
-            {
-                list.Insert(targetIdx + 1, source);
-                list.RemoveAt(removedIdx);
-            }
-            else
-            {
-                if (list.Count + 1 <= ++removedIdx)
-                    return;
-                list.Insert(targetIdx, source);
-                list.RemoveAt(removedIdx);
-            }
-
-            var currentIndex = list.IndexOf(PlayerService.CurrentTrack);
-            
-            // insert index is next track
-            if (currentIndex + 1 == targetIdx)
-                PlayerService.NextPlayTrack = source;
-            else if (currentIndex + 1 < list.Count)
-                PlayerService.NextPlayTrack = list[currentIndex + 1];
-
-            PlayerService.CurrentIndex = currentIndex;
+            PlayerService.MoveTrackInQueue(oldIndex, newIndex);
         }
         private void SpeakerIcon_OnClick(object sender, RoutedEventArgs e)
         {
@@ -685,6 +643,9 @@ namespace MusicX.Controls
             lyricsViewModel.Track = PlayerService.CurrentTrack;
 
             navigationService.OpenModal<LyricsModal>(lyricsViewModel);
+            
+            var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
+            connectionService.ReportMetric("OpenAudioText");
         }
 
         private async void DislikeButton_Click(object sender, RoutedEventArgs e)
@@ -702,14 +663,7 @@ namespace MusicX.Controls
             }
             catch(Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error("Error in dislike track");
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Error in dislike track");
 
                 var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
 

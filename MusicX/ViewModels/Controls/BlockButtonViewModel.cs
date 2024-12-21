@@ -32,7 +32,7 @@ public class BlockButtonViewModel : BaseViewModel
         }
     }
     public Artist? Artist { get; set; }
-    public Block? ParentBlock { get; set; }
+    public BlockViewModel? ParentBlock { get; set; }
 
     public BlockButtonViewModel()
     {
@@ -40,7 +40,7 @@ public class BlockButtonViewModel : BaseViewModel
         // Refresh();
     }
 
-    public BlockButtonViewModel(Button action, Artist? artist = null, Block? parentBlock = null) : this()
+    public BlockButtonViewModel(Button action, Artist? artist = null, BlockViewModel? parentBlock = null) : this()
     {
         Artist = artist;
         ParentBlock = parentBlock;
@@ -101,13 +101,16 @@ public class BlockButtonViewModel : BaseViewModel
                 case "toggle_artist_subscription" when Artist is not null && ParentBlock is not null:
                 {
                     var vkService = StaticService.Container.GetRequiredService<VkService>();
+                    var eventService = StaticService.Container.GetRequiredService<SectionEventService>();
 
                     if (Artist.IsFollowed)
                         await vkService.UnfollowArtist(Action.ArtistId, ParentBlock.Id);
                     else
                         await vkService.FollowArtist(Action.ArtistId, ParentBlock.Id);
 
-                        Artist.IsFollowed = !Artist.IsFollowed;
+                    Artist.IsFollowed = !Artist.IsFollowed;
+                    
+                    eventService.Dispatch(this, Artist.IsFollowed ? SectionEvent.ArtistSubscribe : SectionEvent.ArtistUnsubscribe);
                     Refresh();
                     break;
                 }

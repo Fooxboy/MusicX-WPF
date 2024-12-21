@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using InfluxDB.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,6 +24,7 @@ builder.Services.AddMemoryCache();
 builder.Services.AddAuthorization();
 builder.Services.AddMvc(options => options.EnableEndpointRouting = false);
 builder.Services.AddRazorPages();
+builder.Services.AddHealthChecks();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -47,6 +49,10 @@ builder.Services.AddSingleton<RadioManager>();
 builder.Services.AddTransient<RadioService>();
 builder.Services.AddSingleton<SessionService>();
 builder.Services.AddTransient<ListenTogetherService>();
+
+builder.Services.AddScoped<IInfluxDBClient>(_ => new InfluxDBClient(builder.Configuration.GetConnectionString("influxdb")));
+builder.Services.AddScoped<IWriteApiAsync>(
+    provider => provider.GetRequiredService<IInfluxDBClient>().GetWriteApiAsync());
 
 var app = builder.Build();
 
@@ -76,6 +82,7 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = "/files"
 });
 
+app.MapHealthChecks("/healthz");
 
 app.MapControllers();
 app.MapRazorPages();

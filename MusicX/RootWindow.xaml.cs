@@ -8,8 +8,6 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using AsyncAwaitBestPractices;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Toolkit.Uwp.Notifications;
 using MusicX.Controls;
@@ -20,12 +18,9 @@ using MusicX.Services;
 using MusicX.Services.Player;
 using MusicX.Shared.Player;
 using MusicX.ViewModels;
-using MusicX.ViewModels.Modals;
 using MusicX.Views;
 using MusicX.Views.Modals;
 using NLog;
-using Velopack;
-using Velopack.Sources;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 using Wpf.Ui.Extensions;
@@ -54,7 +49,7 @@ namespace MusicX
 
         public RootWindow(NavigationService navigationService, VkService vkService, Logger logger,
             ConfigService configService, ISnackbarService snackbarService,
-                          ListenTogetherService togetherService) : base(snackbarService, navigationService, logger)
+                          ListenTogetherService togetherService, WindowThemeService themeService) : base(snackbarService, navigationService, themeService)
         {
             Application.Current.MainWindow = this;
             InitializeComponent();     
@@ -116,18 +111,16 @@ namespace MusicX
             {
                 try
                 {
-                    var properties = new Dictionary<string, string>
-                        {
-                            {"Version", StaticService.Version }
-                        };
-                    Analytics.TrackEvent("Connect to session", properties);
+                    var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
+                    connectionService.ReportMetric("ConnectToSession");
 
                     var config = await configService.GetConfig();
                     await listenTogetherService.ConnectToServerAsync(config.UserId);
                     await listenTogetherService.JoinToSesstionAsync(sessionId);
-                }catch(Exception ex)
+                }
+                catch(Exception ex)
                 {
-                    logger.Error(ex, ex.Message);
+                    logger.Error(ex, "Failed to launch app with session from args");
                 }
                 
             });
@@ -138,10 +131,17 @@ namespace MusicX
         {
             if (configService.Config.MinimizeToTray is not null) return configService.Config.MinimizeToTray.Value;
 
-            new ToastContentBuilder()
-                .AddText("Приложене было скрыто в трее, нажмите на иконку, чтобы снова открыть окно.")
-                .AddText("Поведение можно изменить в настройках. Это уведомление больше не будет показано.")
-                .Show();
+            try
+            {
+                new ToastContentBuilder()
+                    .AddText("Приложене было скрыто в трее, нажмите на иконку, чтобы снова открыть окно.")
+                    .AddText("Поведение можно изменить в настройках. Это уведомление больше не будет показано.")
+                    .Show();
+            }
+            catch (Exception e)
+            {
+                logger.Warn(e, "Failed to show toast about minimize to tray");
+            }
                 
             configService.Config.MinimizeToTray = true;
             configService.SetConfig(configService.Config).SafeFireAndForget();
@@ -207,35 +207,36 @@ namespace MusicX
                 {
                     SymbolRegular icon;
 
-                    if (section.Title.ToLower() == "главная")
+                    if (section.Title.Equals("главная", StringComparison.CurrentCultureIgnoreCase))
                     {
                         icon = SymbolRegular.Home24;
                     }
-                    else if (section.Title.ToLower() == "моя музыка")
+                    else if (section.Title.Equals("моя музыка", StringComparison.CurrentCultureIgnoreCase))
                     {
                         icon = SymbolRegular.MusicNote120;
                     }
-                    else if (section.Title.ToLower() == "обзор")
+                    else if (section.Title.Equals("обзор", StringComparison.CurrentCultureIgnoreCase))
                     {
                         icon = SymbolRegular.CompassNorthwest28;
                     }
-                    else if (section.Title.ToLower() == "подкасты")
+                    else if (section.Title.Equals("подкасты", StringComparison.CurrentCultureIgnoreCase))
                     {
                         icon = SymbolRegular.HeadphonesSoundWave20;
                     }
-                    else if (section.Title.ToLower() == "подписки")
+                    else if (section.Title.Equals("подписки", StringComparison.CurrentCultureIgnoreCase))
                     {
                         icon = SymbolRegular.Feed24;
                     }
-                    else if (section.Title.ToLower() == "каталоги")
+                    else if (section.Title.Equals("каталоги", StringComparison.CurrentCultureIgnoreCase))
                     {
                         icon = SymbolRegular.People24;
                     }
-                    else if (section.Title.ToLower() == "поиск")
+                    else if (section.Title.Equals("поиск", StringComparison.CurrentCultureIgnoreCase))
                     {
                         icon = SymbolRegular.Search24;
                     }
-                    else if (section.Title.ToLower().StartsWith("книги"))
+                    else if (section.Title.StartsWith("книги", StringComparison.CurrentCultureIgnoreCase) || 
+                             section.Title.StartsWith("радио", StringComparison.CurrentCultureIgnoreCase))
                     {
                         continue;
                     }
@@ -262,11 +263,11 @@ namespace MusicX
                     { Tag = "test", Icon = SymbolRegular.AppFolder24, Content = "TEST", PageType = typeof(TestPage) };
                 navigationBar.Items.Add(item);
 #endif
-                navigationBar.Items.Add(new()
-                {
-                    Tag = "vkmix", PageDataContext = StaticService.Container.GetRequiredService<VKMixViewModel>(),
-                    Icon = SymbolRegular.Stream24, Content = "Микс", PageType = typeof(VKMixView)
-                });
+                // navigationBar.Items.Add(new()
+                // {
+                //     Tag = "vkmix", PageDataContext = StaticService.Container.GetRequiredService<VKMixViewModel>(),
+                //     Icon = SymbolRegular.Stream24, Content = "Микс", PageType = typeof(VKMixView)
+                // });
                 navigationBar.Items.Add(new()
                 {
                     Tag = "downloads",
@@ -332,18 +333,14 @@ namespace MusicX
                 }
 
                 this.WindowState = WindowState.Normal;
+                
+                var shareService = StaticService.Container.GetRequiredService<ShareService>();
+                
+                shareService.AssignWindow(new(this));
             }
             catch (Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to load root window");
                 _snackbarService.Show("Ошибка запуска",
                     "Попробуйте перезапустить приложение, если ошибка повторяется, напишите об этом разработчику");
             }
@@ -364,7 +361,8 @@ namespace MusicX
                 return;
             
             RootFrame.GoBack();
-            RootFrame.RemoveBackEntry();
+            if (RootFrame.RemoveBackEntry().CustomContentState is IDisposable disposable)
+                disposable.Dispose();
         }
         private void NavigationServiceOnExternalSectionOpened(object? sender, SectionViewModel e)
         {
@@ -375,7 +373,7 @@ namespace MusicX
         }
         private void NavigationServiceOnMenuSectionOpened(object? sender, string s)
         {
-            navigationBar.Items.First(b => b.Tag is string tag && tag == s)
+            navigationBar.Items.First(b => (b.Tag is string tag && tag == s) || (b.Content is string str && str == s))
                 .RaiseEvent(new(ButtonBase.ClickEvent));
         }
 
@@ -429,23 +427,12 @@ namespace MusicX
             {
                 navigationService.OpenSection(null, SectionType.Search);
 
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to open empty search section");
 
                 _snackbarService.Show("Ошибка открытия поиска", "Мы не смогли открыть подсказки поиска");
-
-
             }
         }
 
@@ -459,18 +446,10 @@ namespace MusicX
                 var updateService = StaticService.Container.GetRequiredService<UpdateService>();
                 
                 await updateService.CheckForUpdates();
-            }catch(Exception ex)
+            }
+            catch(Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to check updates on start");
 
                 _snackbarService.Show("Ошибка проверки обновлений", "Мы не смогли проверить доступные обновления");
             }
@@ -494,7 +473,7 @@ namespace MusicX
         private void Previous_OnClick(object? sender, EventArgs e)
         {
             var playerService = StaticService.Container.GetRequiredService<PlayerService>();
-            if (playerService.Tracks.Count > 0 && playerService.Tracks.IndexOf(playerService.CurrentTrack) > 0)
+            if (playerService.Tracks.Count > 0)
                 playerService.PreviousTrack().SafeFireAndForget();
         }
         private void PlayPause_OnClick(object? sender, EventArgs e)
@@ -511,7 +490,7 @@ namespace MusicX
         private void Next_OnClick(object? sender, EventArgs e)
         {
             var playerService = StaticService.Container.GetRequiredService<PlayerService>();
-            if (playerService.Tracks.Count > 0 && playerService.Tracks.IndexOf(playerService.CurrentTrack) < playerService.Tracks.Count)
+            if (playerService.Tracks.Count > 0)
                 playerService.NextTrack().SafeFireAndForget();
         }
 
@@ -585,7 +564,7 @@ namespace MusicX
 
         private void RootFrame_Navigating(object sender, System.Windows.Navigation.NavigatingCancelEventArgs e)
         {
-            SearchBox.Visibility = e.Content is SectionView { DataContext: SectionViewModel { SectionId: "search" } or SectionViewModel { SectionType: SectionType.Search } }
+            SearchBox.Visibility = e.Content is SectionView { DataContext: SectionViewModel { SectionId: "search" } or SectionViewModel { SectionType: SectionType.Search or SectionType.SearchResult } }
                 ? Visibility.Visible
                 : Visibility.Collapsed;
         }

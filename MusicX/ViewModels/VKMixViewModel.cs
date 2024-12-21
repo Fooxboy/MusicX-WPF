@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
+using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Exceptions.Boom;
 using MusicX.Core.Services;
 using MusicX.Helpers;
@@ -31,14 +29,8 @@ namespace MusicX.ViewModels
 
         public async Task OpenedMixesAsync()
         {
-            var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-            Analytics.TrackEvent("Open VK Mix", properties);
+            var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
+            connectionService.ReportMetric("OpenVkMix");
 
             Logger.Info("Открытие страницы VK Mix");
             var config = await ConfigService.GetConfig();
@@ -91,20 +83,11 @@ namespace MusicX.ViewModels
             }
             catch (Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
                 SnackbarService.ShowException("Ошибка загрузки микса", "Мы не смогли загрузить микс, попробуйте ещё раз");
 
                 IsLoaded = true;
 
-                Logger.Error(ex, ex.Message);
+                Logger.Error(ex, "Failed to load vk mix");
             }
         }
 
@@ -112,15 +95,8 @@ namespace MusicX.ViewModels
         {
             try
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Analytics.TrackEvent("Play Personal Mix", properties);
+                var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
+                connectionService.ReportMetric("PlayPersonalMix");
 
                 if (PlayingPersonalMix)
                 {
@@ -132,7 +108,7 @@ namespace MusicX.ViewModels
                 IsLoadingMix = true;
                 var personalMix =  await BoomService.GetPersonalMixAsync();
 
-                await PlayerService.PlayAsync(new RadioPlaylist(BoomService, new(personalMix, BoomRadioType.Personal)), personalMix.Tracks[0].ToTrack());
+                await PlayerService.PlayAsync(new RadioPlaylist(BoomService, new(personalMix, BoomRadioType.Personal)));
 
 
                 IsLoadingMix = false;
@@ -148,21 +124,12 @@ namespace MusicX.ViewModels
                 await AuthBoomAsync(config);
 
                 await PlayPersonalMixAsync();
-            }catch(Exception ex)
+            }
+            catch(Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-
                 SnackbarService.ShowException("Ошибка загрузки микса", "Мы не смогли загрузить микс, попробуйте ещё раз");
 
-                Logger.Error(ex, ex.Message);
+                Logger.Error(ex, "Failed to play personal mix");
             }
         }
     }

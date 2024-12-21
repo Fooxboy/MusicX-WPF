@@ -13,7 +13,11 @@ public enum SectionType
 {
     None,
     Artist,
-    Search
+    Search,
+    /// <summary>
+    /// Meta, section meaning the same as <see cref="SectionType.None"/> but allows search box to appear in the header 
+    /// </summary>
+    SearchResult,
 }
 public class NavigationService
 {

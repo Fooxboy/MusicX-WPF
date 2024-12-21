@@ -3,7 +3,6 @@ using MusicX.Services;
 using MusicX.Views;
 using NLog;
 using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,9 +13,6 @@ using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Services;
 using MusicX.Services.Player;
 using MusicX.Services.Player.Playlists;
-using System.Collections.Generic;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
 using Wpf.Ui.Controls;
 using System.Globalization;
 
@@ -93,20 +89,17 @@ namespace MusicX.Controls
                     nowPlay = true;
                     Icons.Symbol = SymbolRegular.Pause24;
                 }
-            }catch (Exception ex)
-            {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
 
+                foreach(var audio in Playlist.Audios)
+                {
+                    audio.RecccomendedPlaylist = Playlist;
+                }
+            }
+            catch (Exception ex)
+            {
                 var logger = StaticService.Container.GetRequiredService<Logger>();
 
-                logger.Error(ex, ex.Message);
+                logger.Error(ex, "Failed to load recommended playlist");
             }
             
 
@@ -129,14 +122,9 @@ namespace MusicX.Controls
 
         private void TitleCard_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-            Analytics.TrackEvent("OpenReccomendedPlaylist", properties);
+            var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
+            connectionService.ReportMetric("OpenPlayList", "RecommendedPlaylist");
+            
             var navigationService = StaticService.Container.GetRequiredService<Services.NavigationService>();
 
             navigationService.OpenExternalPage(new PlaylistView(Playlist.Playlist.Id,Playlist.Playlist.OwnerId , Playlist.Playlist.AccessKey));
@@ -174,7 +162,7 @@ namespace MusicX.Controls
                     await playerService.PlayAsync(new VkPlaylistPlaylist(
                                                       vkService,
                                                       new(Playlist.Playlist.Id, Playlist.Playlist.OwnerId,
-                                                          Playlist.Playlist.AccessKey)), Playlist.Audios[0].ToTrack(Playlist.Playlist));
+                                                          Playlist.Playlist.AccessKey)));
 
                     Icons.Symbol = SymbolRegular.Pause24;
 
@@ -195,18 +183,11 @@ namespace MusicX.Controls
             }
             catch (Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                Debug.WriteLine(ex.Message);
                 nowLoad = false;
+                
+                var logger = StaticService.Container.GetRequiredService<Logger>();
+                
+                logger.Error(ex, "Failed to play recommended playlist");
             }
         }
 

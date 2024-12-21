@@ -19,7 +19,7 @@ namespace MusicX.Core.Models
         public string? OwnerName { get; set; }
 
         [JsonProperty("type")]
-        public long Type { get; set; }
+        public string Type { get; set; }
 
         [JsonProperty("title")]
         public string? Title { get; set; }
@@ -103,5 +103,7 @@ namespace MusicX.Core.Models
 
             }
         }
+        
+        public string? MainColor { get; set; }
     }
 }

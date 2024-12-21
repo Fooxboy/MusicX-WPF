@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Threading;
-using Microsoft.AppCenter.Crashes;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Helpers;
-using MusicX.Services;
 using MusicX.Services.Player;
-using MusicX.Services.Player.Playlists;
 using MusicX.Shared.Player;
 using NLog;
 using Wpf.Ui;
@@ -87,13 +84,7 @@ namespace MusicX.ViewModels.Modals
             }
             catch(Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
-
-                _logger.Error(ex);
+                _logger.Error(ex, "Failed to load track lyrics");
                 _snackbarService.ShowException("Ошибка", "Мы не смогли загрузить текст песни :(");
 
                 Texts = new List<string>() { "Ошибка загрузки" };
@@ -158,11 +149,7 @@ namespace MusicX.ViewModels.Modals
             }
             catch(Exception ex)
             {
-                var properties = new Dictionary<string, string>
-                {
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
+                _logger.Error(ex, "Failed to jump to next lyrics line");
             }
         }
     }

@@ -123,9 +123,9 @@
                                     <Rectangle.Effect>
                                         <DropShadowEffect
                                             BlurRadius="40"
-                                            Opacity="0.3"
-                                            ShadowDepth="5"
-                                            Color="Black" />
+                                            Opacity="0.6"
+                                            ShadowDepth="0"
+                                            Color="{Binding MainColor, FallbackValue=#000000, Mode=OneWay}" />
                                     </Rectangle.Effect>
                                 </Rectangle>
                             </Grid>
@@ -141,9 +141,7 @@
                             </Grid.RowDefinitions>
                             
                             <controls1:LoadingBorder IsLoading="{Binding IsLoading}"
-                                                     Margin="0,30,20,0"
-                                                     HorizontalAlignment="Left"
-                                                     VerticalAlignment="Center" >
+                                                     Margin="0,0,20,0">
                                 <ScrollViewer behaviors:AutoScrollBehavior.AutoScroll="True"
                                               HorizontalScrollBarVisibility="Hidden"
                                               VerticalScrollBarVisibility="Hidden"
@@ -207,10 +205,9 @@
                                     MinWidth="200"
                                     Appearance="Secondary"
                                     Click="AddPlaylist_Click"
-                                    Content="Добавить к себе"
-                                    Foreground="White">
+                                    Content="Добавить к себе">
                                     <controls:Button.Icon>
-                                        <controls:SymbolIcon Symbol="Add28"/>
+                                        <ui:SymbolIcon Symbol="Add28" />
                                     </controls:Button.Icon>
                                 </controls:Button>
 
@@ -220,10 +217,9 @@
                                     Margin="10,0,0,0"
                                     Appearance="Secondary"
                                     Click="EditPlaylist_Click"
-                                    Content="Редактировать"
-                                    Foreground="White">
+                                    Content="Редактировать">
                                     <controls:Button.Icon>
-                                        <controls:SymbolIcon Symbol="Edit16"/>
+                                        <ui:SymbolIcon Symbol="Edit16" />
                                     </controls:Button.Icon>
                                 </controls:Button>
 
@@ -233,10 +229,9 @@
                                     Margin="10,0,0,0"
                                     Appearance="Secondary"
                                     Click="DownloadPlaylist_Click"
-                                    Content="Скачать"
-                                    Foreground="White">
+                                    Content="Скачать">
                                     <controls:Button.Icon>
-                                        <controls:SymbolIcon Symbol="ArrowDownload48"/>
+                                        <ui:SymbolIcon Symbol="ArrowDownload48" />
                                     </controls:Button.Icon>
                                 </controls:Button>
 

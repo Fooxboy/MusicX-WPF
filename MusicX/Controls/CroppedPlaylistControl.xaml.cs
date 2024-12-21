@@ -1,18 +1,15 @@
-﻿using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Services;
 using MusicX.Services.Player.Playlists;
 using MusicX.Services.Player;
 using MusicX.Views;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using Wpf.Ui.Controls;
 using System;
+using NLog;
 
 namespace MusicX.Controls
 {
@@ -93,14 +90,8 @@ namespace MusicX.Controls
             e.Handled = true;
             try
             {
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Analytics.TrackEvent("PlayPlaylistWithButton", properties);
+                var connectionService = StaticService.Container.GetRequiredService<BackendConnectionService>();
+                connectionService.ReportMetric("PlayPlaylistWithButton");
 
                 var playerService = StaticService.Container.GetRequiredService<PlayerService>();
 
@@ -127,15 +118,9 @@ namespace MusicX.Controls
             }
             catch (Exception ex)
             {
-
-                var properties = new Dictionary<string, string>
-                {
-#if DEBUG
-                    { "IsDebug", "True" },
-#endif
-                    {"Version", StaticService.Version }
-                };
-                Crashes.TrackError(ex, properties);
+                var logger = StaticService.Container.GetRequiredService<Logger>();
+                
+                logger.Error(ex, "Failed to play cropped playlist control with button");
             }
         }
 

@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
-using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Helpers;
 using MusicX.Services;
@@ -60,16 +57,8 @@ public sealed class AvailableNewUpdateModalViewModel : BaseViewModel
         {
             var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
             var logger = StaticService.Container.GetRequiredService<Logger>();
-
-            var properties = new Dictionary<string, string>
-            {
-#if DEBUG
-                { "IsDebug", "True" },
-#endif
-                { "Version", StaticService.Version }
-            };
-            Crashes.TrackError(ex, properties);
-            logger.Error(ex, ex.Message);
+            
+            logger.Error(ex, "Failed to update");
 
             snackbarService.ShowException("Неудалось обновить приложение",
                 $"Произошла ошибка при обновлении приложения: {ex.Message}");

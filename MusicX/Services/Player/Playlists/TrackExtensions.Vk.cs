@@ -30,14 +30,19 @@ public static partial class TrackExtensions
         }else
         {
             trackData =
-                   new VkTrackData(audio.Url, isLiked, audio.IsExplicit, audio.HasLyrics, TimeSpan.FromSeconds(audio.Duration), new(
-                                       audio.Id,
-                                       audio.OwnerId, audio.AccessKey), audio.TrackCode, audio.ParentBlockId,
-                                   playlist is null ? null : new(playlist.Id, playlist.OwnerId, playlist.AccessKey));
+                new VkTrackData(audio.Url, isLiked, audio.IsExplicit, audio.HasLyrics,
+                    TimeSpan.FromSeconds(audio.Duration), new(
+                        audio.Id,
+                        audio.OwnerId, audio.AccessKey), audio.TrackCode, audio.ParentBlockId,
+                    playlist is null ? null : new(playlist.Id, playlist.OwnerId, playlist.AccessKey),
+                    audio.MainColor);
         }
 
-        return new(audio.Title, audio.Subtitle, audio.Album?.ToAlbumId(), mainArtists,
-                   audio.FeaturedArtists?.Select(ToTrackArtist).ToArray() ?? Array.Empty<TrackArtist>(), trackData);
+        return new(audio.Title, audio.Subtitle,
+            audio.Album is null
+                ? new UnknownAlbumId(audio.Cover?.ToString(), audio.Thumb?.Photo1200 ?? audio.Thumb?.Photo600)
+                : audio.Album.ToAlbumId(), mainArtists,
+            audio.FeaturedArtists?.Select(ToTrackArtist).ToArray() ?? Array.Empty<TrackArtist>(), trackData);
     }
 
     public static TrackArtist ToTrackArtist(this MainArtist artist)

@@ -1,0 +1,87 @@
+﻿<Page x:Class="MusicX.Views.Modals.MixSettingsModal"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:MusicX.Views.Modals"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:modals="clr-namespace:MusicX.ViewModels.Modals"
+    mc:Ignorable="d" 
+      MinWidth="400"
+      d:DesignHeight="450" d:DesignWidth="800"
+      d:DataContext="{d:DesignInstance modals:MixSettingsModalViewModel}"
+      Title="{Binding Title}">
+
+    <Grid>
+        <StackPanel>
+            <TextBlock HorizontalAlignment="Center" FontFamily="{StaticResource VKSansRegular}" FontSize="15" Opacity="0.8" Text="{Binding Subtitle}"/>
+
+            <ItemsControl Margin="0,10,0,0" ItemsSource="{Binding Categories}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Margin="0, 10,0,0">
+                            <TextBlock FontFamily="{StaticResource VKSansMedium}" FontSize="15" Text="{Binding Title}"/>
+
+                            <ui:ListView Margin="0, 10,0,0" ItemsSource="{Binding Options}">
+                                <ui:ListView.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                </ui:ListView.ItemsPanel>
+
+                                <ui:ListView.Style >
+                                    <Style TargetType="ui:ListView" BasedOn="{StaticResource ItemsListViewStyle}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Type}" Value="pictured_button_horizontal_group">
+                                                <Setter Property="ItemTemplate">
+                                                    <Setter.Value>
+                                                        <DataTemplate DataType="{x:Type modals:MixSettingsOptionViewModel}">
+                                                            <StackPanel Margin="0,5,5,5">
+                                                                <ToggleButton Width="100" Height="100" IsChecked="{Binding Selected}">
+                                                                    <StackPanel HorizontalAlignment="Center">
+                                                                        <Image Height="50" Width="50" Source="{Binding Icon}"/>
+                                                                        <TextBlock Margin="0,5,0,0" HorizontalAlignment="Center" TextAlignment="Center" VerticalAlignment="Center" Width="120" Text="{Binding Title}"/>
+                                                                    </StackPanel>
+                                                                </ToggleButton>
+                                                            </StackPanel>
+                                                        </DataTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </DataTrigger>
+
+                                            <DataTrigger Binding="{Binding Type}" Value="button_horizontal_group">
+                                                <Setter Property="ItemTemplate">
+                                                    <Setter.Value>
+                                                        <DataTemplate DataType="{x:Type modals:MixSettingsOptionViewModel}">
+                                                            <Grid Margin="0,5,5,5">
+                                                                <ToggleButton Width="120" IsChecked="{Binding Selected}" Content="{Binding Title}"/>
+                                                            </Grid>
+                                                        </DataTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ui:ListView.Style>
+                            </ui:ListView>
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <Grid Margin="0,20,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <ui:Button HorizontalAlignment="Stretch" Margin="5,0,0,0" Appearance="Secondary" Grid.Column="1"
+                           Content="Применить" Command="{Binding ApplyCommand}" />
+                <ui:Button HorizontalAlignment="Stretch" Appearance="Transparent"  Grid.Column="0" Content="Сбросить"
+                           Command="{Binding ResetCommand}" />
+            </Grid>
+        </StackPanel>
+
+        
+    </Grid>
+</Page>

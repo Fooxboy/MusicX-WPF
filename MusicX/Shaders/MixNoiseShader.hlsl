@@ -73,5 +73,5 @@ float4 main(float2 uv : TEXCOORD) : COLOR
     
     float3 col = finalComp;
     
-    return float4(col,tex_col.a);
+    return float4(tex_col.rgb * col,tex_col.a);
 }

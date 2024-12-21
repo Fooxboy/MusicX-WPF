@@ -8,6 +8,7 @@
     xmlns:iconElements="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:helpers="clr-namespace:MusicX.Helpers"
     xmlns:system="clr-namespace:System;assembly=System.Runtime"
+    xmlns:models="clr-namespace:MusicX.Core.Models;assembly=MusicX.Core"
     d:DesignHeight="100"
     d:DesignWidth="800"
     x:Name="Control"
@@ -28,6 +29,14 @@
                     Margin="10,0,0,0"
                      />
             </StackPanel>
+            
+            <StackPanel MouseDown="Share_MouseDown" Orientation="Horizontal">
+                <iconElements:SymbolIcon Symbol="Share20"  />
+                <TextBlock
+                    Margin="10,0,0,0"
+                    
+                    Text="Поделиться" />
+            </StackPanel>
 
             <MenuItem
                 x:Name="GoToArtistMenu"
@@ -41,6 +50,12 @@
                         </StackPanel>
                     </DataTemplate>
                 </MenuItem.HeaderTemplate>
+                <MenuItem.ItemTemplate>
+                    <DataTemplate DataType="{x:Type models:MainArtist}">
+                        <TextBlock Text="{Binding Name, Mode=OneTime}" Tag="{Binding Id, Mode=OneTime}"
+                                   MouseLeftButtonUp="ArtistContextMenu_Click" />
+                    </DataTemplate>
+                </MenuItem.ItemTemplate>
             </MenuItem>
 
             <StackPanel x:Name="AddToPlaylist" MouseDown="AddToPlaylist_MouseDown"  Orientation="Horizontal">
@@ -188,7 +203,7 @@
             </Grid.RowDefinitions>
             
             <Grid Grid.RowSpan="2" Margin="0,0.5,6,0" VerticalAlignment="Center">
-                <ContentPresenter Content="{Binding Audio.Album.Cover, ElementName=Control, Mode=OneWay, TargetNullValue={x:Null}, FallbackValue={x:Null}}"
+                <ContentPresenter Content="{Binding Audio.Cover, ElementName=Control, Mode=OneWay, TargetNullValue={x:Null}, FallbackValue={x:Null}}"
                                   ContentTemplateSelector="{StaticResource TrackIconTemplateSelector}" />
                 <Border x:Name="PlayButtons" 
                         Visibility="Collapsed"
@@ -206,7 +221,8 @@
                 </Border>
             </Grid>
             
-            <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" x:Name="ChartGrid" Visibility="Collapsed"
+            <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="1"
+                    Visibility="{Binding InChart, ElementName=Control, Converter={StaticResource BooleanToVisibilityConverter}}"
                     Margin="0,0,5,0"
                     Width="25"
                     Height="25"
@@ -217,10 +233,11 @@
                     <SolidColorBrush Color="Black" Opacity="0.2" />
                 </Border.Background>
                 <TextBlock
+                    x:Name="ChartTextBlock"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     FontWeight="ExtraBlack"
-                    Text="{Binding ChartPosition, ElementName=Control, Mode=OneWay}" />
+                    Text="0" />
             </Border>
             
             <TextBlock Grid.Row="0" Grid.Column="2"
@@ -236,11 +253,7 @@
                         <ToolTip Content="Перейти к альбому" />
                     </Run.ToolTip>
                 </Run>
-                <Run Text="{Binding Audio.Subtitle, ElementName=Control, Mode=OneWay}">
-                    <Run.Foreground>
-                        <SolidColorBrush Color="White" Opacity="0.3" />
-                    </Run.Foreground>
-                </Run>
+                <Run Text="{Binding Audio.Subtitle, ElementName=Control, Mode=OneWay}" FontWeight="Light" />
             </TextBlock>
             
             <TextBlock
@@ -284,10 +297,9 @@
                 Width="16"
                 Height="16"
                 VerticalAlignment="Center"
-                BorderBrush="White"
+                BorderBrush="{DynamicResource ControlStrokeColorTertiaryBrush}"
                 BorderThickness="1"
                 CornerRadius="2"
-                Opacity="0.4"
                 Visibility="Collapsed">
                 <TextBlock
                     Margin="0,0,0,1"
@@ -295,6 +307,7 @@
                     VerticalAlignment="Center"
                     FontFamily="{StaticResource VKSansBold}"
                     FontSize="12"
+                    Opacity="0.4"
                     Text="E" />
             </Border>
 

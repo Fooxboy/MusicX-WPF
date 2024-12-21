@@ -1,0 +1,31 @@
+﻿<UserControl x:Class="MusicX.Controls.WindowsVersionBlock"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:MusicX.Controls"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             mc:Ignorable="d"
+             Name="Control"
+             DataContext="{Binding Version, ElementName=Control}"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <Style TargetType="ui:Card" BasedOn="{StaticResource {x:Type ui:Card}}">
+            <Setter Property="Padding" Value="6" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+    </UserControl.Resources>
+    
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+        <TextBlock TextAlignment="Center" FontWeight="SemiBold" FontSize="24">
+            <ui:Card Content="{Binding Major, FallbackValue=10}" />
+            <Run>.</Run>
+            <ui:Card Content="{Binding Minor, FallbackValue=0}" />
+            <Run>.</Run>
+            <ui:Card Content="{Binding Build, FallbackValue=19041}" />
+            <Run>.</Run>
+            <ui:Card Content="{Binding Revision, FallbackValue=0}" />
+        </TextBlock>
+    </StackPanel>
+</UserControl>

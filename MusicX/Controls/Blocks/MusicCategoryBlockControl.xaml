@@ -7,35 +7,167 @@
              xmlns:models="clr-namespace:MusicX.Core.Models;assembly=MusicX.Core"
              xmlns:controls="clr-namespace:MusicX.Controls"
              xmlns:shaders="clr-namespace:MusicX.Shaders"
+             xmlns:appearance="clr-namespace:Wpf.Ui.Appearance;assembly=Wpf.Ui"
+             xmlns:blocks="clr-namespace:MusicX.Controls.Blocks"
+             xmlns:converters="clr-namespace:MusicX.Converters"
+             xmlns:patches="clr-namespace:MusicX.Patches"
+             Name="Control"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance models:Block}"
              d:DesignHeight="450" d:DesignWidth="800">
-    <ui:ListView Style="{StaticResource ItemsListViewStyle}" ItemsSource="{Binding Links, Mode=OneTime}">
-        <ui:ListView.ItemsPanel>
-            <ItemsPanelTemplate>
-                <controls:DynamicUniformGrid IsItemsHost="True" Columns="2" />
-            </ItemsPanelTemplate>
-        </ui:ListView.ItemsPanel>
+    <UserControl.Resources>
+        <converters:MarginMultiplyConverter x:Key="MarginMultiplyConverter" Margin="25 15 0 0" />
         
-        <ui:ListView.ItemTemplate>
-            <DataTemplate DataType="{x:Type models:Link}">
-                <ui:CardAction
-                    Height="80"
-                    Margin="0 0 10 10"
-                    Click="CardAction_Click"
-                    IsChevronVisible="True">
-                    <ui:CardAction.Icon>
-                        <ui:ImageIcon Source="{Binding Image[0].Url}">
-                            <ui:ImageIcon.Effect>
-                                <shaders:ColorOverlayEffect />
-                            </ui:ImageIcon.Effect>
-                        </ui:ImageIcon>
-                    </ui:CardAction.Icon>
+        <Style x:Key="ImageIconStyle" TargetType="ui:ImageIcon">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding AppTheme, ElementName=Control}"
+                             Value="{x:Static appearance:ApplicationTheme.Dark}">
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <shaders:ColorOverlayEffect />
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+
+        <DataTemplate x:Key="ListItemTemplate" DataType="{x:Type models:Link}">
+            <ui:CardAction
+                Height="80"
+                Margin="0 0 10 10"
+                Click="CardAction_Click"
+                IsChevronVisible="True">
+                <ui:CardAction.Icon>
+                    <ui:ImageIcon Style="{StaticResource ImageIconStyle}" 
+                                  Source="{Binding Image[0].Url}" />
+                </ui:CardAction.Icon>
+                <TextBlock FontFamily="{StaticResource VKSansRegular}"
+                           Text="{Binding Title}"
+                           TextTrimming="CharacterEllipsis" />
+            </ui:CardAction>
+        </DataTemplate>
+        
+        <DataTemplate x:Key="GridItemTemplate" DataType="{x:Type models:Link}">
+            <ui:CardAction
+                Height="80"
+                Margin="0 0 10 10"
+                Padding="12 0 0 0"
+                Click="CardAction_Click"
+                IsChevronVisible="False">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
                     <TextBlock FontFamily="{StaticResource VKSansRegular}"
+                               VerticalAlignment="Center"
                                Text="{Binding Title}"
                                TextTrimming="CharacterEllipsis" />
-                </ui:CardAction>
-            </DataTemplate>
-        </ui:ListView.ItemTemplate>
-    </ui:ListView>
+                    <ItemsControl Margin="0 9 24 0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" ItemsSource="{Binding Image, Mode=OneTime}"
+                                  Height="100">
+                        <ItemsControl.RenderTransform>
+                            <RotateTransform Angle="-10" />
+                        </ItemsControl.RenderTransform>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <Grid IsItemsHost="True" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemContainerStyle>
+                            <Style TargetType="ContentPresenter">
+                                <Setter Property="Margin" Value="{Binding (patches:ItemContainerGeneratorIndexHook.ItemContainerIndex), Converter={StaticResource MarginMultiplyConverter}, RelativeSource={RelativeSource Self}}" />
+                            </Style>
+                        </ItemsControl.ItemContainerStyle>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type models:Image}">
+                                <Border CornerRadius="8" Width="56" Height="56">
+                                    <Border.Background>
+                                        <ImageBrush ImageSource="{Binding Url, Mode=OneTime}" />
+                                    </Border.Background>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Grid>
+            </ui:CardAction>
+        </DataTemplate>
+
+        <DataTemplate x:Key="DoubleGridItemTemplate" DataType="{x:Type models:Link}">
+            <ui:CardAction
+                Height="80"
+                Margin="0 0 10 10"
+                Padding="12 0 0 0"
+                Click="CardAction_Click"
+                IsChevronVisible="False">   
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Border CornerRadius="8" HorizontalAlignment="Left" Width="56" Height="56">
+                        <Border.Background>
+                            <ImageBrush ImageSource="{Binding Image[0].Url, Mode=OneTime}" />
+                        </Border.Background>
+                    </Border>
+
+                    <StackPanel VerticalAlignment="Center" Grid.Column="1">
+                        <TextBlock FontFamily="{StaticResource VKSansRegular}"
+                            Margin="15,0,0,0"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Left"
+                            Text="{Binding Title}"
+                            TextTrimming="CharacterEllipsis" />
+
+                        <TextBlock FontFamily="{StaticResource VKSansRegular}"
+                                     Opacity="0.4"
+                                     Margin="15,0,0,0"
+                                     VerticalAlignment="Center"
+                                     HorizontalAlignment="Left"
+                                     Text="{Binding Subtitle}"
+                                     TextTrimming="CharacterEllipsis" />    
+                    </StackPanel>
+                    
+                </Grid>
+            </ui:CardAction>
+        </DataTemplate>
+
+        <Style TargetType="ui:ListView" BasedOn="{StaticResource ItemsListViewStyle}">
+            <Setter Property="ItemTemplate" Value="{StaticResource ListItemTemplate}" />
+            <Setter Property="ItemsPanel">
+                <Setter.Value>
+                    <ItemsPanelTemplate>
+                        <controls:DynamicUniformGrid IsItemsHost="True"
+                                                     Columns="2" />
+                    </ItemsPanelTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Layout, ElementName=Control}" Value="Grid">
+                    <Setter Property="ItemTemplate" Value="{StaticResource GridItemTemplate}" />
+                    <Setter Property="ItemsPanel">
+                        <Setter.Value>
+                            <ItemsPanelTemplate>
+                                <UniformGrid IsItemsHost="True" Columns="4" />
+                            </ItemsPanelTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+
+                <DataTrigger Binding="{Binding Layout, ElementName=Control}" Value="DoubleGrid">
+                    <Setter Property="ItemTemplate" Value="{StaticResource DoubleGridItemTemplate}" />
+                    <Setter Property="ItemsPanel">
+                        <Setter.Value>
+                            <ItemsPanelTemplate>
+                                <UniformGrid MinWidth="50" IsItemsHost="True" Columns="2" />
+                            </ItemsPanelTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <ui:ListView ItemsSource="{Binding Links, Mode=OneTime}" />
 </UserControl>

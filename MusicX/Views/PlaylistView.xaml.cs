@@ -4,7 +4,6 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media.Animation;
 using System.Windows.Navigation;
 using AsyncAwaitBestPractices;
 using Microsoft.Extensions.DependencyInjection;
@@ -56,7 +55,7 @@ namespace MusicX.Views
         public PlaylistView(Playlist playlist) : this()
         {
             this.playlist = playlist;
-            ViewModel.PlaylistData = new(playlist.Id, playlist.OwnerId, playlist.AccessKey);
+            ViewModel.PlaylistData = new(playlist.Id, playlist.OwnerId, playlist.AccessKey, (int)playlist.Count);
         }
 
         public PlaylistView(long playlistId, long ownerId, string accessKey) : this()
@@ -190,8 +189,7 @@ namespace MusicX.Views
                     PlayPlaylist.Icon = new SymbolIcon(SymbolRegular.Pause20);
 
                     await player.PlayAsync(
-                        new VkPlaylistPlaylist(StaticService.Container.GetRequiredService<VkService>(),
-                                               ViewModel.PlaylistData), ViewModel.Playlist.Audios[0].ToTrack());
+                        new VkPlaylistPlaylist(StaticService.Container.GetRequiredService<VkService>(), ViewModel.PlaylistData));
                 }
             }catch (Exception ex)
             {
@@ -262,7 +260,7 @@ namespace MusicX.Views
             }
             public void GetObjectData(SerializationInfo info, StreamingContext context)
             {
-                var (id, ownerId, accessKey) = _viewModel.PlaylistData;
+                var (id, ownerId, accessKey, _) = _viewModel.PlaylistData;
                 
                 info.AddValue(IdKey, id);
                 info.AddValue(OwnerIdKey, ownerId);
@@ -307,8 +305,9 @@ namespace MusicX.Views
                 PlayPlaylist.Content = "Остановить воспроизведение";
                 PlayPlaylist.Icon = new SymbolIcon(SymbolRegular.Pause20);
 
-                await player.PlayAsync(new ShuffleVkPlaylistPlaylist(
-                    StaticService.Container.GetRequiredService<VkService>(), ViewModel.PlaylistData));
+                var vkPlaylist = new VkPlaylistPlaylist(StaticService.Container.GetRequiredService<VkService>(), ViewModel.PlaylistData);
+                
+                await player.PlayAsync(vkPlaylist.ShuffleWithSeed(Random.Shared.Next()));
             }
             catch (Exception ex)
             {

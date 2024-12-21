@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.Media.Core;
 using Windows.Media.Playback;
-using FFmpegInteropX;
 using MusicX.Core.Services;
 using MusicX.Shared.Player;
 using NLog;

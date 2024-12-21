@@ -41,12 +41,13 @@ public sealed record BoomTrackData(string Url, bool IsLiked, bool IsExplicit, Ti
 public record IdInfo(long Id, long OwnerId, string AccessKey)
 {
     public string ToOwnerIdString() => $"{OwnerId}_{Id}";
+    public override string ToString() => $"{OwnerId}_{Id}_{AccessKey}";
 }
 
 [ProtoContract(ImplicitFields = ImplicitFields.AllPublic, SkipConstructor = true)]
 public sealed record VkTrackData(string Url, bool IsLiked, bool IsExplicit, bool? HasLyrics, TimeSpan Duration,
                                  IdInfo Info, string TrackCode, string? ParentBlockId,
-                                 IdInfo? Playlist) : TrackData(Url, IsLiked, IsExplicit, Duration)
+                                 IdInfo? Playlist, string? MainColor) : TrackData(Url, IsLiked, IsExplicit, Duration)
 {
     public bool Equals(VkTrackData? other)
     {

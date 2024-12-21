@@ -1,3 +1,4 @@
+using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Windows.Navigation;
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Services;
 using NLog;
-using Wpf.Ui.Extensions;
+
 namespace MusicX.Controls;
 
 public class NavigationBar : Control
@@ -91,9 +92,15 @@ public class NavigationBar : Control
             CurrentItem = Items.FirstOrDefault(b => b.Tag == menuView.MenuTag);
         else
             CurrentItem = null;
-        
+
         if (CurrentItem != null)
-            Frame.CleanNavigation();
+        {
+            while (Frame.CanGoBack)
+            {
+                if (Frame.RemoveBackEntry().CustomContentState is IDisposable disposable)
+                    disposable.Dispose();
+            }
+        }
 
         Log.Info("Navigated to {Content}", e.Content.ToString());
     }
