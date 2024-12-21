@@ -16,18 +16,17 @@ public class BackendConnectionService(Logger logger, string appVersion)
 
     public async void ReportMetric(string eventName, string? source = null)
     {
-        // in case initial token request failed
-        _token ??= await GetTokenAsync(_userId);
-        
         try
         {
+            // in case initial token request failed
+            _token ??= await GetTokenAsync(_userId);
+            
             using var response = await Client.PostAsJsonAsync($"/metrics/{eventName}/report", new ReportMetricRequest(appVersion, source));
             response.EnsureSuccessStatusCode();
         }
         catch (Exception e)
         {
             logger.Error(e, "Error while reporting event metric {0}", eventName);
-            throw;
         }
     }
 
@@ -38,9 +37,12 @@ public class BackendConnectionService(Logger logger, string appVersion)
         if (_token is not null) return _token;
         logger.Info("Получение временного токена Слушать вместе");
 
-        var host = await GetHostAsync();
-
-        Client.BaseAddress = new(host);
+        if (Client.BaseAddress is null)
+        {
+            var host = await GetHostAsync();
+            Client.BaseAddress = new(host);
+        }
+        
         using var response = await Client.PostAsJsonAsync("/token", userId);
         response.EnsureSuccessStatusCode();
 
