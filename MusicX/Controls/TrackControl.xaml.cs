@@ -336,6 +336,16 @@ namespace MusicX.Controls
 
                     await player.PlayAsync(new ListPlaylist(blockViewModel!.Audios.Select(TrackExtensions.ToTrack).ToImmutableList()), index);
                 }
+                // Воспроизведение из рекомендуемых плейлистов
+                else if (Audio.RecccomendedPlaylist is not null) 
+                {
+
+                    var playlistData = new PlaylistData(Audio.RecccomendedPlaylist.Playlist.Id, 
+                        Audio.RecccomendedPlaylist.Playlist.OwnerId, Audio.RecccomendedPlaylist.Playlist.AccessKey,
+                        (int)Audio.RecccomendedPlaylist.Playlist.Count);
+
+                    await player.PlayAsync(new VkPlaylistPlaylist(vkService, playlistData), index);
+                }
                 else
                 {
 

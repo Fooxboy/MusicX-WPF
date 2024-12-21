@@ -95,6 +95,9 @@ namespace MusicX.Core.Models
         public List<MainArtist> FeaturedArtists { get; set; }
         
         public Photo? Thumb { get; set; }
+
+        [JsonIgnore]
+        public RecommendedPlaylist RecccomendedPlaylist { get; set; }
         
         [JsonIgnore]
         public Uri? Cover

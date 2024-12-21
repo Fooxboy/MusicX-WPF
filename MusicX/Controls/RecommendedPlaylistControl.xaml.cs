@@ -89,6 +89,11 @@ namespace MusicX.Controls
                     nowPlay = true;
                     Icons.Symbol = SymbolRegular.Pause24;
                 }
+
+                foreach(var audio in Playlist.Audios)
+                {
+                    audio.RecccomendedPlaylist = Playlist;
+                }
             }
             catch (Exception ex)
             {
