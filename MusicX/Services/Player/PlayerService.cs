@@ -771,7 +771,8 @@ public class PlayerService
     private async Task ListenTogetherTrackChanged(PlaylistTrack playlistTrack)
     {
         _tracks.Replace(playlistTrack);
-        await PlayTrackAsync(0);
+        CurrentIndex = -1;
+        await PlayTrackFromQueueAsync(0);
     }
 
     private async Task ListenTogetherPlayStateChanged(TimeSpan position, bool pause)
