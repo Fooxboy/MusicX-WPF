@@ -24,11 +24,7 @@
                                           SelectedItemsList="{Binding SelectedTracks, Mode=TwoWay}"
                                           SelectionMode="Multiple" ItemsSource="{Binding Tracks}"
                                           Height="560">
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource {x:Type ListViewItem}}">
-                        <Setter Property="Margin" Value="0,1,0,1" />
-                    </Style>
-                </ListBox.ItemContainerStyle>
+               
                 <controls:MultiSelectListView.ItemTemplate>
                     <DataTemplate DataType="{x:Type models:Audio}">
                         <Grid>
