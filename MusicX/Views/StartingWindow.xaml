@@ -16,15 +16,22 @@
     Loaded="Window_Loaded"
     mc:Ignorable="d">
     <Grid>
+        
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
+        <Image Opacity="0.7" Stretch="UniformToFill" Source="pack://application:,,,/Assets/newyear/start_show.png"/>
+
+
         <Image Height="220" Width="220"
                HorizontalAlignment="Center"
                VerticalAlignment="Center"
-               Source="/StoreLogo.scale-400.png" />
+               Source="pack://application:,,,/Assets/newyear/snow_logo.png" />
+
+        <Image Height="100" Width="100" Margin="-190,0,0,120"  Source="pack://application:,,,/Assets/newyear/newyearblock.png"/>
+
 
         <ProgressBar IsIndeterminate="True" Grid.Row="1" />
     </Grid>

@@ -15,6 +15,11 @@
     <ValidateExecutableReferencesMatchSelfContained>false</ValidateExecutableReferencesMatchSelfContained>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\newyear\snow_logo.png" />
+    <None Remove="Assets\newyear\start_show.png" />
+  </ItemGroup>
   
   <ItemGroup>
     <AssemblyAttribute Include="MusicX.Services.BuildDateTime">
@@ -41,6 +46,8 @@
     <Resource Include="Assets\newyear\snow8.png" />
     <Resource Include="Assets\newyear\snow9.png" />
     <Resource Include="Assets\newyear\snowfall.png" />
+    <Resource Include="Assets\newyear\snow_logo.png" />
+    <Resource Include="Assets\newyear\start_show.png" />
     <Resource Include="Fonts\VKSansDisplay-Bold.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
