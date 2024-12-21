@@ -141,9 +141,7 @@
                             </Grid.RowDefinitions>
                             
                             <controls1:LoadingBorder IsLoading="{Binding IsLoading}"
-                                                     Margin="0,30,20,0"
-                                                     HorizontalAlignment="Left"
-                                                     VerticalAlignment="Center" >
+                                                     Margin="0,0,20,0">
                                 <ScrollViewer behaviors:AutoScrollBehavior.AutoScroll="True"
                                               HorizontalScrollBarVisibility="Hidden"
                                               VerticalScrollBarVisibility="Hidden"
