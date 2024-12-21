@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Interop;
 using Windows.UI.Popups;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Toolkit.Uwp.Notifications;
 using MusicX.Controls;
 using MusicX.Core.Models;
 using MusicX.Core.Services;
@@ -277,6 +278,22 @@ namespace MusicX.Views
             var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
 
             navigationService.OpenModal<WelcomeToListenTogetherModal>();
+        }
+
+        private void ShowToast_OnClick(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                new ToastContentBuilder()
+                    .AddText("Текст текст текст")
+                    .AddText("Ещё текста немного навалило")
+                    .Show();
+            }
+            catch (Exception exception)
+            {
+                Debugger.Break();
+                StaticService.Container.GetRequiredService<Logger>().Error(exception, "Toast");
+            }
         }
     }
 }

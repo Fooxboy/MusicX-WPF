@@ -131,10 +131,17 @@ namespace MusicX
         {
             if (configService.Config.MinimizeToTray is not null) return configService.Config.MinimizeToTray.Value;
 
-            new ToastContentBuilder()
-                .AddText("Приложене было скрыто в трее, нажмите на иконку, чтобы снова открыть окно.")
-                .AddText("Поведение можно изменить в настройках. Это уведомление больше не будет показано.")
-                .Show();
+            try
+            {
+                new ToastContentBuilder()
+                    .AddText("Приложене было скрыто в трее, нажмите на иконку, чтобы снова открыть окно.")
+                    .AddText("Поведение можно изменить в настройках. Это уведомление больше не будет показано.")
+                    .Show();
+            }
+            catch (Exception e)
+            {
+                logger.Warn(e, "Failed to show toast about minimize to tray");
+            }
                 
             configService.Config.MinimizeToTray = true;
             configService.SetConfig(configService.Config).SafeFireAndForget();
