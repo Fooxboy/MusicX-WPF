@@ -43,6 +43,20 @@ public static partial class NavigationServiceExtensions
                     return;
                 }
 
+                // ураа костыль для "Настроить рекомендации"
+                var matchRecoms = ConfugureRecomsUrl().Match(link.Url);
+
+                if(matchRecoms.Success)
+                {
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = link.Url,
+                        UseShellExecute = true
+                    });
+
+                    return;
+                }
+
                 var music = await vkService.GetAudioCatalogAsync(link.Url);
                 navigationService.OpenSection(music.Catalog.DefaultSection);
 
@@ -127,4 +141,7 @@ public static partial class NavigationServiceExtensions
     
     [GeneratedRegex(@"https://vk\.com/(?<app>app\-?[0-9]+)(?>[\?\#].+)?$")]
     private static partial Regex MiniAppRegex();
+
+    [GeneratedRegex(@"https://vk\.com/audio\?popup=recoms_onboarding+$")]
+    private static partial Regex ConfugureRecomsUrl();
 }
