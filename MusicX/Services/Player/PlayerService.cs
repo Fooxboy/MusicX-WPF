@@ -339,9 +339,9 @@ public class PlayerService
 
 
 
-            if (CurrentTrack.AlbumId?.CoverUrl is not null)
+            if (CurrentTrack.AlbumId?.BigCoverUrl is not null)
             {
-                player.SystemMediaTransportControls.DisplayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri(CurrentTrack.AlbumId.CoverUrl));
+                player.SystemMediaTransportControls.DisplayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri(CurrentTrack.AlbumId.BigCoverUrl));
 
             }
 
