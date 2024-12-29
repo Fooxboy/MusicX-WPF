@@ -64,5 +64,7 @@ public class ConfigModel
         
     public bool? SendLastFmScrobbles { get; set; }
 
+    public bool? ShowLyricsInFullScreen { get; set; }
+
     public MusicXTheme Theme { get; set; } = MusicXTheme.Dark;
 }

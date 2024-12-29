@@ -170,7 +170,7 @@
             </StackPanel>
 
 
-            <controls:LyricsControl Grid.Column="2" Margin="30,0" MaxHeight="500" MaxWidth="500" x:Name="LyricsControlView"/>
+            <controls:LyricsControl Grid.Column="2" Margin="30,0" MaxHeight="500" MaxWidth="500" Visibility="Collapsed" x:Name="LyricsControlView"/>
 
         </Grid>
 

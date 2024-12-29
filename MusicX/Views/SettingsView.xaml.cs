@@ -63,6 +63,13 @@ namespace MusicX.Views
                 GetBetaUpdates.IsChecked = config.GetBetaUpdates.GetValueOrDefault();
                 SavePlayerState.IsChecked = config.SavePlayerState.GetValueOrDefault();
                 SendLastFm.IsChecked = config.SendLastFmScrobbles.GetValueOrDefault();
+                ShowLyricsInFullScreenSwitch.IsChecked = config.ShowLyricsInFullScreen;
+
+                // бля какой костыль пиздец
+                if(config.ShowLyricsInFullScreen is null)
+                {
+                    ShowLyricsInFullScreenSwitch.IsChecked = true;
+                }
 
                 UserName.Text = config.UserName;
 
@@ -536,6 +543,21 @@ namespace MusicX.Views
             config.Theme = (MusicXTheme)ThemeComboBox.SelectedIndex;
             
             StaticService.Container.GetRequiredService<WindowThemeService>().Update(previousTheme);
+
+            await configService.SetConfig(config);
+        }
+
+        private async void ShowLyricsInFullScreenSwitch_Checked(object sender, RoutedEventArgs e)
+        {
+            config.ShowLyricsInFullScreen = ShowLyricsInFullScreenSwitch.IsChecked;
+
+            await configService.SetConfig(config);
+        }
+
+        private async void ShowLyricsInFullScreenSwitch_Unchecked(object sender, RoutedEventArgs e)
+        {
+
+            config.ShowLyricsInFullScreen = ShowLyricsInFullScreenSwitch.IsChecked;
 
             await configService.SetConfig(config);
         }

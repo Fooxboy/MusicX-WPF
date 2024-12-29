@@ -109,7 +109,15 @@ namespace MusicX.Views
                 TrackName.Text = playerService.CurrentTrack.Title;
                 ArtistName.Text = playerService.CurrentTrack.GetArtistsString();
 
-                await LoadLyrics();
+                var configService = StaticService.Container.GetRequiredService<ConfigService>();
+
+                var config = await configService.GetConfig();
+
+                if(config.ShowLyricsInFullScreen is true or null)
+                {
+                    await LoadLyrics();
+                }
+
             }
             catch (Exception ex)
             {
@@ -128,6 +136,7 @@ namespace MusicX.Views
         {
             try
             {
+                LyricsControlView.Visibility = Visibility.Visible;
                 var vkService = StaticService.Container.GetRequiredService<VkService>();
 
                 if (playerService.CurrentTrack!.Data is not VkTrackData track)
