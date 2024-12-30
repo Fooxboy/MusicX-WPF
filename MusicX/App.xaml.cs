@@ -25,8 +25,9 @@ namespace MusicX
                 if (e.Args != null && e.Args.Length > 0) //открытие не нового приложения, а передача агрументов уже в открытое
                 {
                     await SingleAppService.Instance.SendArguments(e.Args);
-                    Current.Shutdown();
                 }
+
+                Current.Shutdown();
 
                 return;
             }
