@@ -1169,6 +1169,9 @@ namespace MusicX.Core.Services
 
                 logger.Info("Successful invoke 'audio.getLyrics' ");
 
+                if (model is { LyricsInfo.Text: { Count: > 0 } lyrics })
+                    lyrics.RemoveAll(string.IsNullOrEmpty);
+
                 return model;
             }
             catch (Exception ex)
