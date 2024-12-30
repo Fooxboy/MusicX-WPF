@@ -63,11 +63,20 @@ namespace MusicX
             playerSerivce.TrackChangedEvent += PlayerSerivce_TrackChangedEvent;
 
             SingleAppService.Instance.RunWitchArgs += Instance_RunWitchArgs;
+            SingleAppService.Instance.Focus += InstanceOnFocus;
             
             togetherService.ConnectedToSession += TogetherServiceOnConnectedToSession;
 
             Width = configService.Config.Width;
             Height = configService.Config.Height;
+        }
+
+        private void InstanceOnFocus()
+        {
+            Show();
+            if (WindowState == WindowState.Minimized)
+                WindowState = WindowState.Normal;
+            Activate();
         }
 
         protected override void OnStateChanged(EventArgs e)

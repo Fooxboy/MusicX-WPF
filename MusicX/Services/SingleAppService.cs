@@ -1,55 +1,81 @@
 ﻿using MusicX.Models;
 using System;
+using System.IO;
 using System.IO.Pipes;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using NLog;
 
 namespace MusicX.Services
 {
     public class SingleAppService
     {
-        public event Func<string[], Task> RunWitchArgs;
+        public event Func<string[], Task>? RunWitchArgs;
+        
+        public event Action? Focus;
 
-        private static SingleAppService _instance;
+        private static SingleAppService? _instance;
 
-        public static SingleAppService Instance
+        public static SingleAppService Instance => _instance ??= new SingleAppService();
+
+
+        public async void StartArgsListener()
         {
-            get { return _instance ?? (_instance = new SingleAppService()); }
-        }
-
-
-        public async Task StartArgsListener()
-        {
-            Task.Factory.StartNew(() =>
+            try
             {
                 while (true)
                 {
-                    var pipeServer = new NamedPipeServerStream("argsServer");
+                    await using var pipeServer = new NamedPipeServerStream("argsServer");
+                    await pipeServer.WaitForConnectionAsync();
+                    
+                    var command = await JsonSerializer.DeserializeAsync<AppCommand>(pipeServer);
 
-                    pipeServer.WaitForConnection();
-
-                    var textStream = new StreamString(pipeServer);
-
-                    var args = textStream.ReadString();
-
-                    RunWitchArgs?.Invoke(args.Split('-'));
-
-                    pipeServer.Close();
+                    switch (command)
+                    {
+                        case ArgsCommand { Args: var args }:
+                            if (RunWitchArgs is not null)
+                                await RunWitchArgs(args);
+                            break;
+                        case FocusCommand focusCommand:
+                            Focus?.Invoke();
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(command));
+                    }
                 }
-            });
-
+            }
+            catch (Exception e)
+            {
+                StaticService.Container.GetRequiredService<Logger>().Error(e, "Failed to start args listener");
+            }
         }
 
         public async Task SendArguments(string[] args)
         {
-            var pipeClient = new NamedPipeClientStream(".", "argsServer");
-            pipeClient.Connect();
-
-            var textString = new StreamString(pipeClient);
-
-            textString.WriteString(String.Join('-', args));
-
-            pipeClient.Close();
-
+            await SendCommand(new ArgsCommand(args));
         }
+        
+        public async Task FocusWindow()
+        {
+            await SendCommand(new FocusCommand());
+        }
+
+        private async Task SendCommand<T>(T command) where T : AppCommand
+        {
+            await using var pipeClient = new NamedPipeClientStream(".", "argsServer");
+            await pipeClient.ConnectAsync();
+
+            await JsonSerializer.SerializeAsync<AppCommand>(pipeClient, command);
+        }
+
+        [JsonDerivedType(typeof(ArgsCommand), "args")]
+        [JsonDerivedType(typeof(FocusCommand), "focus")]
+        private abstract record AppCommand;
+        
+        private record ArgsCommand(string[] Args) : AppCommand;
+        
+        private record FocusCommand : AppCommand;
     }
 }

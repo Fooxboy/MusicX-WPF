@@ -27,6 +27,8 @@ namespace MusicX
                     await SingleAppService.Instance.SendArguments(e.Args);
                 }
 
+                await SingleAppService.Instance.FocusWindow();
+
                 Current.Shutdown();
 
                 return;
@@ -45,7 +47,7 @@ namespace MusicX
             var window = new StartingWindow(e.Args);
             window.Show();
 
-            await SingleAppService.Instance.StartArgsListener();
+            SingleAppService.Instance.StartArgsListener();
         }
 
         private static bool ShowUnsupportedOsMessage()
