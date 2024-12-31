@@ -15,6 +15,7 @@
         <Storyboard x:Key="LoadedAmination">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="stackPanel" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00" Value="803.712" />
+                
                 <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0">
                     <EasingDoubleKeyFrame.EasingFunction>
                         <CircleEase EasingMode="EaseOut" />
@@ -37,6 +38,7 @@
         
         <Grid x:Name="ContentGrid">
 
+            
         <StackPanel Margin="0,0,0,150">
 
             <Button Content="Test" />
