@@ -191,7 +191,12 @@ public class PlayerService
                 return;
             }
             
-            if (position is not null) Seek(position.Value);
+            if (position is not null)
+            {
+                Seek(position.Value);
+
+                await Task.WhenAll(_statsListeners.Select(b => b.TrackPlayStateChangedAsync(track, position.Value, false)));
+            }
 
             player.Play();
             UpdateWindowsData().SafeFireAndForget();
