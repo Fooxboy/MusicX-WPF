@@ -77,8 +77,8 @@ namespace MusicX.Core.Services
                 }
                 client.SetPresence(new RichPresence()
                 {
-                    Details = artist,
-                    State = name,
+                    Details = TruncateString(artist),
+                    State = TruncateString(name),
                     Assets = new Assets()
                     {
                         LargeImageKey = cover,
@@ -121,6 +121,16 @@ namespace MusicX.Core.Services
                 logger.Error(ex, ex.Message);
 
             }
+        }
+
+        private string TruncateString(string input)
+        {
+            if (input.Length <= 128)
+            {
+                return input;
+            }
+
+            return input.Substring(0, 128 - 3) + "...";
         }
     }
 }
