@@ -191,7 +191,12 @@ public class PlayerService
                 return;
             }
             
-            if (position is not null) Seek(position.Value);
+            if (position is not null)
+            {
+                Seek(position.Value);
+
+                await Task.WhenAll(_statsListeners.Select(b => b.TrackPlayStateChangedAsync(track, position.Value, false)));
+            }
 
             player.Play();
             UpdateWindowsData().SafeFireAndForget();
@@ -339,9 +344,9 @@ public class PlayerService
 
 
 
-            if (CurrentTrack.AlbumId?.CoverUrl is not null)
+            if (CurrentTrack.AlbumId?.BigCoverUrl is not null)
             {
-                player.SystemMediaTransportControls.DisplayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri(CurrentTrack.AlbumId.CoverUrl));
+                player.SystemMediaTransportControls.DisplayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri(CurrentTrack.AlbumId.BigCoverUrl));
 
             }
 
@@ -771,7 +776,8 @@ public class PlayerService
     private async Task ListenTogetherTrackChanged(PlaylistTrack playlistTrack)
     {
         _tracks.Replace(playlistTrack);
-        await PlayTrackAsync(0);
+        CurrentIndex = -1;
+        await PlayTrackFromQueueAsync(0);
     }
 
     private async Task ListenTogetherPlayStateChanged(TimeSpan position, bool pause)

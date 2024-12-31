@@ -1,14 +1,6 @@
-﻿using MusicX.Core.Models;
-using MusicX.Shared.ListenTogether.Radio;
-using Newtonsoft.Json;
+﻿using MusicX.Shared.ListenTogether.Radio;
 using NLog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http.Json;
-using System.Text;
-using System.Threading.Tasks;
-using VkNet.Model.Attachments;
 
 namespace MusicX.Core.Services
 {
@@ -81,7 +73,7 @@ namespace MusicX.Core.Services
         {
             try
             {
-                var p = parameters.Select(x => x.Key + "=" + x.Value);
+                var p = parameters.Select(x => x.Key + "=" + Uri.EscapeDataString(x.Value));
 
                 return await backendConnectionService.Client.GetFromJsonAsync<TResponse>("/radio/" + method + "?" + string.Join("&", p));
             }

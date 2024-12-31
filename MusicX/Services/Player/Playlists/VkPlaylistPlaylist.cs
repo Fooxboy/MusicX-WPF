@@ -82,7 +82,7 @@ public class VkPlaylistPlaylist : PlaylistBase<PlaylistData>, IRandomAccessPlayl
 
         if (_firstLoad)
         {
-            var playlist = await _vkService.GetPlaylistAsync(LoadCount, id, accessKey, ownerId);
+            var playlist = await _vkService.GetPlaylistAsync(0, id, accessKey, ownerId);
 
             _count = (int)playlist.Playlist.Count;
             _offset = 0;
@@ -117,7 +117,7 @@ public class VkPlaylistPlaylist : PlaylistBase<PlaylistData>, IRandomAccessPlayl
         await PerformFirstLoadAsync();
         
         var (offset, length) = range.GetOffsetAndLength(_count);
-        var response = await _vkService.AudioGetAsync(id, ownerId, accessKey, offset, length);
+        var response = await _vkService.AudioGetAsync(id, ownerId, accessKey, offset, length, _seed);
         return response.Items.Select(audio => audio.ToTrack(trackPlaylist));
     }
 }

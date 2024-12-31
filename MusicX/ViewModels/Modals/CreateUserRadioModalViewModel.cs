@@ -10,8 +10,6 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using MusicX.Helpers;
-using VkNet.Abstractions;
-using VkNet.Enums.Filters;
 using Wpf.Ui;
 using NavigationService = MusicX.Services.NavigationService;
 
@@ -57,7 +55,7 @@ namespace MusicX.ViewModels.Modals
             var snackbarService = StaticService.Container.GetRequiredService<ISnackbarService>();
             var logger = StaticService.Container.GetRequiredService<Logger>();
             var navigationService = StaticService.Container.GetRequiredService<NavigationService>();
-            var usersCategory = StaticService.Container.GetRequiredService<IUsersCategory>();
+            var vkService = StaticService.Container.GetRequiredService<VkService>();
 
             if(string.IsNullOrEmpty(TitleRadio))
             {
@@ -94,7 +92,7 @@ namespace MusicX.ViewModels.Modals
 
                 }
 
-                var user = (await usersCategory.GetAsync(new[] { config.UserId }, ProfileFields.Photo100))[0];
+                var user = await vkService.GetCurrentUserAsync();
 
                 var coverUrl = "https://as2.ftcdn.net/v2/jpg/02/87/95/77/1000_F_287957705_kVUIWM8TnTbavhGX9JTEAQLGQo6fVrc5.jpg";
                 if (!string.IsNullOrEmpty(CoverPath) && File.Exists(CoverPath))
@@ -105,7 +103,7 @@ namespace MusicX.ViewModels.Modals
                     coverUrl, 
                     DescriptionRadio,
                     config.UserId, 
-                    config.UserName, user.Photo100.ToString());
+                    config.UserName, user.Photo200?.OriginalString ?? "https://vk.com/images/dquestion_app_widget_1_a.png");
 
                 navigationService.CloseModal();
 

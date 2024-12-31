@@ -330,6 +330,20 @@
                             FontSize="15"
                             Unchecked="SavePlayerState_OnCheckChanged" />
                     </StackPanel>
+
+                    <TextBlock
+                         FontFamily="{StaticResource VKSansMedium}"
+                         FontSize="20"
+                         Text="Полноэкранный режим" />
+                        <StackPanel Margin="0,10">
+                          <wpfui:ToggleSwitch
+                                 x:Name="ShowLyricsInFullScreenSwitch"
+                                 Checked="ShowLyricsInFullScreenSwitch_Checked"
+                                 Content="Показывать текст в полноэкранном режиме"
+                                 FontSize="15"
+                                 Unchecked="ShowLyricsInFullScreenSwitch_Unchecked" />
+                    </StackPanel>
+
                 </StackPanel>
             </wpfui:CardExpander>
 

@@ -93,7 +93,7 @@ jobs:
           write-mode: overwrite
 
       - name: Install vpk
-        run: dotnet tool install -g vpk
+        run: dotnet tool install -g vpk --version 0.0.1023
 
       - run: vpk download github --repoUrl https://github.com/Fooxboy/MusicX-WPF -c ${{ github.ref == 'refs/heads/develop' && 'win-beta' || 'win' }} --pre --token ${{ secrets.GITHUB_TOKEN }}
         name: Download previous release

@@ -50,8 +50,6 @@ namespace MusicX.Server.Services
             _sessionService.AddListenerToSesstion(session.Owner.ConnectionId, listener);
 
             await _hub.Clients.Client(session.Owner.ConnectionId).SendAsync(Callbacks.ListenerConnected, listener);
-            
-            await _hub.Clients.Client(session.Owner.ConnectionId).SendAsync(Callbacks.TrackChanged, session.CurrentTrack);
 
             _logger.LogInformation($"Пользователь {listenerConnectionId} подключился к сессии совместного прослушивания {ownerConnectionId}");
 
