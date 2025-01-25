@@ -277,12 +277,6 @@
                             Appearance="Secondary"
                             Click="RemoveLogs_Click"
                             Content="Очистить" />
-                        <wpfui:Button
-                            Width="180"
-                            Margin="10,0,0,0"
-                            Appearance="Secondary"
-                            Content="Отправить"
-                            IsEnabled="False" />
                     </StackPanel>
 
                     <Rectangle Margin="0,10,0,10" Fill="{DynamicResource ControlStrokeColorTertiaryBrush}" HorizontalAlignment="Stretch" Height="1" Opacity="0.2" VerticalAlignment="Center"/>

@@ -230,7 +230,12 @@ namespace MusicX.Views
                             {
                                 await Logout(config, container);
                             }
-                            catch (VkApiMethodInvokeException ex) when (ex.ErrorCode is 5 or 1117)
+                            catch(VkApiException ex) when (ex.Message.Contains("access_token"))
+                            {
+                                await Logout(config, container);
+
+                            }
+                            catch (VkApiMethodInvokeException ex) when (ex.ErrorCode is 5 or 1117 or 4)
                             {
                                 await Logout(config, container);
                             }
