@@ -122,7 +122,12 @@ public class VkApiInvoke : IVkApiInvoke
 
             if (vkError?.ErrorCode is not (4 or 5 or 1117 or 1114) || // token has expired
                 await _tokenRefreshHandler.RefreshTokenAsync(_tokenStore.Token) is not { } newToken)
+            {
+                if (vkError?.RequestParams is null)
+                    throw new VkApiException(vkError?.ErrorMessage ?? error.ToString());
+                
                 throw new VkApiException(vkError);
+            }
 
             parameters["access_token"] = newToken;
             return await CallAsync<T>(methodName, parameters, skipAuthorization);
@@ -190,7 +195,12 @@ public class VkApiInvoke : IVkApiInvoke
 
             if (vkError?.ErrorCode is not (5 or 1117 or 1114) || // token has expired
                 await _tokenRefreshHandler.RefreshTokenAsync(_tokenStore.Token) is not { } newToken)
+            {
+                if (vkError?.RequestParams is null)
+                    throw new VkApiException(vkError?.ErrorMessage ?? error.ToString());
+                
                 throw new VkApiException(vkError);
+            }
 
             parameters["access_token"] = newToken;
             return await InvokeInternalAsync(methodName, parameters, skipAuthorization);
