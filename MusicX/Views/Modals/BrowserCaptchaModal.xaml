@@ -7,13 +7,19 @@
            xmlns:modals="clr-namespace:MusicX.ViewModels.Modals"
            xmlns:controls="clr-namespace:MusicX.Controls"
            xmlns:wpf="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+           xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
            mc:Ignorable="d"
            Title="Капча" Height="600" Width="400"
            d:DataContext="{d:DesignInstance modals:BrowserCaptchaModalViewModel}"
            Closed="CaptchaModal_OnClosed"
            Background="Transparent">
     <Grid>
-        <wpf:WebView2 x:Name="WebView" Source="{Binding RedirectUri}"
+        <wpf:WebView2 x:Name="WebView" 
+                      NavigationCompleted="WebView_OnNavigationCompleted"
+                      DefaultBackgroundColor="Transparent" 
+                      Source="{Binding RedirectUri}"
+                      DesignModeForegroundColor="Purple"
                       CoreWebView2InitializationCompleted="WebView_OnCoreWebView2InitializationCompleted"/>
+        <ui:ProgressRing x:Name="LoadingRing" IsIndeterminate="True" />
     </Grid>
 </controls:ModalPage>

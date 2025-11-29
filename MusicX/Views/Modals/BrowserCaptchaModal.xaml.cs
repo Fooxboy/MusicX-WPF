@@ -90,4 +90,9 @@ public partial class BrowserCaptchaModal : ModalPage
 #endif
         e.Request.Headers.SetHeader("X-Requested-With", "com.vkontakte.android");
     }
+
+    private void WebView_OnNavigationCompleted(object? sender, CoreWebView2NavigationCompletedEventArgs e)
+    {
+        LoadingRing.Visibility = Visibility.Collapsed;
+    }
 }
