@@ -14,6 +14,7 @@ using VkNet.Abstractions.Authorization;
 using VkNet.Abstractions.Core;
 using VkNet.Abstractions.Utils;
 using VkNet.AudioBypassService.Abstractions;
+using VkNet.AudioBypassService.Abstractions.Categories;
 using VkNet.AudioBypassService.Models.Auth;
 using VkNet.AudioBypassService.Models.LibVerify;
 using VkNet.AudioBypassService.Utils;
@@ -29,13 +30,13 @@ namespace VkNet.AudioBypassService.Flows;
 internal abstract class VkAndroidAuthorizationBase(
     IVkTokenStore tokenStore,
     IDeviceIdProvider deviceIdProvider,
-    IDeviceIdStore deviceIdStore,
     IVkApiVersionManager versionManager,
     ILanguageService languageService,
     IAsyncRateLimiter rateLimiter,
     IRestClient restClient,
     ICaptchaHandler captchaHandler,
-    LibVerifyClient libVerifyClient)
+    LibVerifyClient libVerifyClient,
+    IAuthCategory authCategory)
     : IAuthorizationFlow
 {
     private AndroidApiAuthParams? _apiAuthParams;
@@ -62,7 +63,7 @@ internal abstract class VkAndroidAuthorizationBase(
     {
         if (authParams.IsAnonymous)
         {
-            var (anonymousToken, anonymousTokenExpiration) = await AuthAnonymousAsync(authParams);
+            var (anonymousToken, anonymousTokenExpiration) = await authCategory.GetAnonymToken();
 
             return new()
             {
@@ -151,46 +152,12 @@ internal abstract class VkAndroidAuthorizationBase(
             { "sid", authParams.Sid },
             { "scope", "all" },
             { "supported_ways", authParams.SupportedWays },
-            { "device_id", await GetDeviceIdAsync() },
+            { "device_id", await deviceIdProvider.GetDeviceIdAsync() },
             { "api_id", authParams.ApplicationId },
             { "https", true },
             { "lang", languageService.GetLanguage()?.ToString() ?? "ru" },
             { "v", versionManager.Version },
             { "anonymous_token", tokenStore.Token },
         };
-    }
-
-    private async Task<AnonymousTokenResponse> AuthAnonymousAsync(AndroidApiAuthParams authParams)
-    {
-        var parameters = new VkParameters
-        {
-            { "client_id", authParams.ApplicationId },
-            { "api_id", authParams.ApplicationId },
-            { "client_secret", authParams.ClientSecret },
-            { "device_id", await GetDeviceIdAsync()},
-            { "https", true },
-            { "lang", languageService.GetLanguage()?.ToString() ?? "ru" },
-            { "v", versionManager.Version }
-        };
-
-        var response = await restClient.PostAsync(new Uri("https://api.vk.com/oauth/get_anonym_token"), parameters, Encoding.UTF8);
-        
-        var obj = VkErrors.IfErrorThrowException(response.Value ?? response.Message);
-        VkAuthErrors.IfErrorThrowException(obj);
-
-        return obj.ToObject<AnonymousTokenResponse>(VkApiInvoke.Serializer)!;
-    }
-
-    private async ValueTask<string> GetDeviceIdAsync()
-    {
-        var deviceId = await deviceIdStore.GetDeviceIdAsync();
-        if (!string.IsNullOrEmpty(deviceId))
-            return deviceId;
-
-        deviceId = await deviceIdProvider.GetDeviceIdAsync();
-        
-        await deviceIdStore.SetDeviceIdAsync(deviceId);
-
-        return deviceId;
     }
 }

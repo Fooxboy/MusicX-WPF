@@ -19,13 +19,16 @@ public interface ICaptchaHandler
     T Perform<T>(Func<CaptchaResponse?, T> action);
 }
 
-public abstract record CaptchaResponse
+public abstract record CaptchaResponse(ulong Sid)
 {
     public abstract VkError ToError();
 
-    public abstract void AddTo(IDictionary<string, string> parameters);
+    public virtual void AddTo(IDictionary<string, string> parameters)
+    {
+        parameters.Add("captcha_sid", Sid.ToString());   
+    }
 }
-public record ImageCaptchaResponse(ulong Sid, string Key) : CaptchaResponse
+public record ImageCaptchaResponse(ulong Sid, string Key) : CaptchaResponse(Sid)
 {
     public override VkError ToError() => new()
     {
@@ -34,12 +37,12 @@ public record ImageCaptchaResponse(ulong Sid, string Key) : CaptchaResponse
 
     public override void AddTo(IDictionary<string, string> parameters)
     {
-        parameters.Add("captcha_sid", Sid.ToString());
+        base.AddTo(parameters);
         parameters.Add("captcha_key", Key);
     }
 }
 
-public record BrowserCaptchaResponse(string SuccessToken) : CaptchaResponse
+public record BrowserCaptchaResponse(ulong Sid, string SuccessToken) : CaptchaResponse(Sid)
 {
     public override VkError ToError() => new()
     {
@@ -49,6 +52,7 @@ public record BrowserCaptchaResponse(string SuccessToken) : CaptchaResponse
 
     public override void AddTo(IDictionary<string, string> parameters)
     {
+        base.AddTo(parameters);
         parameters.Add("success_token", SuccessToken);
     }
 }

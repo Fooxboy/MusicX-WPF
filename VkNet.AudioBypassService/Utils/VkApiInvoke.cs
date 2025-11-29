@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,7 +29,7 @@ public class VkApiInvoke(
     IVkTokenStore tokenStore,
     ILanguageService languageService,
     IAsyncRateLimiter rateLimiter,
-    IDeviceIdStore deviceIdStore,
+    IDeviceIdProvider deviceIdProvider,
     ITokenRefreshHandler tokenRefreshHandler)
     : IVkApiInvoke
 {
@@ -54,9 +56,7 @@ public class VkApiInvoke(
     {
         parameters.TryAdd("v", versionManager.Version);
         parameters.TryAdd("lang", languageService.GetLanguage()?.ToString() ?? "ru");
-        
-        if (await deviceIdStore.GetDeviceIdAsync() is { } deviceId)
-            parameters.TryAdd("device_id", deviceId);
+        parameters.TryAdd("device_id", await deviceIdProvider.GetDeviceIdAsync());
     }
     
     public VkResponse Call(string methodName, VkParameters parameters, bool skipAuthorization = false)
@@ -83,6 +83,8 @@ public class VkApiInvoke(
             captchaResponse?.AddTo(requestParameters);
 
             await rateLimiter.WaitNextAsync();
+            
+            Debug.WriteLine($"Request {methodName} {string.Join(", ", parameters.Select(b => $"{b.Key}={b.Value}"))}");
 
             using var response = await client.SendAsync(new()
             {
@@ -101,6 +103,8 @@ public class VkApiInvoke(
             using var reader = new JsonTextReader(textReader) { CloseInput = false };
 
             var obj = await JToken.ReadFromAsync(reader);
+            
+            Debug.WriteLine($"Response {methodName} {obj}");
 
             if (obj["error"] is not { } error)
                 return obj["response"]!.ToObject<T>(Serializer);
@@ -153,6 +157,8 @@ public class VkApiInvoke(
             captchaResponse?.AddTo(requestParameters);
 
             await rateLimiter.WaitNextAsync();
+            
+            Debug.WriteLine($"Request {methodName} {string.Join(", ", parameters.Select(b => $"{b.Key}={b.Value}"))}");
 
             using var response = await client.SendAsync(new HttpRequestMessage
             {
@@ -171,6 +177,8 @@ public class VkApiInvoke(
             using var reader = new JsonTextReader(textReader) { CloseInput = false };
 
             var obj = await JToken.ReadFromAsync(reader);
+            
+            Debug.WriteLine($"Response {methodName} {obj}");
 
             if (obj["error"] is not { } error)
                 return obj["response"]!;

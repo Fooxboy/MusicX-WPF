@@ -102,7 +102,7 @@ public class AsyncCaptchaHandler : ICaptchaHandler
         {
             context.Response = exception.Error.RedirectUri is null
                 ? new ImageCaptchaResponse(exception.Error.CaptchaSid, response)
-                : new BrowserCaptchaResponse(response);
+                : new BrowserCaptchaResponse(exception.Error.CaptchaSid, response);
         }
         else
             context.Response = null;

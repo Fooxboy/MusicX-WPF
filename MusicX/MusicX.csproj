@@ -105,8 +105,6 @@
     <PackageReference Include="QRCoder.Xaml" Version="1.7.0" />
     <PackageReference Include="Sentry.NLog" Version="5.16.2" />
     <PackageReference Include="System.Linq.Async" Version="7.0.0" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="10.0.0" />
-    <PackageReference Include="System.Text.Json" Version="10.0.0" />
     <PackageReference Include="taglib-sharp-netstandard2.0" Version="2.1.0" />
     <PackageReference Include="Velopack" Version="0.0.1298" />
     <PackageReference Include="WPF-UI" Version="3.0.5" />

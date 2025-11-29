@@ -2,4 +2,4 @@
 
 namespace VkNet.AudioBypassService.Models.Auth;
 
-public record AuthError(string Error, ulong? CaptchaSid, Uri? CaptchaImg, Uri? RedirectUri);
+public record AuthError(string Error, string? ErrorDescription, ulong? CaptchaSid, Uri? CaptchaImg, Uri? RedirectUri);

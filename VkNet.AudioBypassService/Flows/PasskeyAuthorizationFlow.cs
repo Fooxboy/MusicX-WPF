@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using VkNet.Abstractions.Core;
 using VkNet.Abstractions.Utils;
 using VkNet.AudioBypassService.Abstractions;
+using VkNet.AudioBypassService.Abstractions.Categories;
 using VkNet.AudioBypassService.Models.Auth;
 using VkNet.AudioBypassService.Utils;
 using VkNet.Extensions.DependencyInjection;
@@ -15,15 +16,15 @@ namespace VkNet.AudioBypassService.Flows;
 internal class PasskeyAuthorizationFlow(
     IVkTokenStore tokenStore,
     IDeviceIdProvider deviceIdProvider,
-    IDeviceIdStore deviceIdStore,
     IVkApiVersionManager versionManager,
     ILanguageService languageService,
     IAsyncRateLimiter rateLimiter,
     IRestClient restClient,
     ICaptchaHandler captchaHandler,
-    LibVerifyClient libVerifyClient)
-    : VkAndroidAuthorizationBase(tokenStore, deviceIdProvider, deviceIdStore, versionManager,
-        languageService, rateLimiter, restClient, captchaHandler, libVerifyClient)
+    LibVerifyClient libVerifyClient,
+    IAuthCategory authCategory)
+    : VkAndroidAuthorizationBase(tokenStore, deviceIdProvider, versionManager,
+        languageService, rateLimiter, restClient, captchaHandler, libVerifyClient, authCategory)
 {
     protected override Task<AuthorizationResult> AuthorizeAsync(AndroidApiAuthParams authParams)
     {

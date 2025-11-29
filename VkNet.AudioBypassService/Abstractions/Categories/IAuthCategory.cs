@@ -15,9 +15,11 @@ public interface IAuthCategory
     
     Task<AuthCheckResponse> CheckAuthCodeAsync(string authHash);
     
-    [ItemCanBeNull] Task<TokenInfo> RefreshTokensAsync(string oldToken, string exchangeToken);
+    Task<TokenInfo?> RefreshTokensAsync(string oldToken, string exchangeToken);
 
     Task<ExchangeTokenResponse> GetExchangeToken([CanBeNull] UsersFields fields = null);
     
     Task<PasskeyBeginResponse> BeginPasskeyAsync(string sid);
+
+    Task<AnonymousTokenResponse> GetAnonymToken();
 }

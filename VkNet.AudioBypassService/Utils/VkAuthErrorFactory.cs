@@ -24,6 +24,7 @@ namespace VkNet.AudioBypassService.Utils
 					return new VkAuthException(new()
 					{
 						Error = error.Error,
+						ErrorDescription = error.ErrorDescription ?? "",
 						CaptchaImg = error.CaptchaImg,
 						CaptchaSid = error.CaptchaSid
 					});

@@ -28,19 +28,18 @@ namespace MusicX.Core.Services
         public readonly IVkApiCategories vkApi;
         private readonly IVkApiInvoke apiInvoke;
         private readonly Logger logger;
-        private readonly string vkApiVersion = "5.243";
+        private readonly string vkApiVersion = "5.268";
 
         public bool IsAuth = false;
         private readonly IVkTokenStore tokenStore;
         private readonly IVkApiAuthAsync auth;
         private readonly IVkApi _api;
         private readonly ICustomSectionsService _customSectionsService;
-        private readonly IDeviceIdStore _deviceIdStore;
         private readonly ITokenRefreshHandler _tokenRefreshHandler;
         private readonly IRestClient _restClient;
 
         public VkService(Logger logger, IVkApiCategories vkApi, IVkApiInvoke apiInvoke, IVkApiVersionManager versionManager,
-                         IVkTokenStore tokenStore, IVkApiAuthAsync auth, IVkApi api, ICustomSectionsService customSectionsService, IDeviceIdStore deviceIdStore, ITokenRefreshHandler tokenRefreshHandler, IRestClient restClient)
+                         IVkTokenStore tokenStore, IVkApiAuthAsync auth, IVkApi api, ICustomSectionsService customSectionsService, ITokenRefreshHandler tokenRefreshHandler, IRestClient restClient)
         {
             this.vkApi = vkApi;
             this.apiInvoke = apiInvoke;
@@ -48,7 +47,6 @@ namespace MusicX.Core.Services
             this.auth = auth;
             _api = api;
             _customSectionsService = customSectionsService;
-            _deviceIdStore = deviceIdStore;
             _tokenRefreshHandler = tokenRefreshHandler;
             _restClient = restClient;
 
@@ -137,7 +135,7 @@ namespace MusicX.Core.Services
                     
                     {"extended", "1"},
                     
-                    {"device_id", await _deviceIdStore.GetDeviceIdAsync()}
+                    
                 };
 
                 if(url != null)
@@ -177,7 +175,7 @@ namespace MusicX.Core.Services
                     
                     {"extended", "1"},
                     
-                    {"device_id", await _deviceIdStore.GetDeviceIdAsync()},
+                    
                     {"section_id", sectionId },
                     {"need_blocks", 1 },
                 };
@@ -210,7 +208,7 @@ namespace MusicX.Core.Services
                 {
                     
                     {"extended", "1"},
-                    {"device_id", await _deviceIdStore.GetDeviceIdAsync()},
+                    
                     
                     {"block_id", blockId },
                 };
@@ -241,7 +239,7 @@ namespace MusicX.Core.Services
                     
                     {"extended", "1"},
                     
-                    {"device_id", await _deviceIdStore.GetDeviceIdAsync()},
+                    
                 };
 
                 if (query != null)
@@ -276,7 +274,7 @@ namespace MusicX.Core.Services
                     
                     {"extended", "1"},
                     
-                    {"device_id", await _deviceIdStore.GetDeviceIdAsync()},
+                    
                     {"artist_id", artistId}
 
                 };
@@ -307,7 +305,7 @@ namespace MusicX.Core.Services
                 {
                     
                     {"extended", "1"},
-                    {"device_id", await _deviceIdStore.GetDeviceIdAsync()},
+                    
                     
                     {"curator_id", curatorId},
                     {"url", url}
@@ -610,7 +608,7 @@ namespace MusicX.Core.Services
                 var parameters = new VkParameters
                 {
                     
-                    {"device_id", await _deviceIdStore.GetDeviceIdAsync()},
+                    
                     
                     {"replacement_ids", replaceId},
                 };
@@ -641,7 +639,7 @@ namespace MusicX.Core.Services
                 var parameters = new VkParameters
                 {
                     
-                    {"device_id", await _deviceIdStore.GetDeviceIdAsync()},
+                    
                     
                     {"events", stats},
                 };
@@ -669,7 +667,7 @@ namespace MusicX.Core.Services
                 var parameters = new VkParameters
                 {
                     
-                    {"device_id", await _deviceIdStore.GetDeviceIdAsync()},
+                    
                     
                     {"curator_id", curatorId},
                 };
@@ -696,7 +694,7 @@ namespace MusicX.Core.Services
                 var parameters = new VkParameters
                 {
                     
-                    {"device_id", await _deviceIdStore.GetDeviceIdAsync()},
+                    
                     
                     {"curator_id", curatorId},
                 };
@@ -724,7 +722,7 @@ namespace MusicX.Core.Services
                 var parameters = new VkParameters
                 {
                     
-                    {"device_id", await _deviceIdStore.GetDeviceIdAsync()},
+                    
                     
                     {"artist_id", artistId},
                     {"ref", referenceId},
@@ -752,7 +750,7 @@ namespace MusicX.Core.Services
                 var parameters = new VkParameters
                 {
                     
-                    {"device_id", await _deviceIdStore.GetDeviceIdAsync()},
+                    
                     
                     {"artist_id", artistId},
                     {"ref", referenceId},
@@ -781,7 +779,7 @@ namespace MusicX.Core.Services
                 var parameters = new VkParameters
                 {
                     
-                    {"device_id", await _deviceIdStore.GetDeviceIdAsync()},
+                    
                     
                     {"track_code", trackCode},
                     {"audio_id", audio }
@@ -816,7 +814,7 @@ namespace MusicX.Core.Services
                 {
                     
                     {"extended", "1"},
-                    {"device_id", await _deviceIdStore.GetDeviceIdAsync()},
+                    
                     
                     {"url", url},
                 };
@@ -846,7 +844,7 @@ namespace MusicX.Core.Services
                 {
                     
                     {"extended", "1"},
-                    {"device_id", await _deviceIdStore.GetDeviceIdAsync()},
+                    
                     
                     {"code", code},
                 };
@@ -865,7 +863,7 @@ namespace MusicX.Core.Services
                 var parameters = new VkParameters
                 {
                     
-                    {"device_id", await _deviceIdStore.GetDeviceIdAsync()},
+                    
                     
                     {"target_audio", audio},
                 };
@@ -910,7 +908,7 @@ namespace MusicX.Core.Services
                 var parameters = new VkParameters
                 {
                     
-                    {"device_id", await _deviceIdStore.GetDeviceIdAsync()},
+                    
                     
                     {"owner_id", ownerId},
                     {"count", 100}
@@ -972,7 +970,7 @@ namespace MusicX.Core.Services
                 var parameters = new VkParameters
                 {
                     
-                    {"device_id", await _deviceIdStore.GetDeviceIdAsync()},
+                    
                     
                     {"owner_id", ownerId},
                     {"playlist_id", playlistId},
@@ -999,7 +997,7 @@ namespace MusicX.Core.Services
                 var parameters = new VkParameters
                 {
                     
-                    {"device_id", await _deviceIdStore.GetDeviceIdAsync()},
+                    
                     
                     {"owner_id", ownerId},
                     {"playlist_id", playlistId},
@@ -1066,7 +1064,7 @@ namespace MusicX.Core.Services
                 var parameters = new VkParameters
                 {
 
-                    {"device_id", await _deviceIdStore.GetDeviceIdAsync()},
+                    
                     {"app_id", 6767438 },
                     {"app_id", 6767438 },
                     {"timestamp", DateTimeOffset.Now.ToUnixTimeSeconds() },
@@ -1105,7 +1103,7 @@ namespace MusicX.Core.Services
                 var parameters = new VkParameters
                 {
                     
-                    {"device_id", await _deviceIdStore.GetDeviceIdAsync()},
+                    
                     
                     {"owner_id", ownerId},
                 };
@@ -1131,7 +1129,7 @@ namespace MusicX.Core.Services
                 var parameters = new VkParameters
                 {
                     
-                    {"device_id", await _deviceIdStore.GetDeviceIdAsync()},
+                    
                     
                     {"owner_id", ownerId},
                 };
@@ -1157,7 +1155,7 @@ namespace MusicX.Core.Services
                 var parameters = new VkParameters
                 {
 
-                    {"device_id", await _deviceIdStore.GetDeviceIdAsync()},
+                    
 
                     {"audio_id", audioId},
                 };
@@ -1190,7 +1188,7 @@ namespace MusicX.Core.Services
                 var parameters = new VkParameters
                 {
 
-                    {"device_id", await _deviceIdStore.GetDeviceIdAsync()},
+                    
 
                     {"audio_ids", $"{ownerId}_{audioId}"},
                 };
@@ -1218,7 +1216,7 @@ namespace MusicX.Core.Services
                 var parameters = new VkParameters
                 {
 
-                    {"device_id", await _deviceIdStore.GetDeviceIdAsync()},
+                    
 
                     {"mix_id", mixId},
                     {"append", append},
@@ -1246,7 +1244,7 @@ namespace MusicX.Core.Services
                 var parameters = new VkParameters
                 {
 
-                    {"device_id", await _deviceIdStore.GetDeviceIdAsync()},
+                    
 
                     {"mix_id", mixId},
                 };
@@ -1271,7 +1269,7 @@ namespace MusicX.Core.Services
                 var parameters = new VkParameters
                 {
                     
-                    {"device_id", await _deviceIdStore.GetDeviceIdAsync()},
+                    
                     
                     {"need_blocks", true},
                 };
@@ -1297,7 +1295,7 @@ namespace MusicX.Core.Services
         {
             var parameters = new VkParameters
             {
-                {"device_id", await _deviceIdStore.GetDeviceIdAsync()},
+                
                 {"screen_name", appId},
                 {"url", url},
                 {"func_v", 23},
@@ -1344,7 +1342,7 @@ namespace MusicX.Core.Services
         {
             var parameters = new VkParameters
             {
-                {"device_id", await _deviceIdStore.GetDeviceIdAsync()},
+                
                 {"mini_app_id", appId},
                 {"referer", "recs"}
             };
@@ -1367,7 +1365,7 @@ namespace MusicX.Core.Services
         {
             var parameters = new VkParameters
             {
-                {"device_id", await _deviceIdStore.GetDeviceIdAsync()},
+                
                 {"display", "android"},
                 {"scope", scope},
                 {"response_type", "token"},

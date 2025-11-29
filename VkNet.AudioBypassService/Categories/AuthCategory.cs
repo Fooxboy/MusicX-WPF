@@ -145,4 +145,14 @@ public partial class AuthCategory : IAuthCategory
         
         return JsonSerializer.Deserialize<PasskeyBeginResponse>(response.Value, options);
     }
+
+    public Task<AnonymousTokenResponse> GetAnonymToken()
+    {
+        return _apiInvoke.CallAsync<AnonymousTokenResponse>("auth.getAnonymToken", new()
+        {
+            { "client_id", 2274003 },
+            { "client_secret", "hHbZxrka2uZ6jB1inYsH" },
+            { "api_id", 2274003 }
+        }, true);
+    }
 }

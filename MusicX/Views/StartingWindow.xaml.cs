@@ -65,7 +65,6 @@ namespace MusicX.Views
                 collection.AddSingleton<IAsyncCaptchaSolver, CaptchaSolverService>();
 
                 collection.AddSingleton<IVkTokenStore, TokenStore>();
-                collection.AddSingleton<IDeviceIdStore, DeviceIdStore>();
                 collection.AddSingleton<IExchangeTokenStore, ExchangeTokenStore>();
 
                 collection.AddAudioBypass();
