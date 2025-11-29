@@ -13,6 +13,7 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<Configurations>Debug;Release</Configurations>
 		<Platforms>x64</Platforms>
+        <Nullable>enable</Nullable>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="JetBrains.Annotations" Version="2024.3.0" PrivateAssets="all" />

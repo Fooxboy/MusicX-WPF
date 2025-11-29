@@ -452,7 +452,7 @@ public class AccountsWindowViewModel : BaseViewModel
         if (string.IsNullOrEmpty(arg))
             return;
 
-        var (_, isPhone, authFlow, flowNames, sid, nextStep) = await _authCategory.ValidateAccountAsync(arg, passkeySupported: true, loginWays:
+        var (_, isPhone, authFlow, flowNames, sid, nextStep) = await _authCategory.ValidateAccountAsync(arg, loginWays:
             new[]
             {
                 LoginWay.Password, LoginWay.Push, LoginWay.Sms, LoginWay.CallReset, LoginWay.ReserveCode,

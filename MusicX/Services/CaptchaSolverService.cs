@@ -9,33 +9,42 @@ using Wpf.Ui;
 
 namespace MusicX.Services;
 
-public class CaptchaSolverService : IAsyncCaptchaSolver
+public class CaptchaSolverService(
+    NavigationService navigationService,
+    ISnackbarService snackbarService,
+    IServiceProvider serviceProvider)
+    : IAsyncCaptchaSolver
 {
-    private readonly NavigationService _navigationService;
-    private readonly ISnackbarService _snackbarService;
-    private readonly IServiceProvider _serviceProvider;
-
-    public CaptchaSolverService(NavigationService navigationService, ISnackbarService snackbarService,
-        IServiceProvider serviceProvider)
+    public ValueTask<string?> SolveAsync(CaptchaRequest request)
     {
-        _navigationService = navigationService;
-        _snackbarService = snackbarService;
-        _serviceProvider = serviceProvider;
-    }
+        switch (request)
+        {
+            case BrowserCaptchaRequest { RedirectUri: var uri }:
+            {
+                var viewModel = serviceProvider.GetRequiredService<BrowserCaptchaModalViewModel>();
+                viewModel.RedirectUri = uri;
 
-    public ValueTask<string?> SolveAsync(string url)
-    {
-        var viewModel = _serviceProvider.GetRequiredService<CaptchaModalViewModel>();
-        viewModel.ImageUrl = url;
-        
-        _navigationService.OpenModal<CaptchaModal>(viewModel);
+                navigationService.OpenModal<BrowserCaptchaModal>(viewModel);
 
-        return new(viewModel.CompletionSource.Task);
+                return new(viewModel.CompletionSource.Task);
+            }
+            case ImageCaptchaRequest { ImageUri: var uri }:
+            {
+                var viewModel = serviceProvider.GetRequiredService<CaptchaModalViewModel>();
+                viewModel.ImageUri = uri;
+
+                navigationService.OpenModal<CaptchaModal>(viewModel);
+
+                return new(viewModel.CompletionSource.Task);
+            }
+            default:
+                return ValueTask.FromResult<string?>(null);
+        }
     }
 
     public ValueTask SolveFailedAsync()
     {
-        _snackbarService.ShowException("Ошибка!", "Вы ввели неправильную капчу");
+        snackbarService.ShowException("Ошибка!", "Вы ввели неправильную капчу");
         return ValueTask.CompletedTask;
     }
 }

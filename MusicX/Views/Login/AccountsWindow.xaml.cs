@@ -33,7 +33,7 @@ public partial class AccountsWindow
     protected override void OnClosed(EventArgs e)
     {
         base.OnClosed(e);
-        _navigationService .ExternalPageOpened -= NavigationServiceOnExternalPageOpened;
+        _navigationService.ExternalPageOpened -= NavigationServiceOnExternalPageOpened;
     }
 
     private void NavigationServiceOnExternalPageOpened(object? sender, object e)

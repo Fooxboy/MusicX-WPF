@@ -52,7 +52,7 @@ public partial class AuthCategory : IAuthCategory
         return _anonToken = AnonTokenRegex().Match(response.Value).Groups["token"].Value;
     }
 
-    public Task<AuthValidateAccountResponse> ValidateAccountAsync(string login, bool forcePassword = false, bool passkeySupported = false, IEnumerable<LoginWay> loginWays = null)
+    public Task<AuthValidateAccountResponse> ValidateAccountAsync(string login, bool forcePassword = false, IEnumerable<LoginWay> loginWays = null)
     {
         return _apiInvoke.CallAsync<AuthValidateAccountResponse>("auth.validateAccount", new()
         {
@@ -60,8 +60,7 @@ public partial class AuthCategory : IAuthCategory
             { "force_password", forcePassword },
             { "supported_ways", loginWays },
             { "flow_type", "auth_without_password" },
-            { "api_id", 2274003 },
-            { "passkey_supported", passkeySupported }
+            { "api_id", 2274003 }
         });
     }
 

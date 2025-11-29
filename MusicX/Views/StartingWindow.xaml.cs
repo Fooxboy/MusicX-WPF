@@ -107,6 +107,7 @@ namespace MusicX.Views
                 collection.AddTransient<LoginVerificationMethodsModalViewModel>();
                 collection.AddTransient<LastFmAuthModalViewModel>();
                 collection.AddTransient<MixSettingsModalViewModel>();
+                collection.AddTransient<BrowserCaptchaModalViewModel>();
 
                 collection.AddSingleton<NavigationService>();
                 collection.AddSingleton<ConfigService>();
@@ -134,6 +135,7 @@ namespace MusicX.Views
                 collection.AddSingleton<SectionEventService>();
                 collection.AddSingleton<ShareService>();
                 collection.AddTransient<VkBridgeService>();
+                collection.AddSingleton<IDeviceIdProvider, WindowsDeviceIdProvider>();
 
                 var container = StaticService.Container = collection.BuildServiceProvider();
 

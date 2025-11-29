@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
@@ -17,20 +16,32 @@ using VkNet.Extensions.DependencyInjection;
 using VkNet.Model;
 using VkNet.Utils;
 using VkNet.Utils.JsonConverter;
+using ICaptchaHandler = VkNet.Extensions.DependencyInjection.ICaptchaHandler;
 
 namespace VkNet.AudioBypassService.Utils;
 
-public class VkApiInvoke : IVkApiInvoke
+public class VkApiInvoke(
+    HttpClient client,
+    ICaptchaHandler handler,
+    IVkApiVersionManager versionManager,
+    IVkTokenStore tokenStore,
+    ILanguageService languageService,
+    IAsyncRateLimiter rateLimiter,
+    IDeviceIdStore deviceIdStore,
+    ITokenRefreshHandler tokenRefreshHandler)
+    : IVkApiInvoke
 {
-    private readonly JsonSerializer _serializer = JsonSerializer.Create(new()
+    private const string AuthorizationScheme = "Bearer";
+
+    internal static readonly JsonSerializer Serializer = JsonSerializer.Create(new()
     {
-        Converters = new JsonConverter[]
-        {
+        Converters =
+        [
             new VkCollectionJsonConverter(),
             new UnixDateTimeConverter(),
             new AttachmentJsonConverter(),
-            new StringEnumConverter(),
-        },
+            new StringEnumConverter()
+        ],
         ContractResolver = new DefaultContractResolver
         {
             NamingStrategy = new SnakeCaseNamingStrategy()
@@ -39,38 +50,13 @@ public class VkApiInvoke : IVkApiInvoke
         ReferenceLoopHandling = ReferenceLoopHandling.Ignore
     });
 
-    private readonly HttpClient _client;
-    private readonly ICaptchaHandler _handler;
-    private readonly IVkApiVersionManager _versionManager;
-    private readonly IVkTokenStore _tokenStore;
-    private readonly ILanguageService _languageService;
-    private readonly IAsyncRateLimiter _rateLimiter;
-    private readonly IDeviceIdStore _deviceIdStore;
-    private readonly ITokenRefreshHandler _tokenRefreshHandler;
-
-    public VkApiInvoke(HttpClient client, ICaptchaHandler handler, IVkApiVersionManager versionManager,
-                       IVkTokenStore tokenStore, ILanguageService languageService, IAsyncRateLimiter rateLimiter, IDeviceIdStore deviceIdStore, ITokenRefreshHandler tokenRefreshHandler)
+    private async ValueTask TryAddRequiredParameters(IDictionary<string, string> parameters)
     {
-        _client = client;
-        _handler = handler;
-        _versionManager = versionManager;
-        _tokenStore = tokenStore;
-        _languageService = languageService;
-        _rateLimiter = rateLimiter;
-        _deviceIdStore = deviceIdStore;
-        _tokenRefreshHandler = tokenRefreshHandler;
-    }
-
-    private async ValueTask TryAddRequiredParameters(IDictionary<string, string> parameters, bool skipAuthorization)
-    {
-        parameters.TryAdd("v", _versionManager.Version);
-        parameters.TryAdd("lang", _languageService.GetLanguage()?.ToString() ?? "ru");
+        parameters.TryAdd("v", versionManager.Version);
+        parameters.TryAdd("lang", languageService.GetLanguage()?.ToString() ?? "ru");
         
-        if (await _deviceIdStore.GetDeviceIdAsync() is { } deviceId)
+        if (await deviceIdStore.GetDeviceIdAsync() is { } deviceId)
             parameters.TryAdd("device_id", deviceId);
-        
-        if (!skipAuthorization)
-            parameters.TryAdd("access_token", _tokenStore.Token);
     }
     
     public VkResponse Call(string methodName, VkParameters parameters, bool skipAuthorization = false)
@@ -89,23 +75,24 @@ public class VkApiInvoke : IVkApiInvoke
         if (jsonConverters.Length > 0)
             throw new NotSupportedException("Custom JsonConverters are not supported");
 
-        await TryAddRequiredParameters(parameters, skipAuthorization);
+        await TryAddRequiredParameters(parameters);
 
-        return await _handler.Perform(async (sid, key) =>
+        return await handler.Perform(async captchaResponse =>
         {
-            if (sid is { } captchaSid)
-            {
-                parameters.Add("captcha_sid", captchaSid.ToString());
-                parameters.Add("captcha_key", key);
-            }
+            var requestParameters = new VkParameters(parameters);
+            captchaResponse?.AddTo(requestParameters);
 
-            await _rateLimiter.WaitNextAsync();
+            await rateLimiter.WaitNextAsync();
 
-            using var response = await _client.SendAsync(new()
+            using var response = await client.SendAsync(new()
             {
                 Method = HttpMethod.Post,
                 RequestUri = new(methodName, UriKind.Relative),
-                Content = new FormUrlEncodedContent(parameters),
+                Content = new FormUrlEncodedContent(requestParameters),
+                Headers =
+                {
+                    Authorization = skipAuthorization ? null : new(AuthorizationScheme, tokenStore.Token)
+                }
             }, HttpCompletionOption.ResponseHeadersRead);
             LastInvokeTime = DateTimeOffset.Now;
 
@@ -116,21 +103,17 @@ public class VkApiInvoke : IVkApiInvoke
             var obj = await JToken.ReadFromAsync(reader);
 
             if (obj["error"] is not { } error)
-                return obj["response"]!.ToObject<T>(_serializer);
+                return obj["response"]!.ToObject<T>(Serializer);
 
-            var vkError = error.ToObject<VkError>(_serializer);
+            var vkError = error.ToObject<VkError>(Serializer);
 
             if (vkError?.ErrorCode is not (4 or 5 or 1117 or 1114) || // token has expired
-                await _tokenRefreshHandler.RefreshTokenAsync(_tokenStore.Token) is not { } newToken)
+                await tokenRefreshHandler.RefreshTokenAsync(tokenStore.Token) is null)
             {
-                if (vkError?.RequestParams is null)
-                    throw new VkApiException(vkError?.ErrorMessage ?? error.ToString());
-                
-                throw new VkApiException(vkError);
+                throw CreateApiError(vkError);
             }
 
-            parameters["access_token"] = newToken;
-            return await CallAsync<T>(methodName, parameters, skipAuthorization);
+            return await CallAsync<T>(methodName, requestParameters, skipAuthorization);
         });
     }
 
@@ -162,23 +145,24 @@ public class VkApiInvoke : IVkApiInvoke
 
     private async Task<JToken> InvokeInternalAsync(string methodName, IDictionary<string, string> parameters, bool skipAuthorization)
     {
-        await TryAddRequiredParameters(parameters, skipAuthorization);
+        await TryAddRequiredParameters(parameters);
         
-        return await _handler.Perform(async (sid, key) =>
+        return await handler.Perform(async captchaResponse =>
         {
-            if (sid is { } captchaSid)
-            {
-                parameters.Add("captcha_sid", captchaSid.ToString());
-                parameters.Add("captcha_key", key);
-            }
+            var requestParameters = new Dictionary<string, string>(parameters);
+            captchaResponse?.AddTo(requestParameters);
 
-            await _rateLimiter.WaitNextAsync();
+            await rateLimiter.WaitNextAsync();
 
-            using var response = await _client.SendAsync(new HttpRequestMessage
+            using var response = await client.SendAsync(new HttpRequestMessage
             {
                 Method = HttpMethod.Post,
                 RequestUri = new Uri(methodName, UriKind.Relative),
-                Content = new FormUrlEncodedContent(parameters),
+                Content = new FormUrlEncodedContent(requestParameters),
+                Headers =
+                {
+                    Authorization = skipAuthorization ? null : new(AuthorizationScheme, tokenStore.Token)
+                }
             }, HttpCompletionOption.ResponseHeadersRead);
             LastInvokeTime = DateTimeOffset.Now;
 
@@ -194,21 +178,21 @@ public class VkApiInvoke : IVkApiInvoke
             var vkError = error.ToObject<VkError>();
 
             if (vkError?.ErrorCode is not (5 or 1117 or 1114) || // token has expired
-                await _tokenRefreshHandler.RefreshTokenAsync(_tokenStore.Token) is not { } newToken)
+                await tokenRefreshHandler.RefreshTokenAsync(tokenStore.Token) is null)
             {
-                if (vkError?.RequestParams is null)
-                    throw new VkApiException(vkError?.ErrorMessage ?? error.ToString());
-                
-                throw new VkApiException(vkError);
+                throw CreateApiError(vkError);
             }
 
-            parameters["access_token"] = newToken;
-            return await InvokeInternalAsync(methodName, parameters, skipAuthorization);
+            return await InvokeInternalAsync(methodName, requestParameters, skipAuthorization);
         });
+    }
+
+    private static VkApiMethodInvokeException CreateApiError(VkError? error)
+    {
+        if (error is null) return new VkApiMethodInvokeException(error);
+        return error.ErrorCode == 14 ? new CaptchaRequiredException(error) : VkErrorFactory.Create(error);
     }
 
     public DateTimeOffset? LastInvokeTime { get; private set;}
     public TimeSpan? LastInvokeTimeSpan => DateTimeOffset.Now - LastInvokeTime;
-
-    public record ResponseRecord<T>(T? Response, VkError? Error);
 }

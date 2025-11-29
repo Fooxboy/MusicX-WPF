@@ -8,10 +8,22 @@ using VkNet.AudioBypassService.Utils;
 using VkNet.Extensions.DependencyInjection;
 using VkNet.Model;
 using VkNet.Utils;
+using ICaptchaHandler = VkNet.Extensions.DependencyInjection.ICaptchaHandler;
 
 namespace VkNet.AudioBypassService.Flows;
 
-internal class PasswordAuthorizationFlow : VkAndroidAuthorizationBase
+internal class PasswordAuthorizationFlow(
+    IVkTokenStore tokenStore,
+    IDeviceIdProvider deviceIdProvider,
+    IDeviceIdStore deviceIdStore,
+    IVkApiVersionManager versionManager,
+    ILanguageService languageService,
+    IAsyncRateLimiter rateLimiter,
+    IRestClient restClient,
+    ICaptchaHandler captchaHandler,
+    LibVerifyClient libVerifyClient)
+    : VkAndroidAuthorizationBase(tokenStore, deviceIdProvider, deviceIdStore,
+        versionManager, languageService, rateLimiter, restClient, captchaHandler, libVerifyClient)
 {
     protected override Task<AuthorizationResult> AuthorizeAsync(AndroidApiAuthParams authParams)
     {
@@ -32,13 +44,5 @@ internal class PasswordAuthorizationFlow : VkAndroidAuthorizationBase
         parameters.Add("vk_connect_auth", true);
         
         return parameters;
-    }
-
-    public PasswordAuthorizationFlow(IVkTokenStore tokenStore, FakeSafetyNetClient safetyNetClient,
-        IDeviceIdStore deviceIdStore, IVkApiVersionManager versionManager, ILanguageService languageService,
-        IAsyncRateLimiter rateLimiter, IRestClient restClient, ICaptchaHandler captchaHandler,
-        LibVerifyClient libVerifyClient) : base(tokenStore, safetyNetClient, deviceIdStore,
-        versionManager, languageService, rateLimiter, restClient, captchaHandler, libVerifyClient)
-    {
     }
 }

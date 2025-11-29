@@ -8,19 +8,23 @@ using VkNet.AudioBypassService.Utils;
 using VkNet.Extensions.DependencyInjection;
 using VkNet.Model;
 using VkNet.Utils;
+using ICaptchaHandler = VkNet.Extensions.DependencyInjection.ICaptchaHandler;
 
 namespace VkNet.AudioBypassService.Flows;
 
-internal class PasskeyAuthorizationFlow : VkAndroidAuthorizationBase
-{
-    public PasskeyAuthorizationFlow(IVkTokenStore tokenStore, FakeSafetyNetClient safetyNetClient,
-        IDeviceIdStore deviceIdStore, IVkApiVersionManager versionManager, ILanguageService languageService,
-        IAsyncRateLimiter rateLimiter, IRestClient restClient, ICaptchaHandler captchaHandler,
-        LibVerifyClient libVerifyClient) : base(tokenStore, safetyNetClient, deviceIdStore, versionManager,
+internal class PasskeyAuthorizationFlow(
+    IVkTokenStore tokenStore,
+    IDeviceIdProvider deviceIdProvider,
+    IDeviceIdStore deviceIdStore,
+    IVkApiVersionManager versionManager,
+    ILanguageService languageService,
+    IAsyncRateLimiter rateLimiter,
+    IRestClient restClient,
+    ICaptchaHandler captchaHandler,
+    LibVerifyClient libVerifyClient)
+    : VkAndroidAuthorizationBase(tokenStore, deviceIdProvider, deviceIdStore, versionManager,
         languageService, rateLimiter, restClient, captchaHandler, libVerifyClient)
-    {
-    }
-
+{
     protected override Task<AuthorizationResult> AuthorizeAsync(AndroidApiAuthParams authParams)
     {
         if (string.IsNullOrEmpty(authParams.PasskeyData))

@@ -21,55 +21,25 @@ using VkNet.Extensions.DependencyInjection;
 using VkNet.Model;
 using VkNet.Utils;
 using VkNet.Utils.JsonConverter;
+using ICaptchaHandler = VkNet.Extensions.DependencyInjection.ICaptchaHandler;
+using VkApiInvoke = VkNet.AudioBypassService.Utils.VkApiInvoke;
 
 namespace VkNet.AudioBypassService.Flows;
 
-internal abstract class VkAndroidAuthorizationBase : IAuthorizationFlow
+internal abstract class VkAndroidAuthorizationBase(
+    IVkTokenStore tokenStore,
+    IDeviceIdProvider deviceIdProvider,
+    IDeviceIdStore deviceIdStore,
+    IVkApiVersionManager versionManager,
+    ILanguageService languageService,
+    IAsyncRateLimiter rateLimiter,
+    IRestClient restClient,
+    ICaptchaHandler captchaHandler,
+    LibVerifyClient libVerifyClient)
+    : IAuthorizationFlow
 {
-    private readonly IVkTokenStore _tokenStore;
-    private readonly FakeSafetyNetClient _safetyNetClient;
-    private readonly IDeviceIdStore _deviceIdStore;
-    private readonly IVkApiVersionManager _versionManager;
-    private readonly ILanguageService _languageService;
-    private readonly IAsyncRateLimiter _rateLimiter;
-    private readonly IRestClient _restClient;
-    private readonly ICaptchaHandler _captchaHandler;
-    private readonly LibVerifyClient _libVerifyClient;
+    private AndroidApiAuthParams? _apiAuthParams;
 
-    [CanBeNull] private AndroidApiAuthParams _apiAuthParams;
-    
-    private readonly JsonSerializer _jsonSerializer = JsonSerializer.Create(new()
-    {
-        Converters = new List<JsonConverter>
-        {
-            new VkCollectionJsonConverter(),
-            new UnixDateTimeConverter(),
-            new AttachmentJsonConverter(),
-            new StringEnumConverter(),
-        },
-        ContractResolver = new DefaultContractResolver
-        {
-            NamingStrategy = new SnakeCaseNamingStrategy()
-        },
-        MaxDepth = null,
-        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-    });
-    
-    protected VkAndroidAuthorizationBase(IVkTokenStore tokenStore, FakeSafetyNetClient safetyNetClient,
-        IDeviceIdStore deviceIdStore, IVkApiVersionManager versionManager, ILanguageService languageService,
-        IAsyncRateLimiter rateLimiter, IRestClient restClient, ICaptchaHandler captchaHandler, LibVerifyClient libVerifyClient)
-    {
-        _tokenStore = tokenStore;
-        _safetyNetClient = safetyNetClient;
-        _deviceIdStore = deviceIdStore;
-        _versionManager = versionManager;
-        _languageService = languageService;
-        _rateLimiter = rateLimiter;
-        _restClient = restClient;
-        _captchaHandler = captchaHandler;
-        _libVerifyClient = libVerifyClient;
-    }
-    
     public Task<AuthorizationResult> AuthorizeAsync()
     {
         if (_apiAuthParams == null)
@@ -102,28 +72,27 @@ internal abstract class VkAndroidAuthorizationBase : IAuthorizationFlow
             };
         }
 
-        return await _captchaHandler.Perform(async (sid, key) =>
+        return await captchaHandler.Perform(async captchaResponse =>
         {
             var parameters = await BuildParameters(authParams);
             
-            parameters.Add("captcha_sid", sid);
-            parameters.Add("captcha_key", key);
+            captchaResponse?.AddTo(parameters);
             
-            await _rateLimiter.WaitNextAsync();
+            await rateLimiter.WaitNextAsync();
 
-            var response = await _restClient.PostAsync(new Uri("https://api.vk.com/oauth/token"), parameters, Encoding.UTF8);
+            var response = await restClient.PostAsync(new Uri("https://api.vk.com/oauth/token"), parameters, Encoding.UTF8);
 
             var obj = JObject.Parse(response.Value ?? response.Message);
 
             if (obj.TryGetValue("error", out var error) &&
                 AuthFlow.FromJsonString(error.ToString()) == AuthFlow.NeedValidation)
             {
-                var (loginWay, _, mask, _, externalId) = obj.ToObject<NeedValidationAuthResponse>(_jsonSerializer);
+                var (loginWay, _, mask, _, externalId) = obj.ToObject<NeedValidationAuthResponse>(VkApiInvoke.Serializer)!;
 
-                VerifyResponse verifyResponse = null;
+                VerifyResponse? verifyResponse = null;
                 if (loginWay == LoginWay.TwoFactorLibVerify)
                 {
-                    verifyResponse = await _libVerifyClient.VerifyAsync(externalId, authParams.Login);
+                    verifyResponse = await libVerifyClient.VerifyAsync(externalId, authParams.Login);
 
                     if (verifyResponse.Status != VerifyResponseStatus.Ok)
                         throw new VerificationException("Error verifying libverify session");
@@ -144,7 +113,7 @@ internal abstract class VkAndroidAuthorizationBase : IAuthorizationFlow
                 }
                 else
                 {
-                    var (status, token) = await _libVerifyClient.AttemptAsync(verifyResponse.VerificationUrl, code);
+                    var (status, token) = await libVerifyClient.AttemptAsync(verifyResponse.VerificationUrl, code);
                     
                     if (status != VerifyResponseStatus.Ok)
                         throw new AuthenticationException("Error attempting libverify code");
@@ -156,16 +125,16 @@ internal abstract class VkAndroidAuthorizationBase : IAuthorizationFlow
                     parameters.Add("validate_token", token);
                 }
                 
-                await _rateLimiter.WaitNextAsync();
+                await rateLimiter.WaitNextAsync();
 
-                response = await _restClient.PostAsync(new Uri("https://api.vk.com/oauth/token"), parameters, Encoding.UTF8);
+                response = await restClient.PostAsync(new Uri("https://api.vk.com/oauth/token"), parameters, Encoding.UTF8);
 
                 obj = JObject.Parse(response.Value ?? response.Message);
             }
             
             VkAuthErrors.IfErrorThrowException(obj);
 
-            var result = obj.ToObject<AuthorizationResult>(_jsonSerializer);
+            var result = obj.ToObject<AuthorizationResult>(VkApiInvoke.Serializer)!;
 
             result.State = authParams.State;
         
@@ -185,9 +154,9 @@ internal abstract class VkAndroidAuthorizationBase : IAuthorizationFlow
             { "device_id", await GetDeviceIdAsync() },
             { "api_id", authParams.ApplicationId },
             { "https", true },
-            { "lang", _languageService.GetLanguage()?.ToString() ?? "ru" },
-            { "v", _versionManager.Version },
-            { "anonymous_token", _tokenStore.Token },
+            { "lang", languageService.GetLanguage()?.ToString() ?? "ru" },
+            { "v", versionManager.Version },
+            { "anonymous_token", tokenStore.Token },
         };
     }
 
@@ -200,31 +169,27 @@ internal abstract class VkAndroidAuthorizationBase : IAuthorizationFlow
             { "client_secret", authParams.ClientSecret },
             { "device_id", await GetDeviceIdAsync()},
             { "https", true },
-            { "lang", _languageService.GetLanguage()?.ToString() ?? "ru" },
-            { "v", _versionManager.Version }
+            { "lang", languageService.GetLanguage()?.ToString() ?? "ru" },
+            { "v", versionManager.Version }
         };
 
-        var response = await _restClient.PostAsync(new Uri("https://api.vk.com/oauth/get_anonym_token"), parameters, Encoding.UTF8);
+        var response = await restClient.PostAsync(new Uri("https://api.vk.com/oauth/get_anonym_token"), parameters, Encoding.UTF8);
         
         var obj = VkErrors.IfErrorThrowException(response.Value ?? response.Message);
         VkAuthErrors.IfErrorThrowException(obj);
 
-        return obj.ToObject<AnonymousTokenResponse>(_jsonSerializer);
+        return obj.ToObject<AnonymousTokenResponse>(VkApiInvoke.Serializer)!;
     }
 
     private async ValueTask<string> GetDeviceIdAsync()
     {
-        var deviceId = await _deviceIdStore.GetDeviceIdAsync();
+        var deviceId = await deviceIdStore.GetDeviceIdAsync();
         if (!string.IsNullOrEmpty(deviceId))
             return deviceId;
 
-        var checkIn = await _safetyNetClient.CheckIn();
-
-        var response = await _safetyNetClient.Register(checkIn);
-
-        deviceId = $"{checkIn.AndroidId}:{response.Split('=')[1]}";
+        deviceId = await deviceIdProvider.GetDeviceIdAsync();
         
-        await _deviceIdStore.SetDeviceIdAsync(deviceId);
+        await deviceIdStore.SetDeviceIdAsync(deviceId);
 
         return deviceId;
     }

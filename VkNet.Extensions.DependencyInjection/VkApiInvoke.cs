@@ -113,13 +113,9 @@ public class VkApiInvoke : IVkApiInvoke
     {
         TryAddRequiredParameters(parameters, skipAuthorization);
         
-        return _handler.Perform(async (sid, key) =>
+        return _handler.Perform(async captchaResponse =>
         {
-            if (sid is { } captchaSid)
-            {
-                parameters.Add("captcha_sid", captchaSid.ToString());
-                parameters.Add("captcha_key", key);
-            }
+            captchaResponse?.AddTo(parameters);
 
             await _rateLimiter.WaitNextAsync();
 

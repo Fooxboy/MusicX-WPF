@@ -1,25 +1,28 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Web;
 using System.Windows.Input;
-using MusicX.Services;
+using Wpf.Ui;
 using Wpf.Ui.Common;
+using Wpf.Ui.Extensions;
+using NavigationService = MusicX.Services.NavigationService;
 
 namespace MusicX.ViewModels.Modals;
 
-public class CaptchaModalViewModel : BaseViewModel
+public class BrowserCaptchaModalViewModel : BaseViewModel
 {
     private readonly NavigationService _navigationService;
+    private readonly ISnackbarService _snackbarService;
 
-    public Uri? ImageUri { get; set; }
-    public ICommand SolveCommand { get; }
+    public Uri? RedirectUri { get; set; }
     public ICommand CloseCommand { get; }
 
     public TaskCompletionSource<string?> CompletionSource { get; } = new();
 
-    public CaptchaModalViewModel(NavigationService navigationService)
+    public BrowserCaptchaModalViewModel(NavigationService navigationService, ISnackbarService snackbarService)
     {
         _navigationService = navigationService;
-        SolveCommand = new RelayCommand(ExecuteSolve);
+        _snackbarService = snackbarService;
         CloseCommand = new RelayCommand(ExecuteClose);
     }
 
@@ -29,9 +32,11 @@ public class CaptchaModalViewModel : BaseViewModel
         _navigationService.CloseModal();
     }
 
-    private void ExecuteSolve(object? obj)
+    public void Complete(string successToken)
     {
-        CompletionSource.SetResult(obj as string);
+        if (RedirectUri is null) return;
+        
+        CompletionSource.SetResult(successToken);
         _navigationService.CloseModal();
     }
 }

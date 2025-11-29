@@ -17,8 +17,6 @@ using MusicX.ViewModels;
 using MusicX.ViewModels.Modals;
 using MusicX.Views.Modals;
 using NLog;
-using VkNet.Abstractions.Core;
-using VkNet.Exception;
 using WinRT.Interop;
 using Wpf.Ui;
 using Wpf.Ui.Extensions;
@@ -214,7 +212,7 @@ namespace MusicX.Views
 
         private void RaiseCaptcha_OnClick(object sender, RoutedEventArgs e)
         {
-            var handler = StaticService.Container.GetRequiredService<ICaptchaHandler>();
+            /*var handler = StaticService.Container.GetRequiredService<ICaptchaHandler>();
 
             handler.Perform(async (sid, key) =>
             {
@@ -226,12 +224,12 @@ namespace MusicX.Views
                 }
                 
                 const ulong captchaSid = 123456;
-                throw new CaptchaNeededException(new()
+                throw new CaptchaRequiredException(new()
                 {
                     CaptchaImg = new($"https://api.vk.com//captcha.php?sid={captchaSid}&s=1"),
                     CaptchaSid = captchaSid
                 });
-            });
+            });*/
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)

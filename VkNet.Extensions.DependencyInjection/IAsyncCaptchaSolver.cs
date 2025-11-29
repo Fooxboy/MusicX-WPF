@@ -5,13 +5,14 @@
 /// </summary>
 public interface IAsyncCaptchaSolver
 {
-    /// <summary>Распознает текст капчи.</summary>
-    /// <param name="url"> Ссылка на изображение капчи. </param>
-    /// <returns> Строка, содержащая текст, который был закодирован в капче. </returns>
-    ValueTask<string?> SolveAsync(string url);
+    ValueTask<string?> SolveAsync(CaptchaRequest request);
 
     /// <summary>
     /// Сообщает сервису, что последняя капча была распознана неверно.
     /// </summary>
     ValueTask SolveFailedAsync();
 }
+
+public abstract record CaptchaRequest;
+public record ImageCaptchaRequest(Uri ImageUri) : CaptchaRequest;
+public record BrowserCaptchaRequest(Uri RedirectUri) : CaptchaRequest;

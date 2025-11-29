@@ -27,7 +27,6 @@ namespace VkNet.AudioBypassService.Extensions
 				throw new ArgumentNullException(nameof(services));
 			}
 
-			services.TryAddSingleton<FakeSafetyNetClient>();
 			services.TryAddSingleton<LibVerifyClient>();
 			services.TryAddSingleton<IRestClient, RestClientWithUserAgent>();
 			services.TryAddSingleton<IDeviceIdStore, DefaultDeviceIdStore>();
@@ -40,8 +39,9 @@ namespace VkNet.AudioBypassService.Extensions
 			services.AddHttpClient<IVkApiInvoke, VkApiInvoke>(client =>
 			{
 				client.BaseAddress = new("https://api.vk.com/method/");
-				client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "VKAndroidApp/8.99-23423 (Android 12; SDK 32; arm64-v8a; MusicX; ru; 2960x1440)");
+				client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "VKAndroidApp/8.142-40587 (Android 12; SDK 32; arm64-v8a; MusicX; ru; 2960x1440)");
 				client.DefaultRequestHeaders.TryAddWithoutValidation("X-VK-Android-Client", "new");
+				client.DefaultRequestHeaders.TryAddWithoutValidation("X-Screen", "nowhere");
 				client.DefaultRequestHeaders.TryAddWithoutValidation("X-Quic", "1");
 			});
 
