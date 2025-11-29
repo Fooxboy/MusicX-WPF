@@ -151,7 +151,7 @@ public abstract class MediaSourceBase : ITrackMediaSource
             var blockSize = frame.NumSamples * Unsafe.SizeOf<short>();
             var array = new byte[frame.NumChannels * blockSize];
 
-            frame.GetChannelData<short>(0).CopyTo(MemoryMarshal.Cast<byte, short>(array));
+            frame.GetChannelData<short>(0).CopyTo(MemoryMarshal.Cast<byte, short>(array.AsSpan()));
             
             frame.Dispose();
 
