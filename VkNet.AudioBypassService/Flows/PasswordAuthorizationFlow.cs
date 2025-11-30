@@ -42,6 +42,7 @@ internal class PasswordAuthorizationFlow(
         parameters.Add("password", authParams.Password);
         parameters.Add("flow_type", "tg_flow");
         parameters.Add("2fa_supported", true);
+        parameters.Add("vk_connect_auth", true);
         
         return parameters;
     }

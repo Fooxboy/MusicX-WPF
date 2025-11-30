@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using JetBrains.Annotations;
@@ -12,9 +13,9 @@ namespace VkNet.AudioBypassService.Utils
 	[UsedImplicitly]
 	public class RestClientWithUserAgent : RestClient
 	{
-		private static readonly IDictionary<string, string> VkHeaders = new Dictionary<string, string>
+		public static readonly IDictionary<string, string> VkHeaders = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
 		{
-			{ "User-Agent", "VKAndroidApp/8.157-45261 (Android 14; SDK 34; arm64-v8a; MusicX; ru; 2960x1440)" },
+			{ "User-Agent", "VKAndroidApp/8.157-45261 (Android 14; SDK 34; arm64-v8a; Pixel 8; ru; 2220x1080)" },
 			{ "X-Screen", "nowhere" },
 			{ "X-VK-Android-Client", "new" },
 			// { "User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36" },
