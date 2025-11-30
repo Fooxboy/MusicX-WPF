@@ -9,7 +9,7 @@
            xmlns:wpf="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
            xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
            mc:Ignorable="d"
-           Title="Капча" Height="600" Width="400"
+           Title="Капча" Height="720" Width="400"
            d:DataContext="{d:DesignInstance modals:BrowserCaptchaModalViewModel}"
            Closed="CaptchaModal_OnClosed"
            Background="Transparent">
