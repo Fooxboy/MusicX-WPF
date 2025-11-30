@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Security;
 using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
 using VkNet.Abstractions.Authorization;
 using VkNet.Abstractions.Core;
 using VkNet.Abstractions.Utils;
@@ -21,7 +17,6 @@ using VkNet.AudioBypassService.Utils;
 using VkNet.Extensions.DependencyInjection;
 using VkNet.Model;
 using VkNet.Utils;
-using VkNet.Utils.JsonConverter;
 using ICaptchaHandler = VkNet.Extensions.DependencyInjection.ICaptchaHandler;
 using VkApiInvoke = VkNet.AudioBypassService.Utils.VkApiInvoke;
 
@@ -80,10 +75,14 @@ internal abstract class VkAndroidAuthorizationBase(
             captchaResponse?.AddTo(parameters);
             
             await rateLimiter.WaitNextAsync();
+            
+            Debug.WriteLine($"Request token {string.Join(", ", parameters.Select(b => $"{b.Key}={b.Value}"))}");
 
             var response = await restClient.PostAsync(new Uri("https://api.vk.com/oauth/token"), parameters, Encoding.UTF8);
-
+            
             var obj = JObject.Parse(response.Value ?? response.Message);
+            
+            Debug.WriteLine($"Response token {obj}");
 
             if (obj.TryGetValue("error", out var error) &&
                 AuthFlow.FromJsonString(error.ToString()) == AuthFlow.NeedValidation)
@@ -128,9 +127,13 @@ internal abstract class VkAndroidAuthorizationBase(
                 
                 await rateLimiter.WaitNextAsync();
 
+                Debug.WriteLine($"Request token {string.Join(", ", parameters.Select(b => $"{b.Key}={b.Value}"))}");
+
                 response = await restClient.PostAsync(new Uri("https://api.vk.com/oauth/token"), parameters, Encoding.UTF8);
 
                 obj = JObject.Parse(response.Value ?? response.Message);
+                
+                Debug.WriteLine($"Response token {obj}");
             }
             
             VkAuthErrors.IfErrorThrowException(obj);

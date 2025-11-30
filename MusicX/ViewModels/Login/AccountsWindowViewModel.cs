@@ -166,7 +166,9 @@ public class AccountsWindowViewModel : BaseViewModel
 
             Profile = response.Profile;
 
-            Sid = response.Sid;
+            // checkotp returns shorter sid for some reason?
+            // official app also sends previous value to token method
+            // Sid = response.Sid;
 
             if (response is { ProfileExist: true })
             {
