@@ -43,6 +43,15 @@ public sealed partial class AudioMixesBlock : UserControl
 
     public static readonly DependencyProperty IsPlayingProperty =
         DependencyProperty.Register(nameof(IsPlaying), typeof(bool), typeof(AudioMixesBlock));
+
+    public static readonly DependencyProperty IsMyMusicOnlyProperty = DependencyProperty.Register(
+        nameof(IsMyMusicOnly), typeof(bool), typeof(AudioMixesBlock), new PropertyMetadata(false));
+
+    public bool IsMyMusicOnly
+    {
+        get => (bool)GetValue(IsMyMusicOnlyProperty);
+        set => SetValue(IsMyMusicOnlyProperty, value);
+    }
     
     private readonly PlayerService _player;
     private ImmutableDictionary<string, ImmutableArray<string>>? _options;
@@ -57,9 +66,6 @@ public sealed partial class AudioMixesBlock : UserControl
     public AudioMixesBlock()
     {
         InitializeComponent();
-
-        Mode = MixMode.Mix;
-
         _player = StaticService.Container.GetRequiredService<PlayerService>();
 
         _player.CurrentPlaylistChanged += CurrentPlaylistChanged;

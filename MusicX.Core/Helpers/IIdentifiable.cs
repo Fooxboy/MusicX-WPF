@@ -123,7 +123,8 @@ public interface IIdentifiable
                                               link.Url.Contains("radiostations") ||
                                               link.Url.Contains("music_transfer") ||
                                               link.Url.Contains("subscription") ||
-                                              link.Url.Contains("audiobooks_favorites")) > 0 &&
+                                              link.Url.Contains("audiobooks_favorites") ||
+                                              link.Url.Contains("audio_kids")) > 0 &&
                 block.Links.Count == 0
             )
         );

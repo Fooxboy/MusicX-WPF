@@ -192,6 +192,11 @@
                       DataType="{x:Type viewModels:BlockViewModel}">
             <blocks:AudioMixesBlock />
         </DataTemplate>
+        
+        <DataTemplate x:Key="audio_stream_mixes_audio_stream_mix"
+                      DataType="{x:Type viewModels:BlockViewModel}">
+            <blocks:AudioMixesBlock Mode="Library" IsMyMusicOnly="True" />
+        </DataTemplate>
 
         <!-- ReSharper restore InconsistentNaming -->
     </UserControl.Resources>

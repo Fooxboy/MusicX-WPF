@@ -139,7 +139,8 @@
             </TextBlock>
 
 
-            <wpfui:Button x:Name="MixSettings" Click="MixSettings_Click" Margin="0,10,0,0" Width="150" HorizontalAlignment="Center">
+            <wpfui:Button x:Name="MixSettings" Click="MixSettings_Click" Margin="0,10,0,0" Width="150" HorizontalAlignment="Center"
+                          Visibility="{Binding IsMyMusicOnly, ElementName=Control, Converter={StaticResource InversionBooleanToVisibilityConverter}}">
                 <wpfui:Button.Content>
                     <StackPanel Orientation="Horizontal">
                         <wpfui:SymbolIcon VerticalAlignment="Center" FontSize="18" Symbol="Settings20"/>
@@ -148,7 +149,8 @@
                 </wpfui:Button.Content>
             </wpfui:Button>
 
-            <Grid Margin="0,30,0,0" HorizontalAlignment="Center">
+            <Grid Margin="0,30,0,0" HorizontalAlignment="Center" 
+                  Visibility="{Binding IsMyMusicOnly, ElementName=Control, Converter={StaticResource InversionBooleanToVisibilityConverter}}">
                 <Border Width="240" Height="32" Opacity="0.2" HorizontalAlignment="Center" BorderThickness="1" BorderBrush="White" CornerRadius="7">
                  
                 </Border>

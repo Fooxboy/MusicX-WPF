@@ -245,7 +245,8 @@ namespace MusicX
                         icon = SymbolRegular.Search24;
                     }
                     else if (section.Title.StartsWith("книги", StringComparison.CurrentCultureIgnoreCase) || 
-                             section.Title.StartsWith("радио", StringComparison.CurrentCultureIgnoreCase))
+                             section.Title.StartsWith("радио", StringComparison.CurrentCultureIgnoreCase) ||
+                             section.Title.StartsWith("детям", StringComparison.CurrentCultureIgnoreCase))
                     {
                         continue;
                     }
