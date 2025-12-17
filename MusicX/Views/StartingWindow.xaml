@@ -23,10 +23,15 @@
         </Grid.RowDefinitions>
 
 
+        <Image Opacity="0.7" Stretch="UniformToFill" Source="pack://application:,,,/Assets/newyear/start_show.png"/>
+
+
         <Image Height="220" Width="220"
                HorizontalAlignment="Center"
                VerticalAlignment="Center"
-               Source="pack://application:,,,/StoreLogo.scale-400.png" />
+               Source="pack://application:,,,/Assets/newyear/snow_logo.png" />
+
+        <Image Height="100" Width="100" Margin="-190,0,0,120"  Source="pack://application:,,,/Assets/newyear/newyearblock.png"/>
 
         <ui:ProgressRing IsIndeterminate="True" Margin="0,300,0,0"/>
 
