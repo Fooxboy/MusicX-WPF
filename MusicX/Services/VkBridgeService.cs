@@ -109,7 +109,7 @@ public class VkBridgeService(IVkApiInvoke vkApi, Logger log, VkService vkService
 
             vkParameters.TryAdd("https", "1");
             
-            var response = await vkApi.CallAsync(method, vkParameters);
+            var response = await vkApi.CallAsync(method, vkParameters, true);
 
             DispatchEvent(nameof(VKWebAppCallAPIMethod), new
             {
