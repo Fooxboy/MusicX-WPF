@@ -30,6 +30,12 @@
                               HorizontalAlignment="Center">Вход ВКонтакте</ui:TextBlock>
                 <ui:TextBox Margin="0,20,0,0" Name="LoginTextBox" PlaceholderText="Телефон или почта" />
                 <ui:Button Width="272" Margin="0,20,0,0" Appearance="Primary" Command="{Binding ViewModel.LoginCommand}" CommandParameter="{Binding Text, ElementName=LoginTextBox}">Войти</ui:Button>
+                <ui:HyperlinkButton Width="272" Margin="0,25,0,0" NavigateUri="https://t.me/MusicXPlayer">
+                    <ui:HyperlinkButton.Icon>
+                        <ui:SymbolIcon Symbol="Send24" />
+                    </ui:HyperlinkButton.Icon>
+                    Телеграм канал с помощью
+                </ui:HyperlinkButton>
             </StackPanel>
         </Grid>
     </ui:Card>
