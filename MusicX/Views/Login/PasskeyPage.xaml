@@ -1,12 +1,17 @@
-﻿<UserControl x:Class="MusicX.Views.Login.PasskeyPage"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:MusicX.Views.Login"
-             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-             mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300">
+﻿<Page x:Class="MusicX.Views.Login.PasskeyPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:login="clr-namespace:MusicX.Views.Login"
+      ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
+      ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      d:DataContext="{d:DesignInstance login:PasskeyPage,
+                                     IsDesignTimeCreatable=False}"
+      mc:Ignorable="d"
+      Title="PasskeyPage" Height="450" Width="800">
     <ui:Card HorizontalAlignment="Center" Width="300">
         <ui:SymbolIcon Symbol="Fingerprint48" FontSize="128" Width="300"
                        HorizontalAlignment="Center">
@@ -15,10 +20,9 @@
             </ui:SymbolIcon.Foreground>
         </ui:SymbolIcon>
         <ui:Card.Footer>
-            <TextBlock FontFamily="{StaticResource VKSansDemiBold}"
-                       TextAlignment="Center"
-                       FontSize="24"
-                       TextWrapping="Wrap">Используйте всплывающее окно.</TextBlock>
+            <ui:TextBlock TextAlignment="Center"
+                       FontTypography="Title"
+                       TextWrapping="Wrap">Используйте всплывающее окно</ui:TextBlock>
         </ui:Card.Footer>
     </ui:Card>
-</UserControl>
+</Page>

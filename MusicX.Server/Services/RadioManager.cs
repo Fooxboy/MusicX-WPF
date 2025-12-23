@@ -1,6 +1,4 @@
-﻿using Microsoft.Win32;
-using MusicX.Shared.ListenTogether.Radio;
-using System.Linq.Expressions;
+﻿using MusicX.Shared.ListenTogether.Radio;
 
 namespace MusicX.Server.Services
 {

@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using System.Web;
 using System.Windows.Input;
 using Wpf.Ui;
 using Wpf.Ui.Common;
-using Wpf.Ui.Extensions;
 using NavigationService = MusicX.Services.NavigationService;
 
 namespace MusicX.ViewModels.Modals;

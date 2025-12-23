@@ -1,6 +1,4 @@
 ﻿using DiscordRPC.Converters;
-using System;
-using System.Runtime.Serialization;
 
 namespace DiscordRPC.RPC.Payload
 {

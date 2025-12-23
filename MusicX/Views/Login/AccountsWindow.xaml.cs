@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using MusicX.Services;
 using MusicX.ViewModels.Login;
+using NLog;
 using Wpf.Ui;
 using NavigationService = MusicX.Services.NavigationService;
 
@@ -9,24 +10,34 @@ namespace MusicX.Views.Login;
 
 public partial class AccountsWindow
 {
+    private readonly Logger _logger;
     private readonly NavigationService _navigationService;
 
-    public AccountsWindow(ISnackbarService snackbarService, NavigationService navigationService,
-        AccountsWindowViewModel viewModel, WindowThemeService themeService) : base(snackbarService, navigationService,
+    public AccountsWindow(Logger logger, LoginViewModel loginViewModel, ISnackbarService snackbarService, NavigationService navigationService, WindowThemeService themeService) : base(snackbarService, navigationService,
         themeService)
     {
+        _logger = logger;
         _navigationService = navigationService;
-        navigationService.ExternalPageOpened += NavigationServiceOnExternalPageOpened;
         InitializeComponent();
-        DataContext = viewModel;
-        viewModel.OpenPage(AccountsWindowPage.EnterLogin);
-        viewModel.LoggedIn += AccountsWindowOnLoggedIn;
+        navigationService.ExternalPageOpened += NavigationServiceOnExternalPageOpened;
+        LoginAsync(loginViewModel);
     }
 
-    private void AccountsWindowOnLoggedIn(object? sender, EventArgs e)
+    private async void LoginAsync(LoginViewModel viewModel)
     {
-        var rootWindow = ActivatorUtilities.CreateInstance<RootWindow>(StaticService.Container);
-        rootWindow.Show();
+        try
+        {
+            _navigationService.OpenExternalPage(new LoginPage(viewModel));
+            if (await viewModel.LoggedIn.Task)
+            {
+                var rootWindow = ActivatorUtilities.CreateInstance<RootWindow>(StaticService.Container);
+                rootWindow.Show();
+            }
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e);
+        }
         Close();
     }
 

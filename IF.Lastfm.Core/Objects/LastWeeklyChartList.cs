@@ -1,5 +1,4 @@
 using System;
-using IF.Lastfm.Core.Api.Enums;
 using Newtonsoft.Json.Linq;
 using IF.Lastfm.Core.Api.Helpers;
 

@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using VkNet.AudioBypassService.Abstractions;
+using VkNet.Extensions.Auth.Abstractions;
 
 namespace MusicX.Services.Stores;
 

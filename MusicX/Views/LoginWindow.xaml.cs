@@ -8,7 +8,7 @@ using MusicX.Helpers;
 using MusicX.Models;
 using MusicX.Services;
 using NLog;
-using VkNet.AudioBypassService.Exceptions;
+using VkNet.Extensions.Auth.Exceptions;
 using Wpf.Ui;
 using NavigationService = MusicX.Services.NavigationService;
 

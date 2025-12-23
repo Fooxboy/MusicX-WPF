@@ -11,9 +11,11 @@ using MusicX.Helpers;
 using MusicX.Shared.ListenTogether.Radio;
 using NLog;
 using VkNet.Abstractions;
-using VkNet.Enums.SafetyEnums;
+using VkNet.Enums.StringEnums;
 using VkNet.Model;
+using Audio = MusicX.Core.Models.Audio;
 using Button = MusicX.Core.Models.Button;
+using Link = MusicX.Core.Models.Link;
 
 namespace MusicX.Services;
 

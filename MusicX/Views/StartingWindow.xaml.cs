@@ -23,11 +23,12 @@ using MusicX.ViewModels.Modals;
 using MusicX.Views.Login;
 using NLog;
 using VkNet.Abstractions;
-using VkNet.AudioBypassService.Abstractions;
-using VkNet.AudioBypassService.Extensions;
-using VkNet.AudioBypassService.Models.Auth;
 using VkNet.Exception;
-using VkNet.Extensions.DependencyInjection;
+using VkNet.Extensions.Auth.Abstractions;
+using VkNet.Extensions.Auth.Extensions;
+using VkNet.Extensions.Auth.Models.Auth;
+using VkNet.Extensions.Auth.Utils;
+using VkNet.Extensions.DependencyInjection.Abstractions;
 using Wpf.Ui;
 using Wpf.Ui.Appearance;
 using NavigationService = MusicX.Services.NavigationService;
@@ -67,8 +68,7 @@ namespace MusicX.Views
                 collection.AddSingleton<IVkTokenStore, TokenStore>();
                 collection.AddSingleton<IExchangeTokenStore, ExchangeTokenStore>();
 
-                collection.AddAudioBypass();
-                collection.AddVkNet();
+                collection.AddVkNetWithAuth();
 
                 collection.AddSingleton<VkService>();
                 collection.AddSingleton<ListenTogetherService>();
@@ -102,11 +102,14 @@ namespace MusicX.Views
                 collection.AddTransient<ListenTogetherControlViewModel>();
                 collection.AddTransient<LyricsViewModel>();
                 collection.AddTransient<CaptchaModalViewModel>();
-                collection.AddTransient<AccountsWindowViewModel>();
                 collection.AddTransient<LoginVerificationMethodsModalViewModel>();
                 collection.AddTransient<LastFmAuthModalViewModel>();
                 collection.AddTransient<MixSettingsModalViewModel>();
                 collection.AddTransient<BrowserCaptchaModalViewModel>();
+
+                collection.AddTransient<LoginViewModel>();
+                collection.AddTransient<OtpCodeViewModel>();
+                collection.AddTransient<PasswordViewModel>();
 
                 collection.AddSingleton<NavigationService>();
                 collection.AddSingleton<ConfigService>();
@@ -135,6 +138,8 @@ namespace MusicX.Views
                 collection.AddSingleton<ShareService>();
                 collection.AddTransient<VkBridgeService>();
                 collection.AddSingleton<IDeviceIdProvider, WindowsDeviceIdProvider>();
+
+                collection.AddHttpClient("miniapp", VkAuthRegisterOptions.DefaultAndroid.ConfigureClient);
 
                 var container = StaticService.Container = collection.BuildServiceProvider();
 
@@ -187,10 +192,6 @@ namespace MusicX.Views
                         
                         if (string.IsNullOrEmpty(config.AccessToken))
                         {
-                            if (string.IsNullOrEmpty(config.AnonToken))
-                                await container.GetRequiredService<IVkApiAuthAsync>()
-                                    .AuthorizeAsync(new AndroidApiAuthParams());
-                            
                             ActivatorUtilities.CreateInstance<AccountsWindow>(container).Show();
                             
                             this.Close();

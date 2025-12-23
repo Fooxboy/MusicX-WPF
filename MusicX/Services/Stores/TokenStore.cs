@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using VkNet.Extensions.DependencyInjection;
+using VkNet.Extensions.DependencyInjection.Abstractions;
 
 namespace MusicX.Services.Stores;
 

@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.SignalR;
-using MusicX.Server.Hubs;
-using MusicX.Shared.ListenTogether.Radio;
+﻿using MusicX.Shared.ListenTogether.Radio;
 
 namespace MusicX.Server.Services
 {

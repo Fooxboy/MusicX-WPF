@@ -6,19 +6,17 @@ using Newtonsoft.Json;
 using NLog;
 using System.Diagnostics;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Text.Json;
 using VkNet.Abstractions;
 using VkNet.Abstractions.Core;
-using VkNet.AudioBypassService.Abstractions;
 using VkNet.Enums.Filters;
 using VkNet.Exception;
-using VkNet.Extensions.DependencyInjection;
 using VkNet.Model;
 using VkNet.Utils;
 using Lyrics = MusicX.Core.Models.Lyrics;
 using MusicX.Core.Models.Mix;
-using VkNet.Abstractions.Utils;
+using VkNet.Extensions.DependencyInjection.Abstractions;
+using Audio = MusicX.Core.Models.Audio;
 
 namespace MusicX.Core.Services
 {
@@ -36,10 +34,10 @@ namespace MusicX.Core.Services
         private readonly IVkApi _api;
         private readonly ICustomSectionsService _customSectionsService;
         private readonly ITokenRefreshHandler _tokenRefreshHandler;
-        private readonly IRestClient _restClient;
+        private readonly IHttpClientFactory _clientFactory;
 
         public VkService(Logger logger, IVkApiCategories vkApi, IVkApiInvoke apiInvoke, IVkApiVersionManager versionManager,
-                         IVkTokenStore tokenStore, IVkApiAuthAsync auth, IVkApi api, ICustomSectionsService customSectionsService, ITokenRefreshHandler tokenRefreshHandler, IRestClient restClient)
+                         IVkTokenStore tokenStore, IVkApiAuthAsync auth, IVkApi api, ICustomSectionsService customSectionsService, ITokenRefreshHandler tokenRefreshHandler, IHttpClientFactory clientFactory)
         {
             this.vkApi = vkApi;
             this.apiInvoke = apiInvoke;
@@ -48,7 +46,7 @@ namespace MusicX.Core.Services
             _api = api;
             _customSectionsService = customSectionsService;
             _tokenRefreshHandler = tokenRefreshHandler;
-            _restClient = restClient;
+            _clientFactory = clientFactory;
 
             var ver = vkApiVersion.Split('.');
             versionManager.SetVersion(int.Parse(ver[0]), int.Parse(ver[1]));
@@ -1379,12 +1377,15 @@ namespace MusicX.Core.Services
 
             try
             {
-                var response = await _restClient.PostAsync(new("https://api.vk.com/oauth/authorize"), parameters, Encoding.UTF8);
-                
-                if (!response.ResponseUri.Fragment.StartsWith("#access_token="))
+                var client = _clientFactory.CreateClient("miniapp");
+                using var response = await client.PostAsync("https://api.vk.com/oauth/authorize",
+                    new FormUrlEncodedContent(parameters));
+
+                var location = response.Headers.Location;
+                if (location?.Fragment.StartsWith("#access_token=") != true)
                     throw new VkApiException("Access token not found");
 
-                var query = Url.ParseQueryString("?" + response.ResponseUri.Fragment[1..]);
+                var query = Url.ParseQueryString("?" + location.Fragment[1..]);
                 return new CredentialResponse(query["access_token"]);
             }
             catch (Exception e)

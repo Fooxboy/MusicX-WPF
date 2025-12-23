@@ -12,7 +12,7 @@ using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.Wpf;
 using MusicX.Services;
 using MusicX.ViewModels;
-using VkNet.AudioBypassService.Utils;
+using VkNet.Extensions.Auth.Utils;
 using NavigationService = System.Windows.Navigation.NavigationService;
 
 namespace MusicX.Views;
@@ -51,7 +51,7 @@ public partial class MiniAppView : Page, IProvideCustomContentState
         settings.IsZoomControlEnabled = false;
         settings.IsBuiltInErrorPageEnabled = false;
 
-        settings.UserAgent = RestClientWithUserAgent.VkHeaders["User-Agent"];
+        settings.UserAgent = VkAuthRegisterOptions.DefaultAndroid.UserAgent;
 
         var bridgeService = StaticService.Container.GetRequiredService<VkBridgeService>();
 

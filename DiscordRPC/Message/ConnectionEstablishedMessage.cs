@@ -1,10 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace DiscordRPC.Message
+﻿namespace DiscordRPC.Message
 {
 	/// <summary>
 	/// The connection to the discord client was succesfull. This is called before <see cref="MessageType.Ready"/>.

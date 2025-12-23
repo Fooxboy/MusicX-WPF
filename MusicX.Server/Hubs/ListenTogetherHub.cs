@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.Caching.Memory;
 using MusicX.Server.Services;
 using MusicX.Shared.ListenTogether;
 using MusicX.Shared.Player;

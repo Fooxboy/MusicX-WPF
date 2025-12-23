@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -10,8 +7,6 @@ using MusicX.Core.Models;
 using MusicX.Core.Services;
 using MusicX.Helpers;
 using MusicX.Services;
-using MusicX.ViewModels;
-using MusicX.Views;
 using NLog;
 using Wpf.Ui.Controls;
 

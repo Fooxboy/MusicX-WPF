@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using MusicX.Server.Hubs;
-using MusicX.Server.Models;
 using MusicX.Shared.ListenTogether;
 using MusicX.Shared.Player;
 

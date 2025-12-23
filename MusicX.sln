@@ -16,11 +16,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicX.Server", "MusicX.Ser
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicX.Shared", "MusicX.Shared\MusicX.Shared.csproj", "{05EE1D52-3FF7-4BEE-9213-B8CE70F7240C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VkNet.AudioBypassService", "VkNet.AudioBypassService\VkNet.AudioBypassService.csproj", "{F05AC765-4098-45D9-B98D-C309995FDDDA}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscordRPC", "DiscordRPC\DiscordRPC.csproj", "{B67F48FE-FE54-4E0D-8A3D-69F4BE6B6424}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VkNet.Extensions.DependencyInjection", "VkNet.Extensions.DependencyInjection\VkNet.Extensions.DependencyInjection.csproj", "{646DE14C-B71A-4A62-8249-204D98DD5334}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SignalR.Protobuf", "SignalR.Protobuf\SignalR.Protobuf.csproj", "{6A511BD3-95E2-4087-9F68-A17DBC237B71}"
 EndProject
@@ -52,18 +48,10 @@ Global
 		{05EE1D52-3FF7-4BEE-9213-B8CE70F7240C}.Debug|x64.Build.0 = Debug|x64
 		{05EE1D52-3FF7-4BEE-9213-B8CE70F7240C}.Release|x64.ActiveCfg = Release|x64
 		{05EE1D52-3FF7-4BEE-9213-B8CE70F7240C}.Release|x64.Build.0 = Release|x64
-		{F05AC765-4098-45D9-B98D-C309995FDDDA}.Release|x64.ActiveCfg = Release|x64
-		{F05AC765-4098-45D9-B98D-C309995FDDDA}.Release|x64.Build.0 = Release|x64
-		{F05AC765-4098-45D9-B98D-C309995FDDDA}.Debug|x64.ActiveCfg = Debug|x64
-		{F05AC765-4098-45D9-B98D-C309995FDDDA}.Debug|x64.Build.0 = Debug|x64
 		{B67F48FE-FE54-4E0D-8A3D-69F4BE6B6424}.Debug|x64.ActiveCfg = Debug|x64
 		{B67F48FE-FE54-4E0D-8A3D-69F4BE6B6424}.Debug|x64.Build.0 = Debug|x64
 		{B67F48FE-FE54-4E0D-8A3D-69F4BE6B6424}.Release|x64.ActiveCfg = Release|x64
 		{B67F48FE-FE54-4E0D-8A3D-69F4BE6B6424}.Release|x64.Build.0 = Release|x64
-		{646DE14C-B71A-4A62-8249-204D98DD5334}.Debug|x64.ActiveCfg = Debug|x64
-		{646DE14C-B71A-4A62-8249-204D98DD5334}.Debug|x64.Build.0 = Debug|x64
-		{646DE14C-B71A-4A62-8249-204D98DD5334}.Release|x64.ActiveCfg = Release|x64
-		{646DE14C-B71A-4A62-8249-204D98DD5334}.Release|x64.Build.0 = Release|x64
 		{6A511BD3-95E2-4087-9F68-A17DBC237B71}.Debug|x64.ActiveCfg = Debug|x64
 		{6A511BD3-95E2-4087-9F68-A17DBC237B71}.Debug|x64.Build.0 = Debug|x64
 		{6A511BD3-95E2-4087-9F68-A17DBC237B71}.Release|x64.ActiveCfg = Release|x64

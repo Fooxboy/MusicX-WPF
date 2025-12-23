@@ -2,8 +2,6 @@
 using MusicX.Core.Models.Mix;
 using MusicX.Core.Services;
 using System.Collections.ObjectModel;
-using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -11,7 +9,6 @@ using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices;
-using Wpf.Ui.Common;
 
 namespace MusicX.ViewModels.Modals;
 

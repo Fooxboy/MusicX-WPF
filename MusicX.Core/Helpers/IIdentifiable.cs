@@ -1,6 +1,5 @@
 ﻿using MusicX.Core.Models;
 using MusicX.Core.Models.General;
-using System.Linq;
 
 namespace MusicX.Core.Helpers;
 

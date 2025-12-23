@@ -4,22 +4,15 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:MusicX.Views.Modals"
-      xmlns:ecosystem="clr-namespace:VkNet.AudioBypassService.Models.Ecosystem;assembly=VkNet.AudioBypassService"
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-      xmlns:auth="clr-namespace:VkNet.AudioBypassService.Models.Auth;assembly=VkNet.AudioBypassService"
       xmlns:modals="clr-namespace:MusicX.ViewModels.Modals"
+      xmlns:ecosystem="clr-namespace:VkNet.Extensions.Auth.Models.Ecosystem;assembly=VkNet.Extensions.Auth"
+      xmlns:auth="clr-namespace:VkNet.Extensions.Auth.Models.Auth;assembly=VkNet.Extensions.Auth"
       mc:Ignorable="d"
-      d:DataContext="{d:DesignInstance modals:LoginVerificationMethodsModalViewModel}"
+      d:DataContext="{d:DesignInstance modals:LoginVerificationMethodsModalViewModel, IsDesignTimeCreatable=False}"
       Name="Modal"
       Title="Выберите метод" Height="450" Width="800">
-    <Page.Resources>
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-    </Page.Resources>
     <Grid>
-        <ui:Card HorizontalAlignment="Center" VerticalAlignment="Center"
-                 Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <ui:ProgressRing IsIndeterminate="True" />
-        </ui:Card>
         <ItemsControl Margin="10,0" ItemsSource="{Binding VerificationMethods}"
                       HorizontalAlignment="Center"
                       HorizontalContentAlignment="Center">

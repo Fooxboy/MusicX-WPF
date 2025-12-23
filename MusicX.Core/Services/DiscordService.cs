@@ -1,13 +1,5 @@
 ﻿using DiscordRPC;
-using MusicX.Core.Models;
-using MusicX.Shared.ListenTogether;
 using NLog;
-using ProtoBuf;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MusicX.Core.Services
 {

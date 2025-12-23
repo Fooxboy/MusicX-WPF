@@ -1,6 +1,4 @@
-﻿using FFMediaToolkit.Audio;
-
-namespace FFMediaToolkit.Decoding.Internal
+﻿namespace FFMediaToolkit.Decoding.Internal
 {
     using FFMediaToolkit.Common;
     using FFMediaToolkit.Helpers;

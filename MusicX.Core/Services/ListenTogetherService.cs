@@ -1,10 +1,8 @@
-﻿using System.Net.Http.Json;
-using Microsoft.AspNetCore.SignalR.Client;
+﻿using Microsoft.AspNetCore.SignalR.Client;
 using MusicX.Core.Models;
 using MusicX.Shared.Extensions;
 using MusicX.Shared.ListenTogether;
 using MusicX.Shared.Player;
-using Newtonsoft.Json;
 using NLog;
 
 namespace MusicX.Core.Services

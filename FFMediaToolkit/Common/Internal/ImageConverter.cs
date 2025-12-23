@@ -1,6 +1,5 @@
 ﻿namespace FFMediaToolkit.Common.Internal
 {
-    using System;
     using System.Drawing;
     using FFMediaToolkit.Graphics;
     using FFmpeg.AutoGen;

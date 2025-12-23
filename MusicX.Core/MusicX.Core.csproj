@@ -11,22 +11,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="C:\Users\Fooxb\.nuget\packages\nlog.config\4.7.14\contentFiles\any\any\NLog.config" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="10.0.0" />
     <PackageReference Include="NLog" Version="6.0.6" />
     <PackageReference Include="NLog.Schema" Version="6.0.6" />
     <PackageReference Include="System.Linq.Async" Version="7.0.0" />
-    <PackageReference Include="VkNet" Version="1.70.0" />
+    <PackageReference Include="VkNet.Extensions.Auth" Version="1.1.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\DiscordRPC\DiscordRPC.csproj" />
     <ProjectReference Include="..\MusicX.Shared\MusicX.Shared.csproj" />
-    <ProjectReference Include="..\VkNet.AudioBypassService\VkNet.AudioBypassService.csproj" />
-    <ProjectReference Include="..\VkNet.Extensions.DependencyInjection\VkNet.Extensions.DependencyInjection.csproj" />
   </ItemGroup>
 
 </Project>
