@@ -4,13 +4,13 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
 using Microsoft.Extensions.DependencyInjection;
-using MusicX.Services;
 using MusicX.ViewModels.Modals;
 using MusicX.Views.Login;
 using MusicX.Views.Modals;
 using VkNet.Abstractions;
 using VkNet.Extensions.Auth.Models.Auth;
 using VkNet.Extensions.Auth.Models.Ecosystem;
+using NavigationService = MusicX.Services.NavigationService;
 using OtpCodePage = MusicX.Views.Login.OtpCodePage;
 
 namespace MusicX.ViewModels.Login;
@@ -37,10 +37,18 @@ public class LoginViewModel : BaseViewModel
         if (string.IsNullOrEmpty(login))
             return;
 
-        await _auth.AuthorizeAsync(new AndroidApiAuthParams());
+        try
+        {
+            await _auth.AuthorizeAsync(new AndroidApiAuthParams());
 
-        await _auth.AuthorizeAsync(new AndroidApiAuthParams(login, null, CodeRequestedAsync,
-            VerificationMethodRequestedAsync: VerificationMethodRequestedAsync));
+            await _auth.AuthorizeAsync(new AndroidApiAuthParams(login, null, CodeRequestedAsync,
+                VerificationMethodRequestedAsync: VerificationMethodRequestedAsync));
+        }
+        catch (Exception e)
+        {
+            LoggedIn.SetException(e);
+            return;
+        }
         
         LoggedIn.SetResult(true);
     }

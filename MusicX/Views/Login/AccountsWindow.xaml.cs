@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
+using MusicX.Helpers;
 using MusicX.Services;
 using MusicX.ViewModels.Login;
 using NLog;
@@ -11,12 +12,14 @@ namespace MusicX.Views.Login;
 public partial class AccountsWindow
 {
     private readonly Logger _logger;
+    private readonly ISnackbarService _snackbarService;
     private readonly NavigationService _navigationService;
 
     public AccountsWindow(Logger logger, LoginViewModel loginViewModel, ISnackbarService snackbarService, NavigationService navigationService, WindowThemeService themeService) : base(snackbarService, navigationService,
         themeService)
     {
         _logger = logger;
+        _snackbarService = snackbarService;
         _navigationService = navigationService;
         InitializeComponent();
         navigationService.ExternalPageOpened += NavigationServiceOnExternalPageOpened;
@@ -36,6 +39,7 @@ public partial class AccountsWindow
         }
         catch (Exception e)
         {
+            _snackbarService.ShowException("Не удалось авторизоваться!", e);
             _logger.Error(e);
         }
         Close();
