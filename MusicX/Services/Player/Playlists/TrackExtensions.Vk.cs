@@ -19,7 +19,7 @@ public static partial class TrackExtensions
         else
             mainArtists = audio.MainArtists.Select(ToTrackArtist).ToArray();
 
-        var isLiked = audio.OwnerId == StaticService.Container.GetRequiredService<IVkApi>().UserId!.Value;
+        var isLiked = audio.OwnerId == StaticService.Container.GetRequiredService<ConfigService>().Config.UserId;
 
         TrackData trackData;
 
