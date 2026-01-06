@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Windows;
 using MusicX.Controls;
 using MusicX.Helpers;
@@ -47,6 +48,14 @@ public class MusicXWindow : FluentWindow
             _navigationService.ModalOpenRequested += NavigationServiceOnModalOpenRequested;
             _navigationService.ModalCloseRequested += NavigationServiceOnModalCloseRequested;
         });
+    }
+
+    protected async ValueTask CloseAsync()
+    {
+        if (_snackbarService is IAsyncDisposable disposable)
+            await disposable.DisposeAsync();
+        
+        Close();
     }
     
     protected override void OnClosing(CancelEventArgs e)

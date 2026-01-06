@@ -42,7 +42,7 @@ public partial class AccountsWindow
             _snackbarService.ShowException("Не удалось авторизоваться!", e);
             _logger.Error(e);
         }
-        Close();
+        await CloseAsync();
     }
 
     protected override void OnClosed(EventArgs e)

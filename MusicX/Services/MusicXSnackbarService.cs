@@ -1,18 +1,22 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
+using Windows.Foundation;
 using Windows.UI.Popups;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 
 namespace MusicX.Services;
-public class MusicXSnackbarService : ISnackbarService
+
+public sealed class MusicXSnackbarService : ISnackbarService, IAsyncDisposable
 {
     private SnackbarPresenter? _presenter;
 
     private Snackbar? _snackbar;
+    private IAsyncOperation<IUICommand>? _activeDialog;
 
     public TimeSpan DefaultTimeOut { get; set; } = TimeSpan.FromSeconds(5.0);
 
@@ -56,7 +60,7 @@ public class MusicXSnackbarService : ISnackbarService
             
             WinRT.Interop.InitializeWithWindow.Initialize(dialog, handle);
 
-            dialog.ShowAsync();
+            _activeDialog = dialog.ShowAsync();
             return;
         }
         
@@ -68,5 +72,11 @@ public class MusicXSnackbarService : ISnackbarService
         _snackbar!.SetCurrentValue(Snackbar.IconProperty, icon);
         _snackbar!.SetCurrentValue(Snackbar.TimeoutProperty, (timeout.TotalSeconds == 0.0) ? DefaultTimeOut : timeout);
         _snackbar!.Show(immediately: true);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_activeDialog is not null)
+            await _activeDialog;
     }
 }
