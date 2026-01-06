@@ -510,8 +510,8 @@
       },
       "VkNet.Extensions.Auth": {
         "type": "Transitive",
-        "resolved": "1.1.0",
-        "contentHash": "r6SPajTCnBges8ba64SujCNQInoLR7ggEMsYX2vzvBAQPu91c7T9beYfxWfmGGtmt3DFkJ+zoB090LW3/lqmow==",
+        "resolved": "1.1.1",
+        "contentHash": "2wZlZ47LyilOnad0ax8ptUgaZpEHLKGuHkLVFOWgApg18zdiOVzFXpVNKFsPKupS1vny8pSmSaFC6O5/SEIwDg==",
         "dependencies": {
           "VkNet.Extensions.DependencyInjection": "1.1.0"
         }
@@ -553,7 +553,7 @@
           "NLog": "[6.0.6, )",
           "NLog.Schema": "[6.0.6, )",
           "System.Linq.Async": "[7.0.0, )",
-          "VkNet.Extensions.Auth": "[1.1.0, )"
+          "VkNet.Extensions.Auth": "[1.1.1, )"
         }
       },
       "musicx.shared": {

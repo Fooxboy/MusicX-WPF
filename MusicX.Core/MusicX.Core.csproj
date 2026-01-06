@@ -15,7 +15,7 @@
     <PackageReference Include="NLog" Version="6.0.6" />
     <PackageReference Include="NLog.Schema" Version="6.0.6" />
     <PackageReference Include="System.Linq.Async" Version="7.0.0" />
-    <PackageReference Include="VkNet.Extensions.Auth" Version="1.1.0" />
+    <PackageReference Include="VkNet.Extensions.Auth" Version="1.1.1" />
   </ItemGroup>
 
   <ItemGroup>
