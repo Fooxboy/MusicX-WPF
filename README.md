@@ -23,6 +23,9 @@
 <div align="center"> <img src="https://raw.githubusercontent.com/Fooxboy/MusicX-WPF/refs/heads/master/MusicX.Site/musicx-site/src/images/home.png" alt="Главный экран
 Music" width="800"/>
 </div>
+<div align="center"> <img src="https://raw.githubusercontent.com/Fooxboy/MusicX-WPF/refs/heads/master/MusicX.Site/musicx-site/src/images/explore.png" alt="Главный экран
+Music" width="800"/>
+</div>
 
 ---
 
