@@ -21,7 +21,7 @@
 ## 📸 Скриншоты
 
 <div align="center"
-  <img src="https://raw.githubusercontent.com/Fooxboy/MusicX-WPF/refs/heads/master/MusicX.Site/musicx-site/src/images/home.png"alt="Главный экран" width="800"/>
+  <img src="https://raw.githubusercontent.com/Fooxboy/MusicX-WPF/refs/heads/master/MusicX.Site/musicx-site/src/images/home.png" alt="Главный экран" width="800"/>
   <p><i>Главный экран приложения и управление воспроизведением</i></p>
 </div>
 
