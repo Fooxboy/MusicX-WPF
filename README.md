@@ -23,7 +23,23 @@
 <div align="center"> <img src="https://raw.githubusercontent.com/Fooxboy/MusicX-WPF/refs/heads/master/MusicX.Site/musicx-site/src/images/home.png" alt="Главный экран
 Music" width="800"/>
 </div>
+
 <div align="center"> <img src="https://raw.githubusercontent.com/Fooxboy/MusicX-WPF/refs/heads/master/MusicX.Site/musicx-site/src/images/explore.png" alt="обзор" width="800"/>
+</div>
+
+<div align="center"> <img src="https://raw.githubusercontent.com/Fooxboy/MusicX-WPF/refs/heads/master/MusicX.Site/musicx-site/src/images/downloads.png" alt="загрузки" width="800"/>
+</div>
+
+<div align="center"> <img src="https://raw.githubusercontent.com/Fooxboy/MusicX-WPF/refs/heads/master/MusicX.Site/musicx-site/src/images/playlists.png" alt="плейлисты на главном экране" width="800"/>
+</div>
+
+<div align="center"> <img src="https://raw.githubusercontent.com/Fooxboy/MusicX-WPF/refs/heads/master/MusicX.Site/musicx-site/src/images/search.png" alt="Поиск" width="800"/>
+</div>
+
+<div align="center"> <img src="https://raw.githubusercontent.com/Fooxboy/MusicX-WPF/refs/heads/master/MusicX.Site/musicx-site/src/images/vkmix.png" alt="вк микс" width="800"/>
+</div>
+
+<div align="center"> <img src="https://raw.githubusercontent.com/Fooxboy/MusicX-WPF/refs/heads/master/MusicX.Site/musicx-site/src/images/podcasts.png" alt="Подкасты" width="800"/>
 </div>
 
 ---
