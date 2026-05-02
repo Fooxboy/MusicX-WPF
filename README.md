@@ -20,9 +20,14 @@
 
 ## 📸 Скриншоты
 
-<div align="center"
-  <img src="https://raw.githubusercontent.com/Fooxboy/MusicX-WPF/refs/heads/master/MusicX.Site/musicx-site/src/images/home.png" alt="Главный экран" width="800"/>
-  <p><i>Главный экран приложения и управление воспроизведением</i></p>
+<div align="center"> <img src="https://
+raw. githubusercontent.com/
+Fooxboy/MusicX-WPF/refs/
+heads/master/MusicX.Site/ music-site/src/images/
+home png" alt="Главный экран
+Music" width="800"/>
+<p>i>Главный экран
+приложения и управление воспроизведением</i></p>
 </div>
 
 ---
