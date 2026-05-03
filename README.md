@@ -1,4 +1,4 @@
-<div align="center"> <img src="https://raw.githubusercontent.com/Fooxboy/MusicX-WPF/refs/heads/master/MusicX/Assets/icon.ico" alt="загрузки" width="800"/>
+<div align="center"> <img src="https://raw.githubusercontent.com/Fooxboy/MusicX-WPF/refs/heads/master/MusicX/Assets/icon.ico" alt="Иконка приложения" width="800"/>
 </div>
 
 # 🎵 MusicX
