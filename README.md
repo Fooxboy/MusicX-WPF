@@ -1,3 +1,5 @@
+<div align="center"> <img src="https://raw.githubusercontent.com/Fooxboy/MusicX-WPF/refs/heads/master/MusicX.Site/musicx-site/src/images/downloads.png" alt="загрузки" width="800"/>
+</div>
 # 🎵 MusicX
 
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/Fooxboy/MusicX-WPF?style=flat-square&color=blue)
