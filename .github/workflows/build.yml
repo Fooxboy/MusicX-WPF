@@ -1,0 +1,110 @@
+name: Duild MusicX-wpf exe
+
+on:
+  push:
+    branches: [ master, develop ]
+
+env:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  compute-version:
+    name: Compute Version
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.commits[0].message, '[skip ci]')"
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      previous-version: ${{ steps.previous-version.outputs.previous-version }}
+    steps:
+      - uses: actions/checkout@master
+        with:
+          fetch-depth: 0
+
+      - name: Git Version
+        id: version
+        uses: codacy/git-version@2.7.1
+        with:
+          dev-branch: develop
+          
+      - name: Get previous version
+        id: previous-version
+        shell: bash
+        run: |
+          if [ ${{ github.ref }} == 'refs/heads/master' ]; then
+            echo "previous-version=${{ steps.version.outputs.previous-version }}" >> $GITHUB_OUTPUT
+          else
+            echo "previous-version=$(git ls-remote --refs --sort="refname" -t -q | cut -d/ -f3- | tail -n1)" >> $GITHUB_OUTPUT
+          fi
+  
+  build:
+    name: Build and Package
+    runs-on: windows-latest
+    needs: [compute-version]
+    if: "!contains(github.event.commits[0].message, '[skip ci]')"
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+          submodules: 'true'
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: |
+            8.0.x
+            9.0.x
+          
+      - uses: GuillaumeFalourd/setup-windows10-sdk-action@v2
+        name: Setup Windows 10 SDK
+        with:
+          sdk-version: 22621
+
+      - name: Restore dependencies
+        run: dotnet restore MusicX/MusicX.csproj --locked-mode -r win-x64
+
+      - name: Build
+        run: dotnet publish MusicX/MusicX.csproj --no-restore -o pub -p:InformationalVersion=${{ needs.compute-version.outputs.version }} --sc
+
+      - name: Set current tag
+        if: ${{ github.ref == 'refs/heads/develop' }}
+        run: git config user.email "you@example.com" && git config user.name "Your Name" && git tag -a ${{ needs.compute-version.outputs.version }} -m ${{ needs.compute-version.outputs.version }} && git push --follow-tags
+
+      - name: Build Changelog
+        id: changelog
+        if: ${{ github.ref == 'refs/heads/develop' }}
+        uses: requarks/changelog-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fromTag: ${{ needs.compute-version.outputs.version }}
+          toTag: ${{ needs.compute-version.outputs.previous-version }}
+          includeInvalidCommits: true
+          writeToFile: false
+          excludeTypes: 'docs'
+          useGitmojis: false
+
+      - name: Write Changelog
+        if: ${{ github.ref == 'refs/heads/develop' }}
+        uses: DamianReeves/write-file-action@master
+        with:
+          path: notes.md
+          contents: ${{ steps.changelog.outputs.changes }}
+          write-mode: overwrite
+
+      - name: Install vpk
+        run: dotnet tool install -g vpk --version 0.0.1023
+
+      - run: vpk download github --repoUrl https://github.com/Fooxboy/MusicX-WPF -c ${{ github.ref == 'refs/heads/develop' && 'win-beta' || 'win' }} --pre --token ${{ secrets.GITHUB_TOKEN }}
+        name: Download previous release
+
+      - name: Build package
+        run: vpk pack -c ${{ github.ref == 'refs/heads/develop' && 'win-beta' || 'win' }} -f vcredist140-x64,webview2 -p pub -u MusicX.WPF -v ${{ needs.compute-version.outputs.version }} --packTitle "MusicX Player" -e MusicX.exe -i MusicX/StoreLogo.scale-400.ico --skipVeloAppCheck --packAuthors "Fooxboy, zznty" --releaseNotes notes.md -s MusicX/StoreLogo.scale-400.png
+
+      - name: Push pre-release package
+        if: ${{ github.ref == 'refs/heads/develop' }}
+        run: vpk upload github -c ${{ github.ref == 'refs/heads/develop' && 'win-beta' || 'win' }} --repoUrl https://github.com/Fooxboy/MusicX-WPF --publish --pre --token ${{ secrets.GITHUB_TOKEN }}
+        
+      - name: Push release package
+        if: ${{ github.ref != 'refs/heads/develop' }}
+        run: vpk upload github -c ${{ github.ref == 'refs/heads/develop' && 'win-beta' || 'win' }} --repoUrl https://github.com/Fooxboy/MusicX-WPF --publish --token ${{ secrets.GITHUB_TOKEN }}
