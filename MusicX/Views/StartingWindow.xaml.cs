@@ -186,9 +186,9 @@ namespace MusicX.Views
                         
                         if (string.IsNullOrEmpty(config.AccessToken))
                         {
-                            if (string.IsNullOrEmpty(config.AnonToken))
-                                await container.GetRequiredService<IVkApiAuthAsync>()
-                                    .AuthorizeAsync(new AndroidApiAuthParams());
+                            // Always re-authorize anonymously to ensure a fresh token
+                            await container.GetRequiredService<IVkApiAuthAsync>()
+                                .AuthorizeAsync(new AndroidApiAuthParams());
                             
                             ActivatorUtilities.CreateInstance<AccountsWindow>(container).Show();
                             
@@ -263,6 +263,7 @@ namespace MusicX.Views
         private async Task Logout(ConfigModel config, IServiceProvider container)
         {
             var configService = container.GetRequiredService<ConfigService>();
+            var exchangeTokenStore = container.GetRequiredService<IExchangeTokenStore>();
 
             config.AccessToken = null;
             config.UserName = null!;
@@ -270,9 +271,11 @@ namespace MusicX.Views
             config.AccessTokenTtl = default;
             config.ExchangeToken = null;
 
-            if (string.IsNullOrEmpty(config.AnonToken))
-                await container.GetRequiredService<IVkApiAuthAsync>()
-                    .AuthorizeAsync(new AndroidApiAuthParams());
+            await exchangeTokenStore.SetExchangeTokenAsync(null);
+
+            // Always re-authorize anonymously to ensure a fresh token
+            await container.GetRequiredService<IVkApiAuthAsync>()
+                .AuthorizeAsync(new AndroidApiAuthParams());
 
             await configService.SetConfig(config);
 

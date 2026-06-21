@@ -44,6 +44,8 @@ public class VkApiAuth : IVkApiAuthAsync
         if (!string.IsNullOrEmpty(@params.AccessToken))
         {
             await _tokenStore.SetAsync(@params.AccessToken);
+            _lastAuthParams = @params;
+            IsAuthorized = true;
             return;
         }
         
@@ -57,6 +59,7 @@ public class VkApiAuth : IVkApiAuthAsync
                                        : null);
 
         _lastAuthParams = @params;
+        IsAuthorized = true;
     }
 
     public Task RefreshTokenAsync(Func<string>? code = null)

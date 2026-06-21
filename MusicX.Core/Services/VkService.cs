@@ -111,8 +111,20 @@ namespace MusicX.Core.Services
                 }
                 catch (VkApiMethodInvokeException e) when (e.ErrorCode == 1117) // token has expired
                 {
-                    if (await _tokenRefreshHandler.RefreshTokenAsync(token) is null)
+                    var newToken = await _tokenRefreshHandler.RefreshTokenAsync(token);
+                    if (newToken is null)
                         throw;
+                    
+                    logger.Info("Token was refreshed, retrying authorization");
+                    
+                    await auth.AuthorizeAsync(new ApiAuthParams()
+                    {
+                        AccessToken = newToken
+                    });
+                    
+                    var user = await vkApi.Users.GetAsync(new List<long>());
+                    _api.UserId = user[0].Id;
+                    logger.Info($"User '{user[0].Id}' successful sign in with refreshed token");
                 }
 
                 IsAuth = true;
@@ -122,7 +134,7 @@ namespace MusicX.Core.Services
                 logger.Error(ex, ex.Message);
                 throw;
             }
-           
+            
 
         }
 

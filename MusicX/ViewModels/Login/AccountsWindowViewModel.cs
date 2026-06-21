@@ -221,13 +221,14 @@ public class AccountsWindowViewModel : BaseViewModel
                         var uuid = Guid.NewGuid().ToString().Replace("-", "");
                         await _loginCategory.ConnectAsync(uuid);
                         await _loginCategory.ConnectAuthCodeAsync(response.SuperAppToken, uuid);
+                        await LoggedInAsync();
                     }
                     else if (response.AccessToken is not null)
                     {
                         await _vkService.SetTokenAsync(response.AccessToken);
+                        LoggedIn?.Invoke(this, EventArgs.Empty);
                     }
                     
-                    LoggedIn?.Invoke(this, EventArgs.Empty);
                     break;
                 }
             }
@@ -255,12 +256,13 @@ public class AccountsWindowViewModel : BaseViewModel
         var (token, profile) = await _authCategory.GetExchangeToken();
 
         _vkApi.UserId = profile.Id;
+        _vkService.IsAuth = true;
 
         _configService.Config.UserId = profile.Id;
         _configService.Config.UserName = $"{profile.FirstName} {profile.LastName}";
         
         await _exchangeTokenStore.SetExchangeTokenAsync(token);
-                    
+                     
         LoggedIn?.Invoke(this, EventArgs.Empty);
     }
 
